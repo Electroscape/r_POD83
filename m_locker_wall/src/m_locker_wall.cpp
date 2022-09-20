@@ -26,7 +26,7 @@
 
 
 STB_MOTHER Mother;
-int stage = stage1;
+int stage = gameLive;
 // since stages are single binary bits and we still need to d some indexing
 int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
@@ -40,7 +40,7 @@ void setup() {
     Serial.println("WDT endabled");
     wdt_enable(WDTO_8S);
 
-    Mother.rs485SetSlaveCount(1);
+    Mother.rs485SetSlaveCount(2);
 
     // STB.printSetupEnd();
 }
@@ -56,13 +56,27 @@ bool passwordInterpreter(char* password) {
     for (int passNo; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
-                stage = stage << 1;
-                delay(6000);
+                // stage = stage << 1;
+                // delay(6000);
+                switch (stage) {
+                    case gameLive:
+                        switch (passNo) {
+                            case 0: stage = serviceMode; break;
+                            case 1:
+                                Serial.println(F("reset things"));
+                                // TODO: implement reset here
+                            break;
+                        }
+                    break;
+                    case serviceMode:
+                        stage = gameLive;
+                    break;
+                }
+
                 return true;
             }
         }
     }
-    delay(6000);
     return false;
 }
 
@@ -70,8 +84,8 @@ bool passwordInterpreter(char* password) {
 // candidate to be moved to a mother specific part of the keypad lib
 bool checkForKeypad() {
 
-    Mother.STB_.dbgln("checkforKeypad");
-    Mother.STB_.dbgln(Mother.STB_.rcvdPtr);
+    // Mother.STB_.dbgln("checkforKeypad");
+    //Mother.STB_.dbgln(Mother.STB_.rcvdPtr);
 
     if (strncmp(keypadCmd.c_str(), Mother.STB_.rcvdPtr, keypadCmd.length()) != 0) {
         return false;
@@ -89,9 +103,11 @@ bool checkForKeypad() {
     if (cmdNo != KeypadCmds::evaluate) { return true; }
 
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
+    /*
     Serial.println("password is: ");
     Serial.println(cmdPtr);
     delay(500);
+    */
 
     // TODO: error handling here in case the rest of the msg is lost?
     if (!(cmdPtr != NULL)) {
@@ -144,8 +160,6 @@ bool checkForRfid() {
         strcat(msg, noString);
     }
     Mother.sendCmdToSlave(msg);
-    // blocking
-    delay(5000);
     return true;
 }
 
@@ -154,7 +168,7 @@ void interpreter() {
     while (Mother.nextRcvdLn()) {
         if (checkForKeypad()) {continue;};
         if (checkForRfid()) {continue;};
-        Serial.println("interpreter");
+        // Serial.println("interpreter");
     }
 }
 
@@ -170,7 +184,6 @@ void stageUpdate() {
     // check || stageIndex >= int(sizeof(stages))
     if (stageIndex < 0) {
         Serial.println(F("Stages out of index!"));
-        delay(5000);
         wdt_reset();
     }
     Mother.setFlags(0, flagMapping[stageIndex]);

@@ -1,22 +1,17 @@
 #pragma once
 
-#define StageCount 8
-#define PasswordAmount 4
+#define StageCount 2
+#define PasswordAmount 6
 #define MaxPassLen 10
 
 // may aswell move this into the Oled lib?
-#define headLineMaxSize 14
+// was 14
+#define headLineMaxSize 16
 
 
 enum stages{
-    stage1 = 1,
-    stage2 = 2,
-    stage3 = 4,
-    stage4 = 8,
-    stage5 = 16,
-    stage6 = 32,
-    stage7 = 64,
-    stage8 = 128
+    gameLive = 1,
+    serviceMode = 2,
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -26,43 +21,35 @@ int stageSum = ~(~0<<sizeof(stages));
 // could have multiple brains listed here making up a matrix
 int flagMapping[StageCount]{
     keypadFlag + oledFlag,
-    rfidFlag + oledFlag,
-    keypadFlag + rfidFlag + oledFlag,
-    keypadFlag + rfidFlag + oledFlag,
-    keypadFlag + rfidFlag + oledFlag,
-    keypadFlag + rfidFlag + oledFlag,
-    keypadFlag + rfidFlag + oledFlag,
-    keypadFlag + rfidFlag + oledFlag
+    keypadFlag + oledFlag
 };
 // save what already is turned on on the brain so we do not need to send it again
 int devicesOn = 0;
 
 char passwords[PasswordAmount][MaxPassLen] = {
-    "0000",
-    "GF",
-    "1337",
-    "4321"
+    "1111",     // service code
+    "0000",     // reset code, does this also work within th service mode?
+    "0001",
+    "0002",
+    "0003",
+    "0004"
 };
 
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    stageSum, // valid in all stages
-    stage1,
-    stage2, 
-    stage3 + stage4
+    stageSum, // service code, valid in all stages
+    stageSum, // reset codevalid in all stages
+    gameLive,
+    gameLive,
+    gameLive,
+    gameLive
 };
 // make a mapping of what password goes to what stage
 
 
 char stageTexts[StageCount][headLineMaxSize] = {
-    "Stage 1",
-    "Stage 2",
-    "Stage 3",
-    "Stage 4",
-    "Stage 5",
-    "Stage 6",
-    "Stage 7",
-    "Stage 8"
+    "Access Code",
+    "Service Mode"
 };
 
