@@ -19,6 +19,7 @@
 #include <stb_mother.h>
 #include <stb_keypadCmds.h>
 #include <stb_oledCmds.h>
+#include <stb_mother_ledCmds.h>
 
 
 #include "header_st.h"
@@ -32,24 +33,19 @@ int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 
-void setup() {
-
-    Mother.begin();
-    // starts serial and default oled
-    Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
-
-    Serial.println("WDT endabled");
-    wdt_enable(WDTO_8S);
-
-    Mother.rs485SetSlaveCount(1);
-
-    // STB.printSetupEnd();
-}
-
 
 // since stages are binary bit being shifted we cannot use them to index
 void setStageIndex() {
     stageIndex = (stage & stageSum) -1;
+}
+
+
+void lockAllDoors() {
+    for (int relayNo=0; relayNo<relayAmount; relayNo++) {
+        Mother.motherRelay.digitalWrite(relayNo, closed);
+        LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 50);
+    }
+    
 }
 
 
@@ -58,7 +54,8 @@ void setStageIndex() {
  * 
 */
 void gameReset() {
-
+    lockAllDoors();
+    stage = gameLive;
 }
 
 
@@ -72,13 +69,12 @@ void passwordActions(int passNo) {
             switch (passNo) {
                 case service: 
                     stage = serviceMode; 
-                    for (int relayNo=0; relayNo<relayAmount; relayNo++) {
-                        Mother.motherRelay.digitalWrite(relayNo, closed);
-                    }
+                    lockAllDoors();
                     Mother.motherRelay.digitalWrite(service, open);
                 break;
                 case resetIndex: gameReset(); break;
-                default: Mother.motherRelay.digitalWrite(passNo, open);
+                default: 
+                    Mother.motherRelay.digitalWrite(passNo, open);
                 break;
             }
         break;
@@ -113,7 +109,7 @@ bool checkForKeypad() {
 
     /*
     Mother.STB_.dbgln("checkforKeypad");
-    Mother.STB_.dbgln(Mother.STB_.rcvdPtr);
+    Mother.STB_.dbgln(Mother.STB_.rcvdPtr);ö
     */
 
     if (strncmp(keypadCmd.c_str(), Mother.STB_.rcvdPtr, keypadCmd.length()) != 0) {
@@ -223,6 +219,21 @@ void stageUpdate() {
     strcat(msg, stageTexts[stageIndex]); 
     Mother.sendCmdToSlave(msg);
     lastStage = stage;
+}
+
+
+void setup() {
+
+    Mother.begin();
+    // starts serial and default oled
+    Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
+
+    Serial.println("WDT endabled");
+    wdt_enable(WDTO_8S);
+
+    Mother.rs485SetSlaveCount(1);
+
+    gameReset();
 }
 
 
