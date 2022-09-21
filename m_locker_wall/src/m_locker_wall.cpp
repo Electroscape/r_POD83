@@ -53,11 +53,51 @@ void setStageIndex() {
 }
 
 
+/**
+ * @brief  TODO: implement
+ * 
+*/
+void gameReset() {
+
+}
+
+
+/**
+ * @brief  room specific section
+ * @param passNo 
+*/
+void passwordActions(int passNo) {
+    switch (stage) {
+        case gameLive:
+            switch (passNo) {
+                case service: 
+                    stage = serviceMode; 
+                    for (int relayNo=0; relayNo<relayAmount; relayNo++) {
+                        Mother.motherRelay.digitalWrite(relayNo, closed);
+                    }
+                    Mother.motherRelay.digitalWrite(service, open);
+                break;
+                case resetIndex: gameReset(); break;
+                default: Mother.motherRelay.digitalWrite(passNo, open);
+                break;
+            }
+        break;
+        case serviceMode:
+            stage = gameLive;
+            switch (passNo) {
+                case service: Mother.motherRelay.digitalWrite(service, closed); break;
+                default: gameReset();
+            }
+        break;
+    }
+}
+
+
 bool passwordInterpreter(char* password) {
     for (int passNo; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
-                stage = stage << 1;
+                passwordActions(passNo);
                 delay(500);
                 return true;
             }
@@ -67,11 +107,14 @@ bool passwordInterpreter(char* password) {
 }
 
 
+
 // candidate to be moved to a mother specific part of the keypad lib
 bool checkForKeypad() {
 
+    /*
     Mother.STB_.dbgln("checkforKeypad");
     Mother.STB_.dbgln(Mother.STB_.rcvdPtr);
+    */
 
     if (strncmp(keypadCmd.c_str(), Mother.STB_.rcvdPtr, keypadCmd.length()) != 0) {
         return false;
@@ -179,11 +222,7 @@ void stageUpdate() {
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
     Mother.sendCmdToSlave(msg);
-
-
     lastStage = stage;
-
-    // update flags
 }
 
 

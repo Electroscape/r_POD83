@@ -21,11 +21,11 @@ enum relays {
 };
 
 enum relayInits {
-    locker_1_init=1,
-    locker_2_init=1,
-    locker_3_init=1,
-    locker_4_init=1,
-    service_init=0
+    locker_1_init = closed,
+    locker_2_init = closed,
+    locker_3_init = closed,
+    locker_4_init = closed,
+    service_init = closed
 };
 
 int relayPinArray[relayAmount] = {
@@ -71,15 +71,17 @@ char passwords[PasswordAmount][MaxPassLen] = {
     "0000",     // reset code, does this also work within th service mode?
 };
 
+const int resetIndex = service + 1;
+
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
+    gameLive,
+    gameLive,
+    gameLive,
+    gameLive,
     stageSum, // service code, valid in all stages
-    stageSum, // reset codevalid in all stages
-    gameLive,
-    gameLive,
-    gameLive,
-    gameLive
+    stageSum  // reset codevalid in all stages
 };
 // make a mapping of what password goes to what stage
 
