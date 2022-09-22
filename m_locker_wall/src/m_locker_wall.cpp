@@ -129,9 +129,11 @@ bool checkForKeypad() {
     if (cmdNo != KeypadCmds::evaluate) { return true; }
 
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
+    /*
     Serial.println("password is: ");
     Serial.println(cmdPtr);
     delay(500);
+    */
 
     // TODO: error handling here in case the rest of the msg is lost?
     if (!(cmdPtr != NULL)) {
@@ -152,7 +154,8 @@ bool checkForKeypad() {
         sprintf(noString, "%d", KeypadCmds::wrong);
         strcat(msg, noString);
     }
-
+    // idk why but we had a termination poblem, maybe sprintf doesnt terminate?
+    msg[strlen(msg) - 1] = '\0';
 
     strcat(msg, noString);
     Mother.sendCmdToSlave(msg);
@@ -232,7 +235,8 @@ void setup() {
     Serial.println("WDT endabled");
     wdt_enable(WDTO_8S);
 
-    Mother.rs485SetSlaveCount(2);
+    // technicall 2 but no need to poll the 2nd 
+    Mother.rs485SetSlaveCount(1);
 
     gameReset();
 }
@@ -243,7 +247,6 @@ void loop() {
     interpreter();
     stageUpdate();
     wdt_reset();
-    // Mother.sendCmdToSlave(1, msg);
 }
 
 
