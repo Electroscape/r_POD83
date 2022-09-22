@@ -32,6 +32,7 @@ int stage = gameLive;
 int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
+bool lockerStatuses[lockerCnt] = {false};
 
 
 // since stages are binary bit being shifted we cannot use them to index
@@ -54,7 +55,9 @@ void lockAllDoors() {
  * 
 */
 void gameReset() {
-    lockAllDoors();
+    for (int no=0; no<lockerCnt; no++) {
+        lockerStatuses[no] = false;
+    }
     stage = gameLive;
 }
 
@@ -74,6 +77,7 @@ void passwordActions(int passNo) {
                 break;
                 case resetIndex: gameReset(); break;
                 default: 
+                    lockerStatuses[passNo] = true;
                     Mother.motherRelay.digitalWrite(passNo, open);
                     LED_CMDS::setPixelToClr(Mother, passNo, LED_CMDS::clrGreen, 50, 1);
                 break;
@@ -110,7 +114,7 @@ bool checkForKeypad() {
 
     /*
     Mother.STB_.dbgln("checkforKeypad");
-    Mother.STB_.dbgln(Mother.STB_.rcvdPtr);ö
+    Mother.STB_.dbgln(Mother.STB_.rcvdPtr);
     */
 
     if (strncmp(keypadCmd.c_str(), Mother.STB_.rcvdPtr, keypadCmd.length()) != 0) {
@@ -163,40 +167,9 @@ bool checkForKeypad() {
 }
 
 
-// again good candidate for a mother specific lib
-bool checkForRfid() {
-
-    if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
-        return false;
-    } 
-    char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
-    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
-    
-    // return msg with correct or incorrect
-    // could be simply universal CodeCorrect
-    char msg[10] = "";
-    strcpy(msg, keypadCmd.c_str());
-    strcat(msg, KeywordsList::delimiter.c_str());
-    char noString[3];
-
-    if (passwordInterpreter(cmdPtr)) {
-        sprintf(noString, "%d", KeypadCmds::correct);
-        strcat(msg, noString);
-    } else {
-        sprintf(noString, "%d", KeypadCmds::wrong);
-        strcat(msg, noString);
-    }
-    Mother.sendCmdToSlave(msg);
-    // blocking
-    delay(5000);
-    return true;
-}
-
-
 void interpreter() {
     while (Mother.nextRcvdLn()) {
-        if (checkForKeypad()) {continue;};
-        if (checkForRfid()) {continue;};
+        checkForKeypad();
     }
 }
 
@@ -209,12 +182,14 @@ void interpreter() {
 void stageUpdate() {
     if (lastStage == stage) { return; }
     setStageIndex();
+        
     // check || stageIndex >= int(sizeof(stages))
     if (stageIndex < 0) {
         Serial.println(F("Stages out of index!"));
         delay(5000);
         wdt_reset();
     }
+    lockAllDoors();
     Mother.setFlags(0, flagMapping[stageIndex]);
 
     char msg[32];

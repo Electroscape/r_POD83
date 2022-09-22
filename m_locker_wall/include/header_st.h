@@ -3,9 +3,9 @@
 #define StageCount 2
 #define PasswordAmount 6
 #define MaxPassLen 10
+#define lockerCnt 4
 
 // may aswell move this into the Oled lib?
-// was 14
 #define headLineMaxSize 16
 
 #define open   0
