@@ -75,6 +75,7 @@ void passwordActions(int passNo) {
                 case resetIndex: gameReset(); break;
                 default: 
                     Mother.motherRelay.digitalWrite(passNo, open);
+                    LED_CMDS::setPixelToClr(Mother, passNo, LED_CMDS::clrGreen, 50, 1);
                 break;
             }
         break;
@@ -231,7 +232,7 @@ void setup() {
     Serial.println("WDT endabled");
     wdt_enable(WDTO_8S);
 
-    Mother.rs485SetSlaveCount(1);
+    Mother.rs485SetSlaveCount(2);
 
     gameReset();
 }
