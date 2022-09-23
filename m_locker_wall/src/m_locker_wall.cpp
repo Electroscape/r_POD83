@@ -49,6 +49,23 @@ void lockAllDoors() {
     
 }
 
+void ledBlink() {
+    wdt_reset();
+    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    delay(200);
+    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack);
+    delay(200);
+    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    delay(200);
+    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack);
+    delay(200);
+    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    // TODO: make a fncs that passes a clr array
+    for (int no=0; no<lockerCnt; no++) {
+        // insert oled setting multiple pixels here
+    }
+};
+
 
 /**
  * @brief  TODO: implement
@@ -57,6 +74,7 @@ void lockAllDoors() {
 void gameReset() {
     for (int no=0; no<lockerCnt; no++) {
         lockerStatuses[no] = false;
+        Mother.motherRelay.digitalWrite(no, closed);
     }
     stage = gameLive;
 }
@@ -151,19 +169,21 @@ bool checkForKeypad() {
     char noString[3];
     strcpy(msg, keypadCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
-            
+    bool doBlink = false;
     if (passwordInterpreter(cmdPtr)) {
         sprintf(noString, "%d", KeypadCmds::correct);
         strcat(msg, noString);
     } else {
         sprintf(noString, "%d", KeypadCmds::wrong);
         strcat(msg, noString);
+        doBlink = true;
     }
     // idk why but we had a termination poblem, maybe sprintf doesnt terminate?
     msg[strlen(msg) - 1] = '\0';
 
     strcat(msg, noString);
     Mother.sendCmdToSlave(msg);
+    if (doBlink) { ledBlink(); }
     return true;
 }
 
