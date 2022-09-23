@@ -95,7 +95,8 @@ void passwordActions(int passNo) {
 
 
 bool passwordInterpreter(char* password) {
-    for (int passNo; passNo < PasswordAmount; passNo++) {
+    Mother.STB_.defaultOled.clear();
+    for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
                 passwordActions(passNo);
