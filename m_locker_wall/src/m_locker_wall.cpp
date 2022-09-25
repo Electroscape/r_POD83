@@ -29,9 +29,10 @@
 STB_MOTHER Mother;
 int stage = gameLive;
 // since stages are single binary bits and we still need to d some indexing
-int stageIndex=0;
+int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
+// going to use this to set the LEDs how they are intended to once the function necessary has been added to the lib
 bool lockerStatuses[lockerCnt] = {false};
 
 
@@ -40,14 +41,6 @@ void setStageIndex() {
     stageIndex = (stage & stageSum) -1;
 }
 
-
-void lockAllDoors() {
-    for (int relayNo=0; relayNo<relayAmount; relayNo++) {
-        Mother.motherRelay.digitalWrite(relayNo, closed);
-        LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 50);
-    }
-    
-}
 
 void ledBlink() {
     wdt_reset();
@@ -77,6 +70,7 @@ void gameReset() {
         Mother.motherRelay.digitalWrite(no, closed);
     }
     stage = gameLive;
+    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 50);
 }
 
 
@@ -90,7 +84,7 @@ void passwordActions(int passNo) {
             switch (passNo) {
                 case service: 
                     stage = serviceMode; 
-                    lockAllDoors();
+                    gameReset();
                     Mother.motherRelay.digitalWrite(service, open);
                 break;
                 case resetIndex: gameReset(); break;
@@ -104,7 +98,9 @@ void passwordActions(int passNo) {
         case serviceMode:
             stage = gameLive;
             switch (passNo) {
-                case service: Mother.motherRelay.digitalWrite(service, closed); break;
+                case service: 
+                    Mother.motherRelay.digitalWrite(service, closed); 
+                break;
                 default: gameReset();
             }
         break;
@@ -210,7 +206,6 @@ void stageUpdate() {
         delay(5000);
         wdt_reset();
     }
-    lockAllDoors();
     Mother.setFlags(0, flagMapping[stageIndex]);
 
     char msg[32];
