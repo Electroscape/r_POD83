@@ -11,8 +11,13 @@
 #define open   0
 #define closed 1
 
+unsigned long introDuration = 5000;
+// duration of the operation of the gate
+unsigned long airlockDuration = 5000;
+
 enum relays {
-    beamer,
+    beamerIntro,
+    beamerDecon,
     gate,
     alarm,
     uvLight,
@@ -27,7 +32,8 @@ enum relayInits {
 };
 
 int relayPinArray[relayAmount] = {
-    beamer,
+    beamerIntro,
+    beamerDecon,
     gate,
     alarm,
     uvLight,
@@ -43,8 +49,14 @@ int relayInitArray[relayAmount] = {
 
 enum stages{
     preStage = 1,
-    serviceMode = 2,
-    intro = 4
+    startStage = 2,
+    intro = 4,
+    decontamination = 8,
+    cleanAirlock = 16,
+    // entering the password after presenting hte RFID
+    airlockRequest = 32, 
+    airlockOpening = 64,
+    endStage = 128
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -55,15 +67,18 @@ int stageSum = ~( ~0 << StageCount );
 // for now its only an Access module mapped here
 int flagMapping[StageCount]{
     0,
+    rfidFlag,
+    0,
+    0,
     keypadFlag
 };
 // save what already is turned on on the brain so we do not need to send it again
 int devicesOn = 0;
 
 char passwords[PasswordAmount][MaxPassLen] = {
-    "0001",
+    "GF",
     "0002",
-    "0003",
+    "1234",
     "0004",
     "1111",     // service code
     "0000"     // reset code, does this also work within th service mode?
@@ -71,7 +86,8 @@ char passwords[PasswordAmount][MaxPassLen] = {
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    stageSum  // reset codevalid in all stages
+    startStage + decontamination,
+    airlockRequest
 };
 // make a mapping of what password goes to what stage
 
@@ -81,8 +97,8 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Present Card",
     "Thank you",
     "Decontamination",
+    "Access denied",
     "Enter Code",
     "Wait to enter",
-    "Caution",
-    ""
+    "Caution"
 };

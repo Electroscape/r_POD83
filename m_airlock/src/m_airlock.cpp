@@ -9,6 +9,10 @@
  * @copyright Copyright (c) 2022
  * 
  *  TODO: 
+ *  6. Wrong code entered on access module -> "Access denied" currently not implemented
+ * 
+ *  Q: 
+ * 
  */
 
 
@@ -28,6 +32,7 @@ int stage = preStage;
 int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
+bool repeatDecontamination = false;
 
 
 
@@ -39,19 +44,14 @@ void setStageIndex() {
 
 
 /**
- * @brief  TODO: implement
- * 
+ * @brief  consider just using softwareReset
 */
 void gameReset() {
-    stage = preStage;
-}
-
-
-/**
- * @brief  room specific section
- * @param passNo 
-*/
-void passwordActions(int passNo) {
+    stage = startStage;
+    for (int relayNo=0; relayNo < relayAmount; relayNo++) {
+        Mother.motherRelay.digitalWrite(relayNo, relayInitArray[relayNo]);
+    }
+    repeatDecontamination = false;
 }
 
 
@@ -60,11 +60,15 @@ bool passwordInterpreter(char* password) {
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
-                passwordActions(passNo);
                 delay(500);
+                stage = stage << 1;
                 return true;
             }
         }
+    }
+    // specifics to a failed input of the password
+    if ( stage == airlockRequest ) {
+        stage = decontamination;
     }
     return false;
 }
@@ -128,13 +132,110 @@ bool checkForKeypad() {
     return true;
 }
 
+// again good candidate for a mother specific lib
+bool checkForRfid() {
+
+    if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
+        return false;
+    } 
+    char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
+    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
+    
+    // return msg with correct or incorrect
+    // could be simply universal CodeCorrect
+    char msg[10] = "";
+    strcpy(msg, keypadCmd.c_str());
+    strcat(msg, KeywordsList::delimiter.c_str());
+    char noString[3];
+
+    if (passwordInterpreter(cmdPtr)) {
+        sprintf(noString, "%d", KeypadCmds::correct);
+        strcat(msg, noString);
+    } else {
+        sprintf(noString, "%d", KeypadCmds::wrong);
+        strcat(msg, noString);
+    }
+    Mother.sendCmdToSlave(msg);
+    // blocking
+    delay(5000);
+    return true;
+}
+
 
 void interpreter() {
     while (Mother.nextRcvdLn()) {
-        checkForKeypad();
+        if (checkForKeypad()) { continue;}
+        checkForRfid();
     }
 }
 
+
+void uvSequence () {
+    wdt_disable();
+    Mother.motherRelay.digitalWrite(uvLight, open);
+    int repCnt = 4;
+    if (repeatDecontamination) { repCnt = 2; }
+    // are UV light supposed to be flashing or only LEDs? Assumed the latter 
+    for (int rep=0; rep<repCnt; rep++) {
+        for (int i=0; i<3; i++) {
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlue, 100);
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 50);
+        }
+    if (rep != repCnt -1) { delay(3000); }
+    }
+    wdt_enable(WDTO_8S);
+    Mother.motherRelay.digitalWrite(uvLight, closed);
+}
+
+
+void oledUpdate() {
+    Mother.setFlags(0, flagMapping[stageIndex]);
+    char msg[32];
+    strcpy(msg, oledHeaderCmd.c_str());
+    strcat(msg, KeywordsList::delimiter.c_str());
+    strcat(msg, stageTexts[stageIndex]); 
+    Mother.sendCmdToSlave(msg);
+    lastStage = stage;
+}
+
+
+void stageActions() {
+    oledUpdate();
+    switch (stage) {
+        case preStage:        
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            wdt_reset();
+            delay(5000);
+            stage = startStage;
+        break;
+        case startStage:    
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 50);
+        break;
+        case intro: 
+            Mother.motherRelay.digitalWrite(beamerIntro, open);
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 50);
+            wdt_disable();
+            delay(introDuration);
+            wdt_enable(WDTO_8S);
+            Mother.motherRelay.digitalWrite(beamerIntro, closed);
+            stage = decontamination;
+        break;
+        // have to check if need some sort of synchronisation ... or have a bit of padding in the decontimnation video
+        case decontamination:
+            uvSequence();
+            repeatDecontamination = true;
+            stage = airlockRequest;
+        break;
+        case airlockRequest:
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrGreen, 40);
+        break;
+        case airlockOpening:
+
+        break;
+        case endStage:
+        break;
+    }
+}
 
 /**
  * @brief  triggers effects specific to the given stage, 
@@ -151,14 +252,7 @@ void stageUpdate() {
         delay(5000);
         wdt_reset();
     }
-    Mother.setFlags(0, flagMapping[stageIndex]);
-
-    char msg[32];
-    strcpy(msg, oledHeaderCmd.c_str());
-    strcat(msg, KeywordsList::delimiter.c_str());
-    strcat(msg, stageTexts[stageIndex]); 
-    Mother.sendCmdToSlave(msg);
-    lastStage = stage;
+    stageActions();
 }
 
 
@@ -182,6 +276,9 @@ void setup() {
     Mother.sendSetting(1, settingCmds::ledCount, ledCount, argsCnt);
     Mother.setupComplete(1);
 
+    // smalle dealay to not load up the fuse by switching on too many devices at once
+    wdt_reset();
+    delay(1000);
     gameReset();
 }
 
