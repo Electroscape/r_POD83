@@ -72,7 +72,7 @@ bool passwordInterpreter(char* password) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
                 delay(500);
                 // since there are only 2 stage with a single valid password
-                if (repeatDecontamination) {
+                if (repeatDecontamination && stage == startStage) {
                     stage = decontamination;
                 } else {
                     stage = stage << 1;
@@ -83,7 +83,22 @@ bool passwordInterpreter(char* password) {
     }
     // specifics to a failed input of the password
     if ( stage == airlockRequest ) {
+        wdt_reset();
+        delay(5000);
+        wdt_reset();
         stage = startStage;
+        char msg[32];
+        strcpy(msg, oledHeaderCmd.c_str());
+        strcat(msg, KeywordsList::delimiter.c_str());
+        strcat(msg, "Clean Airlock"); 
+        Mother.sendCmdToSlave(msg);
+        for (int i=0; i<5; i++) {
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 100);
+            delay(200);
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrWhite, 5);
+            delay(500);
+        }
+        
     }
     return false;
 }
@@ -223,18 +238,6 @@ void airLockSequence() {
 
 
 void oledUpdate() {
-    if (stage == decontamination && repeatDecontamination) {
-        if (repeatDecontamination) {
-            delay(3000);
-            char msg[32];
-            strcpy(msg, oledHeaderCmd.c_str());
-            strcat(msg, KeywordsList::delimiter.c_str());
-            strcat(msg, "Clean Airlock"); 
-            Mother.sendCmdToSlave(msg);
-            wdt_reset();
-            delay(3000);
-        }
-    }
     char msg[32];
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
@@ -269,12 +272,13 @@ void stageActions() {
             wdt_enable(WDTO_8S);
             stage = preStage;
         break;
+        // could be integrated to the setupStage and trashed
         case preStage:        
             wdt_reset();
             delay(5000);
             stage = startStage;
         break;
-        case startStage:    
+        case startStage:   
             LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
         case intro: 
