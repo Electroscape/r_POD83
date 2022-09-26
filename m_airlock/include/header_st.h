@@ -1,10 +1,8 @@
 #pragma once
 
-#define StageCount 9
+#define StageCount 10
 #define PasswordAmount 6
 #define MaxPassLen 10
-#define lockerCnt 4
-
 // may aswell move this into the Oled lib?
 #define headLineMaxSize 16
 
@@ -53,17 +51,18 @@ int relayInitArray[relayAmount] = {
 
 
 enum stages{
-    preStage = 1,
+    setupStage = 1,
+    preStage = 2,
     // ready to scan the RFID card, red light
-    startStage = 2,
-    intro = 4,
-    decontamination = 8,
-    cleanAirlock = 16,
+    startStage = 4,
+    intro = 8,
+    decontamination = 16,
+    cleanAirlock = 32,
     // entering the password after presenting hte RFID
-    airlockRequest = 32, 
-    airlockOpening = 64,
-    airlockOpen = 128,
-    idle = 256
+    airlockRequest = 64, 
+    airlockOpening = 128,
+    airlockOpen = 256,
+    idle = 512
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -73,6 +72,7 @@ int stageSum = ~( ~0 << StageCount );
 // could have multiple brains listed here making up a matrix
 // for now its only an Access module mapped here
 int flagMapping[StageCount]{
+    0,
     0,
     rfidFlag,
     0,
@@ -93,13 +93,14 @@ char passwords[PasswordAmount][MaxPassLen] = {
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    startStage + decontamination,
+    startStage,
     airlockRequest
 };
 // make a mapping of what password goes to what stage
 
 
 char stageTexts[StageCount][headLineMaxSize] = {
+    "Welcome",
     "Welcome",
     "Present Card",
     "Thank you",

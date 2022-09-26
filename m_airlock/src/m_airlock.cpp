@@ -9,6 +9,7 @@
  * @copyright Copyright (c) 2022
  * 
  *  TODO: 
+ * - double post of clean airlock & decontamination
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
  * 
  *  Q: 
@@ -27,14 +28,13 @@
 // using the reset PCF for this
 PCF8574 inputPCF;
 STB_MOTHER Mother;
-int stage = preStage;
+int stage = setupStage;
 // since stages are single binary bits and we still need to d some indexing
 int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 bool repeatDecontamination = false;
-
-
+int inputTicks = 0;
 
 // since stages are binary bit being shifted we cannot use them to index
 void setStageIndex() {
@@ -57,7 +57,7 @@ void setStageIndex() {
  * @brief  consider just using softwareReset
 */
 void gameReset() {
-    stage = preStage;
+    stage = setupStage;
     for (int relayNo=0; relayNo < relayAmount; relayNo++) {
         Mother.motherRelay.digitalWrite(relayNo, relayInitArray[relayNo]);
     }
@@ -241,9 +241,31 @@ void oledUpdate() {
 
 void stageActions() {
     oledUpdate();
+    wdt_reset();
     switch (stage) {
-        case preStage:        
+        case setupStage:
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            wdt_disable();
+            // waitin for the door to be opened
+            while (inputTicks < 5) {
+                if (inputPCF.digitalRead(0) != 0) {
+                    inputTicks++;
+                    delay(25);
+                }
+            }
+            inputTicks = 0;
+            while (inputTicks < 5) {
+                if (inputPCF.digitalRead(0) == 0) {
+                    inputTicks++;
+                    delay(25);
+                }
+            }
+            Mother.motherRelay.digitalWrite(door, closed);
             LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            wdt_enable(WDTO_8S);
+            stage = preStage;
+        break;
+        case preStage:        
             wdt_reset();
             delay(5000);
             stage = startStage;
@@ -326,8 +348,6 @@ void stageUpdate() {
 void inputInit() {
     inputPCF.begin(RESET_I2C_ADD);
     inputPCF.pinMode(0, INPUT);
-    inputPCF.pinMode(0, OUTPUT);
-    inputPCF.digitalWrite(1, HIGH);
 }
 
 
