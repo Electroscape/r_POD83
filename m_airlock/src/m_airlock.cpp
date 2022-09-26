@@ -72,18 +72,21 @@ bool passwordInterpreter(char* password) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
                 delay(500);
                 // since there are only 2 stage with a single valid password
-                stage = stage << 1;
+                if (repeatDecontamination) {
+                    stage = decontamination;
+                } else {
+                    stage = stage << 1;
+                }
                 return true;
             }
         }
     }
     // specifics to a failed input of the password
     if ( stage == airlockRequest ) {
-        stage = decontamination;
+        stage = startStage;
     }
     return false;
 }
-
 
 
 // candidate to be moved to a mother specific part of the keypad lib
@@ -169,6 +172,7 @@ bool checkForRfid() {
     Mother.sendCmdToSlave(msg);
     // blocking
     delay(5000);
+    wdt_reset();
     return true;
 }
 
@@ -228,7 +232,7 @@ void oledUpdate() {
             strcat(msg, "Clean Airlock"); 
             Mother.sendCmdToSlave(msg);
             wdt_reset();
-            delay(5000);
+            delay(3000);
         }
     }
     char msg[32];
