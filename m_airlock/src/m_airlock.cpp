@@ -24,8 +24,8 @@
 
 #include "header_st.h"
 
-
-
+// using the reset PCF for this
+PCF8574 inputPCF;
 STB_MOTHER Mother;
 int stage = preStage;
 // since stages are single binary bits and we still need to d some indexing
@@ -323,6 +323,14 @@ void stageUpdate() {
 }
 
 
+void inputInit() {
+    inputPCF.begin(RESET_I2C_ADD);
+    inputPCF.pinMode(0, INPUT);
+    inputPCF.pinMode(0, OUTPUT);
+    inputPCF.digitalWrite(1, HIGH);
+}
+
+
 void setup() {
 
     Mother.begin();
@@ -336,6 +344,8 @@ void setup() {
     Mother.rs485SetSlaveCount(1);
 
     setStageIndex();
+    inputInit();
+
     /*
     Mother.setFlags(0, flagMapping[stageIndex]);
     Mother.setupComplete(0);

@@ -21,6 +21,7 @@ enum relays {
     gate,
     alarm,
     uvLight,
+    door,
     relayAmount
 };
 
@@ -28,7 +29,8 @@ enum relayInits {
     beamer_init = closed,
     gate_init = closed,
     alarm_init = closed,
-    uvLight_init = closed
+    uvLight_init = closed,
+    doorInit = open
 };
 
 int relayPinArray[relayAmount] = {
@@ -37,6 +39,7 @@ int relayPinArray[relayAmount] = {
     gate,
     alarm,
     uvLight,
+    door
 };
 
 int relayInitArray[relayAmount] = {
@@ -44,7 +47,8 @@ int relayInitArray[relayAmount] = {
     beamer_init,
     gate_init,
     alarm_init,
-    uvLight_init
+    uvLight_init,
+    doorInit
 };
 
 
