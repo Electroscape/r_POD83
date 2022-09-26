@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 8
+#define StageCount 9
 #define PasswordAmount 6
 #define MaxPassLen 10
 #define lockerCnt 4
@@ -41,6 +41,7 @@ int relayPinArray[relayAmount] = {
 
 int relayInitArray[relayAmount] = {
     beamer_init,
+    beamer_init,
     gate_init,
     alarm_init,
     uvLight_init
@@ -49,6 +50,7 @@ int relayInitArray[relayAmount] = {
 
 enum stages{
     preStage = 1,
+    // ready to scan the RFID card, red light
     startStage = 2,
     intro = 4,
     decontamination = 8,
@@ -56,7 +58,8 @@ enum stages{
     // entering the password after presenting hte RFID
     airlockRequest = 32, 
     airlockOpening = 64,
-    endStage = 128
+    airlockOpen = 128,
+    idle = 256
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -70,7 +73,11 @@ int flagMapping[StageCount]{
     rfidFlag,
     0,
     0,
-    keypadFlag
+    0,
+    keypadFlag,
+    0,
+    0,
+    0
 };
 // save what already is turned on on the brain so we do not need to send it again
 int devicesOn = 0;
@@ -78,10 +85,6 @@ int devicesOn = 0;
 char passwords[PasswordAmount][MaxPassLen] = {
     "GF",
     "0002",
-    "1234",
-    "0004",
-    "1111",     // service code
-    "0000"     // reset code, does this also work within th service mode?
 };
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
@@ -100,5 +103,6 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Access denied",
     "Enter Code",
     "Wait to enter",
-    "Caution"
+    "Caution",
+    ""
 };

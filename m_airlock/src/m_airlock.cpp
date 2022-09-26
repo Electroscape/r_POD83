@@ -57,7 +57,7 @@ void setStageIndex() {
  * @brief  consider just using softwareReset
 */
 void gameReset() {
-    stage = startStage;
+    stage = preStage;
     for (int relayNo=0; relayNo < relayAmount; relayNo++) {
         Mother.motherRelay.digitalWrite(relayNo, relayInitArray[relayNo]);
     }
@@ -71,6 +71,7 @@ bool passwordInterpreter(char* password) {
         if (passwordMap[passNo] & stage) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
                 delay(500);
+                // since there are only 2 stage with a single valid password
                 stage = stage << 1;
                 return true;
             }
@@ -189,23 +190,52 @@ void uvSequence () {
     for (int rep=0; rep<repCnt; rep++) {
         for (int i=0; i<3; i++) {
             LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlue, 100);
+            delay(50);
             LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 50);
         }
-    if (rep != repCnt -1) { delay(3000); }
+        if (rep == repCnt -1) { break; }
+        delay(1000);
     }
     wdt_enable(WDTO_8S);
     Mother.motherRelay.digitalWrite(uvLight, closed);
 }
 
 
+/**
+ * @brief  for now a simply blinking 
+*/
+void airLockSequence() {
+    wdt_disable();
+    unsigned long endTime = millis() + airlockDuration;
+    while (millis() < endTime) {
+        LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+        delay(1000);
+        LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+        delay(250);
+    }
+    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+    wdt_enable(WDTO_8S);
+}   
+
+
 void oledUpdate() {
-    Mother.setFlags(0, flagMapping[stageIndex]);
+    if (stage == decontamination && repeatDecontamination) {
+        if (repeatDecontamination) {
+            delay(3000);
+            char msg[32];
+            strcpy(msg, oledHeaderCmd.c_str());
+            strcat(msg, KeywordsList::delimiter.c_str());
+            strcat(msg, "Clean Airlock"); 
+            Mother.sendCmdToSlave(msg);
+            wdt_reset();
+            delay(5000);
+        }
+    }
     char msg[32];
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
     Mother.sendCmdToSlave(msg);
-    lastStage = stage;
 }
 
 
@@ -219,30 +249,50 @@ void stageActions() {
             stage = startStage;
         break;
         case startStage:    
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 50);
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
         case intro: 
+            Serial.println("running Into");
             Mother.motherRelay.digitalWrite(beamerIntro, open);
             LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             wdt_disable();
-            delay(introDuration);
+            delay(10000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(beamerIntro, closed);
             stage = decontamination;
         break;
         // have to check if need some sort of synchronisation ... or have a bit of padding in the decontimnation video
         case decontamination:
+            Mother.motherRelay.digitalWrite(beamerDecon, open);
+            delay(3000);
             uvSequence();
             repeatDecontamination = true;
+            Mother.motherRelay.digitalWrite(beamerDecon, closed);
             stage = airlockRequest;
         break;
         case airlockRequest:
             LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrGreen, 40);
         break;
         case airlockOpening:
-
+            Mother.motherRelay.digitalWrite(alarm, open);
+            Mother.motherRelay.digitalWrite(gate, open);
+            airLockSequence();
+            stage = stage << 1;
         break;
-        case endStage:
+        case airlockOpen:
+            // depending on how the gates motor works we shut it off
+            Mother.motherRelay.digitalWrite(gate, closed);
+            /**
+             * @todo: this needs to be a running light
+            */
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+            wdt_disable();
+            delay(10000);
+            stage = stage << 1;
+        break;
+        case idle:
+            Mother.motherRelay.digitalWrite(alarm, closed);
+            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
     }
 }
@@ -254,6 +304,8 @@ void stageActions() {
 */
 void stageUpdate() {
     if (lastStage == stage) { return; }
+    Serial.print("Stage is:");
+    Serial.println(stage);
     setStageIndex();
         
     // check || stageIndex >= int(sizeof(stages))
@@ -262,6 +314,11 @@ void stageUpdate() {
         delay(5000);
         wdt_reset();
     }
+    // important to do this before stageActions! otherwise we skip stages
+    lastStage = stage;
+
+    Mother.setFlags(0, flagMapping[stageIndex]);
+    oledUpdate();
     stageActions();
 }
 
@@ -279,12 +336,16 @@ void setup() {
     Mother.rs485SetSlaveCount(1);
 
     setStageIndex();
+    /*
     Mother.setFlags(0, flagMapping[stageIndex]);
     Mother.setupComplete(0);
+    */
+    /*
     int argsCnt = 2;
     int ledCount[argsCnt] = {0, 3};
     Mother.sendSetting(1, settingCmds::ledCount, ledCount, argsCnt);
     Mother.setupComplete(1);
+    */
 
     // smalle dealay to not load up the fuse by switching on too many devices at once
     wdt_reset();
