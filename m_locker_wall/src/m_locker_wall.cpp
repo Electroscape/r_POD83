@@ -38,9 +38,20 @@ bool lockerStatuses[lockerCnt] = {false};
 
 // since stages are binary bit being shifted we cannot use them to index
 void setStageIndex() {
-    stageIndex = (stage & stageSum) -1;
+    for (int i=0; i<StageCount; i++) {
+        if (stage <= 1 << i) {
+            stageIndex = i;
+            /*            
+            Serial.print("stageIndex:");
+            Serial.println(stageIndex);
+            delay(1000);
+            */
+            return;
+        }
+    }
+    Serial.println(F("STAGEINDEX ERRROR!"));
+    delay(16000);
 }
-
 
 void ledBlink() {
     wdt_reset();
