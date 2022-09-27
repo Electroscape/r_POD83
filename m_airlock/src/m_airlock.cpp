@@ -93,9 +93,9 @@ bool passwordInterpreter(char* password) {
         strcat(msg, "Clean Airlock"); 
         Mother.sendCmdToSlave(msg);
         for (int i=0; i<5; i++) {
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 100);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 100);
             delay(200);
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrWhite, 5);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 5);
             delay(500);
         }
         
@@ -208,9 +208,9 @@ void uvSequence () {
     // are UV light supposed to be flashing or only LEDs? Assumed the latter 
     for (int rep=0; rep<repCnt; rep++) {
         for (int i=0; i<3; i++) {
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlue, 100);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlue, 100);
             delay(50);
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
         }
         if (rep == repCnt -1) { break; }
         delay(1000);
@@ -227,12 +227,12 @@ void airLockSequence() {
     wdt_disable();
     unsigned long endTime = millis() + airlockDuration;
     while (millis() < endTime) {
-        LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
         delay(1000);
-        LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
         delay(250);
     }
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
     wdt_enable(WDTO_8S);
 }   
 
@@ -251,7 +251,7 @@ void stageActions() {
     wdt_reset();
     switch (stage) {
         case setupStage:
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             wdt_disable();
             // waitin for the door to be opened
             while (inputTicks < 5) {
@@ -268,7 +268,7 @@ void stageActions() {
                 }
             }
             Mother.motherRelay.digitalWrite(door, closed);
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
             wdt_enable(WDTO_8S);
             stage = preStage;
         break;
@@ -279,12 +279,12 @@ void stageActions() {
             stage = startStage;
         break;
         case startStage:   
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 30);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
         case intro: 
             Serial.println("running Into");
             Mother.motherRelay.digitalWrite(beamerIntro, open);
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack, 50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             wdt_disable();
             delay(10000);
             wdt_enable(WDTO_8S);
@@ -301,7 +301,7 @@ void stageActions() {
             stage = airlockRequest;
         break;
         case airlockRequest:
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrGreen, 40);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 40);
         break;
         case airlockOpening:
             Mother.motherRelay.digitalWrite(alarm, open);
@@ -315,14 +315,14 @@ void stageActions() {
             /**
              * @todo: this needs to be a running light
             */
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
             wdt_disable();
             delay(10000);
             stage = stage << 1;
         break;
         case idle:
             Mother.motherRelay.digitalWrite(alarm, closed);
-            LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 30);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
     }
 }
