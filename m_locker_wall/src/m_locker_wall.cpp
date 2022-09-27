@@ -55,18 +55,22 @@ void setStageIndex() {
 
 void ledBlink() {
     wdt_reset();
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed);
     // TODO: make a fncs that passes a clr array
     for (int no=0; no<lockerCnt; no++) {
         // insert oled setting multiple pixels here
+        if (lockerStatuses[no]) {
+            LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, no);
+        }
+
     }
 };
 
@@ -81,7 +85,7 @@ void gameReset() {
         Mother.motherRelay.digitalWrite(no, closed);
     }
     stage = gameLive;
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 50);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 50);
 }
 
 
@@ -102,7 +106,7 @@ void passwordActions(int passNo) {
                 default: 
                     lockerStatuses[passNo] = true;
                     Mother.motherRelay.digitalWrite(passNo, open);
-                    LED_CMDS::setPixelToClr(Mother, passNo, LED_CMDS::clrGreen, 50, 1);
+                    LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, passNo);
                 break;
             }
         break;
