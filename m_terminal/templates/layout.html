@@ -1,0 +1,149 @@
+<!doctype html>
+<html style="font-size: 10pt;" lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+
+    {% block global %}
+        {% if G_CONFIG %}
+            <meta name="config" content='{{ G_CONFIG|tojson }}'/>
+        {% else %}
+            <meta name="config">
+        {% endif %}
+    {% endblock %}
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet"/>
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css" rel="stylesheet"/>
+    <!-- MDB -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js"></script>
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.1.js"
+            integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+
+    <!-- AJAX and socketio -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+            integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+            crossorigin="anonymous"></script>
+
+    <!-- Toaster -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <!-- import local files -->
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/home.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/floatChat.css') }}" media="screen">
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <script>
+        toastr.options = {
+            closeButton: true,
+            debug: true,
+            newestOnTop: false,
+            progressBar: true,
+            preventDuplicates: true,
+            onclick: null,
+            showDuration: "2000",
+            hideDuration: "1000",
+            timeOut: "3000",
+            extendedTimeOut: "1000",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut"
+        };
+
+        if (!document.querySelector('meta[name="config"]').content) {
+            let meta = document.querySelector('meta[name="config"]');
+
+            $.ajax({
+                async: false,
+                type: 'POST',
+                url: '{{ url_for("get_globals") }}',
+                contentType: 'application/json;charset=UTF-8',
+                success: function (res) {
+                    meta.content = JSON.stringify(res);
+                }
+            });
+        }
+        const myChatConfig = JSON.parse(document.querySelector('meta[name="config"]').content);
+        const myRoomID = myChatConfig.id;
+        const myDispName = myChatConfig.title;
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+    </script>
+
+    {% block chat_js %}
+        <!-- For self-socket -->
+        <script type="text/javascript">
+            socket.on('connect', function () {
+                socket.emit('msg_to_backend', {
+                    update: `'${myDispName}' is on page {{ request.path }}`
+                })
+            })
+
+            socket.on('response_to_frontend', function (msg) {
+                //console.log(msg)
+                handleMessageReception(msg)
+            })
+
+            socket.on('usr_auth', function (msg) {
+                console.log(`user ${msg.usr} login`)
+                toastr.success(`user ${msg.usr} login`);
+                loadControlPanel(msg.data)
+
+            })
+
+            function handleMessageReception(msg) {
+                if (typeof msg.user_name !== 'undefined') {
+                    $('#msg_holder').prepend(
+                        `<div><b style="color: #000"> ${msg.user_name}: </b>
+                     <p style="display: inline; color: white">${msg.message}</p></div>`);
+
+                    if (msg.user_name !== myRoomID) {
+                        {% if request.path != "/chat_control" %}
+                            toastr.info('You have received an new message');
+                        {% endif %}
+                        
+                        // update floating container
+                        if (document.getElementById("floatMsgContainer")) {
+                            receiveNewMessage(msg.user_name, msg.message);
+                        }
+                    }
+                }
+            }
+        </script>
+    {% endblock %}
+
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body class="body bg-dark" data-lang="en">
+
+{% include "header.html" %}
+
+<section id="control-section">
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</section>
+
+<script src="{{ url_for('static',filename='js/fns.js') }}">
+</script>
+
+
+
+{% block add_js %}
+
+{% endblock %}
+</body>
+
+</html>

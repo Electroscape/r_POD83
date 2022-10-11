@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% block title %}
+    Server Homepage
+{% endblock %}
+
+{% block chat_js %}
+    <script type="text/javascript">
+        function sendMessage(event) {
+            event.preventDefault();
+            let user_name = $("#dm_sender").val();
+            let user_input = $("#input_msg").val();
+            if (user_input) {
+                socket.emit('msg_to_server', {
+                    user_name: user_name,
+                    message: user_input
+                })
+            }
+            $("#input_msg").val('').focus();
+            return false;
+        }
+
+        socket.on('connect', function () {
+            socket.emit('msg_to_server', {
+                update: "User '{{ g_config.title }}' is now connected"
+            })
+        })
+
+        socket.on('response_to_fe', function (msg) {
+            displayMessage(msg)
+        })
+
+        function displayMessage(msg) {
+            if (msg.cmd) {
+                $('#msg_holder').prepend(`<div class="text-success"> ${JSON.stringify(msg).replaceAll('"', "")}</div>`)
+            } else if (typeof msg.user_name !== 'undefined') {
+                $('#msg_holder').prepend(`<div><b style="color: #000"> ${msg.user_name}: </b>
+                                        <p style="display: inline; color: white">${msg.message}</p></div>`)
+            } else {
+                $('#msg_holder').prepend(`<div class="text-warning"> ${JSON.stringify(msg).replaceAll('"', "")}</div>`)
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block head %}
+    <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatroom.css') }}">
+    <style>
+        .switch-candy input:checked + label {
+            background-color: rgb(var(--mdb-success-rgb));
+        }
+
+        .switch-toggle {
+            display: inline-block;
+            margin-inline-end: 35px;
+        }
+
+        .outer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #lang-box {
+            visibility: hidden;
+        }
+    </style>
+    <script type="text/javascript">
+        function onClickTerminal(src) {
+            let msg = document.querySelector(`input[name="${src}"]:checked`).value;
+            socket.emit('auth_usr', {
+                user_name: src,
+                cmd: "auth",
+                message: msg
+            })
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="outer">
+        Terminal 1:
+        <div class="switch-toggle switch-3 switch-candy">
+            <input id="t1_david" name="tr1" type="radio" value="david" onclick="onClickTerminal(name)"/>
+            <label for="t1_david">David</label>
+
+            <input id="t1_empty" name="tr1" type="radio" value="empty" checked="checked"
+                   onclick="onClickTerminal(name)"/>
+            <label for="t1_empty">Empty</label>
+
+            <input id="t1_rachel" name="tr1" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+            <label for="t1_rachel">Rachel</label>
+        </div>
+
+        Terminal 2:
+        <div class="switch-toggle switch-3 switch-candy">
+            <input id="t2_david" name="tr2" type="radio" value="david" onclick="onClickTerminal(name)"/>
+            <label for="t2_david">David</label>
+
+            <input id="t2_empty" name="tr2" type="radio" value="empty" checked="checked"
+                   onclick="onClickTerminal(name)"/>
+            <label for="t2_empty">Empty</label>
+
+            <input id="t2_rachel" name="tr2" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+            <label for="t2_rachel">Rachel</label>
+        </div>
+    </div>
+    <label for="msg_holder">Chat Messages</label>
+    <div class="message_holder" id="msg_holder">
+    </div>
+
+    <form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)">
+        <label for="dm_sender">Sender: </label>
+        <select class="form-select w-auto d-inline" id="dm_sender">
+            <option value="SYS" selected>System</option>
+            <option value="TR1">Terminal 1</option>
+            <option value="TR2">Terminal 2</option>
+            <option value="SN1">RFID T1</option>
+            <option value="SN2">RFID T2</option>
+        </select>
+        <label class="w-50">
+            <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
+        </label>
+        <input type="submit" value="Send">
+    </form>
+{% endblock %}
+
+{% block add_js %}
+    <script type="text/javascript">
+        let msg;
+        {% for cMsg in chat_msg %}
+            {% if cMsg is mapping %}
+                msg = JSON.parse('{{ cMsg | tojson }}');
+            {% else %}
+                msg = "{{ cMsg }}";
+            {% endif %}
+            displayMessage(msg);
+        {% endfor %}
+
+    </script>
+{% endblock %}

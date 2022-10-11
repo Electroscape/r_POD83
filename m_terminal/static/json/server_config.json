@@ -1,0 +1,17 @@
+{
+  "title": "Server Terminal",
+  "terminal_name": "server",
+  "ip": {
+    "server": "192.168.87.152",
+    "local1":  "localhost",
+    "local2":  "127.0.0.1",
+    "server1": "192.168.178.20",
+    "server2": "192.168.88.143",
+    "server3": "134.28.183.50"
+  },
+  "port": {
+    "server": "5500",
+    "ter1": "5551",
+    "ter2": "5552"
+  }
+}

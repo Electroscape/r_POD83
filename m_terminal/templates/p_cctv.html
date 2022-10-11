@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block head %}
+    <style>
+        #lang-box {
+            visibility: hidden;
+        }
+    </style>
+    <script type="text/javascript">
+        function startStream() {
+            let startBtn = document.getElementById("startBtn");
+            startBtn.hidden = true;
+            let streamContainer = document.getElementById("streamContainer");
+            streamContainer.innerHTML = `<h3 class="mt-5">Live Streaming</h3>
+        <img src="{{ url_for('app_pages.video_feed') }}" width="100%">`;
+        }
+    </script>
+{% endblock %}
+{% block content %}
+
+    <button id="startBtn" class="btn btn-info btn-lg" type="button" onclick=startStream()>Start Camera Stream!</button>
+    <div id="streamContainer" class="col-lg-8  offset-lg-2">
+    </div>
+    <!--
+    <iframe src="rtsp://TeamEscape:EscapeHH2014@192.168.88.21:88/videoMain" width="800px" height="600px">
+    </iframe>
+
+    <video id="main" width="640" height="480"
+           src="rtsp://TeamEscape:EscapeHH2014@192.168.88.21:88/videoMain"></video>
+    -->
+    {% include "floating_chat.html" %}
+{% endblock %}
+

@@ -1,0 +1,6 @@
+**.vscode
+**.idea
+**__pycache__
+**.DS_*
+venv
+**.mp4

@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <style>
+        li {
+            list-style-type: none;
+            font-size: 16pt;
+        }
+
+        .mail {
+            margin: auto;
+            padding: 50px;
+            width: 750px;
+            background: #D8F1F8;
+        }
+
+        .mail h2 {
+            margin-left: 38px;
+        }
+
+        input {
+            font-size: 20pt;
+        }
+
+        input:focus, textarea:focus {
+            background-color: lightyellow;
+        }
+
+        input .submit {
+            font-size: 12pt;
+        }
+
+        .rq {
+            color: #FF0000;
+            font-size: 10pt;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
+            integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+
+{% block content %}
+    <div class="mail">
+        <h2>Input an IP address</h2>
+        <form name="form1" action="#" onsubmit="return false;"><label>
+            <input id="ipv4" type='text' name='text1' placeholder="xxx.xxx.xxx.xxx"/>
+        </label>
+            <input class="submit" type="submit" name="submit" value="Check IP"
+                   onclick="ValidateIPaddress(document.form1.text1)"/>
+        </form>
+    </div>
+    <script src="{{ url_for('static',filename='js/elancell_upload.js') }}">
+
+    </script>
+    <script type="text/javascript">
+        //input mask bundle ip address
+        var ipv4_address = $('#ipv4');
+        ipv4_address.mask('099.099.099.099', {
+            alias: "ip",
+            greedy: false //The initial mask shown will be "" instead of "-____".
+        });
+    </script>
+{% endblock %}

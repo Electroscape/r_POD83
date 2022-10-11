@@ -1,0 +1,52 @@
+#top {
+    color: black;
+    text-align: center;
+    font-size: 5em;
+    padding-inline: 50px;
+}
+
+#keypad {
+    min-width: 400px;
+    width: 50%;
+    background-color: gray;
+    margin: 0 auto;
+    overflow: auto;
+    /* to prevent margin collapse */
+}
+
+#keypad #screen {
+    height: 70px;
+    margin: 1%;
+    padding: 1% 2%;
+    background-color: #E1E5EE;
+    font-size: 4em;
+    letter-spacing: .4em;
+    line-height: 65px;
+    text-align: center;
+}
+
+#keypad #screen.success {
+    background-color: #7AC74F;
+    border: 2px solid #A1CF6B;
+}
+
+#keypad #screen.failed {
+    background-color: #E0C879;
+    border: 2px solid #E87461;
+}
+
+#keypad #buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#keypad button {
+    background-color: #ccc;
+    box-sizing: border-box;
+    width: 30%;
+    margin: .7% 1.65%;
+    height: 60px;
+    font-size: 3em;
+}

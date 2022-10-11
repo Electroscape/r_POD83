@@ -1,0 +1,49 @@
+{
+  "title": "Terminal 2",
+  "id": "TR2",
+  "auth_msg": "Erfordert zunächst Authentifizierung",
+  "btns": [
+    {
+      "title": "Musterfreigabe",
+      "details": "neue Browserseite öffnen",
+      "image": "static/imgs/home/petri-dish.png",
+      "link": "sample_release",
+      "auth": "Rachel"
+    },
+    {
+      "title": "Gasanalyse",
+      "details": "Kontrolle der Dateien",
+      "image": "static/imgs/home/analytics.png",
+      "link": "gas_analysis",
+      "auth": "Rachel"
+    },
+    {
+      "title": "Mikroskop",
+      "details": "den Gasfluss kontrollieren",
+      "image": "static/imgs/home/microscope.png",
+      "link": "microscope",
+      "auth": false
+    },
+    {
+      "title": "Reinraum-Zugang",
+      "details": "Kontrolle der CCTV-Kamera",
+      "image": "static/imgs/home/key-card.png",
+      "link": "cleanroom",
+      "auth": "David"
+    },
+    {
+      "title": "Hochladen der Daten auf elancell",
+      "details": "Überwachungsfilmmaterial",
+      "image": "static/imgs/home/upload.png",
+      "link": "elancell_upload",
+      "auth": "David"
+    },
+    {
+      "title": "Chat",
+      "details": "Chatten mit Terminal 2 oder Chatbot",
+      "image": "static/imgs/home/chat.png",
+      "link": "chat_control",
+      "auth": false
+    }
+  ]
+}

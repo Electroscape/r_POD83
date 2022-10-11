@@ -1,0 +1,18 @@
+<header class="header-flex d-flex justify-content-between py-2">
+    <div class="ml-auto" style="width: 195px; height: 55px">
+    </div>
+    <div class="text-center">
+        <h1 class="text-success typing-effect">{{ g_config.title }}</h1>
+    </div>
+    <div id="lang-box" class="btn-group btn-group-toggle ml-auto">
+        <input type="radio" class="btn-check" onclick="switchLanguage('en')" name="LangSwitch" id="rbEn"
+               autocomplete="off" checked/>
+        <label class="btn btn-dark" for="rbEn">
+            <p class="lang-txt text-lg-center">EN</p></label>
+
+        <input type="radio" class="btn-check" onclick="switchLanguage('de')" name="LangSwitch" id="rbDe"
+               autocomplete="off"/>
+        <label class="btn btn-dark" for="rbDe">
+            <p class="lang-txt text-lg-center">DE</p></label>
+    </div>
+</header>
