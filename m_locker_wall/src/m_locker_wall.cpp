@@ -63,12 +63,15 @@ void ledBlink() {
     delay(200);
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack);
     delay(200);
-    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 50);
     // TODO: make a fncs that passes a clr array
     for (int no=0; no<lockerCnt; no++) {
         // insert oled setting multiple pixels here
         if (lockerStatuses[no]) {
+            // maybe make a cmd to set set of strips to clr if this is too noticeable?
             LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, no);
+            // some level of delay needed here, could be moved into library
+            delay(5);
         }
 
     }
@@ -238,7 +241,7 @@ void setup() {
     // starts serial and default oled
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
 
-    Serial.println("WDT endabled");
+    Serial.println(F("WDT endabled"));
     wdt_enable(WDTO_8S);
 
     // technicall 2 but no need to poll the 2nd 
