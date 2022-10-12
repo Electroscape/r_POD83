@@ -87,7 +87,6 @@ void gameReset() {
         lockerStatuses[no] = false;
         Mother.motherRelay.digitalWrite(no, closed);
     }
-    stage = gameLive;
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 50);
 }
 
@@ -105,7 +104,10 @@ void passwordActions(int passNo) {
                     gameReset();
                     Mother.motherRelay.digitalWrite(service, open);
                 break;
-                case resetIndex: gameReset(); break;
+                case resetIndex: 
+                    gameReset();
+                    stage = gameLive;
+                break;
                 default: 
                     lockerStatuses[passNo] = true;
                     Mother.motherRelay.digitalWrite(passNo, open);
