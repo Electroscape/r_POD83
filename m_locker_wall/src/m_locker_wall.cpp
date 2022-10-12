@@ -8,11 +8,7 @@
  * @copyright Copyright (c) 2022
  * 
  *  TODO: 
- *  - check passwords and passwordsmap usages 
- *  - consider a generic code/combination evaluation
- *  - map actions to passwords, change stage in these actions
  *  - consider non blocking 
- *  - consider stage to stageIndex conversion?
  */
 
 
@@ -21,9 +17,7 @@
 #include <stb_oledCmds.h>
 #include <stb_mother_ledCmds.h>
 
-
 #include "header_st.h"
-
 
 
 STB_MOTHER Mother;
@@ -53,6 +47,7 @@ void setStageIndex() {
     delay(16000);
 }
 
+
 void ledBlink() {
     wdt_reset();
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed);
@@ -78,10 +73,6 @@ void ledBlink() {
 };
 
 
-/**
- * @brief  TODO: implement
- * 
-*/
 void gameReset() {
     for (int no=0; no<lockerCnt; no++) {
         lockerStatuses[no] = false;
@@ -168,15 +159,7 @@ bool checkForKeypad() {
     if (cmdNo != KeypadCmds::evaluate) { return true; }
 
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
-    /*
-    Serial.println("password is: ");
-    Serial.println(cmdPtr);
-    delay(500);
-    */
-
-    // TODO: error handling here in case the rest of the msg is lost?
     if (!(cmdPtr != NULL)) {
-        // send NACK? this isnt in the control flow yet or simply eof?
         return false;
     }
 
@@ -221,7 +204,7 @@ void stageUpdate() {
     setStageIndex();
         
     // check || stageIndex >= int(sizeof(stages))
-    if (stageIndex < 0) {
+    if (stageIndex < 0 || stageIndex > 1 << StageCount) {
         Serial.println(F("Stages out of index!"));
         delay(5000);
         wdt_reset();
@@ -239,14 +222,14 @@ void stageUpdate() {
 
 void setup() {
 
-    Mother.begin();
     // starts serial and default oled
+    Mother.begin();
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
 
     Serial.println(F("WDT endabled"));
     wdt_enable(WDTO_8S);
 
-    // technicall 2 but no need to poll the 2nd 
+    // technicall 2 but no need to poll the 2nd as it only receives the colour
     Mother.rs485SetSlaveCount(1);
 
     gameReset();
