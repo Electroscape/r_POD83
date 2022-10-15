@@ -1,15 +1,16 @@
 from flask import json
 import cv2
 
-# camera = cv2.VideoCapture("rtsp://TeamEscape:*********@192.168.88.21:88/videoMain")
-camera = cv2.VideoCapture("rtsp://rtsp.stream/pattern")
-'''
-for ip camera use - rtsp://username:password@ip_address:88/videoMain' 
-for local webcam use cv2.VideoCapture(0)
-'''
-
 
 def gen_frames():
+    '''
+    for ip camera use - rtsp://username:password@ip_address:88/videoMain' 
+    for local webcam use cv2.VideoCapture(0)
+    '''
+    # camera = cv2.VideoCapture("rtsp://TeamEscape:*********@192.168.88.21:88/videoMain")
+    camera = cv2.VideoCapture("rtsp://rtsp.stream/pattern")
+    # camera = cv2.VideoCapture(0)
+
     while True:
         success, frame = camera.read()  # read the camera frame
         if not success:
@@ -21,7 +22,7 @@ def gen_frames():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
 
-def js_r(filename: str, auth="") -> dict | None:
+def js_r(filename: str, auth="") -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
 
@@ -36,7 +37,7 @@ def js_r(filename: str, auth="") -> dict | None:
         return json_data
 
     except IOError:
-        return None
+        return {}
 
 
 def configure_btns(data: list, auth=""):

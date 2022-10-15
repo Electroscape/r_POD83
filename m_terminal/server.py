@@ -10,7 +10,7 @@ chat_history = RingList(100)
 chat_history.append('Welcome to the server window')
 
 
-def read_json(filename: str) -> dict | None:
+def read_json(filename: str) -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
 
@@ -23,7 +23,7 @@ def read_json(filename: str) -> dict | None:
         return json_data
 
     except IOError:
-        return None
+        return {}
 
 
 Payload.max_decode_packets = 200

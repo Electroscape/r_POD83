@@ -72,7 +72,7 @@ def gas_analysis():
 @app_pages.route('/cleanroom', methods=['GET', 'POST'])
 def cleanroom():
     config = {
-        "title": "Cleanroom Access Control"
+        "title": "Cleanroom Access"
     }
     print("open browser page")
     return render_template("p_cleanroom.html", g_config=config)
