@@ -251,6 +251,13 @@ void stageActions() {
     wdt_reset();
     switch (stage) {
         case setupStage:
+            Mother.motherRelay.digitalWrite(alarm, open);
+            // maybe start blinking with the dots here
+            delay(3000);
+            Mother.motherRelay.digitalWrite(gate_pwr, open);
+            Mother.motherRelay.digitalWrite(gate_direction, gateDown);
+            airLockSequence();
+            Mother.motherRelay.digitalWrite(gate_pwr, closed);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             wdt_disable();
             // waitin for the door to be opened
@@ -305,13 +312,14 @@ void stageActions() {
         break;
         case airlockOpening:
             Mother.motherRelay.digitalWrite(alarm, open);
-            Mother.motherRelay.digitalWrite(gate, open);
+            Mother.motherRelay.digitalWrite(gate_pwr, open);
+            Mother.motherRelay.digitalWrite(gate_direction, gateDown);
             airLockSequence();
             stage = stage << 1;
         break;
         case airlockOpen:
             // depending on how the gates motor works we shut it off
-            Mother.motherRelay.digitalWrite(gate, closed);
+            Mother.motherRelay.digitalWrite(gate_pwr, closed);
             /**
              * @todo: this needs to be a running light
             */

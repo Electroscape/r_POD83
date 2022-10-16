@@ -6,8 +6,10 @@
 // may aswell move this into the Oled lib?
 #define headLineMaxSize 16
 
-#define open   0
-#define closed 1
+#define open        0
+#define closed      1
+#define gateUp      0
+#define gateDown    1
 
 unsigned long introDuration = 5000;
 // duration of the operation of the gate
@@ -16,7 +18,8 @@ unsigned long airlockDuration = 5000;
 enum relays {
     beamerIntro,
     beamerDecon,
-    gate,
+    gate_pwr,
+    gate_direction,
     alarm,
     uvLight,
     door,
@@ -25,7 +28,8 @@ enum relays {
 
 enum relayInits {
     beamer_init = closed,
-    gate_init = closed,
+    gate_pwr_init = closed,
+    gate_direction_init = gateUp,
     alarm_init = closed,
     uvLight_init = closed,
     doorInit = open
@@ -34,7 +38,8 @@ enum relayInits {
 int relayPinArray[relayAmount] = {
     beamerIntro,
     beamerDecon,
-    gate,
+    gate_pwr,
+    gate_direction,
     alarm,
     uvLight,
     door
@@ -43,7 +48,8 @@ int relayPinArray[relayAmount] = {
 int relayInitArray[relayAmount] = {
     beamer_init,
     beamer_init,
-    gate_init,
+    gate_pwr_init,
+    gate_direction_init,
     alarm_init,
     uvLight_init,
     doorInit
