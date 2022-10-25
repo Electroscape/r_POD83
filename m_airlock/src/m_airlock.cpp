@@ -324,7 +324,7 @@ void stageActions() {
             /**
              * @todo: this needs to be a running light
             */
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 10000, 3);
             wdt_disable();
             delay(10000);
             stage = stage << 1;
