@@ -81,6 +81,7 @@ bool passwordInterpreter(char* password) {
             }
         }
     }
+    
     // specifics to a failed input of the password
     if ( stage == airlockRequest ) {
         wdt_reset();
@@ -363,7 +364,7 @@ void stageUpdate() {
 
 void inputInit() {
     inputPCF.begin(RESET_I2C_ADD);
-    inputPCF.pinMode(0, INPUT);
+    inputPCF.pinMode(0, INPUT_PULLUP);
 }
 
 

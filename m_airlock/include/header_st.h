@@ -22,6 +22,7 @@ enum relays {
     gate_direction,
     alarm,
     uvLight,
+    // entry door
     door,
     relayAmount
 };
