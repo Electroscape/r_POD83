@@ -82,7 +82,7 @@ bool passwordInterpreter(char* password) {
         }
     }
     
-    // specifics to a failed input of the password
+    // @todo: this needs to be shoved elsewhere to fix the timing
     if ( stage == airlockRequest ) {
         wdt_reset();
         delay(5000);
@@ -99,7 +99,6 @@ bool passwordInterpreter(char* password) {
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 5);
             delay(500);
         }
-        
     }
     return false;
 }
@@ -259,6 +258,7 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(gate_direction, gateDown);
             airLockSequence();
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
+            Mother.motherRelay.digitalWrite(alarm, closed);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             wdt_disable();
             // waitin for the door to be opened
@@ -314,19 +314,17 @@ void stageActions() {
         case airlockOpening:
             Mother.motherRelay.digitalWrite(alarm, open);
             Mother.motherRelay.digitalWrite(gate_pwr, open);
-            Mother.motherRelay.digitalWrite(gate_direction, gateDown);
+            Mother.motherRelay.digitalWrite(gate_direction, gateUp);
             airLockSequence();
             stage = stage << 1;
         break;
         case airlockOpen:
             // depending on how the gates motor works we shut it off
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
-            /**
-             * @todo: this needs to be a running light
-            */
             LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 10000, 3);
             wdt_disable();
             delay(10000);
+            wdt_enable(WDTO_8S);
             stage = stage << 1;
         break;
         case idle:
