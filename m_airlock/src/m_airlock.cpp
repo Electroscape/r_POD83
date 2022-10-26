@@ -36,7 +36,10 @@ int lastStage = -1;
 bool repeatDecontamination = false;
 int inputTicks = 0;
 
-// since stages are binary bit being shifted we cannot use them to index
+/**
+ * @brief Set the Stage Index object
+ * @todo safety considerations
+*/
 void setStageIndex() {
     for (int i=0; i<StageCount; i++) {
         if (stage <= 1 << i) {
@@ -48,6 +51,7 @@ void setStageIndex() {
         }
     }
     Serial.println(F("STAGEINDEX ERRROR!"));
+    wdt_reset();
     delay(16000);
 }
 
@@ -81,25 +85,8 @@ bool passwordInterpreter(char* password) {
             }
         }
     }
-    
-    // @todo: this needs to be shoved elsewhere to fix the timing
-    if ( stage == airlockRequest ) {
-        wdt_reset();
-        delay(5000);
-        wdt_reset();
-        stage = startStage;
-        char msg[32];
-        strcpy(msg, oledHeaderCmd.c_str());
-        strcat(msg, KeywordsList::delimiter.c_str());
-        strcat(msg, "Clean Airlock"); 
-        Mother.sendCmdToSlave(msg);
-        for (int i=0; i<5; i++) {
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 100);
-            delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 5);
-            delay(500);
-        }
-    }
+
+    if (stage == airlockRequest) { stage = airlockFailed; }
     return false;
 }
 
@@ -200,7 +187,7 @@ void interpreter() {
 }
 
 
-void uvSequence () {
+void uvSequence() {
     wdt_disable();
     Mother.motherRelay.digitalWrite(uvLight, open);
     int repCnt = 4;
@@ -237,6 +224,28 @@ void airLockSequence() {
 }   
 
 
+/**
+ * @brief effects in case they code is entered wrong and airlock cleans again
+*/
+void airlockDenied() {
+
+    for (int i=0; i<5; i++) {
+        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 100);
+        delay(200);
+        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 5);
+        delay(500);
+    }
+    repeatDecontamination = true;
+
+    wdt_reset();
+    char msg[32];
+    strcpy(msg, oledHeaderCmd.c_str());
+    strcat(msg, KeywordsList::delimiter.c_str());
+    strcat(msg, "Clean Airlock"); 
+    Mother.sendCmdToSlave(msg);
+}
+
+
 void oledUpdate() {
     char msg[32];
     strcpy(msg, oledHeaderCmd.c_str());
@@ -265,9 +274,10 @@ void stageActions() {
             while (inputTicks < 5) {
                 if (inputPCF.digitalRead(0) != 0) {
                     inputTicks++;
-                    delay(25);
+                    delay(200);
                 }
             }
+            // and checking if the door is closed, being quicker here
             inputTicks = 0;
             while (inputTicks < 5) {
                 if (inputPCF.digitalRead(0) == 0) {
@@ -304,7 +314,6 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(beamerDecon, open);
             delay(3000);
             uvSequence();
-            repeatDecontamination = true;
             Mother.motherRelay.digitalWrite(beamerDecon, closed);
             stage = airlockRequest;
         break;
@@ -331,6 +340,11 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(alarm, closed);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
+        case airlockFailed: 
+            repeatDecontamination = true; 
+            airlockDenied();
+            stage = startStage;
+        break;
     }
 }
 
@@ -343,6 +357,10 @@ void stageUpdate() {
     if (lastStage == stage) { return; }
     Serial.print("Stage is:");
     Serial.println(stage);
+    // if we go ailrockfailed, we have to keep the failed text on display 
+    if (false && stage == airlockFailed) {
+        wdt_reset();
+    }
     setStageIndex();
         
     // check || stageIndex >= int(sizeof(stages))
