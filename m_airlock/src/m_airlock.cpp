@@ -190,7 +190,9 @@ void interpreter() {
 void uvSequence() {
     wdt_disable();
     Mother.motherRelay.digitalWrite(uvLight, open);
-    int repCnt = 4;
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
+    delay(1000);
+    int repCnt = 5;
     if (repeatDecontamination) { repCnt = 2; }
     // are UV light supposed to be flashing or only LEDs? Assumed the latter 
     for (int rep=0; rep<repCnt; rep++) {
@@ -208,20 +210,21 @@ void uvSequence() {
 
 
 /**
- * @brief  for now a simply blinking 
+ * @brief  a simple blinking for a given duration, should be a command on the brain soon
 */
-void airLockSequence() {
+void airLockBlink(unsigned long blinkDuration) {
     wdt_disable();
-    unsigned long endTime = millis() + airlockDuration;
+    unsigned long endTime = millis() + blinkDuration;
     while (millis() < endTime) {
         LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
         delay(1000);
         LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
         delay(250);
     }
-    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
     wdt_enable(WDTO_8S);
 }   
+
+
 
 
 /**
@@ -232,17 +235,69 @@ void airlockDenied() {
     for (int i=0; i<5; i++) {
         LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 100);
         delay(200);
-        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 5);
+        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 1);
         delay(500);
+        wdt_reset();
     }
-    repeatDecontamination = true;
 
-    wdt_reset();
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
+
     char msg[32];
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, "Clean Airlock"); 
     Mother.sendCmdToSlave(msg);
+
+    delay(3000);
+    wdt_reset();
+
+    repeatDecontamination = true;
+
+}
+
+
+void waitForGameStart() {
+
+    // waitin for the door to be opened
+    while (inputTicks < 5) {
+        if (inputPCF.digitalRead(0) != 0) {
+            inputTicks++;
+            delay(200);
+        }
+    }
+
+    // and checking if the door is closed, being quicker here
+    inputTicks = 0;
+    while (inputTicks < 5) {
+        if (inputPCF.digitalRead(0) == 0) {
+            inputTicks++;
+            delay(25);
+        }
+    }
+
+    Mother.motherRelay.digitalWrite(door, closed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+    wdt_enable(WDTO_8S);
+
+    stage = preStage;
+}
+
+/**
+ * @brief  its a big stage so its a seperate function, split could be when
+*/
+void setupRoom() {
+
+    // provide warning to gate operation
+    Mother.motherRelay.digitalWrite(alarm, open);
+    airLockBlink(gateWarningDelay);
+
+    // operate the gate 
+    Mother.motherRelay.digitalWrite(gate_pwr, open);
+    Mother.motherRelay.digitalWrite(gate_direction, gateDown);
+    airLockBlink(gateDuration);
+    Mother.motherRelay.digitalWrite(gate_pwr, closed);
+    Mother.motherRelay.digitalWrite(alarm, closed);
+    wdt_disable();
 }
 
 
@@ -260,35 +315,8 @@ void stageActions() {
     wdt_reset();
     switch (stage) {
         case setupStage:
-            Mother.motherRelay.digitalWrite(alarm, open);
-            // maybe start blinking with the dots here
-            delay(3000);
-            Mother.motherRelay.digitalWrite(gate_pwr, open);
-            Mother.motherRelay.digitalWrite(gate_direction, gateDown);
-            airLockSequence();
-            Mother.motherRelay.digitalWrite(gate_pwr, closed);
-            Mother.motherRelay.digitalWrite(alarm, closed);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            wdt_disable();
-            // waitin for the door to be opened
-            while (inputTicks < 5) {
-                if (inputPCF.digitalRead(0) != 0) {
-                    inputTicks++;
-                    delay(200);
-                }
-            }
-            // and checking if the door is closed, being quicker here
-            inputTicks = 0;
-            while (inputTicks < 5) {
-                if (inputPCF.digitalRead(0) == 0) {
-                    inputTicks++;
-                    delay(25);
-                }
-            }
-            Mother.motherRelay.digitalWrite(door, closed);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
-            wdt_enable(WDTO_8S);
-            stage = preStage;
+            setupRoom();
+            waitForGameStart();
         break;
         // could be integrated to the setupStage and trashed
         case preStage:        
@@ -318,21 +346,23 @@ void stageActions() {
             stage = airlockRequest;
         break;
         case airlockRequest:
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 40);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 66);
         break;
         case airlockOpening:
             Mother.motherRelay.digitalWrite(alarm, open);
+            airLockBlink(gateWarningDelay);
             Mother.motherRelay.digitalWrite(gate_pwr, open);
             Mother.motherRelay.digitalWrite(gate_direction, gateUp);
-            airLockSequence();
+            airLockBlink(gateDuration);
             stage = stage << 1;
         break;
         case airlockOpen:
             // depending on how the gates motor works we shut it off
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
+            // technically we could use runningLightDuration
             LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 10000, 3);
             wdt_disable();
-            delay(10000);
+            delay(runningLightDuration);
             wdt_enable(WDTO_8S);
             stage = stage << 1;
         break;
@@ -341,7 +371,6 @@ void stageActions() {
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
         case airlockFailed: 
-            repeatDecontamination = true; 
             airlockDenied();
             stage = startStage;
         break;

@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 10
+#define StageCount 11
 #define PasswordAmount 6
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -13,7 +13,10 @@
 
 unsigned long introDuration = 5000;
 // duration of the operation of the gate
-unsigned long airlockDuration = 5000;
+unsigned long gateDuration = 22500;
+unsigned long runningLightDuration = 10000;
+// provide blinking and warning before the game moves on startup
+unsigned long gateWarningDelay = 5000;
 
 enum relays {
     beamerIntro,
@@ -68,8 +71,10 @@ enum stages{
     // entering the password after presenting hte RFID
     airlockRequest = 64, 
     airlockOpening = 128,
+    // brief stage to use the running lights and keep the alarm on
     airlockOpen = 256,
-    idle = 512
+    idle = 512, 
+    airlockFailed = 1024
 };
 
 // the sum of all stages sprinkled with a bit of black magic
