@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 11
+#define StageCount 10
 #define PasswordAmount 6
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -67,14 +67,13 @@ enum stages{
     startStage = 4,
     intro = 8,
     decontamination = 16,
-    cleanAirlock = 32,
     // entering the password after presenting hte RFID
-    airlockRequest = 64, 
-    airlockOpening = 128,
+    airlockRequest = 32, 
+    airlockOpening = 64,
     // brief stage to use the running lights and keep the alarm on
-    airlockOpen = 256,
-    idle = 512, 
-    airlockFailed = 1024
+    airlockOpen = 128,
+    idle = 256, 
+    airlockFailed = 512
 };
 
 // the sum of all stages sprinkled with a bit of black magic

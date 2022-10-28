@@ -360,7 +360,7 @@ void stageActions() {
             // depending on how the gates motor works we shut it off
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
             // technically we could use runningLightDuration
-            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 10000, 3);
+            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 666, 3);
             wdt_disable();
             delay(runningLightDuration);
             wdt_enable(WDTO_8S);
