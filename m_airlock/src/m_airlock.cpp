@@ -11,7 +11,7 @@
  *  TODO: 
  * - double post of clean airlock & decontamination
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
- * 
+ * add numbering of brains to header to make changes easiers
  *  Q: 
  * 
  */
@@ -281,6 +281,7 @@ void waitForGameStart() {
 
     stage = preStage;
 }
+ 
 
 /**
  * @brief  its a big stage so its a seperate function, split could be when
