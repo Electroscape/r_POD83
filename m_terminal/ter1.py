@@ -13,7 +13,7 @@ sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 # Configuration Constants
-server_ip = "http://192.168.87.166:5500"
+server_ip = "http://192.168.87.168:5500"
 g_lang = "en"  # first run starts in English
 terminal_name = "TR1"  # which config file to load
 
@@ -103,4 +103,6 @@ g_config = get_globals()
 chat_msgs = RingList(100)  # stores the whole conversation
 
 app.register_blueprint(app_pages)
-app.run(debug=True, host='0.0.0.0', port=5551)
+
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=5551)
