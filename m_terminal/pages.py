@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, render_template, send_from_directory, Response
+from flask import Blueprint, render_template, Response
 from fns import gen_frames
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
@@ -102,12 +102,6 @@ def media_control():
 @app_pages.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-@app_pages.route('/favicon.ico')
-def favicon():
-    return send_from_directory("static", 'favicon.ico',
-                               mimetype='image/vnd.microsoft.icon')
 
 
 @app_pages.errorhandler(404)
