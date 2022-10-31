@@ -206,6 +206,7 @@ void uvSequence() {
     }
     delay(1000);
     wdt_enable(WDTO_8S);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
     Mother.motherRelay.digitalWrite(uvLight, closed);
 }
 
@@ -355,9 +356,7 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(beamerDecon, closed);
             stage = airlockRequest;
         break;
-        case airlockRequest:
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
-        break;
+        case airlockRequest: break;
         case airlockOpening:
             Mother.motherRelay.digitalWrite(alarm, open);
             airLockBlink(gateWarningDelay);
@@ -371,7 +370,7 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
             // the gateup remains, but no power no change due to relay logic &
             // technically we could use runningLightDuration
-            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 200, 3);
+            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 420, 3);
             wdt_disable();
             delay(runningLightDuration);
             wdt_enable(WDTO_8S);
