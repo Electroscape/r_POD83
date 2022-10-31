@@ -266,6 +266,8 @@ void waitForGameStart() {
         if (inputPCF.digitalRead(0) != 0) {
             inputTicks++;
             delay(25);
+        } else {
+            inputTicks = 0;
         }
     }
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
@@ -276,6 +278,8 @@ void waitForGameStart() {
         if (inputPCF.digitalRead(0) == 0) {
             inputTicks++;
             delay(25);
+        } else {
+            inputTicks = 0;
         }
     }
 
