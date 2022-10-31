@@ -88,8 +88,8 @@ int flagMapping[StageCount]{
     rfidFlag,
     0,
     0,
-    0,
     keypadFlag,
+    0,
     0,
     0,
     0
@@ -116,9 +116,9 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Present Card",
     "Thank you",
     "Decontamination",
-    "Access denied",
     "Enter Code",
     "Wait to enter",
     "Caution",
-    ""
+    "",
+    "Access denied"
 };

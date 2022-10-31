@@ -140,7 +140,7 @@ bool checkForKeypad() {
         strcat(msg, noString);
     }
     // idk why but we had a termination poblem, maybe sprintf doesnt terminate?
-    msg[strlen(msg) - 1] = '\0';
+    // msg[strlen(msg) - 1] = '\0';
 
     strcat(msg, noString);
     Mother.sendCmdToSlave(msg);
@@ -193,7 +193,7 @@ void uvSequence() {
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
     delay(1000);
     int repCnt = 5;
-    if (repeatDecontamination) { repCnt = 2; }
+    // if (repeatDecontamination) { repCnt = 2; }
     // are UV light supposed to be flashing or only LEDs? Assumed the latter 
     for (int rep=0; rep<repCnt; rep++) {
         for (int i=0; i<3; i++) {
@@ -202,8 +202,9 @@ void uvSequence() {
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
         }
         if (rep == repCnt -1) { break; }
-        delay(1000);
+        delay(2000);
     }
+    delay(1000);
     wdt_enable(WDTO_8S);
     Mother.motherRelay.digitalWrite(uvLight, closed);
 }
@@ -216,7 +217,8 @@ void airLockBlink(unsigned long blinkDuration) {
     wdt_disable();
     unsigned long endTime = millis() + blinkDuration;
     while (millis() < endTime) {
-        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+        // was 100 
+        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 15);
         delay(1000);
         LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
         delay(250);
@@ -262,9 +264,10 @@ void waitForGameStart() {
     while (inputTicks < 5) {
         if (inputPCF.digitalRead(0) != 0) {
             inputTicks++;
-            delay(200);
+            delay(25);
         }
     }
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
 
     // and checking if the door is closed, being quicker here
     inputTicks = 0;
@@ -275,8 +278,14 @@ void waitForGameStart() {
         }
     }
 
+    
     Mother.motherRelay.digitalWrite(door, closed);
-    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+    // need a fader function here
+    for (int i=100; i>=30; i-=5) {
+        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, i);
+        delay(300);
+    }
+
     wdt_enable(WDTO_8S);
 
     stage = preStage;
@@ -347,7 +356,7 @@ void stageActions() {
             stage = airlockRequest;
         break;
         case airlockRequest:
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 66);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
         break;
         case airlockOpening:
             Mother.motherRelay.digitalWrite(alarm, open);
@@ -360,8 +369,9 @@ void stageActions() {
         case airlockOpen:
             // depending on how the gates motor works we shut it off
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
+            // the gateup remains, but no power no change due to relay logic &
             // technically we could use runningLightDuration
-            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 666, 3);
+            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 200, 3);
             wdt_disable();
             delay(runningLightDuration);
             wdt_enable(WDTO_8S);
@@ -369,7 +379,7 @@ void stageActions() {
         break;
         case idle:
             Mother.motherRelay.digitalWrite(alarm, closed);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 15);
         break;
         case airlockFailed: 
             airlockDenied();
