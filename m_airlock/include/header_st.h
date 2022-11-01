@@ -99,7 +99,7 @@ int devicesOn = 0;
 
 char passwords[PasswordAmount][MaxPassLen] = {
     "GF",
-    "0002",
+    "1234",
 };
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
