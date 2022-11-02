@@ -1,11 +1,118 @@
 {% extends 'layout.html' %}
 
+
+{% block head %}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <style>
+        #selectable .ui-selecting {
+            background: #FECA40;
+        }
+
+        #selectable .ui-selected {
+            background: #ef3742;
+            color: white;
+        }
+
+        #selectable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            /* width: 100%; */
+        }
+
+        #selectable li {
+            margin: 1%;
+            padding: 1rem;
+            float: left;
+            width: 20%;
+            font-size: 2em;
+            text-align: center;
+            border-radius: 15px;
+            border: 1px solid black;
+        }
+
+
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .flip-card-front {
+            background-color: #bbb;
+            color: black;
+        }
+
+        .flip-card-back {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .ui-state-default {
+            background: transparent;
+        }
+
+        ul {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+
+{% endblock %}
+
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Register">
-  </form>
+    <div class="mx-auto">
+
+        <ul id="selectable">
+            {% for t in range(4) %}
+                <li class="ui-state-default">
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <h1 class="mb-7">Card #{{ loop.index }}</h1>
+                                <img class="w-50" src="{{ url_for('static', filename='imgs/trial.png') }}">
+                            </div>
+                            <div class="flip-card-back">
+                                <p class="mt-5">Gives one time access to gas analysis</p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block add_js %}
+    <script type="text/javascript">
+        $(function () {
+            $("#selectable").selectable();
+        });
+    </script>
 {% endblock %}
