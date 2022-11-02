@@ -81,7 +81,7 @@ def cleanroom():
 @app_pages.route('/elancell_upload', methods=['GET', 'POST'])
 def elancell_upload():
     config = {
-        "title": "Upload to Elancell"
+        "title": "Upload Results"
     }
     print("open Elancell page")
     return render_template("p_elancell_upload.html", g_config=config)

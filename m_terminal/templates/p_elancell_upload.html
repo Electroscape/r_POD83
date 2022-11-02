@@ -10,29 +10,55 @@
         .mail {
             margin: auto;
             padding: 50px;
-            width: 750px;
-            background: #D8F1F8;
-        }
-
-        .mail h2 {
-            margin-left: 38px;
-        }
-
-        input {
-            font-size: 20pt;
+            width: 1000px;
+            border-style: solid;
+            border-width: medium;
         }
 
         input:focus, textarea:focus {
             background-color: lightyellow;
         }
 
-        input .submit {
-            font-size: 12pt;
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .rq {
-            color: #FF0000;
-            font-size: 10pt;
+        .container button {
+            width: 100%;
+            height: 4rem;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .container .loading-wrapper {
+            width: 70%;
+            box-sizing: border-box;
+            display: none;
+        }
+
+        .container .loading-wrapper h1 {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .container .loading-wrapper .loading-bar {
+            width: 100%;
+            height: 4rem;
+            border: 0.4rem solid #41FF00;
+            box-sizing: border-box;
+            margin-top: 2rem;
+        }
+
+        .container .loading-wrapper .loading-bar .loading-fill {
+            width: 1%;
+            height: 100%;
+            background: #41FF00;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
@@ -42,24 +68,78 @@
 
 
 {% block content %}
-    <div class="mail">
-        <h2>Input an IP address</h2>
-        <form name="form1" action="#" onsubmit="return false;"><label>
-            <input id="ipv4" type='text' name='text1' placeholder="xxx.xxx.xxx.xxx"/>
-        </label>
-            <input class="submit" type="submit" name="submit" value="Check IP"
-                   onclick="ValidateIPaddress(document.form1.text1)"/>
-        </form>
+    <div class="container">
+        <button id="btn">Press ENTER to START</button>
+        <div class="loading-wrapper">
+            <h1>Loading...</h1>
+            <div class="loading-bar">
+                <div class="loading-fill"></div>
+            </div>
+        </div>
     </div>
-    <script src="{{ url_for('static',filename='js/elancell_upload.js') }}">
+    <div class="mail">
+        <div class="w-100">
+            <h2 class="mb-3">Upload Results to
+                <input class="submit" type="submit" name="submit" value="elancell"/>
+            </h2>
+            <a href="#uploadToIPCollapse" data-mdb-toggle="collapse" aria-expanded="false"
+               aria-controls="uploadToIPCollapse">upload to IP</a>
+        </div>
 
+        <!-- Collapsed content -->
+        <div class="collapse mt-3" id="uploadToIPCollapse">
+            <h4>Type the IP address</h4>
+            <form class="h2" name="form1" action="#" onsubmit="return false;"><label>
+                <input id="ipv4" type='text' name='text1' placeholder="xxx.xxx.xxx.xxx"/>
+            </label>
+                <input class="submit" type="submit" name="submit" value="upload to IP"
+                       onclick="ValidateIPaddress()"/>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static',filename='js/elancell_upload.js') }}">
     </script>
+
     <script type="text/javascript">
         //input mask bundle ip address
-        var ipv4_address = $('#ipv4');
+        const ipv4_address = $('#ipv4');
         ipv4_address.mask('099.099.099.099', {
             alias: "ip",
             greedy: false //The initial mask shown will be "" instead of "-____".
         });
+
+        const btn = document.querySelector('#btn');
+        const loadingScreen = document.querySelector('.loading-wrapper');
+        let isBtn = true;
+        let isLoading = false;
+        let i = 0;
+
+        const toggleScreens = () => {
+            isBtn = !isBtn;
+            isLoading = !isLoading;
+            isBtn ? btn.style.display = 'block' : btn.style.display = 'none';
+            isLoading ? loadingScreen.style.display = 'block' : loadingScreen.style.display = 'none';
+        }
+
+        const animate = () => {
+            if (i === 0) {
+                i = 1;
+                const loadingFill = document.querySelector('.loading-fill');
+                let width = 1;
+                const interval = setInterval(fill, 50);
+
+                function fill() {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        i = 0;
+                        toggleScreens();
+                    } else {
+                        width++;
+                        loadingFill.style.width = width + '%';
+                    }
+                }
+            }
+        }
     </script>
 {% endblock %}

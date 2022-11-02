@@ -1,4 +1,4 @@
-from flask import request, Flask, render_template
+from flask import request, Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 from ring_list import RingList
 from fns import js_r
@@ -13,7 +13,7 @@ sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 # Configuration Constants
-server_ip = "http://192.168.87.168:5500"
+server_ip = "http://192.168.178.20:5500"
 g_lang = "en"  # first run starts in English
 terminal_name = "TR1"  # which config file to load
 
@@ -53,6 +53,12 @@ def get_globals():
 @app.route('/get_chat', methods=['GET', 'POST'])
 def get_chat():
     return chat_msgs.get()
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory("static", f'favicon_{terminal_name}.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 
 @sio.event
