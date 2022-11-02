@@ -65,3 +65,39 @@ def configure_btns(data: list, auth=""):
         d.update({"html": txt})
 
     return data
+
+
+def get_samples_status() -> list:
+    # read some GPIOs or get status from hardware
+    samples = [
+        {"name": "virus one",
+         "status": "released",
+         "icon": "fa-solid fa-check",
+         "info": "toxic"},
+
+        {"name": "virus two",
+         "status": "locked",
+         "icon": "fas fa-lock",
+         "info": "non-toxic"},
+
+        {"name": "virus three",
+         "status": "locked",
+         "icon": "fas fa-lock",
+         "info": "non-active"},
+
+        {"name": "virus four",
+         "status": "released",
+         "icon": "fas fa-lock-open",
+         "info": "toxic"},
+
+        {"name": "virus five",
+         "status": "locked",
+         "icon": "fas fa-lock",
+         "info": "nobel"},
+
+        {"name": "virus six",
+         "status": "released",
+         "icon": "fas fa-lock-open",
+         "info": "aggressive"}
+    ]
+    return samples

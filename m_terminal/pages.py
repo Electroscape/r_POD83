@@ -1,6 +1,6 @@
 import os
 from flask import Blueprint, render_template, Response
-from fns import gen_frames
+from fns import gen_frames, get_samples_status
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
 
@@ -45,7 +45,8 @@ def foscam_control():
 @app_pages.route('/sample_release', methods=['GET', 'POST'])
 def sample_release():
     config = {
-        "title": "Samples Management"
+        "title": "Samples Status",
+        "samples": get_samples_status()
     }
     print("open sample release page")
     return render_template("p_sample_release.html", g_config=config)

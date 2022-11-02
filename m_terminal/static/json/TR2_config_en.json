@@ -4,7 +4,7 @@
   "auth_msg": "Needs Authentication First",
   "btns": [
     {
-      "title": "Sample Release",
+      "title": "Samples Status",
       "details": "open new browser page",
       "image": "static/imgs/home/petri-dish.png",
       "link": "sample_release",

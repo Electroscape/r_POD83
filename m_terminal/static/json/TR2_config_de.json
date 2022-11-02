@@ -4,7 +4,7 @@
   "auth_msg": "Erfordert zunächst Authentifizierung",
   "btns": [
     {
-      "title": "Musterfreigabe",
+      "title": "Musterstatus",
       "details": "neue Browserseite öffnen",
       "image": "static/imgs/home/petri-dish.png",
       "link": "sample_release",
