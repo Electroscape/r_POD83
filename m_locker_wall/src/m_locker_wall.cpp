@@ -1,5 +1,5 @@
 /**
- * @file m_access_mother_skeleton.cpp
+ * @file m_access_mother.cpp
  * @author Martin Pek (martin.pek@web.de)
  * @brief 
  * @version 0.1
@@ -47,6 +47,13 @@ void setStageIndex() {
     delay(16000);
 }
 
+void ledUpdate() {
+    for (int no=0; no<lockerCnt; no++) {
+        if (lockerStatuses[no]) {
+            LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, no);
+        }
+    }
+}
 
 void ledBlink() {
     wdt_reset();
@@ -60,16 +67,7 @@ void ledBlink() {
     delay(200);
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 50);
     // TODO: make a fncs that passes a clr array
-    for (int no=0; no<lockerCnt; no++) {
-        // insert oled setting multiple pixels here
-        if (lockerStatuses[no]) {
-            // maybe make a cmd to set set of strips to clr if this is too noticeable?
-            LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, no);
-            // some level of delay needed here, could be moved into library
-            delay(5);
-        }
-
-    }
+    ledUpdate();
 };
 
 
@@ -101,8 +99,9 @@ void passwordActions(int passNo) {
                 break;
                 default: 
                     lockerStatuses[passNo] = true;
+                    delay(2);
                     Mother.motherRelay.digitalWrite(passNo, open);
-                    LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, passNo);
+                    ledUpdate();
                 break;
             }
         break;

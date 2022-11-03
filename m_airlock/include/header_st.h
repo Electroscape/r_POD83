@@ -60,7 +60,7 @@ int relayInitArray[relayAmount] = {
 };
 
 
-enum stages{
+enum stages {
     setupStage = 1,
     preStage = 2,
     // ready to scan the RFID card, red light
@@ -82,7 +82,7 @@ int stageSum = ~( ~0 << StageCount );
 
 // could have multiple brains listed here making up a matrix
 // for now its only an Access module mapped here
-int flagMapping[StageCount]{
+int flagMapping[StageCount] {
     0,
     0,
     rfidFlag,
