@@ -288,11 +288,15 @@ void waitForGameStart() {
     
     Mother.motherRelay.digitalWrite(door, closed);
     // need a fader function here
-    for (int i=100; i>=30; i-=5) {
+    LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,1);
+    LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,2);
+    LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,4);
+    
+    /* for (int i=100; i>=30; i-=5) {
         LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, i);
         delay(300);
     }
-
+ */
     wdt_enable(WDTO_8S);
 
     stage = preStage;
@@ -377,7 +381,7 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
             // the gateup remains, but no power no change due to relay logic &
             // technically we could use runningLightDuration
-            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 500, 4);
+            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 30, 500, 4);
             wdt_disable();
             delay(runningLightDuration);
             wdt_enable(WDTO_8S);
