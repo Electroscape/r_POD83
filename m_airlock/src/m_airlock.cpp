@@ -10,6 +10,7 @@
  * 
  *  TODO: 
  * - double post of clean airlock & decontamination
+ * - enumerating brain types
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
  * add numbering of brains to header to make changes easiers
  *  Q: 
@@ -217,12 +218,13 @@ void uvSequence() {
 void airLockBlink(unsigned long blinkDuration) {
     wdt_disable();
     unsigned long endTime = millis() + blinkDuration;
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
     while (millis() < endTime) {
         // was 100 
-        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 15);
-        delay(1000);
-        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-        delay(250);
+        LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrYellow, 15, 2);
+        delay(1500);
+        LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrBlack, 100, 2);
+        delay(500);
     }
     wdt_enable(WDTO_8S);
 }   
@@ -362,11 +364,12 @@ void stageActions() {
         break;
         case airlockRequest: break;
         case airlockOpening:
-            Mother.motherRelay.digitalWrite(alarm, open);
+            // Mother.motherRelay.digitalWrite(alarm, open);
             airLockBlink(gateWarningDelay);
             Mother.motherRelay.digitalWrite(gate_pwr, open);
             Mother.motherRelay.digitalWrite(gate_direction, gateUp);
             airLockBlink(gateDuration);
+            // Mother.motherRelay.digitalWrite(alarm, closed);
             stage = stage << 1;
         break;
         case airlockOpen:
@@ -374,14 +377,13 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
             // the gateup remains, but no power no change due to relay logic &
             // technically we could use runningLightDuration
-            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 420, 3);
+            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 500, 4);
             wdt_disable();
             delay(runningLightDuration);
             wdt_enable(WDTO_8S);
             stage = stage << 1;
         break;
         case idle:
-            Mother.motherRelay.digitalWrite(alarm, closed);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 15);
         break;
         case airlockFailed: 

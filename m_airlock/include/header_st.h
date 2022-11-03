@@ -94,8 +94,6 @@ int flagMapping[StageCount]{
     0,
     0
 };
-// save what already is turned on on the brain so we do not need to send it again
-int devicesOn = 0;
 
 char passwords[PasswordAmount][MaxPassLen] = {
     "GF",
