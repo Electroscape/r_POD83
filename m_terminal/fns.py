@@ -1,3 +1,5 @@
+import os
+
 from flask import json
 import cv2
 
@@ -65,6 +67,10 @@ def configure_btns(data: list, auth=""):
         d.update({"html": txt})
 
     return data
+
+
+def listdir_no_hidden(path):
+    return [f for f in os.listdir(path) if not f.startswith('.')]
 
 
 def get_samples_status() -> list:

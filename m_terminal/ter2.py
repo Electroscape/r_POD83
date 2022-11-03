@@ -20,17 +20,7 @@ terminal_name = "TR2"  # which config file to load
 
 @app.route('/', methods=['GET', 'POST'])
 def entry_point():  # begin of the code
-    global g_lang
-
-    if request.method == 'POST':
-        req_lang = request.form.get("lang")
-        if req_lang or req_lang != g_lang:
-            g_lang = req_lang.strip()
-            print(f"Switch language to {g_lang}")
-            conf = get_globals()
-            return conf
-
-    return render_template("index.html", g_config=g_config)
+    return render_template("index.html", g_config=get_globals())
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
@@ -47,7 +37,28 @@ def chat_control():
 def get_globals():
     global g_config
     g_config = js_r(f"json/{terminal_name}_config_{g_lang}.json", auth=login_user)
+    g_config["lang"] = g_lang
     return g_config
+
+
+@app.route('/switch_lang', methods=['GET', 'POST'])
+def switch_language():
+    global g_lang
+
+    if request.method == 'POST':
+        req_lang = request.form.get("lang")
+        url = request.form.get("page")
+
+        if req_lang or req_lang != g_lang:
+            g_lang = req_lang.strip()
+            print(f"Switch language to {g_lang}")
+            # Switch blog language
+            if "browser" in url:
+                conf = {"not sure": "yet"}
+            else:
+                conf = get_globals()
+
+            return conf
 
 
 @app.route('/get_chat', methods=['GET', 'POST'])

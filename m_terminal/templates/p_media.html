@@ -5,6 +5,7 @@
         body {
             padding-top: 5px;
         }
+
         #control-section {
             padding-top: 0;
         }
@@ -93,11 +94,7 @@
         <div class="menu-wrapper">
             <div class="videos row">
                 {% for media in g_config.files %}
-                    {% if '.DS' in media %}
-                    {% else %}
-                        <video class="item" src="{{ url_for('static', filename='media/' + media) }}" muted></video>
-                    {% endif %}
-
+                    <video class="item" src="{{ url_for('static', filename='media/' + media) }}" muted></video>
                 {% endfor %}
             </div>
             <div class="paddles">

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block head %}
+ <style>
+ #content {
+     color: white;
+ }
+ </style>
+{% endblock %}
+
+{% block content %}
+    {{ post.html|safe }}
+    {{ post.title }}
+    {{ post.date }}
+{% endblock %}

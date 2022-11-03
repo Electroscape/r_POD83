@@ -1,6 +1,7 @@
 {
   "title": "Server Terminal",
   "terminal_name": "server",
+  "lang": "en",
   "ip": {
     "server": "192.168.87.152",
     "local1":  "localhost",

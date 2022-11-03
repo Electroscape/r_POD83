@@ -1,7 +1,7 @@
 function switchLanguage(lang) {
     let data = new FormData()
     data.append("lang", lang)
-    fetch("/", {
+    fetch("/switch_lang", {
         "method": "POST",
         "body": data,
     }).then(response => {
@@ -11,7 +11,10 @@ function switchLanguage(lang) {
             // handle this somehow
         }
     }).then(json => {
+        let rb = document.getElementById("rb_" + lang)
+        rb.checked = true;
         loadControlPanel(json)
+        g_lang = lang
         console.log('Success! ')
     }).catch(error => {
         console.log('error with access token req!')

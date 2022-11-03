@@ -5,13 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
 
-    {% block global %}
-        {% if G_CONFIG %}
-            <meta name="config" content='{{ G_CONFIG|tojson }}'/>
-        {% else %}
-            <meta name="config">
-        {% endif %}
-    {% endblock %}
+    <meta name="config">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
@@ -40,7 +34,7 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/home.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/floatChat.css') }}" media="screen">
 
-    <title>{% block title %}TERMINAL{% endblock %}</title>
+    <title>{% block title %}TERMINAL {{ g_config.terminal }}{% endblock %}</title>
 
     <script>
         toastr.options = {
@@ -77,6 +71,7 @@
         const myRoomID = myChatConfig.id;
         const myDispName = myChatConfig.title;
         const socket = io.connect('http://' + document.domain + ':' + location.port);
+        var g_lang = myChatConfig.lang
     </script>
 
     {% block chat_js %}
@@ -110,7 +105,7 @@
                         {% if request.path != "/chat_control" %}
                             toastr.info('You have received an new message');
                         {% endif %}
-                        
+
                         // update floating container
                         if (document.getElementById("floatMsgContainer")) {
                             receiveNewMessage(msg.user_name, msg.message);
@@ -139,8 +134,14 @@
 <script src="{{ url_for('static',filename='js/fns.js') }}">
 </script>
 
-
-
+<script type="text/javascript">
+        $(function () {
+            let rb = document.getElementById("rb_" + g_lang)
+            if (rb) {
+                rb.checked = true;
+            }
+        });
+</script>
 {% block add_js %}
 
 {% endblock %}
