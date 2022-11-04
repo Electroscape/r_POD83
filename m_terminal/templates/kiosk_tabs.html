@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiosk Tabs</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* Style the tab */
+        html,
+        body {
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<ul class="nav nav-tabs navbar-dark bg-dark justify-content-center">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#server">Server</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#ter1">Terminal 1</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#ter2">Terminal 2</a>
+    </li>
+</ul>
+
+<div class="tab-content h-100">
+    <div id="server" class="tab-pane fade show active w-100 h-100">
+        <iframe src="http://192.168.87.168:5500"></iframe>
+    </div>
+    <div id="ter1" class="tab-pane fade w-100 h-100">
+        <iframe src="http://192.168.87.168:5551"></iframe>
+    </div>
+    <div id="ter2" class="tab-pane fade w-100 h-100">
+        <iframe src="http://192.168.87.168:5552"></iframe>
+    </div>
+</div>
+</body>
+</html>
