@@ -13,7 +13,7 @@ sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 # Configuration Constants
-server_ip = "http://192.168.178.20:5500"
+server_ip = "http://192.168.87.168:5500"
 g_lang = "en"  # first run starts in English
 terminal_name = "TR2"  # which config file to load
 
@@ -35,7 +35,6 @@ def chat_control():
 
 @app.route('/get_globals', methods=['GET', 'POST'])
 def get_globals():
-    global g_config
     g_config = js_r(f"json/{terminal_name}_config_{g_lang}.json", auth=login_user)
     g_config["lang"] = g_lang
     return g_config
@@ -47,18 +46,11 @@ def switch_language():
 
     if request.method == 'POST':
         req_lang = request.form.get("lang")
-        url = request.form.get("page")
 
         if req_lang or req_lang != g_lang:
             g_lang = req_lang.strip()
             print(f"Switch language to {g_lang}")
-            # Switch blog language
-            if "browser" in url:
-                conf = {"not sure": "yet"}
-            else:
-                conf = get_globals()
-
-            return conf
+            return get_globals()
 
 
 @app.route('/get_chat', methods=['GET', 'POST'])
@@ -116,7 +108,6 @@ sio.connect(server_ip)
 
 print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
-g_config = get_globals()
 chat_msgs = RingList(100)  # stores the whole conversation
 
 app.register_blueprint(app_pages)
