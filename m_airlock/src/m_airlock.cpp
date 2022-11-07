@@ -91,6 +91,29 @@ bool passwordInterpreter(char* password) {
     return false;
 }
 
+/**
+ * @brief handles evalauation of codes and sends the result to the access module
+ * @param cmdPtr 
+*/
+void handleResult(char *cmdPtr) {
+    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
+
+    // prepare return msg with correct or incorrect
+    char msg[10] = "";
+    char noString[3] = "";
+    strcpy(msg, keypadCmd.c_str());
+    strcat(msg, KeywordsList::delimiter.c_str());
+    if (passwordInterpreter(cmdPtr) && (cmdPtr != NULL)) {
+        sprintf(noString, "%d", KeypadCmds::correct);
+        strcat(msg, noString);
+    } else {
+        sprintf(noString, "%d", KeypadCmds::wrong);
+        strcat(msg, noString);
+    }
+  
+    Mother.sendCmdToSlave(msg);
+}
+
 
 // candidate to be moved to a mother specific part of the keypad lib
 bool checkForKeypad() {
@@ -115,36 +138,7 @@ bool checkForKeypad() {
     */
     if (cmdNo != KeypadCmds::evaluate) { return true; }
 
-    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
-    /*
-    Serial.println("password is: ");
-    Serial.println(cmdPtr);
-    delay(500);
-    */
-
-    // TODO: error handling here in case the rest of the msg is lost?
-    if (!(cmdPtr != NULL)) {
-        // send NACK? this isnt in the control flow yet or simply eof?
-        return false;
-    }
-
-    // prepare return msg with correct or incorrect
-    char msg[10] = "";
-    char noString[3];
-    strcpy(msg, keypadCmd.c_str());
-    strcat(msg, KeywordsList::delimiter.c_str());
-    if (passwordInterpreter(cmdPtr)) {
-        sprintf(noString, "%d", KeypadCmds::correct);
-        strcat(msg, noString);
-    } else {
-        sprintf(noString, "%d", KeypadCmds::wrong);
-        strcat(msg, noString);
-    }
-    // idk why but we had a termination poblem, maybe sprintf doesnt terminate?
-    // msg[strlen(msg) - 1] = '\0';
-
-    strcat(msg, noString);
-    Mother.sendCmdToSlave(msg);
+    handleResult(cmdPtr);
 
     return true;
 }
@@ -156,25 +150,7 @@ bool checkForRfid() {
         return false;
     } 
     char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
-    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
-    
-    // return msg with correct or incorrect
-    // could be simply universal CodeCorrect
-    char msg[10] = "";
-    strcpy(msg, keypadCmd.c_str());
-    strcat(msg, KeywordsList::delimiter.c_str());
-    char noString[3];
-
-    if (passwordInterpreter(cmdPtr)) {
-        sprintf(noString, "%d", KeypadCmds::correct);
-        strcat(msg, noString);
-    } else {
-        sprintf(noString, "%d", KeypadCmds::wrong);
-        strcat(msg, noString);
-    }
-    Mother.sendCmdToSlave(msg);
-    // blocking
-    delay(5000);
+    handleResult(cmdPtr);
     wdt_reset();
     return true;
 }
