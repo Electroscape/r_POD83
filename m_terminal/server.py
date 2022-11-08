@@ -41,8 +41,8 @@ sio = SocketIO(app, cors_allowed_origins=all_cors)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    ip_address = request.remote_addr
-    print("Requester IP: " + ip_address)
+    # ip_address = request.remote_addr
+    # print("Requester IP: " + ip_address)
     return render_template("server_home.html", g_config=config, chat_msg=chat_history.get())
 
 

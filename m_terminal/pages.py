@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, Response
-from flask_flatpages import FlatPages
-from fns import gen_frames, get_samples_status, listdir_no_hidden
+from fns import get_samples_status, listdir_no_hidden
+from cam_stream import gen_frames
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
 

@@ -1,4 +1,5 @@
 pkill python
+pkill flask
 pkill chromium
 
 cd ~/r_POD83/m_terminal
