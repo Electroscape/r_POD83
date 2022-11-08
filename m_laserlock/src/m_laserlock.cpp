@@ -41,6 +41,11 @@ int inputTicks = 0;
 unsigned long timestamp = millis();
 
 
+void enableWdt() {
+    wdt_enable(WDTO_8S);
+}
+
+
 /**
  * @brief Set the Stage Index object
  * @todo safety considerations
@@ -196,7 +201,7 @@ void waitForGameStart() {
     
     Mother.motherRelay.digitalWrite(door, closed);
 
-    wdt_enable(WDTO_8S);
+    enableWdt();
     stage = stage << 1;
 }
  
@@ -210,6 +215,21 @@ void oledUpdate() {
 }
 
 
+void waitForRpiTrigger() {
+    inputTicks = 0;
+    // waitin for the door to be opened
+    while (inputTicks < 5) {
+        if (inputPCF.digitalRead(0) != 0) {
+            inputTicks++;
+            delay(25);
+        } else {
+            inputTicks = 0;
+        }
+        wdt_reset();
+    }
+}
+
+
 void stageActions() {
     oledUpdate();
     wdt_reset();
@@ -218,6 +238,7 @@ void stageActions() {
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
         break;
         case failedBoot:
+            wdt_disable();
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 50, 10000, 0);
             delay(10000);
 
@@ -234,9 +255,10 @@ void stageActions() {
             delay(25);
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, 0);
             delay(4775);
+            enableWdt();
         break;
         case operational:
-            
+            waitForRpiTrigger();
         break;
         case decon:
             // @todo: check timing here
@@ -263,7 +285,9 @@ void stageActions() {
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50, 0);
             Mother.motherRelay.digitalWrite(door, open);
             delay(5000);
+            wdt_reset();
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20, 0);
+            stage = operational;
         break; 
     }
 }
@@ -284,8 +308,8 @@ void stageUpdate() {
     // check || stageIndex >= int(sizeof(stages))
     if (stageIndex < 0) {
         Serial.println(F("Stages out of index!"));
-        delay(5000);
-        wdt_reset();
+        delay(15000);
+        
     }
     // important to do this before stageActions! otherwise we skip stages
     lastStage = stage;
@@ -309,7 +333,7 @@ void setup() {
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
 
     Serial.println("WDT endabled");
-    wdt_enable(WDTO_8S);
+    enableWdt();
 
     // technicall 2 but no need to poll the 2nd 
     Mother.rs485SetSlaveCount(1);
