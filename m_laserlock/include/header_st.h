@@ -13,6 +13,11 @@
 #define ledBrain 1
 #define txRelayAmount 2
 
+// how long the system remains in unlock and accepts RFID cards 
+unsigned long presentationTime = 10000;
+// how long the signal of RFID identity remains active 
+unsigned long rfidTxDuration = 5000;
+
 
 enum relays {
     door,

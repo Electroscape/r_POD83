@@ -37,6 +37,9 @@ int lastStage = -1;
 bool repeatDecontamination = false;
 int inputTicks = 0;
 
+// general timestamp going to use this to timeout the card repsentation in unlocked and RFIDoutput
+unsigned long timestamp = millis();
+
 
 /**
  * @brief Set the Stage Index object
@@ -65,6 +68,23 @@ void gameReset() {
     stage = setupStage;
     for (int relayNo=0; relayNo < relayAmount; relayNo++) {
         Mother.motherRelay.digitalWrite(relayNo, relayInitArray[relayNo]);
+    }
+}
+
+
+/**
+ * @brief handles timeouts rfidTX and timeout of the RFID presentation
+*/
+void timedTrigger() {
+    if (timestamp > millis()) { return; }
+    switch (stage) {
+        case unlocked: 
+            timestamp = millis() + rfidTxDuration;
+        break;
+        case unlock:
+            stage = failedUnlock;
+            timestamp = millis() + presentationTime;
+        break;
     }
 }
 
@@ -318,6 +338,7 @@ void loop() {
     Mother.rs485PerformPoll();
     interpreter();
     stageUpdate();
+    timedTrigger();
     wdt_reset();
 }
 
