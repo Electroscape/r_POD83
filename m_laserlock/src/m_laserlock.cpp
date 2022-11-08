@@ -31,11 +31,12 @@ PCF8574 inputPCF;
 STB_MOTHER Mother;
 int stage = setupStage;
 // since stages are single binary bits and we still need to d some indexing
-int stageIndex=0;
+int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 bool repeatDecontamination = false;
 int inputTicks = 0;
+
 
 /**
  * @brief Set the Stage Index object
@@ -55,7 +56,6 @@ void setStageIndex() {
     wdt_reset();
     delay(16000);
 }
-
 
 
 /**
@@ -171,13 +171,59 @@ void stageActions() {
     wdt_reset();
     switch (stage) {
         case setupStage: 
-            LED_CMDS::setStripToClr(Mother, 1 , LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
         break;
         case failedBoot:
-            // LED_CMDS::
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 50, 10000, 0);
+            delay(10000);
+
+            // total duration 5s
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            delay(25);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 50, 0);
+            delay(100);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            delay(25);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 40, 0);
+            delay(100);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            delay(25);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, 0);
+            delay(4775);
         break;
+        case operational:
+            
+        break;
+        case decon:
+            // @todo: check timing here
+            int runTime;
+            for (int brightness = 10; brightness <= 100; brightness += 10) {
+                runTime = (100 - brightness) * 20;  // loop should be a total of 8100ms
+                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, 13);
+            }
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            delay(30);      // 8130
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
+            // doesnt specify fade but may aswell see how it works
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, 0);
+        break;
+        case unlock:
+
+        break;
+        case failedUnlock:
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            delay(30);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 75, 0);
+        break;
+        case unlocked:
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50, 0);
+            Mother.motherRelay.digitalWrite(door, open);
+            delay(5000);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20, 0);
+        break; 
     }
 }
+
 
 /**
  * @brief  triggers effects specific to the given stage, 
@@ -238,7 +284,6 @@ void setup() {
     Mother.setupComplete(1);
     */
 
-    // smalle dealay to not load up the fuse by switching on too many devices at once
     wdt_reset();
     delay(1000);
     gameReset();

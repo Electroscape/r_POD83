@@ -10,6 +10,8 @@
 #define open        0
 #define closed      1
 
+#define ledBrain 1
+
 
 enum relays {
     door,
@@ -34,10 +36,12 @@ int relayInitArray[relayAmount] = {
 
 enum stages {
     setupStage = 1, 
-    failedBoot = 2,
-    operational = 4,
-    decon = 8,
-    idle = 16
+    failedBoot = 2,     // trigger 1
+    operational = 4,    
+    decon = 8,          // trigger 2
+    unlock = 16,
+    failedUnlock = 32,
+    unlocked = 64
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -49,7 +53,11 @@ int stageSum = ~( ~0 << StageCount );
 int flagMapping[StageCount] {
     0,
     0,
-    rfidFlag,
+    0, // oeprational
+    0,
+    rfidFlag, // unlock
+    0,  // failedUnlock
+    0   // unlocked
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -59,12 +67,21 @@ char passwords[PasswordAmount][MaxPassLen] = {
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    operational,
-    operational
+    unlock,
+    unlock
 };
 // make a mapping of what password goes to what stage
 
 
 char stageTexts[StageCount][headLineMaxSize] = {
+    "",
+    "Booting",
+    "",
+    "",
+    "Scan arm",
+    "",
+    "",
+    "",
+    "",
     ""
 };
