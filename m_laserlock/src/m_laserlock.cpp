@@ -69,12 +69,36 @@ void gameReset() {
 }
 
 
+// sets txRelays to 0 to indicate empty RFID presence, may be called after a timeout from the mainloop to keep timing simpler
+void outputRFIDReset() {
+    for (int pinNo=0; pinNo<txRelayAmount; pinNo++) {
+        Mother.motherRelay.digitalWrite(pinNo, closed);
+    }
+}
+
+
+/**
+ * @brief converts the passwordindex to a signal on the relays, also leftshifted the passed index once
+ * 0 for no RFID
+ * 1 for David
+ * 2 for Rachel
+ * @param index 
+*/
+void outputRFID(int index) {
+    index = index << 1;
+    for (int txPin=0; txPin<txRelayAmount; txPin++) {
+        Mother.motherRelay.digitalWrite(rfidTxPins[txPin], ((index & (1 << txPin)) > 0) );
+    }
+}
+
+
 bool passwordInterpreter(char* password) {
     Mother.STB_.defaultOled.clear();
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
                 delay(500);
+                outputRFID(passNo);
                 return true;
             }
         }

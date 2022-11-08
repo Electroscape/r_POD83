@@ -6,31 +6,66 @@
 // may aswell move this into the Oled lib?
 #define headLineMaxSize 16
 
-#define relayAmount 2
+#define relayAmount 8
 #define open        0
 #define closed      1
 
 #define ledBrain 1
+#define txRelayAmount 2
 
 
 enum relays {
     door,
-    uv
+    uv,
+    rel_3,
+    rel_4,
+    rel_5,
+    rel_6,
+    RFID_TX_1,
+    RFID_TX_2
 };
 
+
 enum relayInits {
-    doorInit = open,
-    uvInit
+    doorInit = closed,
+    uvInit = closed,
+    rel_3_init = closed,
+    rel_4_init = closed,
+    rel_5_init = closed,
+    rel_6_init = closed,
+    RFID_TX_1_init = closed,
+    RFID_TX_2_init = closed,
 };
+
 
 int relayPinArray[relayAmount] = {
     door, 
-    uv
+    uv,
+    rel_3,
+    rel_4,
+    rel_5,
+    rel_6,
+    RFID_TX_1,
+    RFID_TX_2
 };
+
+
+// used to send binary signal to RPi to show identity presented
+int rfidTxPins[txRelayAmount] = {
+    RFID_TX_1,
+    RFID_TX_2
+};
+
 
 int relayInitArray[relayAmount] = {
     doorInit,
-    uvInit
+    uvInit,
+    rel_3_init,
+    rel_4_init,
+    rel_5_init,
+    rel_6_init,
+    RFID_TX_1_init,
+    RFID_TX_2_init
 };
 
 
@@ -61,8 +96,8 @@ int flagMapping[StageCount] {
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
-    "SD",
-    "AH"
+    "SD",   // David
+    "AH"    // Rachel
 };
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
