@@ -35,7 +35,6 @@ int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 bool repeatDecontamination = false;
-int inputTicks = 0;
 
 /**
  * @brief Set the Stage Index object
@@ -239,6 +238,7 @@ void airlockDenied() {
 
 void waitForGameStart() {
 
+    int inputTicks = 0;
     // waitin for the door to be opened
     while (inputTicks < 5) {
         if (inputPCF.digitalRead(0) != 0) {
