@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 10
+#define StageCount 7
 #define PasswordAmount 2
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -17,6 +17,21 @@
 unsigned long presentationTime = 10000;
 // how long the signal of RFID identity remains active 
 unsigned long rfidTxDuration = 5000;
+unsigned long displayFailedUnlock = 6000;
+
+#define inputCnt 3
+
+enum inputs {
+    bootTrigger,
+    deconTrigger,
+    connectionFixed
+};
+
+uint8_t inputTypes[inputCnt] = {
+    INPUT_PULLUP,
+    INPUT_PULLUP,
+    INPUT_PULLUP
+};
 
 
 enum relays {
@@ -76,12 +91,13 @@ int relayInitArray[relayAmount] = {
 
 enum stages {
     setupStage = 1, 
-    failedBoot = 2,     // trigger 1
-    operational = 4,    
-    decon = 8,          // trigger 2
+    failedBoot = 2,     // trigger boot
+    operational = 4,    // trigger boot & connectionfixed
+    decon = 8,          // trigger decon
     unlock = 16,
     failedUnlock = 32,
-    unlocked = 64
+    unlocked = 64,
+    ready = 128
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -92,12 +108,12 @@ int stageSum = ~( ~0 << StageCount );
 // for now its only an Access module mapped here
 int flagMapping[StageCount] {
     0,
-    0,
-    0, // oeprational
-    0,
-    rfidFlag, // unlock
-    0,  // failedUnlock
-    0   // unlocked
+    0,          // failedBoot
+    0,          // operational
+    0,          // decon
+    rfidFlag,   // unlock
+    0,          // failedUnlock
+    0           // unlocked
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -115,13 +131,10 @@ int passwordMap[PasswordAmount] = {
 
 char stageTexts[StageCount][headLineMaxSize] = {
     "",
-    "Booting",
-    "",
-    "",
-    "Scan arm",
-    "",
-    "",
-    "",
-    "",
-    ""
+    "Booting",      // failedBoot
+    "",             // operational
+    "",             // decon
+    "Scan arm",     // unlock
+    "",             // failedUnlock
+    "",             // unlocked
 };

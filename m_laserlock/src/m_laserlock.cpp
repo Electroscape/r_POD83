@@ -173,39 +173,6 @@ void interpreter() {
     }
 }
 
-
-void waitForGameStart() {
-
-    // waitin for the door to be opened
-    while (inputTicks < 5) {
-        if (inputPCF.digitalRead(0) != 0) {
-            inputTicks++;
-            delay(25);
-        } else {
-            inputTicks = 0;
-        }
-    }
-    // LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
-
-    // and checking if the door is closed, being quicker here
-    inputTicks = 0;
-    while (inputTicks < 5) {
-        if (inputPCF.digitalRead(0) == 0) {
-            inputTicks++;
-            delay(25);
-        } else {
-            inputTicks = 0;
-        }
-    }
-
-    
-    Mother.motherRelay.digitalWrite(door, closed);
-
-    enableWdt();
-    stage = stage << 1;
-}
- 
-
 void oledUpdate() {
     char msg[32];
     strcpy(msg, oledHeaderCmd.c_str());
@@ -227,6 +194,26 @@ void waitForRpiTrigger() {
         }
         wdt_reset();
     }
+}
+
+
+void oledFailed() {
+    timestamp = millis() + displayFailedUnlock;
+    char timeoutMsg[32];
+    strcpy(timeoutMsg, oledHeaderCmd.c_str());
+    strcat(timeoutMsg, KeywordsList::delimiter.c_str());
+    strcat(timeoutMsg, "Timeout"); 
+    char cleanMsg[32];
+    strcpy(cleanMsg, oledHeaderCmd.c_str());
+    strcat(cleanMsg, KeywordsList::delimiter.c_str());
+    strcat(cleanMsg, stageTexts[stageIndex]); 
+    while (timestamp > millis()) {
+        wdt_reset();
+        Mother.sendCmdToSlave(timeoutMsg);
+        delay(1500);
+        Mother.sendCmdToSlave(cleanMsg);
+        delay(1500);
+    }  
 }
 
 
@@ -258,14 +245,18 @@ void stageActions() {
             enableWdt();
         break;
         case operational:
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, 0);
+            delay(10000);
+            // @todo: needs to get a working startup sequence triggered
             waitForRpiTrigger();
+            stage = decon;
         break;
         case decon:
             // @todo: check timing here
             int runTime;
             for (int brightness = 10; brightness <= 100; brightness += 10) {
                 runTime = (100 - brightness) * 20;  // loop should be a total of 8100ms
-                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, 13);
+                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, 12);
             }
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
             delay(30);      // 8130
@@ -278,8 +269,13 @@ void stageActions() {
         break;
         case failedUnlock:
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
-            delay(30);
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 75, 0);
+            delay(50);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, 0);
+            delay(200);
+            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            delay(200);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 50, displayFailedUnlock, 0);
+            stage = operational;
         break;
         case unlocked:
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50, 0);
@@ -302,7 +298,6 @@ void stageUpdate() {
     if (lastStage == stage) { return; }
     Serial.print("Stage is:");
     Serial.println(stage);
-    // if we go ailrockfailed, we have to keep the failed text on display 
     setStageIndex();
         
     // check || stageIndex >= int(sizeof(stages))
@@ -321,8 +316,54 @@ void stageUpdate() {
 
 
 void inputInit() {
-    inputPCF.begin(RESET_I2C_ADD);
-    inputPCF.pinMode(0, INPUT_PULLUP);
+    for (int pin=0; pin<inputCnt; pin++) {
+        inputPCF.begin(RESET_I2C_ADD);
+        inputPCF.pinMode((uint8_t) pin, INPUT_PULLUP);
+    }
+}
+
+
+/**
+ * @brief  handles inputs passed from the RPi and trigger stages
+*/
+void inputDetector() {
+
+    // consider when this is active to avoid double triggering or getting stuck
+    if (stage == decon) { return; }
+
+    int ticks = 0;
+    while (!inputPCF.digitalRead(deconTrigger)) {
+        if (ticks > 5) {
+            Serial.println("setting decon");
+            delay(5000);
+            stage = decon;
+            return;
+        }
+        ticks++;
+    }
+
+    ticks = 0;
+    while (!inputPCF.digitalRead(bootTrigger)) {
+        
+        if (ticks > 5) {
+            while (!inputPCF.digitalRead(connectionFixed)) {
+                ticks++;
+                if (ticks > 10) {
+                    Serial.println("setting operational");
+                    delay(5000);
+                    stage = operational;
+                    return;
+                }
+                delay(1);
+            }
+            Serial.println("setting failed");
+            delay(5000);
+            stage = failedBoot;
+            return;
+        } 
+        delay(1);
+        ticks++;
+    }
 }
 
 
@@ -363,6 +404,7 @@ void loop() {
     interpreter();
     stageUpdate();
     timedTrigger();
+    inputDetector();
     wdt_reset();
 }
 
