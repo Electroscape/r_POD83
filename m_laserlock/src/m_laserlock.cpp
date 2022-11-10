@@ -83,12 +83,8 @@ void gameReset() {
 void timedTrigger() {
     if (timestamp > millis()) { return; }
     switch (stage) {
-        case unlocked: 
-            timestamp = millis() + rfidTxDuration;
-        break;
-        case unlock:
+        case unlock: 
             stage = failedUnlock;
-            timestamp = millis() + presentationTime;
         break;
     }
 }
@@ -114,6 +110,7 @@ void outputRFID(int index) {
     for (int txPin=0; txPin<txRelayAmount; txPin++) {
         Mother.motherRelay.digitalWrite(rfidTxPins[txPin], ((index & (1 << txPin)) > 0) );
     }
+    timestamp = millis() + rfidTxDuration;
 }
 
 
@@ -156,7 +153,6 @@ void handleResult(char *cmdPtr) {
 
 // again good candidate for a mother specific lib
 bool checkForRfid() {
-
     if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
         return false;
     } 
@@ -257,15 +253,17 @@ void stageActions() {
             for (int brightness = 10; brightness <= 100; brightness += 10) {
                 runTime = (100 - brightness) * 20;  // loop should be a total of 8100ms
                 LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, 12, PWM::set1, 1000);
+                delay(runTime);
             }
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
             delay(30);      // 8130
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
+            // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
             // doesnt specify fade but may aswell see how it works
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
+            timestamp = millis() + presentationTime;
+            stage = unlock;
         break;
         case unlock:
-
         break;
         case failedUnlock:
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
@@ -281,8 +279,13 @@ void stageActions() {
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50, 0);
             Mother.motherRelay.digitalWrite(door, open);
             delay(5000);
+            outputRFIDReset();
             wdt_reset();
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20, 0);
+            wdt_disable();
+            delay(15000);
+            enableWdt();
+            
             stage = operational;
         break; 
     }
