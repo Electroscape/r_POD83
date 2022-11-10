@@ -256,7 +256,7 @@ void stageActions() {
             int runTime;
             for (int brightness = 10; brightness <= 100; brightness += 10) {
                 runTime = (100 - brightness) * 20;  // loop should be a total of 8100ms
-                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, 12);
+                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, 12, PWM::set1, 1000);
             }
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
             delay(30);      // 8130
