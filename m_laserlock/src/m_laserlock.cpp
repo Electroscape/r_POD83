@@ -226,7 +226,7 @@ void stageActions() {
         break;
         case failedBoot:
             wdt_disable();
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 50, 10000, 0);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrBlack, 100, LED_CMDS::clrRed, 50, 10000, PWM::set1);
             delay(10000);
 
             // total duration 5s
@@ -240,12 +240,12 @@ void stageActions() {
             delay(100);
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
             delay(25);
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, 0);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, PWM::set1);
             delay(4775);
             enableWdt();
         break;
         case operational:
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, 0);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
             delay(10000);
             // @todo: needs to get a working startup sequence triggered
             waitForRpiTrigger();
@@ -262,7 +262,7 @@ void stageActions() {
             delay(30);      // 8130
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
             // doesnt specify fade but may aswell see how it works
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, 0);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
         break;
         case unlock:
 
@@ -274,7 +274,7 @@ void stageActions() {
             delay(200);
             LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
             delay(200);
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 50, displayFailedUnlock, 0);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 50, displayFailedUnlock,  PWM::set1);
             stage = operational;
         break;
         case unlocked:
