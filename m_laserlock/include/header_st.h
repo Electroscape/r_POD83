@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 7
+#define StageCount 8
 #define PasswordAmount 2
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -12,6 +12,7 @@
 
 #define ledBrain 1
 #define txRelayAmount 2
+#define ledCnt 13
 
 // how long the system remains in unlock and accepts RFID cards 
 unsigned long presentationTime = 10000;
@@ -19,15 +20,17 @@ unsigned long presentationTime = 10000;
 unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 6000;
 
-#define inputCnt 3
+#define inputCnt 4
 
 enum inputs {
-    bootTrigger,
-    deconTrigger,
-    connectionFixed
+    bootTrigger,        // Red
+    deconTrigger,       // Black
+    connectionFixed,    // Green
+    resetTrigger        // white
 };
 
 uint8_t inputTypes[inputCnt] = {
+    INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP
@@ -97,7 +100,7 @@ enum stages {
     unlock = 16,
     failedUnlock = 32,
     unlocked = 64,
-    ready = 128
+    idle = 128
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -113,7 +116,8 @@ int flagMapping[StageCount] {
     0,          // decon
     rfidFlag,   // unlock
     0,          // failedUnlock
-    0           // unlocked
+    0,          // unlocked
+    0           // idle
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -136,5 +140,6 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "",             // decon
     "Scan arm",     // unlock
     "",             // failedUnlock
-    "",             // unlocked
+    "Access Granted",             // unlocked
+    ""
 };

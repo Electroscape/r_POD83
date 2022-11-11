@@ -218,7 +218,7 @@ void stageActions() {
     wdt_reset();
     switch (stage) {
         case setupStage: 
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
         break;
         case failedBoot:
             wdt_disable();
@@ -226,15 +226,15 @@ void stageActions() {
             delay(10000);
 
             // total duration 5s
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(25);
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 50, 0);
-            delay(100);
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 50);
+            delay(400);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(25);
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 40, 0);
-            delay(100);
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 40);
+            delay(400);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(25);
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, PWM::set1);
             delay(4775);
@@ -242,7 +242,9 @@ void stageActions() {
         break;
         case operational:
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
+            wdt_disable();
             delay(10000);
+            enableWdt();
             // @todo: needs to get a working startup sequence triggered
             waitForRpiTrigger();
             stage = decon;
@@ -252,12 +254,12 @@ void stageActions() {
             int runTime;
             for (int brightness = 10; brightness <= 100; brightness += 10) {
                 runTime = (100 - brightness) * 20;  // loop should be a total of 8100ms
-                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, 12, PWM::set1, 1000);
+                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, ledCnt, PWM::set1, 1000);
                 delay(runTime);
             }
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
-            delay(30);      // 8130
-            // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            delay(100);      // 8130
+            // LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
             // doesnt specify fade but may aswell see how it works
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
             timestamp = millis() + presentationTime;
@@ -266,22 +268,22 @@ void stageActions() {
         case unlock:
         break;
         case failedUnlock:
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(50);
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 100);
             delay(200);
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(200);
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 50, displayFailedUnlock,  PWM::set1);
             stage = operational;
         break;
         case unlocked:
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50);
             Mother.motherRelay.digitalWrite(door, open);
             delay(5000);
             outputRFIDReset();
             wdt_reset();
-            LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20);
             wdt_disable();
             delay(15000);
             enableWdt();
@@ -328,11 +330,12 @@ void inputInit() {
 
 /**
  * @brief  handles inputs passed from the RPi and trigger stages
+ * @todo make this shorter and easier to read and understand
 */
 void inputDetector() {
 
     // consider when this is active to avoid double triggering or getting stuck
-    if (stage == decon) { return; }
+    if (stage != idle) { return; }
 
     int ticks = 0;
     while (!inputPCF.digitalRead(deconTrigger)) {
