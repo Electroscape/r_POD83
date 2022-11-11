@@ -178,21 +178,6 @@ void oledUpdate() {
 }
 
 
-void waitForRpiTrigger() {
-    inputTicks = 0;
-    // waitin for the door to be opened
-    while (inputTicks < 5) {
-        if (inputPCF.digitalRead(0) != 0) {
-            inputTicks++;
-            delay(25);
-        } else {
-            inputTicks = 0;
-        }
-        wdt_reset();
-    }
-}
-
-
 void oledFailed() {
     timestamp = millis() + displayFailedUnlock;
     char timeoutMsg[32];
