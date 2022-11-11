@@ -245,9 +245,7 @@ void stageActions() {
             wdt_disable();
             delay(10000);
             enableWdt();
-            // @todo: needs to get a working startup sequence triggered
-            waitForRpiTrigger();
-            stage = decon;
+            stage = idle;
         break;
         case decon:
             // @todo: check timing here
@@ -275,7 +273,7 @@ void stageActions() {
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(200);
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 50, displayFailedUnlock,  PWM::set1);
-            stage = operational;
+            stage = idle;
         break;
         case unlocked:
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50);
@@ -287,8 +285,7 @@ void stageActions() {
             wdt_disable();
             delay(15000);
             enableWdt();
-            
-            stage = operational;
+            stage = idle;
         break; 
     }
 }
@@ -332,44 +329,49 @@ void inputInit() {
  * @brief  handles inputs passed from the RPi and trigger stages
  * @todo make this shorter and easier to read and understand
 */
-void inputDetector() {
+int inputDetector() {
 
-    // consider when this is active to avoid double triggering or getting stuck
+    int ticks;
+    for (int pin=0; pin<inputCnt; pin++) {
+        if (pin == connectionFixed) { continue; }
+        ticks = 0;
+        while(!inputPCF.digitalRead(pin)) {
+            if (ticks > 5) {
+                return pin;
+            }
+            ticks++;
+        }
+    }
+
+    return -1;
+}
+
+void handleRpiInputs() {
+
     if (stage != idle) { return; }
 
-    int ticks = 0;
-    while (!inputPCF.digitalRead(deconTrigger)) {
-        if (ticks > 5) {
+    switch (inputDetector()) {
+        case bootTrigger: 
+            if (!inputPCF.digitalRead(connectionFixed)) {
+                Serial.println("setting operational");
+                delay(5000);
+                stage = operational;
+            } else {
+                Serial.println("setting failed");
+                delay(5000);
+                stage = failedBoot;
+            }
+        break;
+        case deconTrigger: 
             Serial.println("setting decon");
             delay(5000);
             stage = decon;
-            return;
-        }
-        ticks++;
+        break;
+        case reset:
+            // @todo implement
+        break;
     }
 
-    ticks = 0;
-    while (!inputPCF.digitalRead(bootTrigger)) {
-        
-        if (ticks > 5) {
-            while (!inputPCF.digitalRead(connectionFixed)) {
-                ticks++;
-                if (ticks > 10) {
-                    Serial.println("setting operational");
-                    delay(5000);
-                    stage = operational;
-                    return;
-                }
-                delay(1);
-            }
-            Serial.println("setting failed");
-            delay(5000);
-            stage = failedBoot;
-            return;
-        } 
-        delay(1);
-        ticks++;
-    }
 }
 
 
@@ -410,7 +412,7 @@ void loop() {
     interpreter();
     stageUpdate();
     timedTrigger();
-    inputDetector();
+    handleRpiInputs();
     wdt_reset();
 }
 
