@@ -121,6 +121,7 @@ bool passwordInterpreter(char* password) {
             if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
                 delay(500);
                 outputRFID(passNo);
+                if (stage == unlock) { stage = unlocked; }
                 return true;
             }
         }
@@ -204,6 +205,7 @@ void stageActions() {
     switch (stage) {
         case setupStage: 
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            stage = idle;
         break;
         case failedBoot:
             wdt_disable();
@@ -214,29 +216,37 @@ void stageActions() {
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(25);
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 50);
-            delay(400);
+            delay(50);
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(25);
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 40);
-            delay(400);
+            delay(60);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            delay(25);
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 35);
+            delay(25);
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(25);
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, PWM::set1);
             delay(4775);
             enableWdt();
+            stage = idle;
         break;
         case operational:
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
             wdt_disable();
             delay(10000);
             enableWdt();
+            Serial.println("going back to idle");
+            delay(1000);
             stage = idle;
         break;
         case decon:
             // @todo: check timing here
             int runTime;
             for (int brightness = 10; brightness <= 100; brightness += 10) {
-                runTime = (100 - brightness) * 20;  // loop should be a total of 8100ms
+                runTime = (100 - brightness) * 5;  // loop should be a total of 8100ms
+                if (runTime < 20) { runTime = 50; }
                 LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, ledCnt, PWM::set1, 1000);
                 delay(runTime);
             }
@@ -262,7 +272,7 @@ void stageActions() {
         break;
         case unlocked:
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50);
-            Mother.motherRelay.digitalWrite(door, open);
+            Mother.motherRelay.digitalWrite(door, doorOpen);
             delay(5000);
             outputRFIDReset();
             wdt_reset();
@@ -334,6 +344,7 @@ int inputDetector() {
 void handleRpiInputs() {
 
     if (stage != idle) { return; }
+    lastStage = idle;
 
     switch (inputDetector()) {
         case bootTrigger: 
@@ -353,6 +364,7 @@ void handleRpiInputs() {
             stage = decon;
         break;
         case reset:
+            Mother.motherRelay.digitalWrite(door, doorClosed);
             // @todo implement
         break;
     }
@@ -395,9 +407,9 @@ void setup() {
 void loop() {
     Mother.rs485PerformPoll();
     interpreter();
-    stageUpdate();
     timedTrigger();
-    handleRpiInputs();
+    handleRpiInputs();    
+    stageUpdate();
     wdt_reset();
 }
 
