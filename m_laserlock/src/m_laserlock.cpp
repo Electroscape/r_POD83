@@ -93,7 +93,7 @@ void timedTrigger() {
 // sets txRelays to 0 to indicate empty RFID presence, may be called after a timeout from the mainloop to keep timing simpler
 void outputRFIDReset() {
     for (int pinNo=0; pinNo<txRelayAmount; pinNo++) {
-        Mother.motherRelay.digitalWrite(pinNo, closed);
+        Mother.motherRelay.digitalWrite(rfidTxPins[pinNo], closed);
     }
 }
 
