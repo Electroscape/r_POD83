@@ -171,7 +171,7 @@ void interpreter() {
 }
 
 void oledUpdate() {
-    char msg[32];
+    char msg[32] = "";
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
@@ -363,9 +363,11 @@ void handleRpiInputs() {
             delay(5000);
             stage = decon;
         break;
-        case reset:
+        case resetTrigger:
             Mother.motherRelay.digitalWrite(door, doorClosed);
-            // @todo implement
+            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 80);
+            // not necessary but makes sense for safety
+            outputRFIDReset();
         break;
     }
 

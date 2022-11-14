@@ -10,6 +10,9 @@
 #define open        0
 #define closed      1
 
+#define doorOpen    0
+#define doorClosed  1
+
 #define ledBrain 1
 #define txRelayAmount 2
 #define ledCnt 13
@@ -50,7 +53,7 @@ enum relays {
 
 
 enum relayInits {
-    doorInit = closed,
+    doorInit = doorClosed,
     uvInit = closed,
     rel_3_init = closed,
     rel_4_init = closed,
