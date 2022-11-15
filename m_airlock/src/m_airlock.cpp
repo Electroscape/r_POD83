@@ -343,12 +343,13 @@ void stageActions() {
         break;
         case airlockRequest: break;
         case airlockOpening:
-            // Mother.motherRelay.digitalWrite(alarm, open);
+            Mother.motherRelay.digitalWrite(alarm, open);
             airLockBlink(gateWarningDelay);
             Mother.motherRelay.digitalWrite(gate_pwr, open);
             Mother.motherRelay.digitalWrite(gate_direction, gateUp);
-            airLockBlink(gateDuration);
-            // Mother.motherRelay.digitalWrite(alarm, closed);
+            airLockBlink(gateDuration/2);
+            Mother.motherRelay.digitalWrite(alarm, closed);
+            airLockBlink(gateDuration/2);
             stage = stage << 1;
         break;
         case airlockOpen:
