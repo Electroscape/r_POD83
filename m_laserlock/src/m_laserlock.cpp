@@ -200,7 +200,6 @@ void oledFailed() {
 
 
 void stageActions() {
-    oledUpdate();
     wdt_reset();
     switch (stage) {
         case setupStage: 
@@ -237,8 +236,6 @@ void stageActions() {
             wdt_disable();
             delay(10000);
             enableWdt();
-            Serial.println("going back to idle");
-            delay(1000);
             stage = idle;
         break;
         case decon:

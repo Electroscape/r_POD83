@@ -138,11 +138,11 @@ int passwordMap[PasswordAmount] = {
 
 char stageTexts[StageCount][headLineMaxSize] = {
     "",
-    "Booting",      // failedBoot
-    "",             // operational
-    "",             // decon
-    "Scan arm",     // unlock
-    "",             // failedUnlock
-    "Access Granted",             // unlocked
+    "Booting",              // failedBoot
+    "",                     // operational
+    "",                     // decon
+    "Scan arm",             // unlock
+    "",                     // failedUnlock
+    "Access Granted",       // unlocked
     ""
 };

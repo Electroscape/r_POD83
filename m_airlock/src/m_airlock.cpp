@@ -308,7 +308,6 @@ void oledUpdate() {
 
 
 void stageActions() {
-    oledUpdate();
     wdt_reset();
     switch (stage) {
         case setupStage:
