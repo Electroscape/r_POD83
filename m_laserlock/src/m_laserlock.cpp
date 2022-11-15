@@ -181,11 +181,11 @@ void oledUpdate() {
 
 void oledFailed() {
     timestamp = millis() + displayFailedUnlock;
-    char timeoutMsg[32];
+    char timeoutMsg[32] = "";
     strcpy(timeoutMsg, oledHeaderCmd.c_str());
     strcat(timeoutMsg, KeywordsList::delimiter.c_str());
     strcat(timeoutMsg, "Timeout"); 
-    char cleanMsg[32];
+    char cleanMsg[32] = "";
     strcpy(cleanMsg, oledHeaderCmd.c_str());
     strcat(cleanMsg, KeywordsList::delimiter.c_str());
     strcat(cleanMsg, stageTexts[stageIndex]); 
