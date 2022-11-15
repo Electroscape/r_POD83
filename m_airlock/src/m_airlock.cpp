@@ -223,7 +223,7 @@ void airlockDenied() {
 
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
 
-    char msg[32];
+    char msg[32] = "";
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, "Clean Airlock"); 
@@ -299,7 +299,7 @@ void setupRoom() {
 
 
 void oledUpdate() {
-    char msg[32];
+    char msg[32] = "";
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
