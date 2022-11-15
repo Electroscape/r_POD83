@@ -164,7 +164,7 @@ bool checkForKeypad() {
 
     // prepare return msg with correct or incorrect
     char msg[10] = "";
-    char noString[3];
+    char noString[3] = "";
     strcpy(msg, keypadCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     bool doBlink = false;
@@ -210,7 +210,7 @@ void stageUpdate() {
     }
     Mother.setFlags(0, flagMapping[stageIndex]);
 
-    char msg[32];
+    char msg[32] = "";
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
