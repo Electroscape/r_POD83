@@ -21,7 +21,7 @@
 unsigned long presentationTime = 10000;
 // how long the signal of RFID identity remains active 
 unsigned long rfidTxDuration = 5000;
-unsigned long displayFailedUnlock = 6000;
+unsigned long displayFailedUnlock = 8000;
 
 #define inputCnt 4
 

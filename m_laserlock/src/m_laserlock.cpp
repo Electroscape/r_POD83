@@ -34,7 +34,6 @@ int stage = setupStage;
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
-bool repeatDecontamination = false;
 int inputTicks = 0;
 
 // general timestamp going to use this to timeout the card repsentation in unlocked and RFIDoutput
@@ -246,6 +245,7 @@ void stageActions() {
                 if (runTime < 20) { runTime = 50; }
                 LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, ledCnt, PWM::set1, 1000);
                 delay(runTime);
+                wdt_reset();
             }
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(100);      // 8130
@@ -265,6 +265,7 @@ void stageActions() {
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(200);
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 80, displayFailedUnlock,  PWM::set1);
+            oledFailed();
             stage = idle;
         break;
         case unlocked:
