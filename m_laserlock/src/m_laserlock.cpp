@@ -267,7 +267,7 @@ void stageActions() {
             delay(200);
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
             delay(200);
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 50, displayFailedUnlock,  PWM::set1);
+            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 80, displayFailedUnlock,  PWM::set1);
             stage = idle;
         break;
         case unlocked:
