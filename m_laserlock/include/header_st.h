@@ -141,8 +141,8 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Booting",              // failedBoot
     "",                     // operational
     "",                     // decon
-    "Scan arm",             // unlock
-    "",                     // failedUnlock
+    "Scan Arm",             // unlock
+    "Timeout",              // failedUnlock
     "Access Granted",       // unlocked
     ""
 };

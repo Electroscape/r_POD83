@@ -185,11 +185,11 @@ void oledFailed() {
     char timeoutMsg[32] = "";
     strcpy(timeoutMsg, oledHeaderCmd.c_str());
     strcat(timeoutMsg, KeywordsList::delimiter.c_str());
-    strcat(timeoutMsg, "Timeout"); 
+    strcat(timeoutMsg, stageTexts[stageIndex]);
     char cleanMsg[32] = "";
     strcpy(cleanMsg, oledHeaderCmd.c_str());
     strcat(cleanMsg, KeywordsList::delimiter.c_str());
-    strcat(cleanMsg, stageTexts[stageIndex]); 
+    strcat(cleanMsg,  "Clean Airlock"); 
     while (timestamp > millis()) {
         wdt_reset();
         Mother.sendCmdToSlave(timeoutMsg);
