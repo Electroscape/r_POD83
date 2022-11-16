@@ -13,7 +13,7 @@
  * - enumerating brain types
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
  * add numbering of brains to header to make changes easiers
- *  Q: 
+ *  Q:
  * 
  */
 
@@ -35,6 +35,7 @@ int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 int inputTicks = 0;
+bool unlocked = false;
 
 // general timestamp going to use this to timeout the card repsentation in unlocked and RFIDoutput
 unsigned long timestamp = millis();
@@ -113,7 +114,7 @@ void outputRFID(int index) {
 }
 
 
-bool passwordInterpreter(char* password) {
+bool passwordInterpreter(char* password, int brainNo = -1) {
     Mother.STB_.defaultOled.clear();
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
@@ -153,6 +154,7 @@ void handleResult(char *cmdPtr) {
     Mother.sendCmdToSlave(msg);
 }
 
+
 // again good candidate for a mother specific lib
 bool checkForRfid() {
     if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
@@ -170,6 +172,7 @@ void interpreter() {
         checkForRfid();
     }
 }
+
 
 void oledUpdate() {
     char msg[32] = "";
@@ -340,6 +343,7 @@ int inputDetector() {
 
     return -1;
 }
+
 
 void handleRpiInputs() {
 

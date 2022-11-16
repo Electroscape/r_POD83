@@ -13,7 +13,6 @@
 #define doorOpen    0
 #define doorClosed  1
 
-#define ledBrain 1
 #define txRelayAmount 2
 #define ledCnt 13
 
@@ -24,6 +23,14 @@ unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 8000;
 
 #define inputCnt 4
+#define polledSlaveCnt 2    // can differ from actual defined brains since not all may be polled
+
+enum brains {
+    airlockAccess,      // access module on the outside
+    labAccess,          // access module on the inside of the lab
+    ledBrain
+};
+
 
 enum inputs {
     bootTrigger,        // Red
