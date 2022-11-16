@@ -232,8 +232,9 @@ void setup() {
 
     // technicall 2 but no need to poll the 2nd as it only receives the colour
     Mother.rs485SetSlaveCount(1);
-
     gameReset();
+    delay(5000);
+    wdt_reset();
 }
 
 
