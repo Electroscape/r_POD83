@@ -1,9 +1,9 @@
 import cv2
 
-
 # camera = cv2.VideoCapture("rtsp://TeamEscape:*********@192.168.88.21:88/videoMain")
-# camera = cv2.VideoCapture("rtsp://rtsp.stream/pattern")
-camera = cv2.VideoCapture(1)
+camera = cv2.VideoCapture("rtsp://rtsp.stream/pattern")
+# camera = cv2.VideoCapture(1)
+
 
 def gen_frames():
     '''
@@ -20,4 +20,3 @@ def gen_frames():
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
-

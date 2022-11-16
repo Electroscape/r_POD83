@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, Response
+from flask import Blueprint, render_template
 from fns import get_samples_status, listdir_no_hidden
-from cam_stream import gen_frames
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
 
@@ -55,7 +54,8 @@ def microscope():
 @app_pages.route('/gas_analysis', methods=['GET', 'POST'])
 def gas_analysis():
     config = {
-        "title": "Gas Analysis"
+        "title": "Gas Analysis",
+        "samples": get_samples_status()
     }
     print("open gas analysis page")
     return render_template("p_gas_analysis.html", g_config=config)
@@ -89,11 +89,6 @@ def media_control():
     }
     print("open media page")
     return render_template("p_media.html", g_config=config)
-
-
-@app_pages.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app_pages.errorhandler(404)

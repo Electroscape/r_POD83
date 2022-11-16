@@ -24,7 +24,7 @@ function switchLanguage(lang) {
 function loadControlPanel(jsonResponse) {
     let CPanel = document.getElementById("ControlPanel")
 
-    if (!CPanel) return
+    if (!CPanel) return false;
     //CPanel.innerHTML = ""
     let resTxt = ""
     for (let jsonResponseElement of jsonResponse.btns) {

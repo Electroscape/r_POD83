@@ -74,16 +74,6 @@ def get_samples_status() -> list:
         {"name": "virus four",
          "status": "released",
          "icon": "fas fa-lock-open",
-         "info": "toxic"},
-
-        {"name": "virus five",
-         "status": "locked",
-         "icon": "fas fa-lock",
-         "info": "nobel"},
-
-        {"name": "virus six",
-         "status": "released",
-         "icon": "fas fa-lock-open",
-         "info": "aggressive"}
+         "info": "toxic"}
     ]
     return samples

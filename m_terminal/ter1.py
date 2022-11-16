@@ -1,6 +1,8 @@
-from flask import request, Flask, render_template, send_from_directory, redirect
+from flask import request, Flask, render_template, send_from_directory, redirect, Response
 from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
+
+from cam_stream import gen_frames
 from ring_list import RingList
 from fns import js_r
 from pages import app_pages
@@ -30,7 +32,6 @@ def browser():
         "lang": g_lang
     }
     print("open wiki page")
-    print(f"g_lang2 = {g_lang}")
     posts = [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith(g_lang)]
     return render_template("p_browser.html", g_config=config, posts=posts)
 
@@ -83,12 +84,15 @@ def switch_language():
             print(f"Switch language to {g_lang}")
             # Switch blog language
             if "browser" in url:
-                print(request.referrer)
-                print(f"g_lang1 = {g_lang}")
-                return redirect(url)
-            else:
-                return get_globals()
+                print("switch lang in wiki")
+                flatpages.reload()
+                redirect(url)
+            return get_globals()
 
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/get_chat', methods=['GET', 'POST'])
