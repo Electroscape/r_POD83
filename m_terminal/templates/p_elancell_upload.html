@@ -24,20 +24,20 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            margin: 10px;
         }
 
         .container button {
-            width: 100%;
+            width: 30%;
             height: 4rem;
             font-size: 1.5rem;
-            background: none;
-            border: none;
-            outline: none;
             cursor: pointer;
+            margin: 40px;
         }
 
         .container .loading-wrapper {
             width: 70%;
+            margin: 20px;
             box-sizing: border-box;
             display: none;
         }
@@ -60,6 +60,7 @@
             height: 100%;
             background: #41FF00;
         }
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
             integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
@@ -68,17 +69,17 @@
 
 
 {% block content %}
-    <div class="container">
-        <button id="btn">Press ENTER to START</button>
-        <div class="loading-wrapper">
-            <h1>Loading...</h1>
-            <div class="loading-bar">
-                <div class="loading-fill"></div>
+    <div class="mail">
+        <div class="container">
+            <button id="btn" class="btn btn-info">COMPILE DATA</button>
+            <div class="loading-wrapper">
+                <h1>Loading...</h1>
+                <div class="loading-bar">
+                    <div class="loading-fill"></div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="mail">
-        <div class="w-100">
+        <div class="w-100 mt-1">
             <h2 class="mb-3">Upload Results to
                 <input class="submit" type="submit" name="submit" value="elancell"/>
             </h2>
@@ -109,37 +110,46 @@
             greedy: false //The initial mask shown will be "" instead of "-____".
         });
 
-        const btn = document.querySelector('#btn');
-        const loadingScreen = document.querySelector('.loading-wrapper');
-        let isBtn = true;
-        let isLoading = false;
-        let i = 0;
+        document.addEventListener('DOMContentLoaded', () => {
 
-        const toggleScreens = () => {
-            isBtn = !isBtn;
-            isLoading = !isLoading;
-            isBtn ? btn.style.display = 'block' : btn.style.display = 'none';
-            isLoading ? loadingScreen.style.display = 'block' : loadingScreen.style.display = 'none';
-        }
+            const btn = document.querySelector('#btn');
+            const loadingScreen = document.querySelector('.loading-wrapper');
+            let isBtn = true;
+            let isLoading = false;
+            let i = 0;
 
-        const animate = () => {
-            if (i === 0) {
-                i = 1;
-                const loadingFill = document.querySelector('.loading-fill');
-                let width = 1;
-                const interval = setInterval(fill, 50);
+            const toggleScreens = () => {
+                isBtn = !isBtn;
+                isLoading = !isLoading;
+                isBtn ? btn.style.display = 'block' : btn.style.display = 'none';
+                isLoading ? loadingScreen.style.display = 'block' : loadingScreen.style.display = 'none';
+            }
 
-                function fill() {
-                    if (width >= 100) {
-                        clearInterval(interval);
-                        i = 0;
-                        toggleScreens();
-                    } else {
-                        width++;
-                        loadingFill.style.width = width + '%';
+            const animate = () => {
+                if (i === 0) {
+                    i = 1;
+                    const loadingFill = document.querySelector('.loading-fill');
+                    let width = 1;
+                    const interval = setInterval(fill, 50);
+
+                    function fill() {
+                        if (width >= 100) {
+                            clearInterval(interval);
+                            i = 0;
+                            toggleScreens();
+                        } else {
+                            width++;
+                            loadingFill.style.width = width + '%';
+                        }
                     }
                 }
             }
-        }
+
+            btn.addEventListener('click', () => {
+                toggleScreens();
+                animate();
+            });
+
+        });
     </script>
 {% endblock %}

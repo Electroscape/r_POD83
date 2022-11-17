@@ -3,7 +3,7 @@
  */
 
 // Required password
-const password = [7, 7, 8];
+const password = [1, 2, 3, 4];
 // What the user has entered
 var entered = [];
 
