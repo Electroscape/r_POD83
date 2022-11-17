@@ -23,19 +23,39 @@ function switchLanguage(lang) {
 
 function loadControlPanel(jsonResponse) {
     let CPanel = document.getElementById("ControlPanel")
-
-    if (!CPanel) return false;
-    //CPanel.innerHTML = ""
+    let PContainer = document.getElementById("posts-container")
     let resTxt = ""
-    for (let jsonResponseElement of jsonResponse.btns) {
-        resTxt += jsonResponseElement.html
-    }
-    CPanel.innerHTML = resTxt;
 
-    for (let jsonResponseElement of jsonResponse.btns) {
-        if (jsonResponseElement.auth) {
-            disableOption(jsonResponseElement, jsonResponse.auth_msg);
+    if (CPanel) {
+        //CPanel.innerHTML = ""
+
+        for (let jsonResponseElement of jsonResponse.btns) {
+            resTxt += jsonResponseElement.html
         }
+        CPanel.innerHTML = resTxt;
+
+        for (let jsonResponseElement of jsonResponse.btns) {
+            if (jsonResponseElement.auth) {
+                disableOption(jsonResponseElement, jsonResponse.auth_msg);
+            }
+        }
+    } else if (PContainer) {
+        let resTxt = ""
+        for (const post of jsonResponse) {
+            resTxt += `<div class="card col-md-6 m-sm-auto">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a class="stretched-link"
+                           href=${post.url}>
+                            ${post.title}
+                        </a>
+                    </h5>
+                    <p class="card-text"> ${post.exert} </p>
+                    <small> ${post.date} </small>
+                </div>
+            </div>`
+        }
+        PContainer.innerHTML = resTxt
     }
 }
 

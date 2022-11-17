@@ -7,10 +7,10 @@
 
 #keypad {
     min-width: 400px;
-    width: 50%;
+    width: 0%;
     background-color: gray;
     margin: 0 auto;
-    overflow: auto;
+    overflow: hidden;
     /* to prevent margin collapse */
 }
 
@@ -19,7 +19,7 @@
     margin: 1%;
     padding: 1% 2%;
     background-color: #E1E5EE;
-    font-size: 4em;
+    font-size: 3em;
     letter-spacing: .4em;
     line-height: 65px;
     text-align: center;
@@ -48,5 +48,9 @@
     width: 30%;
     margin: .7% 1.65%;
     height: 60px;
-    font-size: 3em;
+    font-size: 1.7em;
+}
+
+#lang-box {
+    visibility: hidden;
 }

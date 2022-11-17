@@ -11,7 +11,7 @@
             startBtn.hidden = true;
             let streamContainer = document.getElementById("streamContainer");
             streamContainer.innerHTML = `<h3 class="mt-5">Live Streaming</h3>
-        <img src="{{ url_for('app_pages.video_feed') }}" width="100%">`;
+        <img src="{{ url_for('video_feed') }}" width="100%">`;
         }
     </script>
 {% endblock %}

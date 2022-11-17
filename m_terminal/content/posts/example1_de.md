@@ -1,5 +1,5 @@
 ---
-title: Sollte es JJJJ-MM-TT oder JJJJ-TT-MM sein? Meine Gedanken
+title: Sollte es JJJJ-MM-TT oder JJJJ-TT-MM sein?
 date: 2013-08-27
 excerpt_separator: <!--more-->
 ---

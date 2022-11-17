@@ -3,7 +3,6 @@ import os
 from flask import json
 
 
-
 def js_r(filename: str, auth="") -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict

@@ -1,4 +1,4 @@
-from flask import request, Flask, render_template, send_from_directory, redirect, Response
+from flask import request, Flask, render_template, send_from_directory, Response, url_for
 from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
 
@@ -32,8 +32,12 @@ def browser():
         "lang": g_lang
     }
     print("open wiki page")
-    posts = [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith(g_lang)]
-    return render_template("p_browser.html", g_config=config, posts=posts)
+    posts = {
+        "en": [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith("en")],
+        "de": [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith("de")]
+    }
+    html_path = f'{terminal_name}/p_browser.html'
+    return render_template(html_path, g_config=config, g_lang=g_lang, posts=posts)
 
 
 @app.route('/browser/<name>/', methods=['GET', 'POST'])
@@ -46,7 +50,8 @@ def get_post(name):
 
     path = '{}/{}'.format(POST_DIR, name_lang)
     post = flatpages.get_or_404(path)
-    return render_template('post.html', g_config=config, post=post)
+    html_path = f'{terminal_name}/post.html'
+    return render_template(html_path, g_config=config, post=post)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -80,14 +85,31 @@ def switch_language():
         url = request.referrer
 
         if req_lang or req_lang != g_lang:
+            app.jinja_env.cache = {}
             g_lang = req_lang.strip()
             print(f"Switch language to {g_lang}")
             # Switch blog language
             if "browser" in url:
                 print("switch lang in wiki")
-                flatpages.reload()
-                redirect(url)
+                return get_posts()
+
             return get_globals()
+
+
+def get_posts():
+    posts = [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith(g_lang)]
+    posts_json = []
+    for p in posts:
+        posts_json.append(
+            {
+                "html": p.html,
+                "title": p.meta["title"],
+                "date": p.meta["date"],
+                "url": url_for('get_post', name=p.path.replace('posts/', '')),
+                "exert": p.body[:100] + "..."
+            }
+        )
+    return posts_json
 
 
 @app.route('/video_feed')
@@ -157,4 +179,6 @@ flatpages = FlatPages(app)
 app.config.from_object(__name__)
 
 if __name__ == "__main__":
+    app.jinja_env.auto_reload = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     app.run(debug=True, host='0.0.0.0', port=5551)
