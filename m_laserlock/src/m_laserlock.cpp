@@ -35,10 +35,10 @@ int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 int inputTicks = 0;
-bool unlocked = false;
 
 // general timestamp going to use this to timeout the card repsentation in unlocked and RFIDoutput
 unsigned long timestamp = millis();
+int cardsPresent = 0;
 
 
 void enableWdt() {
@@ -115,7 +115,7 @@ void outputRFID(int index) {
 
 
 bool passwordInterpreter(char* password, int brainNo = -1) {
-    Mother.STB_.defaultOled.clear();
+    // Mother.STB_.defaultOled.clear();
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             if ( strlen(passwords[passNo]) == strlen(password) &&
@@ -123,7 +123,10 @@ bool passwordInterpreter(char* password, int brainNo = -1) {
             ) {
                 delay(500);
                 outputRFID(passNo);
-                if (stage == unlock) { stage = unlocked; }
+                if (stage == unlock && Mother.rs485getPolledSlave() == airlockAccess) { 
+                    stage = unlocked; 
+                    // start polling the 2nd Access since there is no need before
+                    Mother.rs485SetSlaveCount(2);
                 return true;
             }
         }
@@ -134,15 +137,18 @@ bool passwordInterpreter(char* password, int brainNo = -1) {
 /**
  * @brief handles evalauation of codes and sends the result to the access module
  * @param cmdPtr 
+ * @todo handle the unlock/locking here with 2 access modules
 */
 void handleResult(char *cmdPtr) {
-    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
 
     // prepare return msg with correct or incorrect
     char msg[10] = "";
     char noString[3] = "";
     strcpy(msg, keypadCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
+
+    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
+
     if (passwordInterpreter(cmdPtr) && (cmdPtr != NULL)) {
         sprintf(noString, "%d", KeypadCmds::correct);
         strcat(msg, noString);
@@ -280,11 +286,11 @@ void stageActions() {
             outputRFIDReset();
             wdt_reset();
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20);
-            wdt_disable();
-            delay(15000);
-            enableWdt();
-            stage = idle;
         break; 
+        case locked:
+            delay(5000);
+            outputRFIDReset();
+        break;
     }
 }
 
@@ -310,6 +316,10 @@ void stageUpdate() {
     lastStage = stage;
 
     Mother.setFlags(0, flagMapping[stageIndex]);
+    // for now no need to make it work properly scaling, need to build afnc repertoir anyways
+    if (Mother.getSlaveCnt() >= 2) {
+        Mother.setFlags(1, flagMapping[stageIndex]);
+    }
     oledUpdate();
     stageActions();
 }
@@ -367,6 +377,7 @@ void handleRpiInputs() {
             delay(5000);
             stage = decon;
         break;
+        // @todo: is this still necessary?
         case resetTrigger:
             Mother.motherRelay.digitalWrite(door, doorClosed);
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 80);
@@ -387,7 +398,7 @@ void setup() {
     Serial.println("WDT endabled");
     enableWdt();
 
-    // technicall 2 but no need to poll the 2nd 
+    // technicall 3 but for the first segments till unlocked there is no need
     Mother.rs485SetSlaveCount(1);
 
     setStageIndex();

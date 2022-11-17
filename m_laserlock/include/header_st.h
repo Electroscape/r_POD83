@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 8
+#define StageCount 9
 #define PasswordAmount 2
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -110,7 +110,8 @@ enum stages {
     unlock = 16,
     failedUnlock = 32,
     unlocked = 64,
-    idle = 128
+    idle = 128, 
+    locked = 256
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -126,8 +127,9 @@ int flagMapping[StageCount] {
     0,          // decon
     rfidFlag,   // unlock
     0,          // failedUnlock
-    0,          // unlocked
-    0           // idle
+    rfidFlag,   // unlocked ... there is a cooldown on the access module so it should be fine to reactivate
+    0,          // idle
+    rfidFlag    // locked
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -137,8 +139,8 @@ char passwords[PasswordAmount][MaxPassLen] = {
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    unlock,
-    unlock
+    unlock + unlocked,
+    unlock + unlocked
 };
 // make a mapping of what password goes to what stage
 
@@ -151,5 +153,6 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Scan Arm",             // unlock
     "Timeout",              // failedUnlock
     "Access Granted",       // unlocked
+    "",
     ""
 };
