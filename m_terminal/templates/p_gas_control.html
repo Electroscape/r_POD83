@@ -2,117 +2,43 @@
 
 
 {% block head %}
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <style>
-        #selectable .ui-selecting {
-            background: #FECA40;
-        }
-
-        #selectable .ui-selected {
-            background: #ef3742;
-            color: white;
-        }
-
-        #selectable {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            /* width: 100%; */
-        }
-
-        #selectable li {
-            margin: 1%;
-            padding: 1rem;
-            float: left;
-            width: 20%;
-            font-size: 2em;
-            text-align: center;
-            border-radius: 15px;
-            border: 1px solid black;
-        }
-
-
-        .flip-card {
-            background-color: transparent;
-            width: 100%;
-            height: 300px;
-            perspective: 1000px;
-        }
-
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .flip-card:hover .flip-card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-        }
-
-        .flip-card-front {
-            background-color: #bbb;
-            color: black;
-        }
-
-        .flip-card-back {
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            transform: rotateY(180deg);
-        }
-
-        .ui-state-default {
-            background: transparent;
-        }
-
-        ul {
-            display: flex;
-            justify-content: center;
-        }
-    </style>
-
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis.css') }}" media="screen">
 {% endblock %}
 
 {% block content %}
-    <div class="mx-auto">
-
-        <ul id="selectable">
-            {% for t in range(4) %}
-                <li class="ui-state-default">
-                    <div class="flip-card">
-                        <div class="flip-card-inner">
-                            <div class="flip-card-front">
-                                <h1 class="mb-7">Sample #{{ loop.index }}</h1>
-                                <img class="w-50" src="{{ url_for('static', filename='imgs/trial.png') }}">
-                            </div>
-                            <div class="flip-card-back">
-                                <p class="mt-5">Gives one time access to gas analysis</p>
-                            </div>
+    <div id="fakeBody">
+        <div class="options">
+            <script src="{{ url_for('static',filename='js/keypad.js') }}">
+            </script>
+            {% for sample in g_config.samples %}
+                <div id="option{{ loop.index }}" class="option {% if loop.index0 == 0 %}
+                            active
+                            {% endif %}">
+                    <div style="display: none" class="shadow"></div>
+                    <div class="gameContentClass {% if loop.index0 != 0 %}
+                            d-none
+                            {% endif %}" id="gameContent{{ loop.index }}">
+                        {% with keyTitle="Code #" ~ loop.index, keyPass="111" ~ loop.index, keyID=loop.index0 %}
+                            {% include "keypad.html" %}
+                        {% endwith %}
+                    </div>
+                    <div class="label">
+                        <div class="icon">
+                            <i class="{{ sample.icon }}"></i>
+                        </div>
+                        <div class="info">
+                            <div class="main">{{ sample.name }}</div>
+                            <div class="sub">{{ sample.status }}</div>
                         </div>
                     </div>
-                </li>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
+
 {% endblock %}
 
 {% block add_js %}
-    <script type="text/javascript">
-        $(function () {
-            $("#selectable").selectable();
-        });
+    <script src="{{ url_for('static',filename='js/gas_analysis.js') }}">
     </script>
 {% endblock %}

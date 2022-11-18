@@ -17,7 +17,8 @@ def lab_control():
 @app_pages.route('/gas_control', methods=['GET', 'POST'])
 def gas_control():
     config = {
-        "title": "Gas Control"
+        "title": "Gas Control",
+        "samples": get_samples_status()
     }
     print("open gas page")
     return render_template("p_gas_control.html", g_config=config)

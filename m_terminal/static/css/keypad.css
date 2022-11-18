@@ -1,11 +1,11 @@
-#top {
+.k-top {
     color: black;
     text-align: center;
     font-size: 5em;
     padding-inline: 50px;
 }
 
-#keypad {
+.k-keypad {
     min-width: 400px;
     width: 0%;
     background-color: gray;
@@ -14,7 +14,7 @@
     /* to prevent margin collapse */
 }
 
-#keypad #screen {
+.k-keypad .k-screen {
     height: 70px;
     margin: 1%;
     padding: 1% 2%;
@@ -25,24 +25,24 @@
     text-align: center;
 }
 
-#keypad #screen.success {
+.k-keypad .k-screen.success {
     background-color: #7AC74F;
     border: 2px solid #A1CF6B;
 }
 
-#keypad #screen.failed {
+.k-keypad .k-screen.failed {
     background-color: #E0C879;
     border: 2px solid #E87461;
 }
 
-#keypad #buttons {
+.k-keypad .k-buttons {
     width: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
 
-#keypad button {
+.k-keypad button {
     background-color: #ccc;
     box-sizing: border-box;
     width: 30%;

@@ -2,6 +2,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis_game.css') }}" media="screen">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +14,9 @@
                             {% endif %}">
                     <div style="display: none" class="shadow"></div>
 
-                    <div class="gameContentClass" id="gameContent{{ loop.index }}">
+                    <div class="gameContentClass {% if loop.index0 != 0 %}
+                            d-none
+                            {% endif %}" id="gameContent{{ loop.index }}">
                         <section class="score">
                             <span style="display: none" class="correct">0</span>
                             <span style="display: none" class="total">0</span>
@@ -45,11 +48,12 @@
         </div>
     </div>
 
-
 {% endblock %}
 
 {% block add_js %}
     <script src="{{ url_for('static',filename='js/g_analysis_brands.js') }}">
+    </script>
+    <script src="{{ url_for('static',filename='js/gas_analysis_game.js') }}">
     </script>
     <script src="{{ url_for('static',filename='js/gas_analysis.js') }}">
     </script>
