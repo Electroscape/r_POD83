@@ -17,12 +17,13 @@
 #define ledCnt 13
 
 // how long the system remains in unlock and accepts RFID cards 
-unsigned long presentationTime = 10000;
+unsigned long deconRFIDTimeout = 10000;
 // how long the signal of RFID identity remains active 
 unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 8000;
+unsigned long rfidTimeout = 3000;
 
-#define inputCnt 3
+#define inputCnt 4
 
 enum brains {
     airlockAccess,      // access module on the outside
@@ -35,9 +36,11 @@ enum inputs {
     failedBootTrigger,        // Red
     deconTrigger,       // Black
     bootupTrigger,    // Green
+    reedDoor
 };
 
 uint8_t inputTypes[inputCnt] = {
+    INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP
@@ -136,8 +139,8 @@ char passwords[PasswordAmount][MaxPassLen] = {
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    unlock + unlocked,
-    unlock + unlocked
+    unlock + unlocked + locked,
+    unlock + unlocked + locked
 };
 // make a mapping of what password goes to what stage
 

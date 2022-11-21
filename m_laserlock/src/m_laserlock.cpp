@@ -38,6 +38,8 @@ int inputTicks = 0;
 
 // general timestamp going to use this to timeout the card repsentation in unlocked and RFIDoutput
 unsigned long timestamp = millis();
+// timedTrigger shall reset this value 
+// cardsPreset adding bits of present cards with | 
 int cardsPresent = 0;
 
 
@@ -86,6 +88,9 @@ void timedTrigger() {
         case unlock: 
             stage = failedUnlock;
         break;
+        default:  
+            cardsPresent = 0;
+        break;
     }
 }
 
@@ -114,21 +119,41 @@ void outputRFID(int index) {
 }
 
 
-bool passwordInterpreter(char* password, int brainNo = -1) {
+bool passwordInterpreter(char* password) {
     // Mother.STB_.defaultOled.clear();
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             if ( strlen(passwords[passNo]) == strlen(password) &&
                 strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0
             ) {
-                delay(500);
-                outputRFID(passNo);
+
                 if (stage == unlock && Mother.getPolledSlave() == airlockAccess) { 
+                    delay(500);
                     stage = unlocked; 
                     // start polling the 2nd Access since there is no need before
                     Mother.rs485SetSlaveCount(2);
+                } else {
+                    timestamp = millis() + rfidTimeout;
+                    int currentValue = (1 << passNo) + (PasswordAmount << Mother.getPolledSlave()) - PasswordAmount;
+                    cardsPresent = cardsPresent | currentValue;
+                    if (currentValue > 0 && cardsPresent > currentValue) {
+                        outputRFID(cardsPresent);
+                        timestamp = millis() + rfidTxDuration;
+                        switch (stage) {
+                            case unlocked: 
+                                if (!inputPCF.digitalRead(reedDoor)) {
+                                    stage = locked; 
+                                } // maybe make an oledPrintCmd here?
+                            break;
+                            case locked: 
+                                stage = unlocked; 
+                            break;
+                        }
+                    }
+                    
                 }
                 return true;
+
             }
         }
     }
@@ -174,21 +199,18 @@ void handleResult(char *cmdPtr) {
 
     // prepare return msg with correct or incorrect
     char msg[10] = "";
-    char noString[3] = "";
     strcpy(msg, keypadCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
 
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
 
     if (passwordInterpreter(cmdPtr) && (cmdPtr != NULL)) {
-        sprintf(noString, "%d", KeypadCmds::correct);
-        strcat(msg, noString);
-    } else {
-        sprintf(noString, "%d", KeypadCmds::wrong);
-        strcat(msg, noString);
+        if (stage == unlock) {
+            sendResult(true);
+        } else {
+
+        }
     }
-  
-    Mother.sendCmdToSlave(msg);
 }
 
 
@@ -198,6 +220,7 @@ bool checkForRfid() {
         return false;
     } 
     char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
+    cardsPresent++;
     handleResult(cmdPtr);
     wdt_reset();
     return true;
@@ -294,7 +317,7 @@ void stageActions() {
             // LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
             // doesnt specify fade but may aswell see how it works
             LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
-            timestamp = millis() + presentationTime;
+            timestamp = millis() + deconRFIDTimeout;
             stage = unlock;
         break;
         case unlock:
@@ -313,13 +336,18 @@ void stageActions() {
         case unlocked:
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50);
             Mother.motherRelay.digitalWrite(door, doorOpen);
-            delay(5000);
+            wdt_disable();
+            delay(rfidTxDuration);
+            enableWdt();
             outputRFIDReset();
             wdt_reset();
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20);
         break; 
         case locked:
-            delay(5000);
+            Mother.motherRelay.digitalWrite(door, doorOpen);
+            wdt_disable();
+            delay(rfidTxDuration);
+            enableWdt();
             outputRFIDReset();
         break;
     }
@@ -397,8 +425,6 @@ void handleRpiInputs() {
         case bootupTrigger: 
             stage = operational;
         case deconTrigger: 
-            Serial.println("setting decon");
-            delay(5000);
             stage = decon;
         break;
     }
