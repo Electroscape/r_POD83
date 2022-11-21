@@ -14,7 +14,7 @@
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
  * add numbering of brains to header to make changes easiers
  *  Q:
- * 
+ * - trigger from logging ot activates the RFIDs to lock/unlock
  */
 
 
@@ -123,16 +123,47 @@ bool passwordInterpreter(char* password, int brainNo = -1) {
             ) {
                 delay(500);
                 outputRFID(passNo);
-                if (stage == unlock && Mother.rs485getPolledSlave() == airlockAccess) { 
+                if (stage == unlock && Mother.getPolledSlave() == airlockAccess) { 
                     stage = unlocked; 
                     // start polling the 2nd Access since there is no need before
                     Mother.rs485SetSlaveCount(2);
+                }
                 return true;
             }
         }
     }
     return false;
 }
+
+
+/**
+ * @brief  
+ * @param result 
+ * @param brainNo can be set to > labAccess so it sends to both brains
+*/
+void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
+
+    // prepare return msg with correct or incorrect
+    char msg[10] = "";
+    char noString[3] = "";
+    strcpy(msg, keypadCmd.c_str());
+    strcat(msg, KeywordsList::delimiter.c_str());
+
+    if (result) {
+        sprintf(noString, "%d", KeypadCmds::correct);
+    } else {
+        sprintf(noString, "%d", KeypadCmds::wrong);
+    }
+    strcat(msg, noString);
+  
+    // improper way of doing things really,
+    if (brainNo >= labAccess) {
+        for (int i=0; i<labAccess; i++) {
+            Mother.sendCmdToSlave(msg, i);
+        }
+    }
+}
+
 
 /**
  * @brief handles evalauation of codes and sends the result to the access module
@@ -341,7 +372,6 @@ int inputDetector() {
 
     int ticks;
     for (int pin=0; pin<inputCnt; pin++) {
-        if (pin == connectionFixed) { continue; }
         ticks = 0;
         while(!inputPCF.digitalRead(pin)) {
             if (ticks > 5) {
@@ -361,28 +391,15 @@ void handleRpiInputs() {
     lastStage = idle;
 
     switch (inputDetector()) {
-        case bootTrigger: 
-            if (!inputPCF.digitalRead(connectionFixed)) {
-                Serial.println("setting operational");
-                delay(5000);
-                stage = operational;
-            } else {
-                Serial.println("setting failed");
-                delay(5000);
-                stage = failedBoot;
-            }
+        case failedBootTrigger: 
+            stage = failedBoot;
         break;
+        case bootupTrigger: 
+            stage = operational;
         case deconTrigger: 
             Serial.println("setting decon");
             delay(5000);
             stage = decon;
-        break;
-        // @todo: is this still necessary?
-        case resetTrigger:
-            Mother.motherRelay.digitalWrite(door, doorClosed);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 80);
-            // not necessary but makes sense for safety
-            outputRFIDReset();
         break;
     }
 

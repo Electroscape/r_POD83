@@ -22,8 +22,7 @@ unsigned long presentationTime = 10000;
 unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 8000;
 
-#define inputCnt 4
-#define polledSlaveCnt 2    // can differ from actual defined brains since not all may be polled
+#define inputCnt 3
 
 enum brains {
     airlockAccess,      // access module on the outside
@@ -33,14 +32,12 @@ enum brains {
 
 
 enum inputs {
-    bootTrigger,        // Red
+    failedBootTrigger,        // Red
     deconTrigger,       // Black
-    connectionFixed,    // Green
-    resetTrigger        // white
+    bootupTrigger,    // Green
 };
 
 uint8_t inputTypes[inputCnt] = {
-    INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP
