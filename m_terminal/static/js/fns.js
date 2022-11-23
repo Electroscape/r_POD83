@@ -19,54 +19,18 @@ function switchLanguage(lang) {
     }).catch(error => {
         console.log('error with access token req!')
     })
+    return true;
 }
 
-function loadControlPanel(jsonResponse) {
-    let CPanel = document.getElementById("ControlPanel")
-    let PContainer = document.getElementById("posts-container")
-    let resTxt = ""
-
-    if (CPanel) {
-        //CPanel.innerHTML = ""
-
-        for (let jsonResponseElement of jsonResponse.btns) {
-            resTxt += jsonResponseElement.html
-        }
-        CPanel.innerHTML = resTxt;
-
-        for (let jsonResponseElement of jsonResponse.btns) {
-            if (jsonResponseElement.auth) {
-                disableOption(jsonResponseElement, jsonResponse.auth_msg);
-            }
-        }
-    } else if (PContainer) {
-        let resTxt = ""
-        for (const post of jsonResponse) {
-            resTxt += `<div class="card col-md-6 m-sm-auto">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a class="stretched-link"
-                           href=${post.url}>
-                            ${post.title}
-                        </a>
-                    </h5>
-                    <p class="card-text"> ${post.exert} </p>
-                    <small> ${post.date} </small>
-                </div>
-            </div>`
-        }
-        PContainer.innerHTML = resTxt
-    }
-}
-
-function disableOption(elem, auth_msg) {
-    let maskTxt = "<div class=\"mask\" style=\"background-color: rgba(0, 0, 0, 0.6)\">\n" +
-        "    <div class=\"d-flex justify-content-center align-items-center h-100\">\n" +
+function disableOption(elem, auth_msg, clr = "rgba(0, 0, 0, 0.6)") {
+    let maskTxt = `<div class="mask" style="background-color: ${clr}">\n` +
+        "<div class=\"d-flex justify-content-center align-items-center h-100\">\n" +
         `<p class=\"text-white mb-0\">${auth_msg}</p>` +
-        "    </div>\n" +
-        "  </div>"
+        "</div></div>"
     let container = document.getElementById(elem.id);
+    if (!container) return false;
+
     let a_elem = document.getElementById("a_" + elem.id);
     a_elem.classList.add("disabled");
-    container.innerHTML += maskTxt;
+    container.innerHTML = elem.html + maskTxt;
 }

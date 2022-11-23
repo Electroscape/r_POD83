@@ -1,0 +1,313 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+    <style>
+        input {
+            background: none;
+            color: Red;
+            outline: none;
+            border: none;
+            font-family: monospace;
+        }
+
+        prtscr {
+            font-family: monospace;
+            white-space: pre;
+        }
+
+        #cmdinputs {
+            display: none;
+        }
+
+        button {
+            background: none;
+            border: solid 1px red;
+            padding: 1rem;
+            color: red;
+            text-shadow: maroon 0 0 8px;
+            font-family: monospace;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button:active {
+            background: red;
+            color: maroon;
+        }
+
+        #bootContainer {
+            color: green;
+            overflow-y: scroll;
+            height: 75vh;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <script src="{{ url_for('static',filename='js/keypad.js') }}">
+    </script>
+    <audio id="errorSnd">
+        <source src="{{ url_for('static', filename='sounds/error.mp3') }}" type="audio/mpeg">
+    </audio>
+    <div id="bootContainer">
+        <!-- <div id="test"></div> -->
+
+        <button id="bootup" class="d-none">Power-On Airlock2</button>
+
+        <pre id="prtscr"></pre>
+
+        <div id="result"></div>
+
+        <form id="cmdinputs" action="javascript:cmd();">
+            <label for="fname">></label>
+            <input type="text" id="fname" name="fname" autofocus autocomplete="off">
+        </form>
+    </div>
+    <div id="k-lab" class="d-none">
+
+        {% with keyTitle="access code", keyPass="{{ g_config.password }}", keyID="0" %}
+            {% include "keypad.html" %}
+        {% endwith %}
+    </div>
+{% endblock %}
+
+{% block add_js %}
+    <script type="text/javascript">
+        var appReady = false;
+
+        function cmd() {
+            inputVar = $('#fname').val();
+            inputVar = inputVar.toLowerCase();
+            inputVarWords = inputVar.split(" ");
+            inputVarFirstWord = inputVarWords[0];
+
+// ===== Input is not a number
+            if (isNaN(inputVarFirstWord)) {
+                switch (inputVarFirstWord) {
+
+                    case "help":
+                    case "-h":
+                    case "-help":
+                        $('#result').html('Help text?');
+                        break;
+
+                    case "tag":
+                        tagItem(inputVarWords[1], inputVarWords[2])
+                        // $('#result').html('a');
+                        break;
+
+                    case "codeword":
+                        exception();
+                        break;
+
+                    default:
+                        searchByKeyword(inputVarFirstWord);
+                    // $('#result').html("'"+inputVarFirstWord+"' is not a recognised command");
+                }
+
+// ===== Input is Number
+            } else {
+                if (inputVarFirstWord == '' || inputVarFirstWord == 0) {
+                    $('#result').html('');
+                } else {
+                    viewItemByListNumber(inputVarFirstWord)
+                }
+            }
+
+            document.getElementById("fname").value = "";
+            return false;
+        }
+
+
+        function showHelpText() {
+            $('#result').html('Help text about this app');
+        }
+
+
+        function viewItemByListNumber(itemNo) {
+            //1. Go to itemURL by number in results
+            $('#result').html('Go to: ' + itemNo);
+        }
+
+
+        function tagItem(item, text) {
+            // alert( inputVarWords.length );
+
+            if (item === undefined || text === undefined || item === '' || text === '') {
+                $('#result').html('Tag: missing parameter');
+            } else {
+                // 1. Find element with name key == _item
+                // 2. Add _text to tags
+                // 3. Confirm result
+                $('#result').html(item + ':' + text);
+            }
+
+        };
+
+
+        function searchByKeyword(keyword) {
+            $('#result').html("Results for: '" + keyword + "'");
+        }
+
+
+        function exception() {
+            // Trigger unhandled exception
+            $('#result').html("Unhandled exception");
+        }
+
+        headerLines = [
+            "░█████╗░██╗██████╗░██╗░░░░░░█████╗░░█████╗░██╗░░██╗\n",
+            "██╔══██╗██║██╔══██╗██║░░░░░██╔══██╗██╔══██╗██║░██╔╝\n",
+            "███████║██║██████╔╝██║░░░░░██║░░██║██║░░╚═╝█████═╝░\n",
+            "██╔══██║██║██╔══██╗██║░░░░░██║░░██║██║░░██╗██╔═██╗░\n",
+            "██║░░██║██║██║░░██║███████╗╚█████╔╝╚█████╔╝██║░╚██╗\n",
+            "╚═╝░░╚═╝╚═╝╚═╝░░╚═╝╚══════╝░╚════╝░░╚════╝░╚═╝░░╚═╝\n",
+            "POD83 Computers: NAVI-BIOS (c) 1983 \nLaboratory Corporation International, Inc. \n \n",
+        ];
+        bootLines = [
+            "LAB: v4.105.22.0 \n\n",
+            "Memory Test:\n",
+            "X RAM -------------------- 2198485991424 KB\n",
+            "WAIT . . . . . . . . . .\n",
+            "Memory Test Complete.\n\n",
+            "Total real memory	=	70,351,551,725,568 KB\nAvailable memory	=	70,351,551,725,568 KB\n",
+            "\n==================================================================\n" +
+            "Booting into System Maintenance Mode\n" +
+            "==================================================================\n\n",
+            "PCI Devices Listing ...\n\n",
+            "Bus  Dev  Fun   Vendor  Device  SVID  SSID  Class\n",
+            "0    20   1345  1235    1235    1235  Temp  Cntrlr\n",
+            "\nBooting paravirtualized kernal on bare hardware\n",
+            "setup_precpu: ",
+            "NR_CPUS:8192 ",
+            "NR_CPUS:8192 ",
+            "NR_CPUS:8192\n",
+            "Built X zonelists in Zone order, mobility grouping on, Total pages 16,940,741,088\n",
+            "Checking aperture ...\n"
+        ]
+
+        errorLines = ["ERROR in app: Exception on /lab_control [INIT]",
+            "Cannot load data from the hardware",
+            "Connection is broken",
+            "ERROR 432 - PLEASE CHECK CONNECTIONS"];
+
+        successLine = "Laser is ready to use";
+        appHeader = "##################################################################\n\n" +
+            "Welcome to AirLock:\n" +
+            "Laser is ready!\n\n" +
+            "##################################################################\n";
+
+        function sleep(ms) {
+            return new Promise(
+                resolve => setTimeout(resolve, ms)
+            );
+        }
+
+        async function delayedGreeting() {
+            let fixed = "{{ g_config.boot }}";
+
+            await sleep(1000);
+            for (let line of headerLines) {
+                appendLine(line);
+            }
+
+            await sleep(1000);
+            for (const line of bootLines) {
+                if (line.startsWith("X RAM")) {
+                    for (let i = 0; i < 10; i++) {
+                        appendLine(line);
+                        await sleep(Math.floor(Math.random() * 50) + 1);
+                    }
+                    await sleep(1000);
+                } else if (line.startsWith("0    20")) {
+                    for (let i = 0; i < 12; i++) {
+                        appendLine(line);
+                        await sleep(Math.floor(Math.random() * 50) + 1);
+                    }
+                    await sleep(1000);
+                } else {
+                    appendLine(line);
+                    await sleep(Math.floor(Math.random() * 300) + 1);
+                }
+            }
+
+            await sleep(1000);
+
+            if (fixed === "fixed") {
+                setAppReady(true);
+                await sleep(10);
+            } else {
+                $.post("{{ url_for('lab_control') }}", {
+                    status: "error"
+                });
+                let snd = document.getElementById("errorSnd");
+                snd.play();
+
+                for (let i = 1; i < 6; i++) {
+                    appendLine(`<p style="color: blue">attempt number: ${i}</p>`);
+                    appendLine("re-initializing the laser");
+                    await sleep(Math.floor(Math.random() * 500) + 1);
+                    for (const line of errorLines) {
+                        appendLine(`<p style="color: red">${line}</p>`);
+                        await sleep(Math.floor(Math.random() * 100) + 1);
+                    }
+                }
+                appendLine(`<p style="color: red"><strong>Failed to start the laser airlock..</strong></p>`);
+
+                alert("𝙴𝚁𝚁𝙾𝚁 𝟺𝟹𝟸 - 𝙻𝚊𝚜𝚎𝚛 𝚊𝚒𝚛𝚕𝚘𝚌𝚔 𝚒𝚗𝚝𝚎𝚛𝚏𝚊𝚌𝚎 𝚗𝚘𝚝 𝚏𝚘𝚞𝚗𝚍 - 𝙿𝚕𝚎𝚊𝚜𝚎 𝚌𝚑𝚎𝚌𝚔 𝚌𝚘𝚗𝚗𝚎𝚌𝚝𝚒𝚘𝚗 𝚊𝚗𝚍 𝚝𝚛𝚢 𝚊𝚐𝚊𝚒𝚗");
+                document.location.href = "/"
+            }
+            await sleep(0);
+
+        }
+
+        function appendLine(string) {
+            $('#prtscr').append(string);
+            // window.scrollTo(0, document.body.scrollHeight);
+            $('#bootContainer').scrollTop($('#bootContainer')[0].scrollHeight);
+        }
+
+        function setAppReady(bool) {
+            appReady = bool;
+        }
+
+        $('#bootup').click(function () {
+            $(this).hide();
+            delayedGreeting();
+        });
+
+
+        // async function memoryTest(times, total, delay){
+        //   //times to loop
+        //   //total to count to
+        //   //delay between loops
+        //   $('#prtscr').append("<div id='ramtest'></div>");
+        //   var i;
+        //   for (i = 0; i < times; i++) {
+        //     $('#ramtest').append(pt10);
+        //     await sleep(123);
+        //   }
+
+        // }
+
+
+        document.addEventListener("keypress", function (event) {
+            if (event.keyCode === 13) {
+                if (appReady === true) {
+                    $('#prtscr').empty();
+                    $('#cmdinputs').show();
+                    $('#text').focus();
+                    appendLine(appHeader);
+                } else {
+                    //
+                }
+            }
+        });
+
+        $("#bootup").click()
+    </script>
+{% endblock %}

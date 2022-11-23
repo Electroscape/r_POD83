@@ -4,16 +4,6 @@ from fns import get_samples_status, listdir_no_hidden
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
 
 
-@app_pages.route('/lab_control', methods=['GET', 'POST'])
-def lab_control():
-    config = {
-        "title": "Lab Control",
-        "password": "777"
-    }
-    print("open lab page")
-    return render_template("p_lab.html", g_config=config)
-
-
 @app_pages.route('/gas_control', methods=['GET', 'POST'])
 def gas_control():
     config = {

@@ -55,22 +55,22 @@ def listdir_no_hidden(path):
 def get_samples_status() -> list:
     # read some GPIOs or get status from hardware
     samples = [
-        {"name": "virus one",
+        {"name": "sample 1",
          "status": "released",
          "icon": "fa-solid fa-check",
          "info": "toxic"},
 
-        {"name": "virus two",
+        {"name": "sample 2",
          "status": "locked",
          "icon": "fas fa-lock",
          "info": "non-toxic"},
 
-        {"name": "virus three",
+        {"name": "sample 3",
          "status": "locked",
          "icon": "fas fa-lock",
          "info": "non-active"},
 
-        {"name": "virus four",
+        {"name": "sample 4",
          "status": "released",
          "icon": "fas fa-lock-open",
          "info": "toxic"}

@@ -22,7 +22,7 @@
       "details": "control the gas flow",
       "image": "static/imgs/home/microscope.png",
       "link": "microscope",
-      "auth": false
+      "auth": "Rachel"
     },
     {
       "title": "Clean Room Access",

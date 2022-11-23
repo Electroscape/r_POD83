@@ -3,7 +3,7 @@
   "id": "TR1",
   "auth_msg": "Erfordert zunächst Authentifizierung",
   "passcodes": {
-    "lab_access": 1234,
+    "lab_access": 4321,
     "gas_control": [1111, 1112, 1113, 1114]
   },
   "btns": [

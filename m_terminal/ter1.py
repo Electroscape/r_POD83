@@ -54,9 +54,31 @@ def get_post(name):
     return render_template(html_path, g_config=config, post=post)
 
 
+@app.route('/lab_control', methods=['GET', 'POST'])
+def lab_control():
+    global airlock_boot
+    config = {
+        "title": "Lab Control",
+        "password": "4321",
+        "boot": airlock_boot
+    }
+
+    if request.method == "POST":
+        res = request.form.get("status")
+        print(f"airlock: {res}")
+        airlock_boot = res
+        return airlock_boot
+
+    print("open lab page")
+    html_path = f'{terminal_name}/p_lab.html'
+    return render_template(html_path, g_config=config)
+
+
 @app.route('/', methods=['GET', 'POST'])
 def entry_point():  # begin of the code
-    return render_template("index.html", g_config=get_globals())
+    conf = get_globals()
+    airlock_element = [d for d in conf["btns"] if d["link"] == "lab_control"][0]
+    return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_element=airlock_element)
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
@@ -173,6 +195,7 @@ sio.connect(server_ip)
 print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores the whole conversation
+airlock_boot = "normal"
 
 app.register_blueprint(app_pages)
 flatpages = FlatPages(app)

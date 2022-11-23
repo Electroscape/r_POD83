@@ -135,12 +135,58 @@
 </script>
 
 <script type="text/javascript">
-        $(function () {
-            let rb = document.getElementById("rb_" + g_lang)
-            if (rb) {
-                rb.checked = true;
+    $(function () {
+        let rb = document.getElementById("rb_" + g_lang)
+        if (rb) {
+            rb.checked = true;
+        }
+    });
+
+    function loadControlPanel(jsonResponse, cb = () => {
+        {% if airlock and airlock == "error" %}
+            let elem = {{ airlock_element |tojson}};
+            disableOption(elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
+        {% endif %}
+    }) {
+        let CPanel = document.getElementById("ControlPanel")
+        let PContainer = document.getElementById("posts-container")
+        let resTxt = ""
+
+        if (CPanel) {
+            //CPanel.innerHTML = ""
+            for (let jsonResponseElement of jsonResponse.btns) {
+                resTxt += jsonResponseElement.html
             }
-        });
+            CPanel.innerHTML = resTxt;
+
+            cb();
+
+            for (let jsonResponseElement of jsonResponse.btns) {
+                if (jsonResponseElement.auth) {
+                    disableOption(jsonResponseElement, jsonResponse.auth_msg);
+                }
+            }
+
+
+        } else if (PContainer) {
+            let resTxt = ""
+            for (const post of jsonResponse) {
+                resTxt += `<div class="card col-md-6 m-sm-auto">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a class="stretched-link"
+                           href=${post.url}>
+                            ${post.title}
+                        </a>
+                    </h5>
+                    <p class="card-text"> ${post.exert} </p>
+                    <small> ${post.date} </small>
+                </div>
+            </div>`
+            }
+            PContainer.innerHTML = resTxt
+        }
+    }
 </script>
 {% block add_js %}
 

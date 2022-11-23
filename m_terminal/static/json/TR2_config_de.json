@@ -22,7 +22,7 @@
       "details": "den Gasfluss kontrollieren",
       "image": "static/imgs/home/microscope.png",
       "link": "microscope",
-      "auth": false
+      "auth": "Rachel"
     },
     {
       "title": "Reinraum-Zugang",
