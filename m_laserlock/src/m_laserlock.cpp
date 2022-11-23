@@ -11,10 +11,11 @@
  *  TODO: 
  * - double post of clean airlock & decontamination
  * - enumerating brain types
+ * 🔲 add feedback to close the door when tryint to lock
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
- * add numbering of brains to header to make changes easiers
+ * ✅ add numbering of brains to header to make changes easiers
  *  Q:
- * - trigger from logging ot activates the RFIDs to lock/unlock
+ * 
  */
 
 
