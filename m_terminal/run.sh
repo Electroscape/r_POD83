@@ -8,7 +8,7 @@ source ./venv/bin/activate
 
 sleep 5 &
 FLASK_APP=server.py FLASK_DEBUG=true flask run --host 0.0.0.0 --port 5500 &
-sleep 15 &
+sleep 5 &
 FLASK_APP=ter1.py FLASK_DEBUG=true flask run --host 0.0.0.0 --port 5551 &
 sleep 5 &
 FLASK_APP=ter2.py FLASK_DEBUG=true flask run --host 0.0.0.0 --port 5552 &

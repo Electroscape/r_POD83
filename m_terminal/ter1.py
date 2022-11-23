@@ -107,7 +107,6 @@ def switch_language():
         url = request.referrer
 
         if req_lang or req_lang != g_lang:
-            app.jinja_env.cache = {}
             g_lang = req_lang.strip()
             print(f"Switch language to {g_lang}")
             # Switch blog language
