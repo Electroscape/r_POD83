@@ -142,12 +142,7 @@
         }
     });
 
-    function loadControlPanel(jsonResponse, cb = () => {
-        {% if airlock and airlock == "error" %}
-            let elem = {{ airlock_element |tojson}};
-            disableOption(elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
-        {% endif %}
-    }) {
+    function loadControlPanel(jsonResponse) {
         let CPanel = document.getElementById("ControlPanel")
         let PContainer = document.getElementById("posts-container")
         let resTxt = ""
@@ -159,7 +154,10 @@
             }
             CPanel.innerHTML = resTxt;
 
-            cb();
+            {% if airlock and airlock == "error" %}
+                let air_elem = jsonResponse.btns.find(x => x.id === '{{ airlock_id }}');
+                disableOption(air_elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
+            {% endif %}
 
             for (let jsonResponseElement of jsonResponse.btns) {
                 if (jsonResponseElement.auth) {

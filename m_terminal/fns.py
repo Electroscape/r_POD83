@@ -29,7 +29,7 @@ def configure_btns(data: list, auth=""):
         # get default html
         txt = options_html
         # create ids
-        d.update({"id": d.get("title").replace(" ", "")})
+        d.update({"id": d.get("link").replace("_", "-")})
         # change authenticated user
         if d["auth"] and auth == d["auth"].lower():
             d["auth"] = False

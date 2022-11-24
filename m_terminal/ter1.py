@@ -77,8 +77,8 @@ def lab_control():
 @app.route('/', methods=['GET', 'POST'])
 def entry_point():  # begin of the code
     conf = get_globals()
-    airlock_element = [d for d in conf["btns"] if d["link"] == "lab_control"][0]
-    return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_element=airlock_element)
+    airlock_id = "lab-control"
+    return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id)
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
