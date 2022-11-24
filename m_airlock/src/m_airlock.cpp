@@ -73,7 +73,7 @@ bool passwordInterpreter(char* password) {
     Mother.STB_.defaultOled.clear();
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
-            if ( strlen(passwords[passNo]) == strlen(password) &&
+            if ( (stage == startStage || strlen(passwords[passNo]) == strlen(password) ) &&
                 strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0
             ) {
             
