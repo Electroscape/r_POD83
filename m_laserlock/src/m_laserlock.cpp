@@ -120,48 +120,6 @@ void outputRFID(int index) {
 }
 
 
-bool passwordInterpreter(char* password) {
-    // Mother.STB_.defaultOled.clear();
-    for (int passNo=0; passNo < PasswordAmount; passNo++) {
-        if (passwordMap[passNo] & stage) {
-            if ( strlen(passwords[passNo]) == strlen(password) &&
-                strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0
-            ) {
-
-                if (stage == unlock && Mother.getPolledSlave() == airlockAccess) { 
-                    delay(500);
-                    stage = unlocked; 
-                    // start polling the 2nd Access since there is no need before
-                    Mother.rs485SetSlaveCount(2);
-                } else {
-                    timestamp = millis() + rfidTimeout;
-                    int currentValue = (1 << passNo) + (PasswordAmount << Mother.getPolledSlave()) - PasswordAmount;
-                    cardsPresent = cardsPresent | currentValue;
-                    if (currentValue > 0 && cardsPresent > currentValue) {
-                        outputRFID(cardsPresent);
-                        timestamp = millis() + rfidTxDuration;
-                        switch (stage) {
-                            case unlocked: 
-                                if (!inputPCF.digitalRead(reedDoor)) {
-                                    stage = locked; 
-                                } // maybe make an oledPrintCmd here?
-                            break;
-                            case locked: 
-                                stage = unlocked; 
-                            break;
-                        }
-                    }
-                    
-                }
-                return true;
-
-            }
-        }
-    }
-    return false;
-}
-
-
 /**
  * @brief  
  * @param result 
@@ -192,6 +150,71 @@ void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
 
 
 /**
+ * @brief handles room specific actions
+ * @param passNo 
+*/
+void handleCorrectPassword(int passNo) {
+
+    // rather specifi logic... prefer to make a negation so things could switch easier
+    if (stage == unlock) { 
+        // delay(500);
+        stage = unlocked; 
+        // start polling the 2nd Access since there is no need before
+        Mother.rs485SetSlaveCount(2);
+        return;
+    }
+
+    // this handles the locking and unlocking via presentation on both sides
+
+    timestamp = millis() + rfidTimeout;
+    cardsPresent &= passNo;
+
+    // not presented on both sides, hence we exit here
+    if (cardsPresent < PasswordAmount) { return; }
+
+    int cardLocality = passNo + Mother.getPolledSlave();
+    // since we trigger we cannot send a 0 so we shift to 1... other output is 2 
+    if (cardLocality == 0) { cardLocality++; }
+    outputRFID(cardLocality);
+    timestamp = millis() + rfidTxDuration;
+
+    switch (stage) {
+        case unlocked: 
+            if (!inputPCF.digitalRead(reedDoor)) {
+                stage = locked; 
+                sendResult(true, 0);
+                sendResult(true, 1);
+            }       
+            // @todo: there needs to be better feedback here currently TBD
+        break;
+        case locked: 
+            stage = unlocked; 
+            sendResult(true, 0);
+            sendResult(true, 1);
+        break;
+    }
+
+}
+
+
+bool passwordInterpreter(char* password) {
+    // Mother.STB_.defaultOled.clear();
+    for (int passNo=0; passNo < PasswordAmount; passNo++) {
+        if (passwordMap[passNo] & stage) {
+            // strlen(passwords[passNo]) == strlen(password) &&
+            if ( strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
+                handleCorrectPassword(passNo);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+
+
+/**
  * @brief handles evalauation of codes and sends the result to the access module
  * @param cmdPtr 
  * @todo handle the unlock/locking here with 2 access modules
@@ -206,11 +229,12 @@ void handleResult(char *cmdPtr) {
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
 
     if (passwordInterpreter(cmdPtr) && (cmdPtr != NULL)) {
-        if (stage == unlock) {
+        // evaluation of unlocked and locked is delayed to send when both cards are valid
+        if ((stage & unlock & locked) != 0) {
             sendResult(true);
-        } else {
-
         }
+    } else {
+        sendResult(false);
     }
 }
 
@@ -220,8 +244,10 @@ bool checkForRfid() {
     if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
         return false;
     } 
+    Serial.println("received rfid");
+    Serial.println(Mother.STB_.rcvdPtr);
+    delay(5000);
     char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
-    cardsPresent++;
     handleResult(cmdPtr);
     wdt_reset();
     return true;
@@ -235,12 +261,12 @@ void interpreter() {
 }
 
 
-void oledUpdate() {
+void oledUpdate(int brainIndex = 0) {
     char msg[32] = "";
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
-    Mother.sendCmdToSlave(msg);
+    Mother.sendCmdToSlave(msg, brainIndex);
 }
 
 
@@ -375,12 +401,11 @@ void stageUpdate() {
     // important to do this before stageActions! otherwise we skip stages
     lastStage = stage;
 
-    Mother.setFlags(0, flagMapping[stageIndex]);
     // for now no need to make it work properly scaling, need to build afnc repertoir anyways
-    if (Mother.getSlaveCnt() >= 2) {
-        Mother.setFlags(1, flagMapping[stageIndex]);
+    for (int brainNo=0; brainNo < Mother.getSlaveCnt(); brainNo++) {
+        Mother.setFlags(brainNo, flagMapping[stageIndex]);
+        oledUpdate(brainNo);
     }
-    oledUpdate();
     stageActions();
 }
 
@@ -468,9 +493,9 @@ void setup() {
 void loop() {
     Mother.rs485PerformPoll();
     interpreter();
-    timedTrigger();
     handleRpiInputs();    
     stageUpdate();
+    timedTrigger();
     wdt_reset();
 }
 

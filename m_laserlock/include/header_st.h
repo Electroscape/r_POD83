@@ -121,7 +121,7 @@ int stageSum = ~( ~0 << StageCount );
 // could have multiple brains listed here making up a matrix
 // for now its only an Access module mapped here
 int flagMapping[StageCount] {
-    0,
+    0,          // setupStage
     0,          // failedBoot
     0,          // operational
     0,          // decon
@@ -146,13 +146,13 @@ int passwordMap[PasswordAmount] = {
 
 
 char stageTexts[StageCount][headLineMaxSize] = {
-    "",
+    "",                     // setupStage
     "Booting",              // failedBoot
     "",                     // operational
     "",                     // decon
     "Scan Arm",             // unlock
     "Timeout",              // failedUnlock
     "Access Granted",       // unlocked
-    "",
-    ""
+    "",                     // idle 
+    ""                      // locked
 };
