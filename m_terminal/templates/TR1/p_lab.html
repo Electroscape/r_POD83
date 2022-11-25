@@ -245,7 +245,7 @@
                 $('#cmdinputs').show();
                 $('#text').focus();
                 appendLine(appHeader);
-                
+
             } else {
                 $.post("{{ url_for('lab_control') }}", {
                     status: "error"

@@ -73,7 +73,7 @@
             if (src_cmd.length > 1) {
                 socket.emit(src_cmd[1], {
                     user_name: src_cmd[0],
-                    cmd: "auth",
+                    cmd: src_cmd[1],
                     message: msg
                 })
             } else {
