@@ -176,6 +176,14 @@ def usr_auth(data):
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
 
 
+@sio.on('airlock_updates')
+def update_airlock(data):
+    global airlock_boot
+    print(f"airlock msg: {data}")
+    airlock_boot = data
+    self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
+
+
 @sio.on('response_to_terminals')
 def on_message(data):
     chat_msgs.append(data)

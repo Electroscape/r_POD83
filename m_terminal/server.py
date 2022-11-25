@@ -93,6 +93,12 @@ def authenticate_usr(msg):
     frontend_server_messages(msg)
 
 
+@sio.on('airlock')
+def airlock_updates(msg):
+    sio.emit("airlock_updates", msg["message"])
+    frontend_server_messages(msg)
+
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory("static", 'server_favicon.ico',

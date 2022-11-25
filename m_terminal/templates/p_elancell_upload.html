@@ -1,6 +1,135 @@
 {% extends 'layout.html' %}
 
 {% block head %}
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/dot-luv/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            var dialog, form,
+
+                // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
+                emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                name = $("#name"),
+                email = $("#email"),
+                password = $("#password"),
+                ip = $("#ipv4").val(),
+                allFields = $([]).add(name).add(email).add(password),
+                tips = $(".validateTips");
+
+            function updateTips(t) {
+                tips
+                    .text(t)
+                    .addClass("ui-state-highlight");
+                setTimeout(function () {
+                    tips.removeClass("ui-state-highlight", 1500);
+                }, 500);
+            }
+
+            function checkLength(o, n, min, max) {
+                if (o.val().length > max || o.val().length < min) {
+                    o.addClass("ui-state-error");
+                    updateTips("Length of " + n + " must be between " +
+                        min + " and " + max + ".");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function checkRegexp(o, regexp, n) {
+                if (!(regexp.test(o.val()))) {
+                    o.addClass("ui-state-error");
+                    updateTips(n);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function addUser() {
+                var valid = true;
+                allFields.removeClass("ui-state-error");
+
+                valid = valid && checkLength(name, "username", 3, 16);
+                valid = valid && checkLength(email, "email", 6, 80);
+                valid = valid && checkLength(password, "password", 5, 16);
+
+                let filenameCheck = checkRegexp(name, /^[a-z]([0-9a-z_\.\s])+$/i, "error in the configuration, please re-check all the values")
+                valid = valid && filenameCheck
+                valid = valid && checkRegexp(email, emailRegex, "eg. ui@jquery.com");
+                valid = valid && checkRegexp(password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9");
+
+                if (!filenameCheck) {
+                    $("#ipv4").removeAttr("disabled");
+                }
+
+                if (valid) {
+                    dialog.dialog("close");
+                    alert("Sent Successfully to ip " + ip);
+                }
+                return valid;
+            }
+
+            dialog = $("#dialog-form").dialog({
+                autoOpen: false,
+                height: 600,
+                width: 550,
+                modal: true,
+                buttons: {
+                    Cancel: function () {
+                        dialog.dialog("close");
+                    },
+
+                    "Upload": addUser,
+                },
+                close: function () {
+                    form[0].reset();
+                    allFields.removeClass("ui-state-error");
+                }
+            });
+
+            form = dialog.find("form").on("submit", function (event) {
+                event.preventDefault();
+                addUser();
+            });
+
+            $("#BtnUpload").button().on("click", function () {
+                dialog.dialog("open");
+            });
+        });
+    </script>
+    <style>
+        label, input {
+            display: block;
+        }
+
+        input.text {
+            margin-bottom: 12px;
+            width: 95%;
+            padding: .4em;
+        }
+
+        fieldset {
+            padding: 0;
+            border: 0;
+            margin-top: 25px;
+        }
+
+        h1 {
+            font-size: 1.2em;
+            margin: .6em 0;
+        }
+
+        .ui-dialog .ui-state-error {
+            padding: .3em;
+        }
+
+        .validateTips {
+            border: 1px solid transparent;
+            padding: 0.3em;
+        }
+    </style>
     <style>
         li {
             list-style-type: none;
@@ -13,10 +142,6 @@
             width: 1000px;
             border-style: solid;
             border-width: medium;
-        }
-
-        input:focus, textarea:focus {
-            background-color: lightyellow;
         }
 
         .container {
@@ -69,33 +194,48 @@
 
 
 {% block content %}
+    <div id="dialog-form" title="Upload to Elancell">
+        <p class="validateTips">All form fields are required.</p>
+
+        <form>
+            <fieldset>
+                <h3>Network Configuration</h3>
+                <label for="ipv4">ip
+                    <input id="ipv4" type='text' name='text1' value="134.231.54.19"
+                           class="text ui-widget-content ui-corner-all" disabled/>
+                </label>
+
+                <label for="email">account
+                    <input type="text" name="email" id="email" value="david@elancell.com"
+                           class="text ui-widget-content ui-corner-all" disabled>
+                </label>
+                <label for="password">password
+                    <input type="text" name="password" id="password" value="xxxxxxx"
+                           style="-webkit-text-security: square;"
+                           class="text ui-widget-content ui-corner-all" disabled>
+                </label>
+
+                <h3>File Info</h3>
+                <label for="name">name</label>
+                <input type="text" name="name" id="name" value="results.csv"
+                       class="text ui-widget-content ui-corner-all">
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+            </fieldset>
+        </form>
+    </div>
+
     <div class="mail">
         <div class="container">
             <button id="btn" class="btn btn-info">COMPILE DATA</button>
             <div class="loading-wrapper">
-                <h1>Loading...</h1>
+                <h1 id="loadId">Compiling...</h1>
                 <div class="loading-bar">
                     <div class="loading-fill"></div>
                 </div>
             </div>
-        </div>
-        <div class="w-100 mt-1">
-            <h2 class="mb-3">Upload Results to
-                <input class="submit" type="submit" name="submit" value="elancell"/>
-            </h2>
-            <a href="#uploadToIPCollapse" data-mdb-toggle="collapse" aria-expanded="false"
-               aria-controls="uploadToIPCollapse">upload to IP</a>
-        </div>
-
-        <!-- Collapsed content -->
-        <div class="collapse mt-3" id="uploadToIPCollapse">
-            <h4>Type the IP address</h4>
-            <form class="h2" name="form1" action="#" onsubmit="return false;"><label>
-                <input id="ipv4" type='text' name='text1' placeholder="xxx.xxx.xxx.xxx"/>
-            </label>
-                <input class="submit" type="submit" name="submit" value="upload to IP"
-                       onclick="ValidateIPaddress()"/>
-            </form>
+            <button id="BtnUpload" class="submit">Submit Results</button>
         </div>
     </div>
 
@@ -113,10 +253,12 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             const btn = document.querySelector('#btn');
+            const uploadBtn = document.querySelector('#BtnUpload');
             const loadingScreen = document.querySelector('.loading-wrapper');
             let isBtn = true;
             let isLoading = false;
             let i = 0;
+            uploadBtn.setAttribute("disabled", true);
 
             const toggleScreens = () => {
                 isBtn = !isBtn;
@@ -134,9 +276,8 @@
 
                     function fill() {
                         if (width >= 100) {
-                            clearInterval(interval);
-                            i = 0;
-                            toggleScreens();
+                            $("#loadId")[0].innerHTML = "compiled successfully ✔️"
+                            uploadBtn.removeAttribute('disabled');
                         } else {
                             width++;
                             loadingFill.style.width = width + '%';

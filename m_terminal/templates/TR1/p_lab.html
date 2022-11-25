@@ -240,6 +240,12 @@
             if (fixed === "fixed") {
                 setAppReady(true);
                 await sleep(10);
+
+                $('#prtscr').empty();
+                $('#cmdinputs').show();
+                $('#text').focus();
+                appendLine(appHeader);
+                
             } else {
                 $.post("{{ url_for('lab_control') }}", {
                     status: "error"
@@ -293,20 +299,6 @@
         //   }
 
         // }
-
-
-        document.addEventListener("keypress", function (event) {
-            if (event.keyCode === 13) {
-                if (appReady === true) {
-                    $('#prtscr').empty();
-                    $('#cmdinputs').show();
-                    $('#text').focus();
-                    appendLine(appHeader);
-                } else {
-                    //
-                }
-            }
-        });
 
         $("#bootup").click()
     </script>

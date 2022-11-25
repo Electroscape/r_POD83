@@ -69,11 +69,21 @@
     <script type="text/javascript">
         function onClickTerminal(src) {
             let msg = document.querySelector(`input[name="${src}"]:checked`).value;
-            socket.emit('auth_usr', {
-                user_name: src,
-                cmd: "auth",
-                message: msg
-            })
+            let src_cmd = src.split("_")
+            if (src_cmd.length > 1) {
+                socket.emit(src_cmd[1], {
+                    user_name: src_cmd[0],
+                    cmd: "auth",
+                    message: msg
+                })
+            } else {
+                socket.emit('auth_usr', {
+                    user_name: src,
+                    cmd: "auth",
+                    message: msg
+                })
+
+            }
         }
     </script>
 {% endblock %}
@@ -104,6 +114,16 @@
 
             <input id="t2_rachel" name="tr2" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
             <label for="t2_rachel">Rachel</label>
+        </div>
+
+        Airlock:
+        <div class="switch-toggle switch-candy">
+            <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
+                   onclick="onClickTerminal(name)"/>
+            <label for="t1_broken">Broken</label>
+
+            <input id="t1_fixed" name="tr1_airlock" type="radio" value="fixed" onclick="onClickTerminal(name)"/>
+            <label for="t1_fixed">Fixed</label>
         </div>
     </div>
     <label for="msg_holder">Chat Messages</label>
