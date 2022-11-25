@@ -331,15 +331,13 @@ void stageActions() {
         break;
         case decon:
             // @todo: check timing here
-            int runTime;
             int effektTime;
             for (int brightness = 10; brightness <= 100; brightness += 10) {
-                runTime = (100 - brightness) * 5;  // loop should be a total of 8100ms
-                effektTime = runTime*4;
-                if (runTime < 20) { runTime = 50; }
+                effektTime = (100 - brightness) * 20;
+                if (effektTime < 20) { effektTime = 50; }
                 //LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, ledCnt, PWM::set1, 1000);
                 LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, effektTime, ledCnt, PWM::set1, 0);
-                delay(runTime);
+                delay(900); // loop should be a total of 8100ms -> 9 loops
                 wdt_reset();
             }
             LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
