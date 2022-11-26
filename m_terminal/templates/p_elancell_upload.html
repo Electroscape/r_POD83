@@ -13,7 +13,7 @@
                 name = $("#name"),
                 email = $("#email"),
                 password = $("#password"),
-                ip = $("#ipv4").val(),
+                ip = $("#ipv4"),
                 allFields = $([]).add(name).add(email).add(password),
                 tips = $(".validateTips");
 
@@ -66,7 +66,7 @@
 
                 if (valid) {
                     dialog.dialog("close");
-                    alert("Sent Successfully to ip " + ip);
+                    alert("Sent Successfully to ip " + ip.val());
                 }
                 return valid;
             }
