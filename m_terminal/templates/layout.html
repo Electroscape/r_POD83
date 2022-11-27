@@ -97,8 +97,18 @@
 
             socket.on("airlock_fe", function (msg) {
                 console.log(`airlock ${msg}`)
-                toastr.success(`airlock laser is ${msg.status}`);
+                toastr.warning(`airlock laser is ${msg.status}`);
                 loadControlPanel(msg.data)
+            })
+
+            socket.on("boot_fe", function (msg) {
+                console.log(`usb boot: ${msg}`)
+                if (msg.status === "disconnect") {
+                    toastr.error(`Shutdown in 5 Seconds`);
+                    setTimeout(function () {
+                        window.location.href = "/";
+                    }, 5000);
+                }
             })
 
             function handleMessageReception(msg) {

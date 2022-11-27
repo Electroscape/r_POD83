@@ -90,40 +90,55 @@
 
 {% block content %}
     <div class="outer">
-        Terminal 1:
-        <div class="switch-toggle switch-3 switch-candy">
-            <input id="t1_david" name="tr1" type="radio" value="david" onclick="onClickTerminal(name)"/>
-            <label for="t1_david">David</label>
+        <div>
+            USB Boot:
+            <div class="switch-toggle switch-candy">
+                <input id="t1_shutdown" name="tr1_usbBoot" type="radio" value="disconnect" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t1_shutdown">Shutdown</label>
 
-            <input id="t1_empty" name="tr1" type="radio" value="empty" checked="checked"
-                   onclick="onClickTerminal(name)"/>
-            <label for="t1_empty">Empty</label>
-
-            <input id="t1_rachel" name="tr1" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
-            <label for="t1_rachel">Rachel</label>
+                <input id="t1_boot" name="tr1_usbBoot" type="radio" value="boot" onclick="onClickTerminal(name)"/>
+                <label for="t1_boot">Boot up</label>
+            </div>
         </div>
+        <div>
+            Terminal 1:
+            <div class="switch-toggle switch-3 switch-candy">
+                <input id="t1_david" name="tr1" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                <label for="t1_david">David</label>
 
-        Terminal 2:
-        <div class="switch-toggle switch-3 switch-candy">
-            <input id="t2_david" name="tr2" type="radio" value="david" onclick="onClickTerminal(name)"/>
-            <label for="t2_david">David</label>
+                <input id="t1_empty" name="tr1" type="radio" value="empty" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t1_empty">Empty</label>
 
-            <input id="t2_empty" name="tr2" type="radio" value="empty" checked="checked"
-                   onclick="onClickTerminal(name)"/>
-            <label for="t2_empty">Empty</label>
-
-            <input id="t2_rachel" name="tr2" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
-            <label for="t2_rachel">Rachel</label>
+                <input id="t1_rachel" name="tr1" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                <label for="t1_rachel">Rachel</label>
+            </div>
         </div>
+        <div>
+            Terminal 2:
+            <div class="switch-toggle switch-3 switch-candy">
+                <input id="t2_david" name="tr2" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                <label for="t2_david">David</label>
 
-        Airlock:
-        <div class="switch-toggle switch-candy">
-            <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
-                   onclick="onClickTerminal(name)"/>
-            <label for="t1_broken">Broken</label>
+                <input id="t2_empty" name="tr2" type="radio" value="empty" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_empty">Empty</label>
 
-            <input id="t1_fixed" name="tr1_airlock" type="radio" value="fixed" onclick="onClickTerminal(name)"/>
-            <label for="t1_fixed">Fixed</label>
+                <input id="t2_rachel" name="tr2" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                <label for="t2_rachel">Rachel</label>
+            </div>
+        </div>
+        <div>
+            Airlock:
+            <div class="switch-toggle switch-candy">
+                <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t1_broken">Broken</label>
+
+                <input id="t1_fixed" name="tr1_airlock" type="radio" value="fixed" onclick="onClickTerminal(name)"/>
+                <label for="t1_fixed">Fixed</label>
+            </div>
         </div>
     </div>
     <label for="msg_holder">Chat Messages</label>

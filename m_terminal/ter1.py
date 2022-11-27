@@ -1,4 +1,4 @@
-from flask import request, Flask, render_template, send_from_directory, Response, url_for
+from flask import request, Flask, render_template, send_from_directory, Response, url_for, redirect
 from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
 
@@ -76,9 +76,20 @@ def lab_control():
 
 @app.route('/', methods=['GET', 'POST'])
 def entry_point():  # begin of the code
+    if usb_boot != "boot":
+        return redirect("/boot")
+
     conf = get_globals()
     airlock_id = "lab-control"
     return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id)
+
+
+@app.route('/boot', methods=['GET', 'POST'])
+def pre_entry_point():
+    if usb_boot == "boot":
+        return redirect("/")
+
+    return render_template("boot_up.html")
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
@@ -176,6 +187,14 @@ def usr_auth(data):
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
 
 
+@sio.on('usb_boot')
+def boot_up(data):
+    global usb_boot
+    print(f"Boot USB status: {data}")
+    usb_boot = data
+    self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
+
+
 @sio.on('airlock_updates')
 def update_airlock(data):
     global airlock_boot
@@ -203,6 +222,7 @@ print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores the whole conversation
 airlock_boot = "normal"
+usb_boot = "shutdown"
 
 app.register_blueprint(app_pages)
 flatpages = FlatPages(app)

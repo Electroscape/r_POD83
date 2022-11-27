@@ -99,6 +99,12 @@ def airlock_updates(msg):
     frontend_server_messages(msg)
 
 
+@sio.on('usbBoot')
+def usb_boot(msg):
+    sio.emit("usb_boot", msg["message"])
+    frontend_server_messages(msg)
+
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory("static", 'server_favicon.ico',
