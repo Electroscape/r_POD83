@@ -73,25 +73,9 @@ void setStageIndex() {
  * @brief  consider just using softwareReset
 */
 void gameReset() {
-    stage = setupStage;
+    // stage = setupStage;
     for (int relayNo=0; relayNo < relayAmount; relayNo++) {
         Mother.motherRelay.digitalWrite(relayNo, relayInitArray[relayNo]);
-    }
-}
-
-
-/**
- * @brief handles timeouts rfidTX and timeout of the RFID presentation
-*/
-void timedTrigger() {
-    if (timestamp > millis()) { return; }
-    switch (stage) {
-        case unlock: 
-            stage = failedUnlock;
-        break;
-        default:  
-            cardsPresent = 0;
-        break;
     }
 }
 
@@ -150,6 +134,24 @@ void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
 
 
 /**
+ * @brief handles timeouts rfidTX and timeout of the RFID presentation
+*/
+void timedTrigger() {
+    if (timestamp > millis()) { return; }
+    switch (stage) {
+        case unlock: 
+            stage = failedUnlock;
+        break;
+        default:  
+            cardsPresent = 0;
+            sendResult(false, 0);
+            sendResult(false, 1);
+        break;
+    }
+}
+
+
+/**
  * @brief handles room specific actions
  * @param passNo 
 */
@@ -192,6 +194,7 @@ void handleCorrectPassword(int passNo) {
             sendResult(true, 0);
             sendResult(true, 1);
         break;
+        default: sendResult(true);
     }
 
 }
@@ -219,16 +222,9 @@ bool passwordInterpreter(char* password) {
  * @param cmdPtr 
  * @todo handle the unlock/locking here with 2 access modules
 */
-void handleResult(char *cmdPtr) {
-
-    // prepare return msg with correct or incorrect
-    char msg[10] = "";
-    strcpy(msg, keypadCmd.c_str());
-    strcat(msg, KeywordsList::delimiter.c_str());
-
-    cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
-
-    if (passwordInterpreter(cmdPtr) && (cmdPtr != NULL)) {
+void handleResult() {
+    Mother.STB_.rcvdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
+    if (passwordInterpreter(Mother.STB_.rcvdPtr) && (Mother.STB_.rcvdPtr != NULL)) {
         // evaluation of unlocked and locked is delayed to send when both cards are valid
         if ((stage & unlock & locked) != 0) {
             sendResult(true);
@@ -244,11 +240,8 @@ bool checkForRfid() {
     if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
         return false;
     } 
-    Serial.println("received rfid");
-    Serial.println(Mother.STB_.rcvdPtr);
-    delay(5000);
-    char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
-    handleResult(cmdPtr);
+    Mother.STB_.rcvdPtr += KeywordsList::rfidKeyword.length();
+    handleResult();
     wdt_reset();
     return true;
 }
@@ -440,7 +433,7 @@ int inputDetector() {
 }
 
 
-void handleRpiInputs() {
+void handleInputs() {
 
     if (stage != idle) { return; }
     lastStage = idle;
@@ -494,7 +487,7 @@ void setup() {
 void loop() {
     Mother.rs485PerformPoll();
     interpreter();
-    handleRpiInputs();    
+    handleInputs();    
     stageUpdate();
     timedTrigger();
     wdt_reset();
