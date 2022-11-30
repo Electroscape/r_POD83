@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 9
+#define StageCount 10
 #define PasswordAmount 2
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -23,23 +23,28 @@ unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 8000;
 unsigned long rfidTimeout = 3000;
 
-#define inputCnt 4
+// FL lamps shall be some industrial reddish light 
+static constexpr int clrLight[3] = {255,200,120};
+
+#define inputCnt 5
 
 enum brains {
     airlockAccess,      // access module on the outside
     labAccess,          // access module on the inside of the lab
-    ledBrain
+    ledLaserBrain,
+    ledCeilBrain
 };
 
 
 enum inputs {
-    failedBootTrigger,        // Red
-    deconTrigger,       // Black
-    bootupTrigger,    // Green
-    reedDoor
+    room1Light,             // red
+    failedBootTrigger,      // black  
+    bootupTrigger,          // Green
+    reedDoor,               // white    
 };
 
 uint8_t inputTypes[inputCnt] = {
+    INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP,
@@ -67,7 +72,7 @@ enum relayInits {
     rel_5_init = closed,
     rel_6_init = closed,
     RFID_TX_1_init = closed,
-    RFID_TX_2_init = closed,
+    RFID_TX_2_init = closed
 };
 
 
@@ -111,7 +116,8 @@ enum stages {
     failedUnlock = 32,
     unlocked = 64,
     idle = 128, 
-    locked = 256
+    locked = 256,
+    lightStart = 512,
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -129,7 +135,8 @@ int flagMapping[StageCount] {
     0,          // failedUnlock
     rfidFlag,   // unlocked ... there is a cooldown on the access module so it should be fine to reactivate
     0,          // idle
-    rfidFlag    // locked
+    rfidFlag,   // locked
+    0           // lightStart
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -154,5 +161,6 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Timeout",              // failedUnlock
     "Access Granted",       // unlocked
     "",                     // idle 
-    ""                      // locked
+    "",                     // locked
+    ""                      // lightStart
 };

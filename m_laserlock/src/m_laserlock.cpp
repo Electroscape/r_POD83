@@ -42,6 +42,7 @@ unsigned long timestamp = millis();
 // timedTrigger shall reset this value 
 // cardsPreset adding bits of present cards with | 
 int cardsPresent = 0;
+bool lightOn = false;
 
 
 void enableWdt() {
@@ -77,6 +78,7 @@ void gameReset() {
     for (int relayNo=0; relayNo < relayAmount; relayNo++) {
         Mother.motherRelay.digitalWrite(relayNo, relayInitArray[relayNo]);
     }
+    lightOn = false;
 }
 
 
@@ -137,12 +139,21 @@ void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
  * @brief handles timeouts rfidTX and timeout of the RFID presentation
 */
 void timedTrigger() {
+    // may need to fix this exit condition and reset
     if (timestamp > millis()) { return; }
     switch (stage) {
         case unlock: 
             stage = failedUnlock;
         break;
-        default:  
+        // alternatively use cardspresent to send evaluation
+        case unlocked:  
+            if (cardsPresent <= 0) {return;}
+            cardsPresent = 0;
+            sendResult(false, 0);
+            sendResult(false, 1);
+        break;
+        case locked:  
+            if (cardsPresent <= 0) {return;}
             cardsPresent = 0;
             sendResult(false, 0);
             sendResult(false, 1);
@@ -287,40 +298,41 @@ void stageActions() {
     wdt_reset();
     switch (stage) {
         case setupStage: 
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100, 0);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100, 0);
             stage = idle;
         break;
         case failedBoot:
             wdt_disable();
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrBlack, 100, LED_CMDS::clrRed, 50, 10000, PWM::set1);
+            LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100, LED_CMDS::clrRed, 50, 10000, PWM::set1);
             delay(10000);
 
             // total duration 5s
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(25);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 50);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 50);
             delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(25);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 40);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 40);
             delay(60);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(25);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 35);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 35);
             delay(25);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(25);
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, PWM::set1);
+            LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrRed, 0, 4775, PWM::set1);
             delay(4775);
             enableWdt();
             stage = idle;
         break;
         case operational:
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
+            LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
             wdt_disable();
             delay(10000);
             enableWdt();
-            stage = idle;
+            stage = decon;
         break;
         case decon:
             // @todo: check timing here
@@ -328,41 +340,41 @@ void stageActions() {
             for (int brightness = 10; brightness <= 100; brightness += 10) {
                 effektTime = (100 - brightness) * 20;
                 if (effektTime < 20) { effektTime = 50; }
-                //LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, runTime, ledCnt, PWM::set1, 1000);
-                LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrBlue, brightness, effektTime, ledCnt, PWM::set1, 0);
+                //LED_CMDS::running(Mother, ledLaserBrain, LED_CMDS::clrBlue, brightness, runTime, ledCnt, PWM::set1, 1000);
+                LED_CMDS::running(Mother, ledLaserBrain, LED_CMDS::clrBlue, brightness, effektTime, ledCnt, PWM::set1, 0);
                 delay(900); // loop should be a total of 8100ms -> 9 loops
                 wdt_reset();
             }
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(100);      // 8130
-            // LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, 0);
+            // LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100, 0);
             // doesnt specify fade but may aswell see how it works
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
+            LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
             timestamp = millis() + deconRFIDTimeout;
             stage = unlock;
         break;
         case unlock:
         break;
         case failedUnlock:
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 100);
             delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(200);
-            LED_CMDS::fade2color(Mother, ledBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 80, displayFailedUnlock,  PWM::set1);
+            LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrRed, 100, LED_CMDS::clrRed, 80, displayFailedUnlock,  PWM::set1);
             oledFailed();
             stage = idle;
         break;
         case unlocked:
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrGreen, 50);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrGreen, 50);
             Mother.motherRelay.digitalWrite(door, doorOpen);
             wdt_disable();
             delay(rfidTxDuration);
             enableWdt();
             outputRFIDReset();
             wdt_reset();
-            LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrWhite, 20);
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 20);
         break; 
         case locked:
             Mother.motherRelay.digitalWrite(door, doorOpen);
@@ -370,6 +382,10 @@ void stageActions() {
             delay(rfidTxDuration);
             enableWdt();
             outputRFIDReset();
+        break;
+        case lightStart:
+            LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 100, displayFailedUnlock,  PWM::set1 + PWM::set2);
+            stage = idle;
         break;
     }
 }
@@ -444,8 +460,10 @@ void handleInputs() {
         break;
         case bootupTrigger: 
             stage = operational;
-        case deconTrigger: 
-            stage = decon;
+        case room1Light:
+            if (lightOn) { return; }
+            lightOn = true;
+            stage = lightStart;
         break;
     }
 
