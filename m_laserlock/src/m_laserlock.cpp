@@ -460,11 +460,13 @@ void handleInputs() {
         break;
         case bootupTrigger: 
             stage = operational;
+        break;
         case room1Light:
             if (lightOn) { return; }
             lightOn = true;
             stage = lightStart;
         break;
+        default: break;
     }
 
 }
