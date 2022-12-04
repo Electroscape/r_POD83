@@ -28,9 +28,14 @@ function disableOption(elem, auth_msg, clr = "rgba(0, 0, 0, 0.6)") {
         `<p class=\"text-white mb-0\">${auth_msg}</p>` +
         "</div></div>"
     let container = document.getElementById(elem.id);
-    if (!container) return false;
+    if (!container) {
+        console.log("Didn't find the container")
+        return false;
+    }
+
+    container.innerHTML = elem.html + maskTxt;
 
     let a_elem = document.getElementById("a_" + elem.id);
     a_elem.classList.add("disabled");
-    container.innerHTML = elem.html + maskTxt;
+
 }

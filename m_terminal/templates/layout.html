@@ -98,7 +98,8 @@
             socket.on("airlock_fe", function (msg) {
                 console.log(`airlock ${msg}`)
                 toastr.warning(`airlock laser is ${msg.status}`);
-                loadControlPanel(msg.data)
+                let a_elem = document.getElementById("a_" + "lab-control");
+                a_elem.classList.remove("disabled");
             })
 
             socket.on("boot_fe", function (msg) {
