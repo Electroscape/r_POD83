@@ -9,7 +9,7 @@
     min-width: 400px;
     width: 0%;
     background-color: gray;
-    margin: 0 auto;
+    margin: 100px auto auto;
     overflow: hidden;
     /* to prevent margin collapse */
 }

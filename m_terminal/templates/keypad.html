@@ -1,7 +1,5 @@
-<link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
-
 <main class="k-keypad" id="keypad{{ keyID }}">
-    <div class="k-top" id="top{{ keyID }}">
+    <div class="k-top d-none" id="top{{ keyID }}">
         {{ keyTitle }}
     </div>
 
@@ -55,9 +53,15 @@
             } else if (isCorrect("{{ keyID }}")) {
                 screen.classList.add('success');
                 screen.textContent = 'success';
+                socket.emit('msg_to_backend', {
+                    update: `{{ request.path }} keypad {{ keyID }} correct`
+                })
             } else {
                 screen.classList.add('failed');
                 screen.textContent = 'wrong';
+                socket.emit('msg_to_backend', {
+                    update: `{{ request.path }} keypad {{ keyID }} wrong`
+                })
             }
 
             // clear result message

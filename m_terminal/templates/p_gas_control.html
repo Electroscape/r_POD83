@@ -8,6 +8,7 @@
 {% block content %}
     <div id="fakeBody">
         <div class="options">
+            <link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
             <script src="{{ url_for('static',filename='js/keypad.js') }}">
             </script>
             {% for sample in g_config.samples %}
@@ -18,7 +19,7 @@
                     <div class="gameContentClass {% if loop.index0 != 0 %}
                             d-none
                             {% endif %}" id="gameContent{{ loop.index }}">
-                        {% with keyTitle="Code #" ~ loop.index, keyPass="111" ~ loop.index, keyID=loop.index0 %}
+                        {% with keyTitle="Code #" ~ loop.index, keyPass=sample.passcode, keyID=loop.index0 %}
                             {% include "keypad.html" %}
                         {% endwith %}
                     </div>

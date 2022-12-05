@@ -1,29 +1,19 @@
-let correct = 0;
-let total = 0;
-const totalDraggableItems = 5;
-const totalMatchingPairs = 5; // Should be <= totalDraggableItems
+let correct = [];
+let total = [];
+let itemsList = []
 
-const scoreSection = document.querySelector(".score");
-const correctSpan = scoreSection.querySelector(".correct");
-const totalSpan = scoreSection.querySelector(".total");
-const playAgainBtn = scoreSection.querySelector("#play-again-btn");
+function initiateGame(index, numItems) {
+    let draggableItems = document.querySelector("#draggable-items-" + index);
+    let matchingPairs = document.querySelector("#matching-pairs-" + index);
 
-const draggableItems = document.querySelector(".draggable-items");
-const matchingPairs = document.querySelector(".matching-pairs");
-let draggableElements;
-let droppableElements;
-
-initiateGame();
-
-function initiateGame() {
-    const randomDraggableBrands = generateRandomItemsArray(totalDraggableItems, brands);
-    const randomDroppableBrands = totalMatchingPairs < totalDraggableItems ? generateRandomItemsArray(totalMatchingPairs, randomDraggableBrands) : randomDraggableBrands;
-    const alphabeticallySortedRandomDroppableBrands = [...randomDroppableBrands].sort((a, b) => a.brandName.toLowerCase().localeCompare(b.brandName.toLowerCase()));
+    const randomDraggableBrands = generateRandomItemsArray(numItems, brands);
+    const alphabeticallySortedRandomDroppableBrands = [...randomDraggableBrands].sort((a, b) => a.brandName.toLowerCase().localeCompare(b.brandName.toLowerCase()));
+    itemsList[index] = [...randomDraggableBrands];
 
     // Create "draggable-items" and append to DOM
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         draggableItems.insertAdjacentHTML("beforeend", `
-      <i class="fab fa-${randomDraggableBrands[i].iconName} draggable" draggable="true" style="color: ${randomDraggableBrands[i].color};" id="${randomDraggableBrands[i].iconName}"></i>
+      <i class="fab fa-${randomDraggableBrands[i].iconName} draggable drag-g${index}" draggable="true" style="color: ${randomDraggableBrands[i].color};" id="${randomDraggableBrands[i].iconName}+"></i>
     `);
     }
 
@@ -32,13 +22,13 @@ function initiateGame() {
         matchingPairs.insertAdjacentHTML("beforeend", `
       <div class="matching-pair">
         <span class="gameLabel">${alphabeticallySortedRandomDroppableBrands[i].brandName}</span>
-        <span class="droppable" data-brand="${alphabeticallySortedRandomDroppableBrands[i].iconName}"></span>
+        <span class="droppable drop-g${index}" data-brand="${alphabeticallySortedRandomDroppableBrands[i].iconName}"></span>
       </div>
     `);
     }
 
-    draggableElements = document.querySelectorAll(".draggable");
-    droppableElements = document.querySelectorAll(".droppable");
+    let draggableElements = document.querySelectorAll(".drag-g" + index);
+    let droppableElements = document.querySelectorAll(".drop-g" + index);
 
     draggableElements.forEach(elem => {
         elem.addEventListener("dragstart", dragStart);
@@ -84,38 +74,39 @@ function dragLeave(event) {
 
 function drop(event) {
     event.preventDefault();
+    const index = 0;
+    const scoreSection = document.querySelector("#score-" + index);
+    const correctSpan = scoreSection.querySelector(".correct");
+    const totalSpan = scoreSection.querySelector(".total");
+    //const playAgainBtn = scoreSection.querySelector("#play-again-btn");
+
     event.target.classList.remove("droppable-hover");
     const draggableElementBrand = event.dataTransfer.getData("text");
     const droppableElementBrand = event.target.getAttribute("data-brand");
     const isCorrectMatching = draggableElementBrand === droppableElementBrand;
-    total++;
+    total[index]++;
+    const draggableElement = document.getElementById(draggableElementBrand);
+    event.target.classList.add("dropped");
+    draggableElement.classList.add("dragged");
+    draggableElement.setAttribute("draggable", "false");
+    event.target.innerHTML = `<i class="fab fa-${draggableElementBrand}" style="color: ${draggableElement.style.color};"></i>`;
+
     if (isCorrectMatching) {
-        const draggableElement = document.getElementById(draggableElementBrand);
-        event.target.classList.add("dropped");
-        draggableElement.classList.add("dragged");
-        draggableElement.setAttribute("draggable", "false");
-        event.target.innerHTML = `<i class="fab fa-${draggableElementBrand}" style="color: ${draggableElement.style.color};"></i>`;
-        correct++;
+        correct[index]++;
     }
     scoreSection.style.opacity = 0;
     setTimeout(() => {
-        correctSpan.textContent = correct;
-        totalSpan.textContent = total;
+        correctSpan.textContent = correct[index];
+        totalSpan.textContent = total[index];
         scoreSection.style.opacity = 1;
     }, 200);
-    if (correct === Math.min(totalMatchingPairs, totalDraggableItems)) { // Game Over!!
-        playAgainBtn.style.display = "block";
-        setTimeout(() => {
-            playAgainBtn.classList.add("play-again-btn-entrance");
-        }, 200);
+    if (itemsList[index].length === total[index] && correct[index] === total[index]) { // Game Over!!
+
     }
 }
 
-// Other Event Listeners
-playAgainBtn.addEventListener("click", playAgainBtnClick);
-
 function playAgainBtnClick() {
-    playAgainBtn.classList.remove("play-again-btn-entrance");
+
     correct = 0;
     total = 0;
     draggableItems.style.opacity = 0;

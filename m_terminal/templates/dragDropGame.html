@@ -1,0 +1,34 @@
+<main class="dd-game" id="dd-game-{{ gameID }}">
+    <section class="score" id="score-{{ gameID }}">
+        <span class="correct">0</span>
+        <span class="total">0</span>
+        <button id="reset-btn-{{ gameID }}">reset</button>
+        <button id="submit-btn-{{ gameID }}">submit</button>
+    </section>
+    <section class="draggable-items" id="draggable-items-{{ gameID }}">
+        <!-- Will be dynamically populated - Example Element: -->
+        <!-- <i class="fab fa-codepen draggable" draggable="true" style="color: #111111;" id="codepen"></i> -->
+    </section>
+    <section class="matching-pairs" id="matching-pairs-{{ gameID }}">
+        <!-- Will be dynamically populated - Example Element: -->
+        <!-- <div class="matching-pair">
+          <span class="label">Codepen</span><span class="droppable" data-brand="codepen"></span>
+        </div> -->
+    </section>
+</main>
+
+<script type="text/javascript">
+    /*  Takes different actions based on buttons pushed and checks for the correct
+     *  length and password entered
+     */
+    // Length of items
+    correct.push(0);
+
+    // What the user has entered
+    total.push(0);
+    itemsList.push([]);
+
+    /* Event Listener on page load
+     */
+    initiateGame("{{ gameID }}", "{{ numItems }}")
+</script>

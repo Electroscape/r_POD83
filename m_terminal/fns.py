@@ -56,21 +56,29 @@ def get_samples_status() -> list:
     # read some GPIOs or get status from hardware
     samples = [
         {"name": "sample 1",
+         "passcode": "1111",
+         "elements": "5",
          "status": "released",
          "icon": "fa-solid fa-check",
          "info": "toxic"},
 
         {"name": "sample 2",
+         "passcode": "1112",
+         "elements": "5",
          "status": "locked",
          "icon": "fas fa-lock",
          "info": "non-toxic"},
 
         {"name": "sample 3",
+         "passcode": "1113",
+         "elements": "5",
          "status": "locked",
          "icon": "fas fa-lock",
          "info": "non-active"},
 
         {"name": "sample 4",
+         "passcode": "1114",
+         "elements": "5",
          "status": "released",
          "icon": "fas fa-lock-open",
          "info": "toxic"}

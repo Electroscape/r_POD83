@@ -48,8 +48,6 @@
 {% endblock %}
 
 {% block content %}
-    <script src="{{ url_for('static',filename='js/keypad.js') }}">
-    </script>
     <audio id="errorSnd">
         <source src="{{ url_for('static', filename='sounds/error.mp3') }}" type="audio/mpeg">
     </audio>
@@ -61,15 +59,12 @@
         <pre id="prtscr"></pre>
 
         <div id="result"></div>
-
-        <form id="cmdinputs" action="javascript:cmd();">
-            <label for="fname">></label>
-            <input type="text" id="fname" name="fname" autofocus autocomplete="off">
-        </form>
     </div>
     <div id="k-lab" class="d-none">
-
-        {% with keyTitle="access code", keyPass="{{ g_config.password }}", keyID="0" %}
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
+        <script src="{{ url_for('static',filename='js/keypad.js') }}">
+        </script>
+        {% with keyTitle="access code", keyPass=g_config.password, keyID="0" %}
             {% include "keypad.html" %}
         {% endwith %}
     </div>
@@ -77,88 +72,6 @@
 
 {% block add_js %}
     <script type="text/javascript">
-        var appReady = false;
-
-        function cmd() {
-            inputVar = $('#fname').val();
-            inputVar = inputVar.toLowerCase();
-            inputVarWords = inputVar.split(" ");
-            inputVarFirstWord = inputVarWords[0];
-
-// ===== Input is not a number
-            if (isNaN(inputVarFirstWord)) {
-                switch (inputVarFirstWord) {
-
-                    case "help":
-                    case "-h":
-                    case "-help":
-                        $('#result').html('Help text?');
-                        break;
-
-                    case "tag":
-                        tagItem(inputVarWords[1], inputVarWords[2])
-                        // $('#result').html('a');
-                        break;
-
-                    case "codeword":
-                        exception();
-                        break;
-
-                    default:
-                        searchByKeyword(inputVarFirstWord);
-                    // $('#result').html("'"+inputVarFirstWord+"' is not a recognised command");
-                }
-
-// ===== Input is Number
-            } else {
-                if (inputVarFirstWord == '' || inputVarFirstWord == 0) {
-                    $('#result').html('');
-                } else {
-                    viewItemByListNumber(inputVarFirstWord)
-                }
-            }
-
-            document.getElementById("fname").value = "";
-            return false;
-        }
-
-
-        function showHelpText() {
-            $('#result').html('Help text about this app');
-        }
-
-
-        function viewItemByListNumber(itemNo) {
-            //1. Go to itemURL by number in results
-            $('#result').html('Go to: ' + itemNo);
-        }
-
-
-        function tagItem(item, text) {
-            // alert( inputVarWords.length );
-
-            if (item === undefined || text === undefined || item === '' || text === '') {
-                $('#result').html('Tag: missing parameter');
-            } else {
-                // 1. Find element with name key == _item
-                // 2. Add _text to tags
-                // 3. Confirm result
-                $('#result').html(item + ':' + text);
-            }
-
-        };
-
-
-        function searchByKeyword(keyword) {
-            $('#result').html("Results for: '" + keyword + "'");
-        }
-
-
-        function exception() {
-            // Trigger unhandled exception
-            $('#result').html("Unhandled exception");
-        }
-
         headerLines = [
             "░█████╗░██╗██████╗░██╗░░░░░░█████╗░░█████╗░██╗░░██╗\n",
             "██╔══██╗██║██╔══██╗██║░░░░░██╔══██╗██╔══██╗██║░██╔╝\n",
@@ -238,13 +151,15 @@
             await sleep(1000);
 
             if (fixed === "fixed") {
-                setAppReady(true);
                 await sleep(10);
 
                 $('#prtscr').empty();
                 $('#cmdinputs').show();
                 $('#text').focus();
                 appendLine(appHeader);
+
+                $("#bootContainer").hide();
+                $("#k-lab").removeClass("d-none");
 
             } else {
                 $.post("{{ url_for('lab_control') }}", {
@@ -277,28 +192,10 @@
             $('#bootContainer').scrollTop($('#bootContainer')[0].scrollHeight);
         }
 
-        function setAppReady(bool) {
-            appReady = bool;
-        }
-
         $('#bootup').click(function () {
             $(this).hide();
             delayedGreeting();
         });
-
-
-        // async function memoryTest(times, total, delay){
-        //   //times to loop
-        //   //total to count to
-        //   //delay between loops
-        //   $('#prtscr').append("<div id='ramtest'></div>");
-        //   var i;
-        //   for (i = 0; i < times; i++) {
-        //     $('#ramtest').append(pt10);
-        //     await sleep(123);
-        //   }
-
-        // }
 
         $("#bootup").click()
     </script>
