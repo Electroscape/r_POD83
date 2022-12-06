@@ -13,7 +13,7 @@ function initiateGame(index, numItems) {
     // Create "draggable-items" and append to DOM
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         draggableItems.insertAdjacentHTML("beforeend", `
-      <i class="fab fa-${randomDraggableBrands[i].iconName} draggable drag-g${index}" draggable="true" style="color: ${randomDraggableBrands[i].color};" id="${randomDraggableBrands[i].iconName}+"></i>
+      <i class="fab fa-${randomDraggableBrands[i].iconName} draggable drag-g${index}" draggable="true" style="color: ${randomDraggableBrands[i].color};" id="${randomDraggableBrands[i].iconName}"></i>
     `);
     }
 
@@ -22,7 +22,7 @@ function initiateGame(index, numItems) {
         matchingPairs.insertAdjacentHTML("beforeend", `
       <div class="matching-pair">
         <span class="gameLabel">${alphabeticallySortedRandomDroppableBrands[i].brandName}</span>
-        <span class="droppable drop-g${index}" data-brand="${alphabeticallySortedRandomDroppableBrands[i].iconName}"></span>
+        <span class="drop-g${index} droppable" data-brand="${alphabeticallySortedRandomDroppableBrands[i].iconName}"></span>
       </div>
     `);
     }
@@ -74,7 +74,7 @@ function dragLeave(event) {
 
 function drop(event) {
     event.preventDefault();
-    const index = 0;
+    const index = event.target.classList[0].at(-1);
     const scoreSection = document.querySelector("#score-" + index);
     const correctSpan = scoreSection.querySelector(".correct");
     const totalSpan = scoreSection.querySelector(".total");
