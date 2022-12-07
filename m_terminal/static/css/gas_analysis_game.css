@@ -8,32 +8,22 @@
     transition: opacity 0.2s;
 }
 
-#play-again-btn {
-    position: absolute;
+.resetBtn {
     color: #fff;
     background-color: #111;
-    border: 5px double #fff;
-    border-radius: 14px;
+    border: 5px #fff;
+    margin-inline: 20px;
     padding: 8px 10px;
     outline: none;
     letter-spacing: 0.05em;
-    cursor: pointer;
-    display: none;
-    opacity: 0;
-    transition: opacity 0.5s, transform 0.5s, background-color 0.2s;
 }
 
-#play-again-btn:hover {
+.resetBtn:hover {
     background-color: #333;
 }
 
-#play-again-btn:active {
+.resetBtn:active {
     background-color: #555;
-}
-
-#play-again-btn.play-again-btn-entrance {
-    opacity: 1;
-    transform: translateX(6rem);
 }
 
 .draggable-items {
@@ -118,11 +108,11 @@
         font-size: 14px;
     }
 
-    #play-again-btn {
+    .resetBtn {
         top: -0.4rem;
     }
 
-    #play-again-btn.play-again-btn-entrance {
+    .resetBtn.resetBtn-entrance {
         transform: translateX(7rem);
     }
 }

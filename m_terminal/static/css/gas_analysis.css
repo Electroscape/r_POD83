@@ -341,7 +341,6 @@
 }
 
 #fakeBody .options .option:not(.active) .shadow {
-    bottom: -40px;
     box-shadow: inset 0 -120px 0px -120px black, inset 0 -120px 0px -100px black;
 }
 
@@ -356,11 +355,11 @@
 }
 
 #fakeBody .options .option .shadow {
+    background-color: green;
     position: absolute;
-    bottom: 0px;
     left: 0px;
     right: 0px;
-    height: 120px;
+    height: 100%;
     transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
 }
 

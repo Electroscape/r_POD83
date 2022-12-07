@@ -2,18 +2,20 @@ let correct = [];
 let total = [];
 let itemsList = []
 
-function initiateGame(index, numItems) {
+function initiateGame(index, randomDraggableBrands) {
     let draggableItems = document.querySelector("#draggable-items-" + index);
     let matchingPairs = document.querySelector("#matching-pairs-" + index);
+    let shadow = document.querySelector("#shadow-" + index);
+    shadow.hidden = true
 
-    const randomDraggableBrands = generateRandomItemsArray(numItems, brands);
+    itemsList[index] = randomDraggableBrands.concat([]);
     const alphabeticallySortedRandomDroppableBrands = [...randomDraggableBrands].sort((a, b) => a.brandName.toLowerCase().localeCompare(b.brandName.toLowerCase()));
-    itemsList[index] = [...randomDraggableBrands];
+
 
     // Create "draggable-items" and append to DOM
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         draggableItems.insertAdjacentHTML("beforeend", `
-      <i class="fab fa-${randomDraggableBrands[i].iconName} draggable drag-g${index}" draggable="true" style="color: ${randomDraggableBrands[i].color};" id="${randomDraggableBrands[i].iconName}"></i>
+      <i class="fab fa-${randomDraggableBrands[i].iconName} draggable drag-g${index}" draggable="true" style="color: ${randomDraggableBrands[i].color};" id="${randomDraggableBrands[i].iconName}-${index}"></i>
     `);
     }
 
@@ -22,7 +24,7 @@ function initiateGame(index, numItems) {
         matchingPairs.insertAdjacentHTML("beforeend", `
       <div class="matching-pair">
         <span class="gameLabel">${alphabeticallySortedRandomDroppableBrands[i].brandName}</span>
-        <span class="drop-g${index} droppable" data-brand="${alphabeticallySortedRandomDroppableBrands[i].iconName}"></span>
+        <span class="drop-g${index} droppable" data-brand="${alphabeticallySortedRandomDroppableBrands[i].iconName}-${index}"></span>
       </div>
     `);
     }
@@ -49,7 +51,8 @@ function initiateGame(index, numItems) {
 //Events fired on the drag target
 
 function dragStart(event) {
-    event.dataTransfer.setData("text", event.target.id); // or "text/plain"
+    let itemId = event.target.id;
+    event.dataTransfer.setData("text", itemId); // or "text/plain"
 }
 
 //Events fired on the drop target
@@ -78,18 +81,21 @@ function drop(event) {
     const scoreSection = document.querySelector("#score-" + index);
     const correctSpan = scoreSection.querySelector(".correct");
     const totalSpan = scoreSection.querySelector(".total");
-    //const playAgainBtn = scoreSection.querySelector("#play-again-btn");
+    //const playAgainBtn = scoreSection.querySelector("#reset-btn");
 
     event.target.classList.remove("droppable-hover");
     const draggableElementBrand = event.dataTransfer.getData("text");
     const droppableElementBrand = event.target.getAttribute("data-brand");
     const isCorrectMatching = draggableElementBrand === droppableElementBrand;
     total[index]++;
+
     const draggableElement = document.getElementById(draggableElementBrand);
     event.target.classList.add("dropped");
     draggableElement.classList.add("dragged");
     draggableElement.setAttribute("draggable", "false");
-    event.target.innerHTML = `<i class="fab fa-${draggableElementBrand}" style="color: ${draggableElement.style.color};"></i>`;
+    let iconName = draggableElementBrand.split("-");
+    iconName.pop()
+    event.target.innerHTML = `<i class="fab fa-${iconName.join("-")}" style="color: ${draggableElement.style.color};"></i>`;
 
     if (isCorrectMatching) {
         correct[index]++;
@@ -101,26 +107,41 @@ function drop(event) {
         scoreSection.style.opacity = 1;
     }, 200);
     if (itemsList[index].length === total[index] && correct[index] === total[index]) { // Game Over!!
+        setTimeout(() => {
+            let shadow = document.querySelector("#shadow-" + index);
+            shadow.hidden = false;
+            alert("Stable Correct Solution");
 
+        }, 600)
+    } else if (itemsList[index].length === total[index]) {
+        setTimeout(() => {
+            alert("Unstable combination")
+            $("#reset-btn-" + index).click()
+        }, 600)
     }
 }
 
-function playAgainBtnClick() {
+function resetBtnClick(index) {
+    let draggableItems = document.querySelector("#draggable-items-" + index);
+    let matchingPairs = document.querySelector("#matching-pairs-" + index);
 
-    correct = 0;
-    total = 0;
+    const scoreSection = document.querySelector("#score-" + index);
+    const correctSpan = scoreSection.querySelector(".correct");
+    const totalSpan = scoreSection.querySelector(".total");
+
+    correct[index] = 0;
+    total[index] = 0;
     draggableItems.style.opacity = 0;
     matchingPairs.style.opacity = 0;
     setTimeout(() => {
         scoreSection.style.opacity = 0;
     }, 100);
     setTimeout(() => {
-        playAgainBtn.style.display = "none";
         while (draggableItems.firstChild) draggableItems.removeChild(draggableItems.firstChild);
         while (matchingPairs.firstChild) matchingPairs.removeChild(matchingPairs.firstChild);
-        initiateGame();
-        correctSpan.textContent = correct;
-        totalSpan.textContent = total;
+        initiateGame(index, itemsList[index]);
+        correctSpan.textContent = correct[index];
+        totalSpan.textContent = total[index];
         draggableItems.style.opacity = 1;
         matchingPairs.style.opacity = 1;
         scoreSection.style.opacity = 1;

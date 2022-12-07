@@ -1,10 +1,9 @@
 <main class="dd-game" id="dd-game-{{ gameID }}">
     <section class="score" id="score-{{ gameID }}">
-        <span class="correct">0</span>
-        <span class="total">0</span>
-        <button id="reset-btn-{{ gameID }}">reset</button>
-        <button id="submit-btn-{{ gameID }}">submit</button>
+        <span class="correct d-none">0</span>
+        <span class="total d-none">0</span>
     </section>
+    <button class="resetBtn" id="reset-btn-{{ gameID }}" name="{{ gameID }}" onclick="resetBtnClick(name)">reset</button>
     <section class="draggable-items" id="draggable-items-{{ gameID }}">
         <!-- Will be dynamically populated - Example Element: -->
         <!-- <i class="fab fa-codepen draggable" draggable="true" style="color: #111111;" id="codepen"></i> -->
@@ -30,5 +29,5 @@
 
     /* Event Listener on page load
      */
-    initiateGame("{{ gameID }}", "{{ numItems }}")
+    initiateGame("{{ gameID }}", {{ elements }})
 </script>
