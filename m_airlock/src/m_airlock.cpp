@@ -334,9 +334,26 @@ void stageActions() {
             delay(10000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(beamerIntro, closed);
-            stage = decontamination;
+            //stage = decontamination;
+            stage = sterilisation; // One time sterilisation
         break;
         // have to check if need some sort of synchronisation ... or have a bit of padding in the decontimnation video
+        case sterilisation:
+            // starting with a bright light than green blinking
+            wdt_disable();
+            
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(10);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            delay(400);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,30,PWM::set1_2_3);
+            delay(3100);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+
+            wdt_enable(WDTO_8S);
+            stage = decontamination;
+
+        break;
         case decontamination:
             Mother.motherRelay.digitalWrite(beamerDecon, open);
             delay(3000);
@@ -346,13 +363,19 @@ void stageActions() {
         break;
         case airlockRequest: break;
         case airlockOpening:
+            wdt_disable();
             Mother.motherRelay.digitalWrite(alarm, open);
-            airLockBlink(gateWarningDelay);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,500,1500,100,15,PWM::set3);
+            delay(gateWarningDelay);
             Mother.motherRelay.digitalWrite(gate_pwr, open);
             Mother.motherRelay.digitalWrite(gate_direction, gateUp);
-            airLockBlink(gateDuration/2);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,500,1500,100,15,PWM::set3);
+            delay(gateDuration/2);
             Mother.motherRelay.digitalWrite(alarm, closed);
-            airLockBlink(gateDuration/2);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,500,1500,100,15,PWM::set3);
+            delay(gateDuration/2);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            wdt_enable(WDTO_8S);
             stage = stage << 1;
         break;
         case airlockOpen:

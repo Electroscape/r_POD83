@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 10
+#define StageCount 11
 #define PasswordAmount 6
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -73,7 +73,8 @@ enum stages {
     // brief stage to use the running lights and keep the alarm on
     airlockOpen = 128,
     idle = 256, 
-    airlockFailed = 512
+    airlockFailed = 512,
+    sterilisation = 1024,
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -118,5 +119,6 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Wait to enter",
     "Caution",
     "",
-    "Access denied"
+    "Access denied",
+    "Sterilisation"
 };
