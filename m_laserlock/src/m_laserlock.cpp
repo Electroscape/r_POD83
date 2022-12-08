@@ -14,6 +14,7 @@
  * 🔲 add feedback to close the door when tryint to lock
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
  * ✅ add numbering of brains to header to make changes easiers
+ * in between stage or text for unlocking with rfid
  *  Q:
  * 
  */
@@ -146,18 +147,19 @@ void timedTrigger() {
             stage = failedUnlock;
         break;
         // alternatively use cardspresent to send evaluation
-        case unlocked:  
-            if (cardsPresent <= 0) {return;}
+        case seperationUnlocked:  
+            if (cardsPresent == 0) {return;}
             cardsPresent = 0;
             sendResult(false, 0);
             sendResult(false, 1);
         break;
-        case locked:  
-            if (cardsPresent <= 0) {return;}
+
+        /*
+            if (cardsPresent == 0) {return;}
             cardsPresent = 0;
             sendResult(false, 0);
             sendResult(false, 1);
-        break;
+        */
     }
 }
 
@@ -169,16 +171,21 @@ void timedTrigger() {
 void handleCorrectPassword(int passNo) {
 
     // rather specifi logic... prefer to make a negation so things could switch easier
-    if (stage == unlock) { 
-        // delay(500);
-        stage = unlocked; 
-        // start polling the 2nd Access since there is no need before
-        Mother.rs485SetSlaveCount(2);
-        return;
+    switch (stage) {
+        case unlock: 
+            // delay(500);
+            stage = unlocked; 
+            delay(3000);
+            // start polling the 2nd Access since there is no need before
+            Mother.rs485SetSlaveCount(2);
+        break;
+        case seperationLocked:
+            stage = seperationUnlocked;
+            delay(3000);
+        break;
     }
 
     // this handles the locking and unlocking via presentation on both sides
-
     timestamp = millis() + rfidTimeout;
     cardsPresent &= passNo;
 
@@ -192,20 +199,20 @@ void handleCorrectPassword(int passNo) {
     timestamp = millis() + rfidTxDuration;
 
     switch (stage) {
-        case unlocked: 
+        case seperationUnlocked: 
             if (!inputPCF.digitalRead(reedDoor)) {
-                stage = locked; 
+                stage = seperationLocked; 
                 sendResult(true, 0);
                 sendResult(true, 1);
-            }       
+            } else {
+                sendResult(false, 0);
+                sendResult(false, 1);
+            }
+            wdt_reset();
+            delay(5000);
+            wdt_reset();
             // @todo: there needs to be better feedback here currently TBD
         break;
-        case locked: 
-            stage = unlocked; 
-            sendResult(true, 0);
-            sendResult(true, 1);
-        break;
-        default: sendResult(true);
     }
 
 }
@@ -236,8 +243,8 @@ bool passwordInterpreter(char* password) {
 void handleResult() {
     Mother.STB_.rcvdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
     if (passwordInterpreter(Mother.STB_.rcvdPtr) && (Mother.STB_.rcvdPtr != NULL)) {
-        // evaluation of unlocked and locked is delayed to send when both cards are valid
-        if ((stage & unlock & locked) != 0) {
+        // excluding the cases where both cards need to be present
+        if (stage != seperationUnlocked) {
             sendResult(true);
         }
     } else {
@@ -375,13 +382,17 @@ void stageActions() {
             outputRFIDReset();
             wdt_reset();
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 20);
+            stage = seperationUnlocked;
         break; 
-        case locked:
+        case seperationUnlocked:
             Mother.motherRelay.digitalWrite(door, doorOpen);
             wdt_disable();
             delay(rfidTxDuration);
             enableWdt();
             outputRFIDReset();
+        break;
+        case seperationLocked:
+            Mother.motherRelay.digitalWrite(door, doorOpen);
         break;
         case lightStart:
             LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 100, displayFailedUnlock,  PWM::set1 + PWM::set2);
@@ -453,8 +464,8 @@ void handleInputs() {
 
     if (stage != idle) { return; }
     lastStage = idle;
-
-    switch (inputDetector()) {
+    int result = inputDetector();
+    switch (result) {
         case failedBootTrigger: 
             stage = failedBoot;
         break;
@@ -463,7 +474,7 @@ void handleInputs() {
         break;
         case room1Light:
             if (lightOn) { return; }
-            lightOn = true;
+            // lightOn = true;
             stage = lightStart;
         break;
         default: break;

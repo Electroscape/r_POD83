@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 10
+#define StageCount 11
 #define PasswordAmount 2
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -26,7 +26,7 @@ unsigned long rfidTimeout = 3000;
 // FL lamps shall be some industrial reddish light 
 static constexpr int clrLight[3] = {255,200,120};
 
-#define inputCnt 5
+#define inputCnt 4
 
 enum brains {
     airlockAccess,      // access module on the outside
@@ -44,7 +44,6 @@ enum inputs {
 };
 
 uint8_t inputTypes[inputCnt] = {
-    INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP,
     INPUT_PULLUP,
@@ -109,15 +108,16 @@ int relayInitArray[relayAmount] = {
 
 enum stages {
     setupStage = 1, 
-    failedBoot = 2,     // trigger boot
-    operational = 4,    // trigger boot & connectionfixed
-    decon = 8,          // trigger decon
-    unlock = 16,
-    failedUnlock = 32,
-    unlocked = 64,
-    idle = 128, 
-    locked = 256,
-    lightStart = 512,
+    idle = 2, 
+    failedBoot = 4,     // trigger boot
+    operational = 8,    // trigger boot & connectionfixed
+    decon = 16,          // trigger decon
+    unlock = 32,
+    failedUnlock = 64,
+    unlocked = 128,
+    seperationUnlocked = 256,       // waiting for Auth on both sides to lock
+    seperationLocked = 512,         // waiting for Auth on one side to unlock
+    lightStart = 1024,
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -128,15 +128,16 @@ int stageSum = ~( ~0 << StageCount );
 // for now its only an Access module mapped here
 int flagMapping[StageCount] {
     0,          // setupStage
+    0,          // idle
     0,          // failedBoot
     0,          // operational
     0,          // decon
     rfidFlag,   // unlock
     0,          // failedUnlock
-    rfidFlag,   // unlocked ... there is a cooldown on the access module so it should be fine to reactivate
-    0,          // idle
-    rfidFlag,   // locked
-    0           // lightStart
+    0,          // unlocked ... there is a cooldown on the access module so it should be fine to reactivate
+    rfidFlag,   // seperationUnlocked
+    rfidFlag,   // seperationLocked
+    0           // lightStart from "USB-Boot"
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -146,21 +147,22 @@ char passwords[PasswordAmount][MaxPassLen] = {
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    unlock + unlocked + locked,
-    unlock + unlocked + locked
+    unlock + seperationLocked + seperationUnlocked,
+    unlock + seperationLocked + seperationUnlocked
 };
 // make a mapping of what password goes to what stage
 
 
 char stageTexts[StageCount][headLineMaxSize] = {
     "",                     // setupStage
+    "",                     // idle 
     "Booting",              // failedBoot
     "",                     // operational
     "",                     // decon
     "Scan Arm",             // unlock
     "Timeout",              // failedUnlock
     "Access Granted",       // unlocked
-    "",                     // idle 
-    "",                     // locked
+    "Present To Lock",      // seperationUnlocked
+    "Present to Open"       // seperationLocked
     ""                      // lightStart
 };
