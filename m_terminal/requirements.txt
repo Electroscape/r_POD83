@@ -7,5 +7,6 @@ python-socketio==5.7.2
 numpy==1.23.4
 requests
 opencv-python~=4.6.0.66
+gevent
 gevent-websocket
 socketio~=0.2.1
