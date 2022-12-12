@@ -1,3 +1,9 @@
 {
-  "gpio_mapping": {}
+      "terminalAdresses": [
+
+      ],
+      "gpio_mapping": [
+
+      ]
+
 }

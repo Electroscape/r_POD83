@@ -4,6 +4,7 @@
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
 import json
+import logging
 
 
 try:
@@ -20,7 +21,9 @@ except (RuntimeError, ModuleNotFoundError):
 app = Flask('Pi-Arbiter')
 
 async_mode = None
-socketio = SocketIO(app, async_mode=async_mode)
+sio = SocketIO.Client()
+# asyncio
+# sio = socketio.AsyncClient()
 gpio_thread = None
 
 
@@ -34,7 +37,18 @@ def load_settings(self):
         exit()
 
 
-if __name__ == '__main__':
-    socketio.emit('riddles_updated', {
-        'relays': 'Stuff'}, namespace='/test', broadcast=True)
+@sio.event
+def connect():
+    print("I'm connected!")
 
+
+def usb_boot():
+    sio.emit("usb_boot", "boot")
+
+
+def main():
+    usb_boot()
+
+
+if __name__ == '__main__':
+    main()

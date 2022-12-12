@@ -1,2 +1,7 @@
 Flask
 Flask-SocketIO
+gevent-websocket
+
+# optional for on pc testing
+# tkinter?
+GPIOEmulator
