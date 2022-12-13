@@ -1,7 +1,6 @@
 # This is a sample Python script.
 
 
-from flask import Flask, request
 import json
 import socketio
 
@@ -21,10 +20,9 @@ except (RuntimeError, ModuleNotFoundError):
     # GPIO.VERBOSE = False
     from GPIOEmulator.EmulatorGUI import GPIO
 
-server_ip = "http://192.168.87.168:5500"
+server_ip = "http://RasPi-4-POD-T1:5500"
 
-app = Flask('Pi-Arbiter')
-app.config['SECRET_KEY'] = 'gjr39dkjn344_!67#'
+# standard Python
 sio = socketio.Client()
 
 
