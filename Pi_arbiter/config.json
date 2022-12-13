@@ -2,5 +2,4 @@
       "terminal_server_add": "http://RasPi-4-POD-T1:5500",
       "event_mapping": "",
       "sound_server_add": "http://POD-ITX/AudioInterface.php"
-
 }

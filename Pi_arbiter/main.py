@@ -2,11 +2,9 @@
 
 
 import json
-
-import requests
 import socketio
 from time import sleep
-
+from event_mapping import sound_events
 import os
 # standard Python would be python-socketIo
 
@@ -36,6 +34,8 @@ sio = socketio.Client()
 # asyncio
 # sio = socketio.AsyncClient()
 gpio_thread = None
+# used to prevent multiple boots
+usb_booted = False
 
 '''
 class event:
@@ -43,7 +43,8 @@ class event:
         self.name = name
 '''
 
-usb_pin = 5
+usb_in = 5
+usb_out = 7
 
 
 class Settings:
@@ -51,8 +52,8 @@ class Settings:
         # self.pin_mapping = _pin_mapping
         self.event_mapping = event_mapping
         self.server_add = server_add
-        self.output_GPIOs = [usb_pin]
-        self.input_GPIOs = [7]
+        self.output_GPIOs = [usb_out]
+        self.input_GPIOs = [usb_in]
         self.sound_server_add = sound_server_add
 
 
@@ -75,15 +76,33 @@ def connect():
     print("Connected to Server!")
 
 
+def setup_gpio_callbacks():
+    # GPIO.add_event_callback(channel, my_callback, bouncetime=200)
+    print()
+
+
 def usb_boot():
     # sio.emit("usb_boot", "boot")
-    GPIO.output(usb_pin, GPIO.LOW)
-    payload = {
-        "ip": "192.168.178.172",
-        "group_id": 2
-    }
-    ret = requests.post(settings.sound_server_add, payload)
-    print(ret)
+    GPIO.output(usb_out, GPIO.LOW)
+    global usb_booted
+    usb_booted = True
+
+
+class InputGroup:
+    def __init__(self, pins):
+        self.pins = pins
+
+    def read_binary_inputs(self):
+        result = 0
+        for i, pin in enumerate(self.pins):
+            if GPIO.input(pin):
+                result += 1 << i
+        return result
+
+
+@sio.on('usb_boot')
+def airlock_intro():
+    sound_events["airlock_video"]
 
 
 def setup_gpios():
@@ -96,9 +115,11 @@ def setup_gpios():
     for pin in settings.output_GPIOs:
         GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
 
+    setup_gpio_callbacks()
+
 
 def scan_for_usb():
-    return True
+    return os.path.exists("/dev/sda")
 
 
 def main():
@@ -106,13 +127,15 @@ def main():
         if scan_for_usb():
             usb_boot()
             sleep(20)
+        # GPIO scanning
+        # socketio
 
 
 if __name__ == '__main__':
     settings = load_settings()
     setup_gpios()
-    # usb_boot()
-    # exit()
+    usb_boot()
+    exit()
     connected = False
     while not connected:
         try:
