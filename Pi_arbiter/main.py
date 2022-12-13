@@ -2,9 +2,13 @@
 
 
 from flask import Flask, request
-from flask_socketio import SocketIO, emit
 import json
-import logging
+import socketio
+
+# standard Python would be python-socketIo
+
+# GPIO.add_event_detect(data.gpio, GPIO.RISING, callback=callback, bouncetime=20)
+#
 
 
 try:
@@ -17,11 +21,13 @@ except (RuntimeError, ModuleNotFoundError):
     # GPIO.VERBOSE = False
     from GPIOEmulator.EmulatorGUI import GPIO
 
+server_ip = "http://192.168.87.168:5500"
 
 app = Flask('Pi-Arbiter')
+app.config['SECRET_KEY'] = 'gjr39dkjn344_!67#'
+sio = socketio.Client()
 
-async_mode = None
-sio = SocketIO.Client()
+
 # asyncio
 # sio = socketio.AsyncClient()
 gpio_thread = None
@@ -39,7 +45,7 @@ def load_settings(self):
 
 @sio.event
 def connect():
-    print("I'm connected!")
+    print("Connected to Server!")
 
 
 def usb_boot():
@@ -47,8 +53,11 @@ def usb_boot():
 
 
 def main():
-    usb_boot()
+    while True:
+        usb_boot()
 
 
 if __name__ == '__main__':
+    sio.connect(server_ip)
+    # socketio.run(app, host='0.0.0.0', port=80, debug=False, allow_unsafe_werkzeug=True)
     main()

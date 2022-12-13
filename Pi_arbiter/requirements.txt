@@ -1,6 +1,6 @@
 Flask
 Flask-SocketIO
-gevent-websocket
+# gevent-websocket
 
 # optional for on pc testing
 # tkinter?
