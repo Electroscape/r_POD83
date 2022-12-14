@@ -16,7 +16,7 @@ sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 # Configuration Constants
-server_ip = "http://192.168.87.168:5500"
+server_ip = "http://192.168.178.20:5500"
 g_lang = "en"  # first run starts in English
 terminal_name = "TR1"  # which config file to load
 

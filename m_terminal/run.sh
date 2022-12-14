@@ -3,7 +3,7 @@ pkill flask
 pkill chromium
 
 # shellcheck disable=SC2164
-cd ~/r_POD83/m_terminal
+cd ~/Electroscape/r_POD83/m_terminal
 source ./venv/bin/activate
 
 sleep 5 &

@@ -47,7 +47,7 @@
                 }
             }
 
-            function addUser() {
+            function submitToElancell() {
                 var valid = true;
                 allFields.removeClass("ui-state-error");
 
@@ -65,8 +65,9 @@
                 }
 
                 if (valid) {
+                    let ipVal = ip.val();
                     dialog.dialog("close");
-                    alert("Sent Successfully to ip " + ip.val());
+                    alert("Sent Successfully to ip " + ipVal);
                 }
                 return valid;
             }
@@ -81,7 +82,7 @@
                         dialog.dialog("close");
                     },
 
-                    "Upload": addUser,
+                    "Upload": submitToElancell,
                 },
                 close: function () {
                     form[0].reset();
@@ -91,7 +92,7 @@
 
             form = dialog.find("form").on("submit", function (event) {
                 event.preventDefault();
-                addUser();
+                submitToElancell();
             });
 
             $("#BtnUpload").button().on("click", function () {
@@ -198,27 +199,27 @@
         <p class="validateTips">All form fields are required.</p>
 
         <form>
-            <fieldset>
+            <fieldset class="form-outline">
                 <h3>Network Configuration</h3>
-                <label for="ipv4">ip
+                <label class="form-label" for="ipv4">ip
                     <input id="ipv4" type='text' name='text1' value="134.231.54.19"
-                           class="text ui-widget-content ui-corner-all" disabled/>
+                           class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 
-                <label for="email">account
-                    <input type="text" name="email" id="email" value="david@elancell.com"
-                           class="text ui-widget-content ui-corner-all" disabled>
+                <label class="form-label" for="email">account
+                    <input type="email" name="email" id="email" value="david@elancell.com"
+                           class="form-control text ui-widget-content ui-corner-all" disabled>
                 </label>
-                <label for="password">password
+                <label class="form-label" for="password">password
                     <input type="text" name="password" id="password" value="xxxxxxx"
                            style="-webkit-text-security: square;"
-                           class="text ui-widget-content ui-corner-all" disabled>
+                           class="form-control text ui-widget-content ui-corner-all" disabled>
                 </label>
 
                 <h3>File Info</h3>
-                <label for="name">name</label>
+                <label class="form-label" for="name">name</label>
                 <input type="text" name="name" id="name" value="results.csv"
-                       class="text ui-widget-content ui-corner-all">
+                       class="form-control text ui-widget-content ui-corner-all">
 
                 <!-- Allow form submission with keyboard without duplicating the dialog button -->
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
