@@ -15,6 +15,7 @@ import os
 @TODO: 
  * expection handling
  * cooldowns, need to consider what time library
+ * resettimes for gpio output
 
 
 '''
