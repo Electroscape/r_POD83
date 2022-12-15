@@ -2,6 +2,23 @@
 
 {% block head %}
     <style>
+        /* countdown */
+        .countdown {
+            font-size: 6.5rem;
+            margin-top: 20px;
+        }
+
+        #lang-box {
+            visibility: hidden;
+        }
+
+        #k-lab {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         input {
             background: none;
             color: Red;
@@ -61,12 +78,9 @@
         <div id="result"></div>
     </div>
     <div id="k-lab" class="d-none">
-        <link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
-        <script src="{{ url_for('static',filename='js/keypad.js') }}">
-        </script>
-        {% with keyTitle="access code", keyPass=g_config.password, keyID="0" %}
-            {% include "keypad.html" %}
-        {% endwith %}
+        <!-- countdown text -->
+        <p>Please authenticate yourself before the time is up!</p>
+        <p class="countdown">00</p>
     </div>
 {% endblock %}
 
@@ -110,8 +124,8 @@
 
         successLine = "Laser is ready to use";
         appHeader = "##################################################################\n\n" +
-            "Welcome to AirLock:\n" +
-            "Laser is ready!\n\n" +
+            "Boot up successfully"+
+            "AirLock Laser is ready!\n\n" +
             "##################################################################\n";
 
         function sleep(ms) {
@@ -158,8 +172,9 @@
                 $('#text').focus();
                 appendLine(appHeader);
 
-                $("#bootContainer").hide();
+                $("#bootContainer").css("height", "unset");
                 $("#k-lab").removeClass("d-none");
+                setCountdownTimer(60);
 
             } else {
                 $.post("{{ url_for('lab_control') }}", {
@@ -168,10 +183,10 @@
                 let snd = document.getElementById("errorSnd");
                 snd.play();
 
-                for (let i = 1; i < 6; i++) {
+                for (let i = 1; i < 5; i++) {
                     appendLine(`<p style="color: blue">attempt number: ${i}</p>`);
                     appendLine("re-initializing the laser");
-                    await sleep(Math.floor(Math.random() * 500) + 1);
+                    await sleep(Math.floor(Math.random() * 700) + 1);
                     for (const line of errorLines) {
                         appendLine(`<p style="color: red">${line}</p>`);
                         await sleep(Math.floor(Math.random() * 100) + 1);
@@ -198,5 +213,84 @@
         });
 
         $("#bootup").click()
+    </script>
+    <script type="text/javascript">
+        // grab the .countdown
+        const countDown = document.querySelector('.countdown');
+
+        /* global variables and constants*/
+        // variable to store setInterval
+        let countDownInterval;
+        // secondsLeft in millisecond
+        let secondsLeftms;
+        // end time
+        let endTime;
+        // .stop-btn clicked or not
+        let stopBtnClicked = false;
+        /* global variables ends */
+
+        /* .form submit listener */
+        function setCountdownTimer(timeInSec) {
+            // check if it is not zero
+            if (timeInSec > 0) {
+                // convert to msec
+                timeInSec = timeInSec * 1000;
+
+                // get current time in milliseconds
+                const now = Date.now();
+                // calculate the ending time
+                endTime = now + timeInSec;
+
+                // activate the countdown at first
+                setCountDown(endTime);
+
+                countDownInterval = setInterval(() => {
+                    setCountDown(endTime);
+                }, 1000);
+            }
+        }
+
+        /* setCountDown function */
+        const setCountDown = (endTime) => {
+            // calculate how many milliseconds is left to reach endTime from now
+            secondsLeftms = endTime - Date.now();
+            // convert it to seconds
+            const secondsLeft = Math.round(secondsLeftms / 1000);
+
+            // calculate the hours, minutes and seconds
+            let hours = Math.floor(secondsLeft / 3600);
+            let minutes = Math.floor(secondsLeft / 60) - (hours * 60);
+            let seconds = secondsLeft % 60;
+
+            // adding an extra zero in front of digits if it is < 10
+            if (hours < 10) {
+                hours = `0${hours}`;
+            }
+            if (minutes < 10) {
+                minutes = `0${minutes}`;
+            }
+            if (seconds < 10) {
+                seconds = `0${seconds}`;
+            }
+
+            // stopping the timer if the time is up
+            if (secondsLeft < 0) {
+                resetCountDown();
+                return;
+            }
+
+            // set the .countdown text
+            countDown.innerHTML = `${seconds}`;
+        };
+        /* setCountDown function ends */
+
+
+        /* resetCountDown function */
+        const resetCountDown = () => {
+            // destroy the setInterval()
+            clearInterval(countDownInterval);
+            document.location.href = "/"
+        };
+        /* resetCountDown function ends */
     </script>
 {% endblock %}

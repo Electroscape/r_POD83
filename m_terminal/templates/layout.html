@@ -98,8 +98,7 @@
             socket.on("airlock_fe", function (msg) {
                 console.log(`airlock ${msg}`)
                 toastr.warning(`airlock laser is ${msg.status}`);
-                let a_elem = document.getElementById("a_" + "lab-control");
-                a_elem.classList.remove("disabled");
+                loadControlPanel(msg.data, msg.status);
             })
 
             socket.on("boot_fe", function (msg) {
@@ -159,7 +158,7 @@
         }
     });
 
-    function loadControlPanel(jsonResponse) {
+    function loadControlPanel(jsonResponse, airlockStatus="") {
         let CPanel = document.getElementById("ControlPanel")
         let PContainer = document.getElementById("posts-container")
         let resTxt = ""
@@ -171,10 +170,11 @@
             }
             CPanel.innerHTML = resTxt;
 
-            {% if airlock and airlock == "error" %}
+            let airlock = airlockStatus || "{% if airlock %}{{ airlock }}{% endif %}";
+            if (airlock === "error") {
                 let air_elem = jsonResponse.btns.find(x => x.id === '{{ airlock_id }}');
                 disableOption(air_elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
-            {% endif %}
+            }
 
             for (let jsonResponseElement of jsonResponse.btns) {
                 if (jsonResponseElement.auth) {
