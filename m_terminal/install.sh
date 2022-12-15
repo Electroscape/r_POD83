@@ -6,4 +6,4 @@ cd ~/Electroscape/r_POD83/m_terminal/
 python -m venv venv
 source ./venv/bin/activate
 
-python pip install -r requirements.txt
+python -m pip install -r requirements.txt
