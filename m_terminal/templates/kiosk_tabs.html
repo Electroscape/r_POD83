@@ -16,6 +16,7 @@
         body {
             height: 100%;
         }
+
         iframe {
             width: 100%;
             height: 100%;
@@ -24,27 +25,20 @@
 </head>
 <body>
 <ul class="nav nav-tabs navbar-dark bg-dark justify-content-center">
-    <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#server">Server</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#ter1">Terminal 1</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#ter2">Terminal 2</a>
-    </li>
+    {% for id in ips.keys() %}
+        <li class="nav-item">
+            <a class="nav-link {% if loop.index0 == 0 %}active{% endif %}" data-bs-toggle="tab"
+               href="#{{ id }}">{{ id }}</a>
+        </li>
+    {% endfor %}
 </ul>
 
 <div class="tab-content h-100">
-    <div id="server" class="tab-pane fade show active w-100 h-100">
-        <iframe src="http://192.168.87.168:5500"></iframe>
-    </div>
-    <div id="ter1" class="tab-pane fade w-100 h-100">
-        <iframe src="http://192.168.87.168:5551"></iframe>
-    </div>
-    <div id="ter2" class="tab-pane fade w-100 h-100">
-        <iframe src="http://192.168.87.168:5552"></iframe>
-    </div>
+    {% for id, ip in ips.items() %}
+        <div id="{{ id }}" class="tab-pane fade w-100 h-100 {% if loop.index0 == 0 %}show active{% endif %}">
+            <iframe src="{{ ip }}"></iframe>
+        </div>
+    {% endfor %}
 </div>
 </body>
 </html>

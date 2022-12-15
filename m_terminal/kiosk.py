@@ -5,7 +5,12 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("kiosk_tabs.html")
+    ips = {
+        "server": "http://192.168.87.168:5500",
+        "ter1": "http://192.168.87.168:5551",
+        "ter2": "http://192.168.87.168:5552"
+    }
+    return render_template("kiosk_tabs.html", ips=ips)
 
 
 @app.route('/favicon.ico')

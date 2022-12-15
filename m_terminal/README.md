@@ -74,8 +74,9 @@ However, the `jinja` snippets are not recognised, so it is recommended to use `p
   add all possible IPs that could communicate in the setup.
 - `ter1.py` and `ter2.py` can only work if the `server.py` is running and reachable. Get the IP which is the server
   running on and update the variable `server_ip` in the terminal script.
+- In `ter1` the `media` page can only be loaded if there is content in `static/media` folder.
 - The `kiosk.py` script is irrelevant to the setup. It is used to add tabs to display both terminals and the server in one webpage in
-  the kiosk mode.
+  the kiosk mode. Simply, change `ips` dict in `kiosk.py` to create your webpage with tabs (easier to monitor several pages at the same time).
 
 ## Useful Commands
 
