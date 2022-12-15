@@ -4,7 +4,7 @@
 import json
 import socketio
 from time import sleep
-from event_mapping import sound_events
+from event_mapping import *
 import os
 # standard Python would be python-socketIo
 
@@ -82,10 +82,13 @@ def setup_gpio_callbacks():
 
 
 def usb_boot():
-    # sio.emit("usb_boot", "boot")
-    GPIO.output(usb_out, GPIO.LOW)
-    global usb_booted
-    usb_booted = True
+    # sio.emit('tr1', 'boot')
+    handle_event(event_map, 'usb_boot')
+    sio.emit('usb_boot', 'boot')
+    # sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
+    # GPIO.output(usb_out, GPIO.LOW)
+    # global usb_booted
+    # usb_booted = True
 
 
 class InputGroup:
@@ -101,21 +104,28 @@ class InputGroup:
 
 
 @sio.on('usb_boot')
-def airlock_intro():
-    sound_events["airlock_video"]
+def airlock_intro(msg):
+    print(msg)
+    # sound_events["airlock_video"]
 
 
 def setup_gpios():
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
 
-    for pin in settings.input_GPIOs:
-        GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    for value in event_map.values():
+        try:
+            for pin in value['gpio_out']:
+                GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
+        except KeyError:
+            pass
 
-    for pin in settings.output_GPIOs:
-        GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
-
-    setup_gpio_callbacks()
+        try:
+            for pin in value['gpio_in']:
+                GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+                # callback stuff here
+        except KeyError:
+            pass
 
 
 def scan_for_usb():
@@ -131,18 +141,46 @@ def main():
         # socketio
 
 
-if __name__ == '__main__':
-    settings = load_settings()
-    setup_gpios()
-    usb_boot()
-    exit()
-    connected = False
-    while not connected:
+def handle_event(event_dict, event_name):
+    print(f"handling event {event_name}")
+    try:
+        event = event_dict[event_name]
+    except KeyError:
+        return False
+
+    try:
+        sound_cb = event["sound_cb"]
+        print(f"activating sound: {sound_cb}")
+        activate_sound(sound_cb)
+    except KeyError:
+        pass
+
+    try:
+        pins = event["gpio_out"]
+        for pin in pins:
+            print(f"setting output: {pin}")
+            GPIO.output(pin, GPIO.LOW)
+    except KeyError:
+        pass
+
+
+def connect():
+    while True:
         try:
             sio.connect(settings.server_add)
-            connected = True
+            return True
         except socketio.exceptions.ConnectionError as exc:
             print(f'Caught exception socket.error : {exc}')
             sleep(1)
 
+
+if __name__ == '__main__':
+    settings = load_settings()
+    setup_gpios()
+
+    connected = connect()
+
+    sleep(5)
+    usb_boot()
+    exit()
     main()

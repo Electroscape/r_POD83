@@ -1,8 +1,10 @@
 import requests
 
 '''
+double post of teh same atmo is not possible
 
-GPIO addevent?
+we could connect the cables to both the RPi and Mother
+
 sio event?
 
 and then how to handle cooldowns?
@@ -25,6 +27,13 @@ RPi 3.3V -> 5V Pulldown on arduino
  
  ### terminal 
   * boot cmd -> pcf arduino -> 
+  
+  
+  # @sio.on('usbBoot','boot')
+  
+  # receive an event would be 
+    @sio.on('channel_name')
+    def authenticate_usr(msg):
  
 '''
 
@@ -35,12 +44,13 @@ RPi 3.3V -> 5V Pulldown on arduino
 def cb_test():
     print("callback stuff")
 
+
 test_name = "airlock_intro"
 
 event_map = {
     "airlock_intro": {
         # if several pins are used we need a state aswell
-        "gpio_pins": [],
+        "gpio_in": [],
         "cb_fn": cb_test(),
         "sound_cb": {
             "is_fx": True,
@@ -68,35 +78,44 @@ event_map = {
         }
     },
     "usb_boot": {
+        "gpio_out": [4],
         "sound_cb": {
             "is_fx": False,
             "id": 2
         },
-        "socket_cb": {
-
+    },
+    "laserlock_fail": {
+        "gpio_out": [5],
+        "sound_cb": {
+            "id": 3
         }
-    }
+    },
+    "laserlock_bootdecon": {
+        "gpio_out": [6],
+        "sound_cb": {
+            "id": 4
+        }
+    },
+    "laserlock_welcome_david": {
+        "sound_cb": {
+            "id": 15
+        }
+    },
+    "laserlock_welcome_rachel": {
+        "sound_cb": {
+            "id": 16
+        }
+    },
 }
 
 
-def handle_event(event_dict):
-    try:
-        sound_cb = event_dict["sound_cb"]
-        activate_sound(sound_cb)
-    except KeyError:
-        pass
-    try:
-        socket_cb = event_dict["socket_cb"]
-    except KeyError:
-        pass
-
-
 def activate_sound(sound_cb):
+    print(sound_cb)
     payload = dict(ip="192.168.178.172")
 
     try:
         sound_id = sound_cb["id"]
-        if sound_cb["is_fx"].is_fx:
+        if sound_cb["is_fx"]:
             payload["fx_id"] = sound_id
         else:
             payload["group_id"] = sound_id
@@ -118,15 +137,6 @@ class Events:
         self.airlock_decon = ""
 '''
 
-# @TODO: pack eventnames into class/dict?
-sound_events = {
-    "airlock_video": SoundEvent(7),
-    "airlock_sterilisation": SoundEvent(8),
-    "airlock_decon": SoundEvent(2),
-    "airlock_wrong": SoundEvent(1),
-
-    "usb_boot": SoundEvent(2, False)
-}
 
 
 
