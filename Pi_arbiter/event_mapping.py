@@ -28,10 +28,53 @@ RPi 3.3V -> 5V Pulldown on arduino
  
 '''
 
+# http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
+# defaults?
 
-class Event:
-    def __init__(self, callback):
-        self.callback = callback
+
+def cb_test():
+    print("callback stuff")
+
+
+event_map = {
+    "airlock_intro": {
+        # if several pins are used we need a state aswell
+        "gpio_pins": [],
+        "cb_fn": cb_test(),
+        "sound_cb": {
+            "is_fx": True,
+            "id": 7
+        }
+    },
+    "airlock_sterilisation": {
+        "sound_cb": {
+            "gpio_pins": [],
+            "is_fx": True,
+            "id": 8
+        }
+    },
+    "airlock_decon": {
+        "gpio_pins": [],
+        "sound_cb": {
+            "id": 2
+        }
+    },
+    "airlock_wrong": {
+        "gpio_pins": [],
+        "sound_cb": {
+            "is_fx": True,
+            "id": 1
+        }
+    },
+    "usb_boot": {
+        "sound_cb": {
+            "is_fx": False,
+            "id": 2
+        }
+    }
+
+
+}
 
 
 class SoundEvent:
@@ -51,6 +94,9 @@ class SoundEvent:
         ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
         print(ret)
 
+
+
+
 '''
 class Events:
     def __init__(self):
@@ -63,9 +109,10 @@ class Events:
 # @TODO: pack eventnames into class/dict?
 sound_events = {
     "airlock_video": SoundEvent(7),
-    "airlock_wrong": SoundEvent(1),
     "airlock_sterilisation": SoundEvent(8),
     "airlock_decon": SoundEvent(2),
+    "airlock_wrong": SoundEvent(1),
+
     "usb_boot": SoundEvent(2, False)
 }
 
