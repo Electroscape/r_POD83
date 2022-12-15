@@ -35,6 +35,7 @@ RPi 3.3V -> 5V Pulldown on arduino
 def cb_test():
     print("callback stuff")
 
+test_name = "airlock_intro"
 
 event_map = {
     "airlock_intro": {
@@ -70,29 +71,40 @@ event_map = {
         "sound_cb": {
             "is_fx": False,
             "id": 2
+        },
+        "socket_cb": {
+
         }
     }
-
-
 }
 
 
-class SoundEvent:
-    def __int__(self, effect_no, is_fx=True):
-        self.id = effect_no
-        self.is_fx = is_fx
+def handle_event(event_dict):
+    try:
+        sound_cb = event_dict["sound_cb"]
+        activate_sound(sound_cb)
+    except KeyError:
+        pass
+    try:
+        socket_cb = event_dict["socket_cb"]
+    except KeyError:
+        pass
 
-    # @TODO: can we pass the settings somehow?
-    def activate_sound(self):
-        payload = {
-            "ip": "192.168.178.172",
-        }
-        if self.is_fx:
-            payload["fx_id"] = self.id
+
+def activate_sound(sound_cb):
+    payload = dict(ip="192.168.178.172")
+
+    try:
+        sound_id = sound_cb["id"]
+        if sound_cb["is_fx"].is_fx:
+            payload["fx_id"] = sound_id
         else:
-            payload["group_id"] = self.id
-        ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
-        print(ret)
+            payload["group_id"] = sound_id
+    except KeyError:
+        pass
+
+    ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
+    print(ret)
 
 
 
