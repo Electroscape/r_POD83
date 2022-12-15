@@ -307,7 +307,6 @@
     border: solid 1px;
     background-size: auto 120%;
     background-position: center;
-    cursor: pointer;
     transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
 }
 
@@ -355,7 +354,6 @@
 }
 
 #fakeBody .options .option .shadow {
-    background-color: green;
     position: absolute;
     left: 0px;
     right: 0px;

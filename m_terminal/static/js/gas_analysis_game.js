@@ -6,6 +6,9 @@ function initiateGame(index, randomDraggableBrands) {
     let draggableItems = document.querySelector("#draggable-items-" + index);
     let matchingPairs = document.querySelector("#matching-pairs-" + index);
     let shadow = document.querySelector("#shadow-" + index);
+    const submitBtn = document.querySelector("#submit-btn-" + index);
+
+    submitBtn.disabled = true;
     shadow.hidden = true
 
     itemsList[index] = randomDraggableBrands.concat([]);
@@ -81,7 +84,7 @@ function drop(event) {
     const scoreSection = document.querySelector("#score-" + index);
     const correctSpan = scoreSection.querySelector(".correct");
     const totalSpan = scoreSection.querySelector(".total");
-    //const playAgainBtn = scoreSection.querySelector("#reset-btn");
+    const submitBtn = document.querySelector("#submit-btn-" + index);
 
     event.target.classList.remove("droppable-hover");
     const draggableElementBrand = event.dataTransfer.getData("text");
@@ -106,18 +109,33 @@ function drop(event) {
         totalSpan.textContent = total[index];
         scoreSection.style.opacity = 1;
     }, 200);
-    if (itemsList[index].length === total[index] && correct[index] === total[index]) { // Game Over!!
-        setTimeout(() => {
-            let shadow = document.querySelector("#shadow-" + index);
-            shadow.hidden = false;
-            alert("Stable Correct Solution");
-
-        }, 600)
+    if (itemsList[index].length === total[index]) { // Game Over!!
+        submitBtn.disabled = false;
     } else if (itemsList[index].length === total[index]) {
         setTimeout(() => {
             alert("Unstable combination")
             $("#reset-btn-" + index).click()
         }, 600)
+    }
+}
+
+function submitBtnClick(index) {
+    if (itemsList[index].length === total[index] && correct[index] === total[index]) { // Game Over!!
+        setTimeout(() => {
+            let shadow = document.querySelector("#shadow-" + index);
+            let successTxt = shadow.querySelector("#success-txt-" + index);
+            successTxt.classList.remove("d-none");
+            shadow.hidden = false;
+            shadow.style.backgroundColor = "green";
+
+            alert("Stable Correct Solution");
+
+        }, 200)
+    } else if (itemsList[index].length === total[index]) {
+        setTimeout(() => {
+            alert("Unstable combination")
+            $("#reset-btn-" + index).click()
+        }, 200)
     }
 }
 
@@ -128,7 +146,9 @@ function resetBtnClick(index) {
     const scoreSection = document.querySelector("#score-" + index);
     const correctSpan = scoreSection.querySelector(".correct");
     const totalSpan = scoreSection.querySelector(".total");
+    const submitBtn = document.querySelector("#submit-btn-" + index);
 
+    submitBtn.disabled = true;
     correct[index] = 0;
     total[index] = 0;
     draggableItems.style.opacity = 0;

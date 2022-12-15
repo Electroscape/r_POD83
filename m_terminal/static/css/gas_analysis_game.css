@@ -8,6 +8,22 @@
     transition: opacity 0.2s;
 }
 
+.submitBtn {
+    border: 5px #fff;
+    padding: 8px 10px;
+    outline: none;
+    letter-spacing: 0.05em;
+}
+
+.submitBtn:enabled {
+    color: #fff;
+    background-color: #111;
+}
+
+.submitBtn:enabled:hover {
+    background-color: #333;
+    cursor: pointer;
+}
 .resetBtn {
     color: #fff;
     background-color: #111;
