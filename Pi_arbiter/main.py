@@ -12,7 +12,10 @@ import os
 #
 
 '''
-@TODO: expection handling
+@TODO: 
+ * expection handling
+ * cooldowns, need to consider what time library
+
 
 '''
 
@@ -43,17 +46,12 @@ class event:
         self.name = name
 '''
 
-usb_in = 5
-usb_out = 7
-
 
 class Settings:
     def __init__(self, event_mapping, server_add, sound_server_add):
         # self.pin_mapping = _pin_mapping
         self.event_mapping = event_mapping
         self.server_add = server_add
-        self.output_GPIOs = [usb_out]
-        self.input_GPIOs = [usb_in]
         self.sound_server_add = sound_server_add
 
 
@@ -82,25 +80,28 @@ def setup_gpio_callbacks():
 
 
 def usb_boot():
-    # sio.emit('tr1', 'boot')
     handle_event(event_map, 'usb_boot')
     sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
-    # sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
-    # GPIO.output(usb_out, GPIO.LOW)
-    # global usb_booted
-    # usb_booted = True
 
 
-class InputGroup:
+class GPIOBundle:
     def __init__(self, pins):
-        self.pins = pins
+        self.__pins = pins
+        self.__cooldown = 0
 
-    def read_binary_inputs(self):
-        result = 0
-        for i, pin in enumerate(self.pins):
-            if GPIO.input(pin):
-                result += 1 << i
-        return result
+    def get_value(self):
+        res = 0
+        for i, pin in enumerate(self.__pins):
+            if GPIO.input(pin) == GPIO.LOW:
+                res |= 1 << i
+        return res
+
+    def set_value(self, value):
+        for i, pin in enumerate(self.__pins):
+            if (1 << i) & value > 0:
+                GPIO.output(pin, GPIO.LOW)
+            else:
+                GPIO.output(pin, GPIO.HIGH)
 
 
 @sio.on('usb_boot')
@@ -110,7 +111,7 @@ def airlock_intro(msg):
 
 
 def setup_gpios():
-    GPIO.setwarnings(False)
+    # GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
 
     for value in event_map.values():
@@ -182,5 +183,9 @@ if __name__ == '__main__':
 
     sleep(5)
     usb_boot()
+    GPIO.cleanup()
     exit()
-    main()
+    try:
+        main()
+    finally:
+        GPIO.cleanup()
