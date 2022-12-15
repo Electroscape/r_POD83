@@ -84,7 +84,7 @@ def setup_gpio_callbacks():
 def usb_boot():
     # sio.emit('tr1', 'boot')
     handle_event(event_map, 'usb_boot')
-    sio.emit('usb_boot', 'boot')
+    sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
     # sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
     # GPIO.output(usb_out, GPIO.LOW)
     # global usb_booted
