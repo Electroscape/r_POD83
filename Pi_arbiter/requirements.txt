@@ -1,5 +1,5 @@
-python-engineio==3.13.0
-python-socketio==4.6.0
+
+python-socketio==5.7.2
 requests
 
 # optional for on pc testing
