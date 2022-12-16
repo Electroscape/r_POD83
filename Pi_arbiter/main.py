@@ -13,14 +13,14 @@ import os
 
 '''
 @TODO: 
- * expection handling
- * cooldowns, need to consider what time library
- * resettimes for gpio output
-
+    * expection handling
+    * cooldowns, need to consider what time library
+    * resettimes for gpio output
+    * handling of multiple IO reading the same pulldown sensor via level shifter 
 
 '''
 
-
+# make this a function?
 try:
     import RPi.GPIO as GPIO
     print("Running on RPi")
@@ -30,10 +30,12 @@ except (RuntimeError, ModuleNotFoundError):
     # GPIO.VERBOSE = False
     from GPIOEmulator.EmulatorGUI import GPIO
 
+# GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
 
 # standard Python
 sio = socketio.Client()
-
+bundle_input_groups = []
 
 # asyncio
 # sio = socketio.AsyncClient()
@@ -85,10 +87,20 @@ def usb_boot():
     sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
 
 
+# may be moved to a util library so these can be declared in a
+# config file
 class GPIOBundle:
-    def __init__(self, pins):
+    def __init__(self, pins, io_type):
         self.__pins = pins
         self.__cooldown = 0
+        for pin in self.__pins:
+            if io_type == GPIO.IN:
+                GPIO.setup(pin, io_type, pull_up_down=GPIO.PUD_DOWN)
+            else:
+                GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
+        if io_type == GPIO.IN:
+            # global bundle_input_groups
+            bundle_input_groups.append(self)
 
     def get_value(self):
         res = 0
@@ -104,6 +116,8 @@ class GPIOBundle:
             else:
                 GPIO.output(pin, GPIO.HIGH)
 
+# laserlock_in_bundle = GPIOBundle([27, 26, 25], GPIO.IN)
+
 
 @sio.on('usb_boot')
 def airlock_intro(msg):
@@ -111,9 +125,29 @@ def airlock_intro(msg):
     # sound_events["airlock_video"]
 
 
+@sio.event
+def my_event(sid, data):
+    # handle the message
+    print("received an event")
+    print(sid)
+    print(data)
+
+
+@sio.on('airlock_fe')
+def airlock_boot_request(msg):
+    print(f"message from frontend {msg}")
+    try:
+        fixed_connection_pin = event_map["laserlock_bootdecon"]["gpio_in"]
+        if GPIO.input(fixed_connection_pin) == GPIO.HIGH:
+            handle_event(event_map, "laserlock_fail")
+        else:
+            handle_event(event_map, "laserlock_bootdecon")
+    except KeyError:
+        print("airlock_boot_request failed due to keyerror")
+
+
+# need to specify further since this is not the only gpio setup
 def setup_gpios():
-    # GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
 
     for value in event_map.values():
         try:
@@ -121,6 +155,10 @@ def setup_gpios():
                 GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
         except KeyError:
             pass
+        except Exception as exp:
+            print(f"issue setting up GPIO {pin} "
+                  f"resulting in {exp} ")
+            exit()
 
         try:
             for pin in value['gpio_in']:
@@ -128,6 +166,11 @@ def setup_gpios():
                 # callback stuff here
         except KeyError:
             pass
+        except Exception as exp:
+            print(f"issue setting up GPIO {pin} "
+                  f"resulting in {exp} ")
+            exit()
+
 
 
 def scan_for_usb():
@@ -174,12 +217,12 @@ def connect():
         except socketio.exceptions.ConnectionError as exc:
             print(f'Caught exception socket.error : {exc}')
             sleep(1)
+        # check if connected
 
 
 if __name__ == '__main__':
     settings = load_settings()
     setup_gpios()
-
     connected = connect()
 
     sleep(5)

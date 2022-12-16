@@ -94,12 +94,14 @@ event_map = {
         }
     },
     "laserlock_bootdecon": {
+        "gpio_in": [27],
         "gpio_out": [6],
         "sound_cb": {
             "id": 4
         }
     },
     "laserlock_welcome_david": {
+        "gpio_in_bundle": [1],
         "sound_cb": {
             "id": 15
         }
@@ -125,20 +127,14 @@ def activate_sound(sound_cb):
     except KeyError:
         pass
 
-    ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
-    print(ret)
+    try:
+        ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
+        print(ret)
+    except OSError as OSE:
+        print(f"failed to request sound due to {OSE}")
+        exit()
 
 
-
-
-'''
-class Events:
-    def __init__(self):
-        self.airlock_video = "airlock_video"
-        self.airlock_wrong = "airlock_wrong"
-        self.airlock_sterilisation = "airlock_sterilisation"
-        self.airlock_decon = ""
-'''
 
 
 
