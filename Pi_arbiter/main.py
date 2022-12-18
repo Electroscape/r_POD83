@@ -3,7 +3,7 @@
 
 import json
 import socketio
-from time import sleep
+from time import sleep, time
 from event_mapping import *
 import os
 # standard Python would be python-socketIo
@@ -90,17 +90,16 @@ def usb_boot():
 # may be moved to a util library so these can be declared in a
 # config file
 class GPIOBundle:
-    def __init__(self, pins, io_type):
+    def __init__(self, pins, callback_dictionary=None):
         self.__pins = pins
         self.__cooldown = 0
+        self.__callback_dictionary = callback_dictionary
         for pin in self.__pins:
-            if io_type == GPIO.IN:
-                GPIO.setup(pin, io_type, pull_up_down=GPIO.PUD_DOWN)
-            else:
+            if callback_dictionary is None:
                 GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
-        if io_type == GPIO.IN:
-            # global bundle_input_groups
-            bundle_input_groups.append(self)
+            else:
+                GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+                bundle_input_groups.append(self)
 
     def get_value(self):
         res = 0
@@ -115,6 +114,22 @@ class GPIOBundle:
                 GPIO.output(pin, GPIO.LOW)
             else:
                 GPIO.output(pin, GPIO.HIGH)
+
+    def scan_for_event(self):
+        # doing a really long cooldown here may need to be made a passed parameter or config value
+        if time() - self.__cooldown < 10:
+            return False
+        for pin in self.__pins:
+            if GPIO.input(pin) == GPIO.LOW:
+                self.__cooldown = time()
+                return True
+        return False
+
+    # honestly may be a rename here
+    def handle_event(self):
+        if self.scan_for_event():
+            print(" WIP here")
+
 
 # laserlock_in_bundle = GPIOBundle([27, 26, 25], GPIO.IN)
 
@@ -170,7 +185,6 @@ def setup_gpios():
             print(f"issue setting up GPIO {pin} "
                   f"resulting in {exp} ")
             exit()
-
 
 
 def scan_for_usb():
