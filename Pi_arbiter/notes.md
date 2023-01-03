@@ -17,3 +17,10 @@ https://raspberrytips.com/mount-usb-drive-raspberry-pi/
  raspi-4-pod-t1
 raspi-4-pod-Arbiter
  
+
+response_to_terminalsresponse_to_fe
+{'update': "'Terminal 1' is on page /lab_control"}
+
+
+4, 5, 6, 13, 
+16, 17, 18, 19
