@@ -14,12 +14,23 @@ https://raspberrytips.com/mount-usb-drive-raspberry-pi/
 
 ### RPis
 
- raspi-4-pod-t1
+raspi-4-pod-t1
 raspi-4-pod-Arbiter
- 
+"server": "192.168.178.179"
+"server": "5500",
+"ter1": "5551",
+"ter2": "5552"
 
-response_to_terminalsresponse_to_fe
+#### failed boot
+response_to_fe
 {'update': "'Terminal 1' is on page /lab_control"}
+ * this gets send anytime the lab access is beng requested
+
+#### correct boot
+pw 4321
+
+response_to_fe
+{'update': '/lab_control keypad 0 correct'}
 
 
 4, 5, 6, 13, 
