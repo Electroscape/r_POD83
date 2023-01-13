@@ -77,6 +77,18 @@ def connect():
     print("Connected to Server!")
 
 
+@sio.event
+def my_message(data):
+    print('message received with ', data)
+
+
+@sio.event
+def disconnect(sid):
+    global connected
+    connected = False
+    connect()
+
+
 def setup_gpio_callbacks():
     # GPIO.add_event_callback(channel, my_callback, bouncetime=200)
     print()
@@ -85,6 +97,7 @@ def setup_gpio_callbacks():
 def usb_boot():
     handle_event(event_map, 'usb_boot')
     sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
+    usb_booted = True
 
 
 # may be moved to a util library so these can be declared in a
@@ -115,7 +128,7 @@ class GPIOBundle:
             else:
                 GPIO.output(pin, GPIO.HIGH)
 
-    def scan_for_event(self):
+    def has_event(self):
         # doing a really long cooldown here may need to be made a passed parameter or config value
         if time() - self.__cooldown < 10:
             return False
@@ -125,19 +138,38 @@ class GPIOBundle:
                 return True
         return False
 
-    # honestly may be a rename here
-    def handle_event(self):
-        if self.scan_for_event():
-            print(" WIP here")
+    def handle(self):
+        if not self.has_event():
+            return False
+        value = self.get_value()
+        try:
+            self.__callback_dictionary[value]()
+        except ValueError:
+            pass
+        # self.__callback_dictionary
+        print("event detected")
+        print(" WIP here")
 
 
 # laserlock_in_bundle = GPIOBundle([27, 26, 25], GPIO.IN)
+def check_gpios():
+    for bundle in bundle_input_groups:
+        bundle.handle
 
 
 @sio.on('usb_boot')
 def airlock_intro(msg):
     print(msg)
     # sound_events["airlock_video"]
+
+
+@sio.on('*')
+def catch_all(event, data):
+    print("\n")
+    print(event)
+    print(data)
+    print("\n")
+    pass
 
 
 @sio.event
@@ -188,7 +220,7 @@ def setup_gpios():
 
 
 def scan_for_usb():
-    return os.path.exists("/dev/sda")
+    return os.path.exists("/dev/sda") and not usb_booted
 
 
 def main():
@@ -196,8 +228,7 @@ def main():
         if scan_for_usb():
             usb_boot()
             sleep(20)
-        # GPIO scanning
-        # socketio
+
 
 
 def handle_event(event_dict, event_name):
@@ -242,7 +273,6 @@ if __name__ == '__main__':
     sleep(5)
     usb_boot()
     GPIO.cleanup()
-    exit()
     try:
         main()
     finally:
