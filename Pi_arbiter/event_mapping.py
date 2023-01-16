@@ -135,7 +135,9 @@ def activate_sound(sound_cb):
         exit()
 
 
-
+def bundle_laserlock_cb():
+    # login users
+    return
 
 
 

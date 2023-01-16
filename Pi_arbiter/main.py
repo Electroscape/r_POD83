@@ -6,6 +6,7 @@ import socketio
 from time import sleep, time
 from event_mapping import *
 import os
+import logging
 # standard Python would be python-socketIo
 
 # GPIO.add_event_detect(data.gpio, GPIO.RISING, callback=callback, bouncetime=20)
@@ -97,6 +98,7 @@ def setup_gpio_callbacks():
 def usb_boot():
     handle_event(event_map, 'usb_boot')
     sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
+    global usb_booted
     usb_booted = True
 
 
@@ -115,6 +117,7 @@ class GPIOBundle:
                 bundle_input_groups.append(self)
 
     def get_value(self):
+        sleep(0.01)
         res = 0
         for i, pin in enumerate(self.__pins):
             if GPIO.input(pin) == GPIO.LOW:
@@ -141,13 +144,15 @@ class GPIOBundle:
     def handle(self):
         if not self.has_event():
             return False
+        print("event detected")
         value = self.get_value()
         try:
             self.__callback_dictionary[value]()
         except ValueError:
             pass
-        # self.__callback_dictionary
-        print("event detected")
+        except Exception as err:
+            print(f"failing to handle GPIObundle due to:\n{err}")
+
         print(" WIP here")
 
 
@@ -155,12 +160,6 @@ class GPIOBundle:
 def check_gpios():
     for bundle in bundle_input_groups:
         bundle.handle
-
-
-@sio.on('usb_boot')
-def airlock_intro(msg):
-    print(msg)
-    # sound_events["airlock_video"]
 
 
 @sio.on('*')
@@ -230,7 +229,6 @@ def main():
             sleep(20)
 
 
-
 def handle_event(event_dict, event_name):
     print(f"handling event {event_name}")
     try:
@@ -262,7 +260,6 @@ def connect():
         except socketio.exceptions.ConnectionError as exc:
             print(f'Caught exception socket.error : {exc}')
             sleep(1)
-        # check if connected
 
 
 if __name__ == '__main__':
