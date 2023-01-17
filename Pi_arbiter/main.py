@@ -3,10 +3,11 @@
 
 import json
 import socketio
-from time import sleep, time
+from time import sleep
 from event_mapping import *
 import os
 import logging
+from gpio_fncs import *
 # standard Python would be python-socketIo
 
 # GPIO.add_event_detect(data.gpio, GPIO.RISING, callback=callback, bouncetime=20)
@@ -18,21 +19,10 @@ import logging
     * cooldowns, need to consider what time library
     * resettimes for gpio output
     * handling of multiple IO reading the same pulldown sensor via level shifter 
+    * gpio callback from fe event
 
+Caught exception socket.error : Already connected
 '''
-
-# make this a function?
-try:
-    import RPi.GPIO as GPIO
-    print("Running on RPi")
-except (RuntimeError, ModuleNotFoundError):
-    print("Running without GPIOs on non Pi ENV / non RPi.GPIO installed machine")
-    # self.settings.is_rpi_env = False
-    # GPIO.VERBOSE = False
-    from GPIOEmulator.EmulatorGUI import GPIO
-
-# GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
 
 # standard Python
 sio = socketio.Client()
@@ -84,7 +74,7 @@ def my_message(data):
 
 
 @sio.event
-def disconnect(sid):
+def disconnect():
     global connected
     connected = False
     connect()
@@ -96,74 +86,15 @@ def setup_gpio_callbacks():
 
 
 def usb_boot():
-    handle_event(event_map, 'usb_boot')
+    handle_gpio_event(event_map, 'usb_boot')
     sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
     global usb_booted
     usb_booted = True
 
 
-# may be moved to a util library so these can be declared in a
-# config file
-class GPIOBundle:
-    def __init__(self, pins, callback_dictionary=None):
-        self.__pins = pins
-        self.__cooldown = 0
-        self.__callback_dictionary = callback_dictionary
-        for pin in self.__pins:
-            if callback_dictionary is None:
-                GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
-            else:
-                GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-                bundle_input_groups.append(self)
-
-    def get_value(self):
-        sleep(0.01)
-        res = 0
-        for i, pin in enumerate(self.__pins):
-            if GPIO.input(pin) == GPIO.LOW:
-                res |= 1 << i
-        return res
-
-    def set_value(self, value):
-        for i, pin in enumerate(self.__pins):
-            if (1 << i) & value > 0:
-                GPIO.output(pin, GPIO.LOW)
-            else:
-                GPIO.output(pin, GPIO.HIGH)
-
-    def has_event(self):
-        # doing a really long cooldown here may need to be made a passed parameter or config value
-        if time() - self.__cooldown < 10:
-            return False
-        for pin in self.__pins:
-            if GPIO.input(pin) == GPIO.LOW:
-                self.__cooldown = time()
-                return True
-        return False
-
-    def handle(self):
-        if not self.has_event():
-            return False
-        print("event detected")
-        value = self.get_value()
-        try:
-            self.__callback_dictionary[value]()
-        except ValueError:
-            pass
-        except Exception as err:
-            print(f"failing to handle GPIObundle due to:\n{err}")
-
-        print(" WIP here")
-
-
-# laserlock_in_bundle = GPIOBundle([27, 26, 25], GPIO.IN)
-def check_gpios():
-    for bundle in bundle_input_groups:
-        bundle.handle
-
-
 @sio.on('*')
 def catch_all(event, data):
+
     print("\n")
     print(event)
     print(data)
@@ -171,26 +102,32 @@ def catch_all(event, data):
     pass
 
 
-@sio.event
-def my_event(sid, data):
-    # handle the message
-    print("received an event")
-    print(sid)
-    print(data)
+frontend_cb_map = {
+    "/lab_control keypad 0 correct":
+}
+
+@sio.on('response_to_fe')
+def handle_fe(data):
+    update = data.get('update')
+    print(f"update is: {update}")
+    if "/lab_control keypad 0 correct" == update:
+        event_map["laserlock_bootdecon"]
 
 
-@sio.on('airlock_fe')
-def airlock_boot_request(msg):
-    print(f"message from frontend {msg}")
+
+    print(f"message from frontend {data}")
+
+    '''
     try:
-        fixed_connection_pin = event_map["laserlock_bootdecon"]["gpio_in"]
-        if GPIO.input(fixed_connection_pin) == GPIO.HIGH:
-            handle_event(event_map, "laserlock_fail")
-        else:
-            handle_event(event_map, "laserlock_bootdecon")
+    fixed_connection_pin = event_map["laserlock_bootdecon"]["gpio_in"]
+    if GPIO.input(fixed_connection_pin) == GPIO.HIGH:
+    handle_gpio_event(event_map, "laserlock_fail")
+    else:
+    handle_gpio_event(event_map, "laserlock_bootdecon")
     except KeyError:
-        print("airlock_boot_request failed due to keyerror")
-
+    print("airlock_boot_request failed due to keyerror")
+    
+    '''
 
 # need to specify further since this is not the only gpio setup
 def setup_gpios():
@@ -229,7 +166,7 @@ def main():
             sleep(20)
 
 
-def handle_event(event_dict, event_name):
+def handle_gpio_event(event_dict, event_name):
     print(f"handling event {event_name}")
     try:
         event = event_dict[event_name]
