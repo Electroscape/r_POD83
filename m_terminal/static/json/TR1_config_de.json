@@ -19,7 +19,7 @@
       "details": "Kontrolle der Dateien",
       "image": "static/imgs/home/medical-lab.png",
       "link": "lab_control",
-      "auth": "David"
+      "auth": "false"
     },
     {
       "title": "Gassteuerung",
