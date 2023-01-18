@@ -71,4 +71,11 @@ class GPIOBundle:
 # laserlock_in_bundle = GPIOBundle([27, 26, 25], GPIO.IN)
 def check_gpios(bundle_input_groups):
     for bundle in bundle_input_groups:
-        bundle.handle
+        bundle.handle()
+
+
+def gpio_cb(event_dict):
+    try:
+        GPIO.output(event_dict["gpio_out"], GPIO.LOW)
+    except KeyError:
+        pass

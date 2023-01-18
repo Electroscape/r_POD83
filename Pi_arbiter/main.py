@@ -42,9 +42,9 @@ class event:
 
 
 class Settings:
-    def __init__(self, event_mapping, server_add, sound_server_add):
+    def __init__(self, server_add, sound_server_add):
         # self.pin_mapping = _pin_mapping
-        self.event_mapping = event_mapping
+        # self.event_mapping = event_mapping
         self.server_add = server_add
         self.sound_server_add = sound_server_add
 
@@ -53,14 +53,14 @@ def load_settings():
     try:
         with open('config.json') as json_file:
             cfg = json.loads(json_file.read())
-            event_mapping = cfg["event_mapping"]
+            # event_mapping = cfg["event_mapping"]
             terminal_server_add = cfg["terminal_server_add"]
             sound_server_add = cfg["sound_server_add"]
     except ValueError as e:
         print('failure to read config.json')
         print(e)
         exit()
-    return Settings(event_mapping, terminal_server_add, sound_server_add)
+    return Settings(terminal_server_add, sound_server_add)
 
 
 @sio.event
@@ -69,20 +69,10 @@ def connect():
 
 
 @sio.event
-def my_message(data):
-    print('message received with ', data)
-
-
-@sio.event
 def disconnect():
     global connected
     connected = False
     connect()
-
-
-def setup_gpio_callbacks():
-    # GPIO.add_event_callback(channel, my_callback, bouncetime=200)
-    print()
 
 
 def usb_boot():
@@ -102,20 +92,26 @@ def catch_all(event, data):
     pass
 
 
+def laserlock_decon():
+    print()
+
+
 frontend_cb_map = {
-    "/lab_control keypad 0 correct":
+    "/lab_control keypad 0 correct": laserlock_decon()
 }
+
 
 @sio.on('response_to_fe')
 def handle_fe(data):
+    print(f"message from frontend {data}")
     update = data.get('update')
     print(f"update is: {update}")
     if "/lab_control keypad 0 correct" == update:
-        event_map["laserlock_bootdecon"]
+        event = event_map["laserlock_bootdecon"]
+        activate_sound(event)
+        gpio_cb(event)
+        activate_sound(event)
 
-
-
-    print(f"message from frontend {data}")
 
     '''
     try:
@@ -128,6 +124,7 @@ def handle_fe(data):
     print("airlock_boot_request failed due to keyerror")
     
     '''
+
 
 # need to specify further since this is not the only gpio setup
 def setup_gpios():
@@ -203,10 +200,6 @@ if __name__ == '__main__':
     settings = load_settings()
     setup_gpios()
     connected = connect()
-
-    sleep(5)
-    usb_boot()
-    GPIO.cleanup()
     try:
         main()
     finally:
