@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 import json
 
@@ -14,8 +14,9 @@ def read_json(filename: str, from_static=True) -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
 
+    :param from_static: (bool) fetch the file from static folder
     :param filename: json file name inside static folder
-    :return: dict or None
+    :return: dict
     """
     if from_static:
         filename = f"static/{filename}"
@@ -40,7 +41,7 @@ app.jinja_env.globals['G_CONFIG'] = config
 
 all_cors = [f"http://{ip}:{port}" for ip in config["ip"].values() for port in config["port"].values()]
 ip_conf = [f"http://{ip}" for ip in ip_conf.values()]
-all_cors.append(ip_conf)
+all_cors.extend(ip_conf)
 all_cors.append('*')
 sio = SocketIO(app, cors_allowed_origins=all_cors)
 
