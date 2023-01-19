@@ -331,9 +331,11 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(beamerIntro, open);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             wdt_disable();
-            delay(10000);
-            wdt_enable(WDTO_8S);
+            delay(3000)
             Mother.motherRelay.digitalWrite(beamerIntro, closed);
+            delay(7000);
+            wdt_enable(WDTO_8S);
+            
             //stage = decontamination;
             stage = sterilisation; // One time sterilisation
         break;
