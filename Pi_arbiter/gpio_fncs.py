@@ -1,4 +1,6 @@
 from time import time, sleep
+# not a fan of * impports ... amybe we can make classes
+from event_mapping import *
 
 # make this a function?
 try:

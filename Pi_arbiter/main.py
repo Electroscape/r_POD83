@@ -4,6 +4,7 @@
 import json
 import socketio
 from time import sleep
+# not a fan of * impports ... amybe we can make classes
 from event_mapping import *
 import os
 import logging
@@ -20,6 +21,7 @@ from gpio_fncs import *
     * resettimes for gpio output
     * handling of multiple IO reading the same pulldown sensor via level shifter 
     * gpio callback from fe event
+    * map fe events to events
 
 Caught exception socket.error : Already connected
 '''
@@ -126,7 +128,7 @@ def handle_fe(data):
     '''
 
 
-# need to specify further since this is not the only gpio setup
+# this needs to move to gpio_fncs
 def setup_gpios():
 
     for value in event_map.values():
@@ -171,9 +173,9 @@ def handle_gpio_event(event_dict, event_name):
         return False
 
     try:
-        sound_cb = event["sound_cb"]
-        print(f"activating sound: {sound_cb}")
-        activate_sound(sound_cb)
+        event_entry = event[sound]
+        print(f"activating sound: {event_entry}")
+        activate_sound(event_entry)
     except KeyError:
         pass
 

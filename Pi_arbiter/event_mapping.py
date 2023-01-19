@@ -42,10 +42,11 @@ RPi 3.3V -> 5V Pulldown on arduino
 
 # http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
 # defaults?
-
-
-def cb_test():
-    print("callback stuff")
+sound = "sound"
+is_fx = "is_fx"
+sound_id = "id"
+gpio_in = "gpio_in"
+gpio_out = ""
 
 
 test_name = "airlock_intro"
@@ -53,77 +54,75 @@ test_name = "airlock_intro"
 event_map = {
     "airlock_intro": {
         # if several pins are used we need a state aswell
-        "gpio_in": [],
-        "cb_fn": cb_test(),
-        "sound_cb": {
-            "is_fx": True,
-            "id": 7
+        gpio_in: [],
+        sound: {
+            is_fx: True,
+            sound_id: 7
         }
     },
     "airlock_sterilisation": {
-        "sound_cb": {
-            "gpio_pins": [],
-            "is_fx": True,
-            "id": 8
+        sound: {
+            is_fx: True,
+            sound_id: 8
         }
     },
     "airlock_decon": {
         "gpio_pins": [],
-        "sound_cb": {
-            "id": 2
+        sound: {
+            sound_id: 2
         }
     },
     "airlock_wrong": {
         "gpio_pins": [],
-        "sound_cb": {
-            "is_fx": True,
-            "id": 1
+        sound: {
+            is_fx: True,
+            sound_id: 1
         }
     },
     "usb_boot": {
         "gpio_out": [4],
-        "sound_cb": {
-            "is_fx": False,
-            "id": 2
+        sound: {
+            is_fx: False,
+            sound_id: 2
         },
     },
     "laserlock_fail": {
         "gpio_out": [5],
-        "sound_cb": {
-            "id": 3
+        sound: {
+            sound_id: 3
         }
     },
     "laserlock_bootdecon": {
-        "gpio_in": [27],
+        gpio_in: [27],
         "gpio_out": [6],
-        "sound_cb": {
-            "id": 4
+        sound: {
+            sound_id: 4
         }
     },
     "laserlock_welcome_david": {
         "gpio_in_bundle": [1],
-        "sound_cb": {
-            "id": 15
+        sound: {
+            sound_id: 15
         }
     },
     "laserlock_welcome_rachel": {
-        "sound_cb": {
-            "id": 16
+        sound: {
+            sound_id: 16
         }
     },
 }
 
 
-def activate_sound(sound_cb):
-    print(sound_cb)
+def activate_sound(event_entry):
+    print(event_entry)
     payload = dict(ip="192.168.178.172")
 
     try:
-        sound_id = sound_cb["id"]
-        if sound_cb["is_fx"]:
-            payload["fx_id"] = sound_id
+        sound_id_value = event_entry[sound_id]
+        if event_entry["is_fx"]:
+            payload["fx_id"] = sound_id_value
         else:
-            payload["group_id"] = sound_id
+            payload["group_id"] = sound_id_value
     except KeyError:
         pass
 
@@ -133,11 +132,6 @@ def activate_sound(sound_cb):
     except OSError as OSE:
         print(f"failed to request sound due to {OSE}")
         exit()
-
-
-def bundle_laserlock_cb():
-    # login users
-    return
 
 
 
