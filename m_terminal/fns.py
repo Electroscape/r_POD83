@@ -3,7 +3,7 @@ import os
 from flask import json
 
 
-def js_r(filename: str, auth="") -> dict:
+def js_r(filename: str, auth="", from_static=True) -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
 
@@ -11,10 +11,15 @@ def js_r(filename: str, auth="") -> dict:
     :param filename: json file name inside static folder
     :return: dict or None
     """
+
+    if from_static:
+        filename = f"static/{filename}"
+
     try:
-        with open(f"static/{filename}", "r") as f_in:
+        with open(filename, "r") as f_in:
             json_data = json.load(f_in)
-            json_data["btns"] = configure_btns(json_data.get("btns"), auth)
+            if not filename.startswith("ip_"):
+                json_data["btns"] = configure_btns(json_data.get("btns"), auth)
         return json_data
 
     except IOError:

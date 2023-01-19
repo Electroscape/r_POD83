@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
 from flask_socketio import SocketIO
 import json
 
@@ -10,15 +10,18 @@ chat_history = RingList(100)
 chat_history.append('Welcome to the server window')
 
 
-def read_json(filename: str) -> dict:
+def read_json(filename: str, from_static=True) -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
 
     :param filename: json file name inside static folder
     :return: dict or None
     """
+    if from_static:
+        filename = f"static/{filename}"
+
     try:
-        with open(f"static/{filename}", "r") as f_in:
+        with open(filename, "r") as f_in:
             json_data = json.load(f_in)
         return json_data
 
@@ -32,9 +35,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 config = read_json(f"json/server_config.json")
+ip_conf = read_json(f"ip_config.json", from_static=False)
 app.jinja_env.globals['G_CONFIG'] = config
 
 all_cors = [f"http://{ip}:{port}" for ip in config["ip"].values() for port in config["port"].values()]
+ip_conf = [f"http://{ip}" for ip in ip_conf.values()]
+all_cors.append(ip_conf)
 all_cors.append('*')
 sio = SocketIO(app, cors_allowed_origins=all_cors)
 

@@ -1,16 +1,19 @@
+import json
 from flask import Flask, render_template, send_from_directory
 
+
 app = Flask(__name__)
+
+# Get IP addresses
+with open(f"ip_config.json", "r") as f_in:
+    ips = json.load(f_in)
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    ips = {
-        "server": "http://192.168.87.168:5500",
-        "ter1": "http://192.168.87.168:5551",
-        "ter2": "http://192.168.87.168:5552"
-    }
-    return render_template("kiosk_tabs.html", ips=ips)
+    # ips are found in ip_config.json
+    ip_vals = {k: "http://" + v  for k,v in ips.items()}
+    return render_template("kiosk_tabs.html", ips=ip_vals)
 
 
 @app.route('/favicon.ico')

@@ -12,8 +12,10 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
+ip_conf = js_r("ip_config.json", from_static=False)
+
 # Configuration Constants
-server_ip = "http://192.168.178.20:5500"
+server_ip = "http://" + ip_conf["server"]
 g_lang = "en"  # first run starts in English
 terminal_name = "TR2"  # which config file to load
 
