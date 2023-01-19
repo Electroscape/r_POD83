@@ -45,8 +45,6 @@ class event:
 
 class Settings:
     def __init__(self, server_add, sound_server_add):
-        # self.pin_mapping = _pin_mapping
-        # self.event_mapping = event_mapping
         self.server_add = server_add
         self.sound_server_add = sound_server_add
 

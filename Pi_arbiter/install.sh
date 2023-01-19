@@ -1,2 +1,2 @@
 python -m venv venv
-pip3 install -r requirements
+pip3 install -r requirements.txt
