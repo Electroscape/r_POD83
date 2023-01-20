@@ -81,14 +81,21 @@ def connect_error():
     print("The connection to server failed!")
 
 
-@sio.on('login_msg')
-def usr_auth(data):
-    global login_user
-    print(f"Login msg: {data}")
-
+@sio.on('to_clients')
+def events_handler(data):
     # filter the message to get the user here!
-    if data.get("user_name") == terminal_name.lower():
-        login_user = data.get("message")
+    if data.get("username") != terminal_name.lower():
+        print(f"irrelevant msg: {data}")
+        return 0
+    else:
+        global login_user
+
+        msg = data.get("message")
+
+    # Commands
+    if data.get("cmd") == "auth":
+        login_user = msg
+        print(f"login msg: {msg}")
         print(f'{terminal_name} authenticated user is: {login_user}')
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
 

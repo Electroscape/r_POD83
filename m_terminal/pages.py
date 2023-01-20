@@ -11,7 +11,7 @@ def gas_control():
         "samples": get_samples_status()
     }
     print("open gas page")
-    return render_template("p_gas_control.html", g_config=config)
+    return render_template("TR1/p_gas_control.html", g_config=config)
 
 
 @app_pages.route('/foscam_control', methods=['GET', 'POST'])
@@ -20,7 +20,7 @@ def foscam_control():
         "title": "CCTV Cameras"
     }
     print("open CCTV page")
-    return render_template("p_cctv.html", g_config=config)
+    return render_template("TR1/p_cctv.html", g_config=config)
 
 
 @app_pages.route('/sample_release', methods=['GET', 'POST'])
@@ -30,7 +30,7 @@ def sample_release():
         "samples": get_samples_status()
     }
     print("open sample release page")
-    return render_template("p_sample_release.html", g_config=config)
+    return render_template("TR2/p_sample_release.html", g_config=config)
 
 
 @app_pages.route('/microscope', methods=['GET', 'POST'])
@@ -39,7 +39,7 @@ def microscope():
         "title": "Microscope"
     }
     print("open microscope page")
-    return render_template("p_microscope.html", g_config=config)
+    return render_template("TR2/p_microscope.html", g_config=config)
 
 
 @app_pages.route('/gas_analysis', methods=['GET', 'POST'])
@@ -49,7 +49,7 @@ def gas_analysis():
         "samples": get_samples_status()
     }
     print("open gas analysis page")
-    return render_template("p_gas_analysis.html", g_config=config)
+    return render_template("TR2/p_gas_analysis.html", g_config=config)
 
 
 @app_pages.route('/cleanroom', methods=['GET', 'POST'])
@@ -58,7 +58,7 @@ def cleanroom():
         "title": "Cleanroom Access"
     }
     print("open browser page")
-    return render_template("p_cleanroom.html", g_config=config)
+    return render_template("TR2/p_cleanroom.html", g_config=config)
 
 
 @app_pages.route('/elancell_upload', methods=['GET', 'POST'])
@@ -67,7 +67,7 @@ def elancell_upload():
         "title": "Upload Results"
     }
     print("open Elancell page")
-    return render_template("p_elancell_upload.html", g_config=config)
+    return render_template("TR2/p_elancell_upload.html", g_config=config)
 
 
 @app_pages.route('/media_control', methods=['GET', 'POST'])
@@ -79,7 +79,7 @@ def media_control():
         "files": media_files
     }
     print("open media page")
-    return render_template("p_media.html", g_config=config)
+    return render_template("TR1/p_media.html", g_config=config)
 
 
 @app_pages.errorhandler(404)

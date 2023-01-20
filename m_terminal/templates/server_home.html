@@ -59,7 +59,8 @@
         .outer {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
         }
 
         #lang-box {
@@ -70,20 +71,11 @@
         function onClickTerminal(src) {
             let msg = document.querySelector(`input[name="${src}"]:checked`).value;
             let src_cmd = src.split("_")
-            if (src_cmd.length > 1) {
-                socket.emit(src_cmd[1], {
-                    user_name: src_cmd[0],
-                    cmd: src_cmd[1],
-                    message: msg
-                })
-            } else {
-                socket.emit('auth_usr', {
-                    user_name: src,
-                    cmd: "auth",
-                    message: msg
-                })
-
-            }
+            socket.emit("events", {
+                username: src_cmd[0],
+                cmd: src_cmd[1],
+                message: msg
+            })
         }
     </script>
 {% endblock %}
@@ -104,28 +96,28 @@
         <div>
             Terminal 1:
             <div class="switch-toggle switch-3 switch-candy">
-                <input id="t1_david" name="tr1" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                <input id="t1_david" name="tr1_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
                 <label for="t1_david">David</label>
 
-                <input id="t1_empty" name="tr1" type="radio" value="empty" checked="checked"
+                <input id="t1_empty" name="tr1_auth" type="radio" value="empty" checked="checked"
                        onclick="onClickTerminal(name)"/>
                 <label for="t1_empty">Empty</label>
 
-                <input id="t1_rachel" name="tr1" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                <input id="t1_rachel" name="tr1_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
                 <label for="t1_rachel">Rachel</label>
             </div>
         </div>
         <div>
             Terminal 2:
             <div class="switch-toggle switch-3 switch-candy">
-                <input id="t2_david" name="tr2" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                <input id="t2_david" name="tr2_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
                 <label for="t2_david">David</label>
 
-                <input id="t2_empty" name="tr2" type="radio" value="empty" checked="checked"
+                <input id="t2_empty" name="tr2_auth" type="radio" value="empty" checked="checked"
                        onclick="onClickTerminal(name)"/>
                 <label for="t2_empty">Empty</label>
 
-                <input id="t2_rachel" name="tr2" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                <input id="t2_rachel" name="tr2_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
                 <label for="t2_rachel">Rachel</label>
             </div>
         </div>
@@ -140,6 +132,47 @@
                 <label for="t1_fixed">Fixed</label>
             </div>
         </div>
+        <div>
+            Microscope:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_mOFF" name="tr2_mSwitch" type="radio" value="off" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_mOFF">OFF</label>
+
+                <input id="t2_mON" name="tr2_mSwitch" type="radio" value="on" onclick="onClickTerminal(name)"/>
+                <label for="t2_mON">ON</label>
+            </div>
+            <div class="switch-toggle switch-5 switch-candy">
+                <input id="t2_sample1" name="tr2_microscope" type="radio" value="1" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_sample1">Sample 1</label>
+
+                <input id="t2_sample2" name="tr2_microscope" type="radio" value="2" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample2">Sample 2</label>
+
+                <input id="t2_sample3" name="tr2_microscope" type="radio" value="3" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample3">Sample 3</label>
+
+                <input id="t2_sample4" name="tr2_microscope" type="radio" value="4" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample4">Sample 4</label>
+
+                <input id="t2_sample5" name="tr2_microscope" type="radio" value="5" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample5">Sample 5</label>
+
+            </div>
+        </div>
+        <div>
+            Elancell upload:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_disable" name="tr2_elancell" type="radio" value="disable" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_disable">Disable</label>
+
+                <input id="t2_enable" name="tr2_elancell" type="radio" value="enable" onclick="onClickTerminal(name)"/>
+                <label for="t2_enable">Enable</label>
+            </div>
+        </div>
+
     </div>
     <label for="msg_holder">Chat Messages</label>
     <div class="message_holder" id="msg_holder">

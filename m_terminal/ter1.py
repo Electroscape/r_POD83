@@ -91,7 +91,7 @@ def pre_entry_point():
     if usb_boot == "boot":
         return redirect("/")
 
-    return render_template("boot_up.html")
+    return render_template("TR1/boot_up.html")
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
@@ -177,32 +177,32 @@ def connect_error():
     print("The connection to server failed!")
 
 
-@sio.on('login_msg')
-def usr_auth(data):
-    global login_user
-    print(f"Login msg: {data}")
-
+@sio.on('to_clients')
+def events_handler(data):
     # filter the message to get the user here!
-    if data.get("user_name") == terminal_name.lower():
-        login_user = data.get("message")
+    if data.get("username") != terminal_name.lower():
+        print(f"irrelevant msg: {data}")
+        return 0
+    else:
+        global login_user
+        global usb_boot
+        global airlock_boot
+        msg = data.get("message")
+
+    # Commands
+    if data.get("cmd") == "auth":
+        login_user = msg
+        print(f"login msg: {msg}")
         print(f'{terminal_name} authenticated user is: {login_user}')
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
-
-
-@sio.on('usb_boot')
-def boot_up(data):
-    global usb_boot
-    print(f"Boot USB status: {data}")
-    usb_boot = data
-    self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
-
-
-@sio.on('airlock_updates')
-def update_airlock(data):
-    global airlock_boot
-    print(f"airlock msg: {data}")
-    airlock_boot = data
-    self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
+    elif data.get("cmd") == "usbBoot":
+        usb_boot = msg
+        print(f"boot msg: {msg}")
+        self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
+    elif data.get("cmd") == "airlock":
+        airlock_boot = msg
+        print(f"airlock msg: {msg}")
+        self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
 
 
 @sio.on('response_to_terminals')

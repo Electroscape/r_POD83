@@ -30,6 +30,13 @@ def read_json(filename: str, from_static=True) -> dict:
         return {}
 
 
+samples = read_json("json/samples.json")
+sample_icons = {
+    "locked": "fas fa-lock",
+    "unlocked": "fas fa-lock-open",
+    "released": "fa-solid fa-check"
+}
+
 Payload.max_decode_packets = 200
 
 app = Flask(__name__)
@@ -55,7 +62,12 @@ def index():
 
 @app.route("/get_globals", methods=["GET", "POST"])
 def get_globals():
-    return read_json(f"json/server_config.json")
+    return read_json("json/server_config.json")
+
+
+@app.route('/get_samples', methods=['GET', 'POST'])
+def get_samples_status() -> dict:
+    return samples
 
 
 @sio.on("connect")
@@ -84,31 +96,15 @@ def frontend_server_messages(json_msg):
 def handle_received_messages(json_msg):
     print('server received message: ' + str(json_msg))
 
-    # if message is command
-    if json_msg.get("cmd") == "auth":
-        authenticate_usr(json_msg)
-
-    # send back whatever received
+    # broadcast chat message
     sio.emit('response_to_terminals', json_msg)
-    # send it back to frontend
+    # send it to frontend
     frontend_server_messages(json_msg)
 
 
-@sio.on('auth_usr')
-def authenticate_usr(msg):
-    sio.emit("login_msg", msg)
-    frontend_server_messages(msg)
-
-
-@sio.on('airlock')
-def airlock_updates(msg):
-    sio.emit("airlock_updates", msg["message"])
-    frontend_server_messages(msg)
-
-
-@sio.on('usbBoot')
-def usb_boot(msg):
-    sio.emit("usb_boot", msg["message"])
+@sio.on('events')
+def events_handler(msg):
+    sio.emit("to_clients", msg)
     frontend_server_messages(msg)
 
 
