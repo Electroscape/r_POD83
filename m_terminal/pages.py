@@ -52,15 +52,6 @@ def gas_analysis():
     return render_template("TR2/p_gas_analysis.html", g_config=config)
 
 
-@app_pages.route('/cleanroom', methods=['GET', 'POST'])
-def cleanroom():
-    config = {
-        "title": "Cleanroom Access"
-    }
-    print("open browser page")
-    return render_template("TR2/p_cleanroom.html", g_config=config)
-
-
 @app_pages.route('/elancell_upload', methods=['GET', 'POST'])
 def elancell_upload():
     config = {
