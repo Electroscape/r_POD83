@@ -104,6 +104,7 @@ def events_handler(data):
         return 0
     else:
         global login_user
+        global elancell_upload
 
         msg = data.get("message")
 
@@ -113,6 +114,9 @@ def events_handler(data):
         print(f"login msg: {msg}")
         print(f'{terminal_name} authenticated user is: {login_user}')
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
+    elif data.get("cmd") == "elancell":
+        elancell_upload = msg
+        print(f"elancell msg: {msg}")
 
 
 @sio.on('response_to_terminals')
