@@ -54,6 +54,7 @@ def switch_language():
             print(f"Switch language to {g_lang}")
             return get_globals()
 
+
 @app.route('/cleanroom', methods=['GET', 'POST'])
 def cleanroom():
     config = {
@@ -63,9 +64,15 @@ def cleanroom():
     print("open browser page")
     return render_template("TR2/p_cleanroom.html", g_config=config)
 
+
 @app.route('/get_chat', methods=['GET', 'POST'])
 def get_chat():
     return chat_msgs.get()
+
+
+@app.route('/get_elancell', methods=['GET', 'POST'])
+def get_elancell():
+    return elancell_upload
 
 
 @app.route('/favicon.ico')
@@ -126,6 +133,7 @@ sio.connect(server_ip)
 print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores the whole conversation
+elancell_upload = "disable"
 
 app.register_blueprint(app_pages)
 

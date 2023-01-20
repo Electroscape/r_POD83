@@ -17,7 +17,7 @@
             })
         })
 
-        socket.on('boot_fe', function (msg) {
+        socket.on('boot_fe', function () {
             startBootUp();
             console.log("done");
             setTimeout(function () {
@@ -52,34 +52,6 @@
             opacity: 1;
         }
 
-        .login {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login div {
-            border: 1px solid white;
-            padding: 1.5rem;
-        }
-
-        .login h2 {
-            color: white;
-            margin-bottom: 1rem;
-        }
-
-        .login input {
-            border: 0;
-            color: white;
-            padding: 0;
-            font-size: 1rem;
-            background: transparent;
-        }
-
-        .login input:focus {
-            outline: 0;
-        }
-
         .feed textarea {
             width: 80%;
             height: 98vh;
@@ -97,14 +69,9 @@
     </style>
 </head>
 <body>
-<div id='js-login' class="active screen login">
-    <div style="display: none">
-        <h2>Enter Password</h2>
-        <input type="password"/>
-    </div>
-</div>
-ﬂ
+
 <div id='js-feed' class="screen feed">
+    <label for="feed-area"></label>
     <textarea id="feed-area" rows="10"></textarea>
 </div>
 
@@ -113,7 +80,8 @@
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    var feedItems = [
+    const feedItems = [
+        ' ',
         'WELCOME',
         '...............................',
         ' ',
@@ -126,7 +94,7 @@
         'Boot - Default boot priority order:',
         ' ',
         '1: USB FDD',
-        '2: ATAPI CD0:MATSHITADVD-RAM UJ-842-(PM)',
+        '2: ATAPI CD0:MATS-HTA-DVD-RAM UJ-842-(PM)',
         '3: USB CD',
         '4: ATA HDD0 HTS541010G9SA00-(S1)',
         '5: PCI LAN: IBA GE Slot 0200 v1231',
@@ -134,7 +102,7 @@
         '7: ATA HDD1 Excluded from boot order: ATA HDD2, ATAPI CD1 Network - Default boot priority order: 1: PCI LAN: IBA GE Slot 0200 v1231, 2: USB FDD',
         ' ',
         ' ',
-        'INTEL I7 KJSHDK U-ID: 8-76537-6281-723',
+        'INTEL I7 KJS-HDK U-ID: 8-76537-6281-723',
         ' ',
         'IP: 1.7l11.2,5.8l11.2,5.7l0.1,11.6l-2.4-0.2l-1.3,2.1',
         'l-0.7,1.8l0.6,0.7l-0.9,0.9l0.3,1.2L537,427l-0.3,1.1l1-0.2l0.6,1.1l0',
@@ -142,33 +110,27 @@
         ' ',
         '.......................................',
         ' ',
-
         'System Initiated.'
-    ]
+    ];
 
-    var i = 0;
+    let i = 0;
 
-    var printLine = function () {
+    const printLine = function () {
         if (feedItems[i]) {
-            var el = document.querySelector('#feed-area')
-            var old = el.value;
-            var newText = el.value + feedItems[i] + '\n';
-            el.value = newText;
+            let el = document.querySelector('#feed-area')
+            el.value = el.value + feedItems[i] + '\n';
             i++;
         }
 
         window.setTimeout(printLine, getRandomInt(50, 300));
-    }
+    };
 
-    var fillWindow = function () {
+    const fillWindow = function () {
         printLine();
-    }
+    };
 
     function startBootUp() {
-        var el = document.querySelector('#js-login');
-        el.classList.remove('active')
-
-        var next = document.querySelector('#js-feed');
+        let next = document.querySelector('#js-feed');
         next.classList.add('active')
         fillWindow()
     }

@@ -101,6 +101,10 @@
         });
     </script>
     <style>
+        #lang-box {
+            visibility: hidden;
+        }
+
         label, input {
             display: block;
         }
@@ -115,11 +119,6 @@
             padding: 0;
             border: 0;
             margin-top: 25px;
-        }
-
-        h1 {
-            font-size: 1.2em;
-            margin: .6em 0;
         }
 
         .ui-dialog .ui-state-error {
@@ -258,8 +257,7 @@
             const loadingScreen = document.querySelector('.loading-wrapper');
             let isBtn = true;
             let isLoading = false;
-            let i = 0;
-            uploadBtn.setAttribute("disabled", true);
+            uploadBtn.setAttribute("disabled", "true");
 
             const toggleScreens = () => {
                 isBtn = !isBtn;
@@ -268,28 +266,44 @@
                 isLoading ? loadingScreen.style.display = 'block' : loadingScreen.style.display = 'none';
             }
 
-            const animate = () => {
-                if (i === 0) {
-                    i = 1;
-                    const loadingFill = document.querySelector('.loading-fill');
-                    let width = 1;
-                    const interval = setInterval(fill, 50);
+            const animate = (elancellStatus) => {
+                const loadingFill = document.querySelector('.loading-fill');
+                let width = 1;
+                const interval = setInterval(fill, 50);
+                let isEnabled = elancellStatus === "enabled"
 
-                    function fill() {
-                        if (width >= 100) {
-                            $("#loadId")[0].innerHTML = "compiled successfully ✔️"
-                            uploadBtn.removeAttribute('disabled');
-                        } else {
-                            width++;
-                            loadingFill.style.width = width + '%';
-                        }
+                function fill() {
+                    if (!isEnabled && width === 33) {
+                        $("#loadId")[0].innerHTML = "Compilation failed!<br>No enough data to complete the process"
+                        $(".loading-bar")[0].style.borderColor = "red";
+                        clearInterval(interval);
+                        setTimeout(function () {
+                            toggleScreens();
+                            loadingFill.style.width = '1%';
+                            $(".loading-bar")[0].style.borderColor = "";
+                            $("#loadId")[0].innerHTML = "Compiling...";
+                        }, 5000)
+                    } else if (isEnabled && width >= 100) {
+                        $("#loadId")[0].innerHTML = "compiled successfully ✔️"
+                        uploadBtn.removeAttribute('disabled');
+                        clearInterval(interval);
+                    } else {
+                        width++;
+                        loadingFill.style.width = width + '%';
                     }
                 }
             }
 
             btn.addEventListener('click', () => {
-                toggleScreens();
-                animate();
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for("get_elancell") }}',
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (res) {
+                        toggleScreens();
+                        animate(res);
+                    }
+                });
             });
 
         });
