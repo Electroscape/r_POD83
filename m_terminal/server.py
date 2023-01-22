@@ -95,16 +95,35 @@ def frontend_server_messages(json_msg):
 @sio.on('msg_to_server')
 def handle_received_messages(json_msg):
     print('server received message: ' + str(json_msg))
+    if json_msg.get("keypad_update"):
+        global samples
+        # "gas_control keypad 0 wrong"
+        cmd = json_msg.get("keypad_update").split()
+        if cmd[0].startswith("/gas_control") and cmd[-1] == "correct":
+            samples[int(cmd[-2])]["status"] = "unlocked"
+            samples[int(cmd[-2])]["icon"] = sample_icons["unlocked"]
 
-    # broadcast chat message
-    sio.emit('response_to_terminals', json_msg)
+        elif cmd[0].startswith("/gas_analysis") and cmd[-1] == "correct":
+            samples[int(cmd[-2])]["status"] = "released"
+            samples[int(cmd[-2])]["icon"] = sample_icons["released"]
+
+        sio.emit("samples", samples)
+    else:
+        # broadcast chat message
+        sio.emit('response_to_terminals', json_msg)
     # send it to frontend
     frontend_server_messages(json_msg)
 
 
 @sio.on('events')
 def events_handler(msg):
-    sio.emit("to_clients", msg)
+    if msg.get("username") == "server":
+        if msg.get("cmd") == "reset":
+            global samples
+            samples = read_json("json/samples.json")
+            sio.emit("samples", samples)
+    else:
+        sio.emit("to_clients", msg)
     frontend_server_messages(msg)
 
 

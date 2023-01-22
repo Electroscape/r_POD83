@@ -131,7 +131,7 @@
         "color": "#f55247"
       }
     ],
-    "status": "released",
+    "status": "locked",
     "icon": "fas fa-lock",
     "info": "toxic"
   }

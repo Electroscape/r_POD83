@@ -4,6 +4,7 @@
     --user-button-cardborder: rgba(255, 255, 255, 0.25);
     --user-button-text: #323133;
     --user-button-shadow: rgba(0, 0, 0, 0.1);
+    --user-button-main: #EC87C0;
 }
 
 #fakeBody #user-button {
@@ -165,7 +166,6 @@
     position: absolute;
     width: 30px;
     height: 30px;
-    background: var(--singlecolour);
     border-radius: 100%;
     cursor: pointer;
     transform: translate(-50%, -50%);
@@ -177,10 +177,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-
-#fakeBody #user-button .u-icons > *:hover, #fakeBody #user-button .u-icons > *:focus-within {
-    background: var(--hcolour);
 }
 
 #fakeBody #user-button .u-icons > *:first-child:nth-last-child(1):nth-child(1), #fakeBody #user-button .u-icons > *:first-child:nth-last-child(1) ~ *:nth-child(1) {
@@ -330,7 +326,7 @@
 }
 
 #fakeBody .options .option.active .label .info > div {
-    left: 0px;
+    left: 0;
     opacity: 1;
 }
 
@@ -340,7 +336,7 @@
 }
 
 #fakeBody .options .option:not(.active) .shadow {
-    box-shadow: inset 0 -120px 0px -120px black, inset 0 -120px 0px -100px black;
+    box-shadow: inset 0 -120px 0 -120px black, inset 0 -120px 0 -100px black;
 }
 
 #fakeBody .options .option:not(.active) .label {
@@ -355,8 +351,8 @@
 
 #fakeBody .options .option .shadow {
     position: absolute;
-    left: 0px;
-    right: 0px;
+    left: 0;
+    right: 0;
     height: 100%;
     transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
 }
@@ -364,7 +360,7 @@
 #fakeBody .options .option .label {
     display: flex;
     position: absolute;
-    right: 0px;
+    right: 0;
     height: 40px;
     transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
 }
@@ -379,7 +375,6 @@
     height: 40px;
     border-radius: 100%;
     background-color: white;
-    color: var(--defaultBackground);
 }
 
 #fakeBody .options .option .label .info {

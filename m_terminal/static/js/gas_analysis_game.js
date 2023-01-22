@@ -121,21 +121,20 @@ function drop(event) {
 
 function submitBtnClick(index) {
     if (itemsList[index].length === total[index] && correct[index] === total[index]) { // Game Over!!
+        socket.emit('msg_to_backend', {
+            keypad_update: `${window.location.pathname} dragDropGame ${index} correct`
+        })
         setTimeout(() => {
-            let shadow = document.querySelector("#shadow-" + index);
-            let successTxt = shadow.querySelector("#success-txt-" + index);
-            successTxt.classList.remove("d-none");
-            shadow.hidden = false;
-            shadow.style.backgroundColor = "green";
-
             alert("Stable Correct Solution");
-
-        }, 200)
+        }, 2000)
     } else if (itemsList[index].length === total[index]) {
+        socket.emit('msg_to_backend', {
+            keypad_update: `${window.location.pathname} dragDropGame ${index} wrong`
+        })
         setTimeout(() => {
             alert("Unstable combination")
             $("#reset-btn-" + index).click()
-        }, 200)
+        }, 2000)
     }
 }
 

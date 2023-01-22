@@ -8,6 +8,49 @@
     </style>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis_game.css') }}" media="screen">
+
+    <script type="text/javascript">
+        function lockedSeq(index) {
+            let shadow = document.querySelector("#shadow-" + index);
+            let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
+            shadowTxt.innerText = "locked"
+            shadowTxt.classList.remove("d-none");
+            shadow.hidden = false;
+            shadow.style.backgroundColor = "grey";
+            shadow.style.opacity = 0.5;
+        }
+
+        function releasedSeq(index) {
+            let shadow = document.querySelector("#shadow-" + index);
+            let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
+            shadowTxt.innerText = "released"
+            shadowTxt.classList.remove("d-none");
+            shadow.hidden = false;
+            shadow.style.backgroundColor = "green";
+            shadow.style.opacity = 0.5;
+        }
+
+        function checkSampleStatus(i, sample) {
+            $("#icon-" + i).removeClass().addClass(sample.icon);
+            $("#status-" + i)[0].innerText = sample.status
+            if (sample.status === "released") {
+                releasedSeq(i)
+            } else if (sample.status === "locked") {
+                lockedSeq(i)
+            } else {
+                let shadow = document.querySelector("#shadow-" + i);
+                shadow.hidden = true;
+            }
+        }
+
+        socket.on('samples_updates', function (samples) {
+            setTimeout(() => {
+            for (let i = 0; i < samples.length; i++) {
+                checkSampleStatus(i, samples[i]);
+            }
+            }, 2000)
+        })
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -22,12 +65,8 @@
                             active
                             {% endif %}">
                     <div class="shadow" id="shadow-{{ loop.index0 }}">
-                        <h1 id="lock-txt-{{ loop.index0 }}" class="txt-vertical d-none"
-                            style="-webkit-transform: rotate(90deg); margin-top: 150px;">
-                            locked</h1>
-                        <h1 id="success-txt-{{ loop.index0 }}" class="txt-vertical d-none"
-                            style="-webkit-transform: rotate(90deg); margin-top: 150px;">
-                            stable</h1>
+                        <h1 id="shadow-txt-{{ loop.index0 }}" class="txt-vertical d-none"
+                            style="-webkit-transform: rotate(90deg); margin-top: 150px;"></h1>
                     </div>
 
                     <div class="gameContentClass {% if loop.index0 != 0 %}
@@ -40,14 +79,17 @@
 
                     <div class="label">
                         <div class="icon">
-                            <i class="{{ sample.icon }}"></i>
+                            <i id="icon-{{ loop.index0 }}" class="{{ sample.icon }}"></i>
                         </div>
                         <div class="info">
                             <div class="main">{{ sample.name }}</div>
-                            <div class="sub">{{ sample.status }}</div>
+                            <div id="status-{{ loop.index0 }}" class="sub">{{ sample.status }}</div>
                         </div>
                     </div>
                 </div>
+                <script type="text/javascript">
+                    checkSampleStatus({{ loop.index0 }}, {{ sample| tojson }})
+                </script>
             {% endfor %}
         </div>
     </div>

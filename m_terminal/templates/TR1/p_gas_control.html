@@ -1,8 +1,46 @@
 {% extends 'layout.html' %}
 
-
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis.css') }}" media="screen">
+
+    <script type="text/javascript">
+        function unlockSeq(index) {
+            let shadow = document.querySelector("#shadow-" + index);
+            let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
+            shadowTxt.innerText = "unlocked"
+            shadowTxt.classList.remove("d-none");
+            shadow.hidden = false;
+            shadow.style.backgroundColor = "grey";
+            shadow.style.opacity = 0.5;
+        }
+
+        function releaseSeq(index) {
+            let shadow = document.querySelector("#shadow-" + index);
+            let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
+            shadowTxt.innerText = "released"
+            shadowTxt.classList.remove("d-none");
+            shadow.hidden = false;
+            shadow.style.backgroundColor = "green";
+            shadow.style.opacity = 0.5;
+        }
+
+        function checkSampleStatus(i, sample) {
+            $("#icon-" + i).removeClass().addClass(sample.icon);
+            $("#status-" + i)[0].innerText = sample.status
+            if (sample.status === "released") {
+                releaseSeq(i)
+            } else if (sample.status === "unlocked") {
+                unlockSeq(i)
+            }
+        }
+
+        socket.on('samples_updates', function (samples) {
+            for (let i = 0; i < samples.length; i++) {
+                checkSampleStatus(i, samples[i])
+            }
+
+        })
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +53,11 @@
                 <div id="option{{ loop.index }}" class="option {% if loop.index0 == 0 %}
                             active
                             {% endif %}">
-                    <div style="display: none" class="shadow"></div>
+                    <div class="shadow" id="shadow-{{ loop.index0 }}" hidden>
+                        <h1 id="shadow-txt-{{ loop.index0 }}" class="txt-vertical d-none"
+                            style="-webkit-transform: rotate(90deg); margin-top: 150px;">
+                            locked</h1>
+                    </div>
                     <div class="gameContentClass {% if loop.index0 != 0 %}
                             d-none
                             {% endif %}" id="gameContent{{ loop.index }}">
@@ -25,14 +67,17 @@
                     </div>
                     <div class="label">
                         <div class="icon">
-                            <i class="{{ sample.icon }}"></i>
+                            <i id="icon-{{ loop.index0 }}" class="{{ sample.icon }}"></i>
                         </div>
                         <div class="info">
                             <div class="main">{{ sample.name }}</div>
-                            <div class="sub">{{ sample.status }}</div>
+                            <div id="status-{{ loop.index0 }}" class="sub">{{ sample.status }}</div>
                         </div>
                     </div>
                 </div>
+                <script type="text/javascript">
+                    checkSampleStatus({{ loop.index0 }}, {{ sample| tojson }})
+                </script>
             {% endfor %}
         </div>
     </div>

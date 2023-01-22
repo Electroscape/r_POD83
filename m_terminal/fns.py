@@ -7,6 +7,7 @@ def js_r(filename: str, auth="", from_static=True) -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
 
+    :param from_static: (bool) from static folder or not
     :param auth: authenticated user
     :param filename: json file name inside static folder
     :return: dict or None

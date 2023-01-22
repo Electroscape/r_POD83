@@ -119,6 +119,11 @@ def events_handler(data):
         print(f"elancell msg: {msg}")
 
 
+@sio.on('samples')
+def samples_handler(samples):
+    self_sio.emit("samples_updates", samples)
+
+
 @sio.on('response_to_terminals')
 def on_message(data):
     chat_msgs.append(data)

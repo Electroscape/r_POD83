@@ -111,6 +111,13 @@
                 }
             })
 
+            socket.on('samples_updates', function (msg) {
+                //console.log(msg)
+                {% if request.path != "/gas_control" and request.path != "/gas_analysis" %}
+                    toastr.success('There is an update in samples status');
+                {% endif %}
+            })
+
             function handleMessageReception(msg) {
                 if (typeof msg.user_name !== 'undefined') {
                     $('#msg_holder').prepend(
@@ -158,7 +165,7 @@
         }
     });
 
-    function loadControlPanel(jsonResponse, airlockStatus="") {
+    function loadControlPanel(jsonResponse, airlockStatus = "") {
         let CPanel = document.getElementById("ControlPanel")
         let PContainer = document.getElementById("posts-container")
         let resTxt = ""

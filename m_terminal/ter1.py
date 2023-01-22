@@ -205,6 +205,11 @@ def events_handler(data):
         self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
 
 
+@sio.on('samples')
+def samples_handler(samples):
+    self_sio.emit("samples_updates", samples)
+
+
 @sio.on('response_to_terminals')
 def on_message(data):
     chat_msgs.append(data)

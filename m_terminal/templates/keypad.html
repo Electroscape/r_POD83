@@ -54,20 +54,20 @@
                 screen.classList.add('success');
                 screen.textContent = 'success';
                 socket.emit('msg_to_backend', {
-                    update: `{{ request.path }} keypad {{ keyID }} correct`
+                    keypad_update: `{{ request.path }} keypad {{ keyID }} correct`
                 })
             } else {
                 screen.classList.add('failed');
                 screen.textContent = 'wrong';
                 socket.emit('msg_to_backend', {
-                    update: `{{ request.path }} keypad {{ keyID }} wrong`
+                    keypad_update: `{{ request.path }} keypad {{ keyID }} wrong`
                 })
-            }
 
-            // clear result message
-            setTimeout(function () {
-                keypadClear("{{ keyID }}");
-            }, 1000);
+                // clear result message
+                setTimeout(function () {
+                    keypadClear("{{ keyID }}");
+                }, 1000);
+            }
         });
 
         // Event listener for when * is clicked
