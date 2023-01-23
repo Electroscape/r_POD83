@@ -103,14 +103,21 @@ frontend_cb_map = {
 
 @sio.on('response_to_fe')
 def handle_fe(data):
-    print(f"message from frontend {data}")
-    update = data.get('update')
-    print(f"update is: {update}")
-    if "/lab_control keypad 0 correct" == update:
-        event = event_map["laserlock_bootdecon"]
-        activate_sound(event)
-        gpio_cb(event)
-        activate_sound(event)
+    event_name = False
+    for event in event_map:
+        try:
+            event_name = event[fe_event]
+            if event_name == data.get('update'):
+                break
+        except ValueError:
+            pass
+
+    if not event_name:
+        return
+
+    activate_sound(event)
+    gpio_cb(event)
+    activate_sound(event)
 
 
     '''

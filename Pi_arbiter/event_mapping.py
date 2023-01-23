@@ -47,6 +47,7 @@ is_fx = "is_fx"
 sound_id = "id"
 gpio_in = "gpio_in"
 gpio_out = ""
+fe_event = "fe_event"
 
 
 test_name = "airlock_intro"
@@ -87,12 +88,14 @@ event_map = {
         },
     },
     "laserlock_fail": {
+        fe_event: "",
         "gpio_out": [5],
         sound: {
             sound_id: 3
         }
     },
     "laserlock_bootdecon": {
+        fe_event: "",
         gpio_in: [27],
         "gpio_out": [6],
         sound: {
