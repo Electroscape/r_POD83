@@ -22,8 +22,7 @@ from gpio_fncs import *
     * handling of multiple IO reading the same pulldown sensor via level shifter 
     * gpio callback from fe event
     * map fe events to events
-
-Caught exception socket.error : Already connected
+    * Caught exception socket.error : Already connected
 '''
 
 # standard Python
@@ -72,12 +71,13 @@ def connect():
 def disconnect():
     global connected
     connected = False
+    sio.disconnect()
     connect()
 
 
 def usb_boot():
     handle_gpio_event(event_map, 'usb_boot')
-    sio.emit('usbBoot', {'user_name': 'tr1', 'cmd': 'usbBoot', 'message': 'boot'})
+    sio.emit('events', {'user_name': 'ter1', 'cmd': 'usbBoot'})
     global usb_booted
     usb_booted = True
 
@@ -92,24 +92,15 @@ def catch_all(event, data):
     pass
 
 
-def laserlock_decon():
-    print()
-
-
-frontend_cb_map = {
-    "/lab_control keypad 0 correct": laserlock_decon()
-}
-
-
 @sio.on('response_to_fe')
 def handle_fe(data):
     event_name = False
-    for event in event_map:
+    for event in event_map.values():
         try:
             event_name = event[fe_event]
             if event_name == data.get('update'):
                 break
-        except ValueError:
+        except KeyError:
             pass
 
     if not event_name:

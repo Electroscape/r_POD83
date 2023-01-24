@@ -1,5 +1,5 @@
 import requests
-
+from gpio_fncs import GPIOBundle
 
 
 
@@ -46,11 +46,13 @@ sound = "sound"
 is_fx = "is_fx"
 sound_id = "id"
 gpio_in = "gpio_in"
-gpio_out = ""
+gpio_out = "gpio_out"
 fe_event = "fe_event"
 
 
 test_name = "airlock_intro"
+
+
 
 event_map = {
     "airlock_intro": {
@@ -68,13 +70,11 @@ event_map = {
         }
     },
     "airlock_decon": {
-        "gpio_pins": [],
         sound: {
             sound_id: 2
         }
     },
     "airlock_wrong": {
-        "gpio_pins": [],
         sound: {
             is_fx: True,
             sound_id: 1
@@ -88,14 +88,14 @@ event_map = {
         },
     },
     "laserlock_fail": {
-        fe_event: "",
+        fe_event: "bootFail",
         "gpio_out": [5],
         sound: {
             sound_id: 3
         }
     },
     "laserlock_bootdecon": {
-        fe_event: "",
+        fe_event: "bootDecon",
         gpio_in: [27],
         "gpio_out": [6],
         sound: {
