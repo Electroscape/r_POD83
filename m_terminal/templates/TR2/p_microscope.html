@@ -15,8 +15,14 @@
             align-items: center;
         }
 
+        .tv {
+            background-color: black;
+        }
+
         .video {
             height: 100%;
+            width: 80%;
+            margin-inline: auto;
             overflow: hidden;
         }
 
@@ -209,7 +215,7 @@
             <div class="video">
                 <video id="vid" autoplay="" muted="" loop="" width="100%" height="100%">
                     <source id="mp4"
-                            src="https://cuadernodeescaladas.com/wp-content/themes/josetxu-notepad/videos/nubes-pajaro-sarcofago.mp4"
+                            src="{{ url_for('static', filename='media/microscope/microscopeReady.mp4') }}"
                             type="video/mp4">
                 </video>
             </div>

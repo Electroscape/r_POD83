@@ -103,11 +103,25 @@ def handle_received_messages(json_msg):
             samples[int(cmd[-2])]["status"] = "unlocked"
             samples[int(cmd[-2])]["icon"] = sample_icons["unlocked"]
 
-        elif cmd[0].startswith("/gas_analysis") and cmd[-1] == "correct":
-            samples[int(cmd[-2])]["status"] = "released"
-            samples[int(cmd[-2])]["icon"] = sample_icons["released"]
+        elif cmd[0].startswith("/gas_analysis"):
+            if cmd[-1] == "correct":
+                samples[int(cmd[-2])]["status"] = "released"
+                samples[int(cmd[-2])]["icon"] = sample_icons["released"]
+            trigger_msg = {
+                "username": "arb",
+                "cmd": "dispenser",
+                "message": f"{cmd[-2]} {cmd[-1]}"
+            }
+            sio.emit("trigger", trigger_msg)
+            # should I add ~5 sec delay here?
+            # after trigger msg and before sending the samples updates msg
+            # for the physical world to take place.
 
         sio.emit("samples", samples)
+    elif "/lab_control" in json_msg:
+        print("access to laser-lock requested")
+        # access the airlock lab
+        sio.emit("trigger", {"username": "arb", "cmd": "airlock", "message": "access"})
     else:
         # broadcast chat message
         sio.emit('response_to_terminals', json_msg)
