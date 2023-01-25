@@ -53,11 +53,9 @@ fe_event = "fe_event"
 test_name = "airlock_intro"
 
 
-
 event_map = {
     "airlock_intro": {
         # if several pins are used we need a state aswell
-        gpio_in: [],
         sound: {
             is_fx: True,
             sound_id: 7
@@ -81,7 +79,7 @@ event_map = {
         }
     },
     "usb_boot": {
-        "gpio_out": [4],
+        "gpio_out": 4,
         sound: {
             is_fx: False,
             sound_id: 2
@@ -89,21 +87,19 @@ event_map = {
     },
     "laserlock_fail": {
         fe_event: "bootFail",
-        "gpio_out": [5],
+        gpio_out: 5,
         sound: {
             sound_id: 3
         }
     },
     "laserlock_bootdecon": {
         fe_event: "bootDecon",
-        gpio_in: [27],
-        "gpio_out": [6],
+        gpio_out: 6,
         sound: {
             sound_id: 4
         }
     },
     "laserlock_welcome_david": {
-        "gpio_in_bundle": [1],
         sound: {
             sound_id: 15
         }
