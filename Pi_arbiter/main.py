@@ -78,6 +78,7 @@ def disconnect():
 
 def usb_boot():
     sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "boot"})
+    handle_event("usb_boot")
     global usb_booted
     usb_booted = True
 
@@ -196,7 +197,8 @@ def main():
         if scan_for_usb():
             usb_boot()
             sleep(8)
-        handle_event(scan_gpio_events())
+        handle_event("laserlock_fail")
+        exit()
 
 
 if __name__ == '__main__':

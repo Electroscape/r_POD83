@@ -79,7 +79,7 @@ event_map = {
         }
     },
     "usb_boot": {
-        "gpio_out": 4,
+        gpio_out: 4,
         sound: {
             is_fx: False,
             sound_id: 2
