@@ -1,3 +1,9 @@
+import os
+import sys
+
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
+
 from flask import request, Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 from ring_list import RingList

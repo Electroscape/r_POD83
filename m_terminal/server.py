@@ -1,3 +1,9 @@
+import os
+import sys
+
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
+
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 import json

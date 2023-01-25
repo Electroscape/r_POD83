@@ -1,3 +1,9 @@
+import os
+import sys
+
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
+
 from flask import request, Flask, render_template, send_from_directory, Response, url_for, redirect
 from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
