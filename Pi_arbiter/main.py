@@ -25,6 +25,9 @@ from gpio_fncs import *
     * ✅ map fe events to events
     * 🔲 Caught exception socket.error : Already connected? -> Try: finally: disco?
     * 🔲 logging
+    * 🔲 rachel + david
+    * 🔲 cable broken needs to be a delta broadcast
+    * 🔲 resettime as param
 '''
 
 # standard Python
@@ -130,21 +133,13 @@ def handle_event(event_key, event_value=None):
 @sio.on("trigger")
 def handle_fe(data):
     print(data)
-    event_name = False
     for event in event_map.values():
         try:
             event_name = event[fe_event]
             if event_name == data.get('update'):
-                break
+                handle_event(event)
         except KeyError:
             pass
-
-    if not event_name:
-        return
-
-    activate_sound(event)
-    gpio_cb(event)
-    activate_sound(event)
 
 
 # this needs to move to gpio_fncs
@@ -178,17 +173,21 @@ def scan_for_usb():
     return os.path.exists("/dev/sda") and not usb_booted
 
 
-def scan_gpio_events():
+# TODO: make this compatible with multiple events
+def handle_gpio_events():
+    event_pins_cd = []
     for event_key in event_map.keys():
         event_value = event_map[event_key]
         try:
             input_pin = event_value[gpio_in]
             # @TODO: cooldown check here
             if GPIO.input(input_pin) == GPIO.LOW:
-                gpio_input_cooldowns.append((input_pin, time.thread_time() + 5))
-                return event_key
+                handle_event(event_key)
+                event_pins_cd.append(input_pin)
         except KeyError:
             pass
+    for input_pin in event_pins_cd:
+        gpio_input_cooldowns.append((input_pin, time.thread_time() + 5))
 
 
 def connect():
@@ -206,6 +205,8 @@ def main():
         if scan_for_usb():
             usb_boot()
             sleep(8)
+        handle_gpio_events()
+        handle_fe()
         handle_event("laserlock_fail")
         sleep(3)
         GPIO.output(5, GPIO.HIGH)
