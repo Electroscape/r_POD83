@@ -86,12 +86,15 @@ def gpio_cb(event_dict):
 
 def reset_timer_target(pins):
     sleep(3)
+    print(f"setting pins back to low {pins}")
     for pin in pins:
+
         GPIO.output(pin, GPIO.HIGH)
 
 
 def reset_timer(pins):
-    Thread(target=reset_timer_target, args=(pins,))
+    gpio_reset_thread = Thread(target=reset_timer_target, args=(pins,))
+    gpio_reset_thread.start()
 
 
 def cooldown_check(pin, cooldown_list):

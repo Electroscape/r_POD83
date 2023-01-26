@@ -1,7 +1,6 @@
+# @author Martin Pek (martin.pek@web.de)
+
 import time
-
-
-@author Martin Pek (martin.pek@web.de)
 
 import json
 import socketio
@@ -37,6 +36,7 @@ gpio_input_cooldowns = []
 gpio_thread = None
 # used to prevent multiple boots
 usb_booted = False
+connected = False
 
 '''
 class event:
@@ -70,12 +70,17 @@ def connect():
     print("Connected to Server!")
 
 
+'''
 @sio.event
 def disconnect():
+    if not connected:
+        return False
     global connected
     connected = False
     sio.disconnect()
     connect()
+
+'''
 
 
 def usb_boot():
@@ -149,6 +154,7 @@ def setup_gpios():
         try:
             pin = event_value[gpio_out]
             GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
+            GPIO.output(pin, GPIO.HIGH)
         except KeyError:
             pass
         except Exception as exp:
@@ -201,7 +207,11 @@ def main():
             usb_boot()
             sleep(8)
         handle_event("laserlock_fail")
-        exit()
+        sleep(3)
+        GPIO.output(5, GPIO.HIGH)
+        sleep(25)
+        handle_event("laserlock_bootdecon")
+        sleep(25)
 
 
 if __name__ == '__main__':
