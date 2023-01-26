@@ -435,7 +435,7 @@ void stageUpdate() {
 void inputInit() {
     for (int pin=0; pin<inputCnt; pin++) {
         inputPCF.begin(RESET_I2C_ADD);
-        inputPCF.pinMode((uint8_t) pin, INPUT);
+        inputPCF.pinMode((uint8_t) pin, INPUT_PULLUP);
     }
 }
 
@@ -449,7 +449,7 @@ int inputDetector() {
     int ticks;
     for (int pin=0; pin<inputCnt; pin++) {
         ticks = 0;
-        while(inputPCF.digitalRead(pin)) {
+        while(!inputPCF.digitalRead(pin)) {
             if (ticks > 5) {
                 return pin;
             }
