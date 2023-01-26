@@ -173,17 +173,25 @@ def scan_for_usb():
     return os.path.exists("/dev/sda") and not usb_booted
 
 
-# TODO: make this compatible with multiple events
+def is_gpio_on_cooldown(pin):
+    for cooldown in gpio_input_cooldowns:
+        if pin == cooldown[0]:
+            if cooldown[1] < time.thread_time():
+                gpio_input_cooldowns.remove(cooldown)
+                return False
+            else:
+                return True
+
+
 def handle_gpio_events():
-    event_pins_cd = []
+    event_pins_cd = {}
     for event_key in event_map.keys():
         event_value = event_map[event_key]
         try:
             input_pin = event_value[gpio_in]
-            # @TODO: cooldown check here
-            if GPIO.input(input_pin) == GPIO.LOW:
+            if GPIO.input(input_pin) == GPIO.LOW and not is_gpio_on_cooldown():
                 handle_event(event_key)
-                event_pins_cd.append(input_pin)
+                event_pins_cd.add(input_pin)
         except KeyError:
             pass
     for input_pin in event_pins_cd:
@@ -204,15 +212,18 @@ def main():
     while True:
         if scan_for_usb():
             usb_boot()
-            sleep(8)
+            # sleep(8)
         handle_gpio_events()
         handle_fe()
+
+        '''
         handle_event("laserlock_fail")
         sleep(3)
         GPIO.output(5, GPIO.HIGH)
         sleep(25)
         handle_event("laserlock_bootdecon")
         sleep(25)
+        '''
 
 
 if __name__ == '__main__':
