@@ -16,14 +16,14 @@ from gpio_fncs import *
 
 '''
 @TODO: 
-    * expection handling
-    * cooldowns, need to consider what time library
-    * resettimes for gpio output
-    * handling of multiple IO reading the same pulldown sensor via level shifter 
-    * gpio callback from fe event
-    * gpio cooldowns
-    * map fe events to events
-    * Caught exception socket.error : Already connected
+    * 🔲 expection handling
+    * 🔲 cooldowns, need to consider what time library
+    * 🔲 handling of multiple IO reading the same pulldown sensor via level shifter 
+    * 🔲 gpio callback from fe event
+    * ✅ gpio output cooldowns
+    * 🔲 gpio input cooldowns
+    * 🔲 map fe events to events
+    * 🔲 Caught exception socket.error : Already connected
 '''
 
 # standard Python
@@ -115,7 +115,7 @@ def handle_event(event_key, event_value=None):
         pin = event_value[gpio_out]
         print(f"setting output: {pin}")
         GPIO.output(pin, GPIO.LOW)
-        # @TODO: add timestamp for reset here or a thread to reset
+        reset_timer([pin])
     except KeyError:
         pass
 

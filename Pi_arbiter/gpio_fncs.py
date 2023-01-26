@@ -1,6 +1,7 @@
 from time import time, sleep
 # not a fan of * impports ... amybe we can make classes
 from event_mapping import *
+from threading import Thread
 
 # make this a function?
 try:
@@ -81,3 +82,14 @@ def gpio_cb(event_dict):
         GPIO.output(event_dict["gpio_out"], GPIO.LOW)
     except KeyError:
         pass
+
+
+def reset_timer_target(pins):
+    sleep(3)
+    for pin in pins:
+        GPIO.output(pin, GPIO.HIGH)
+
+
+def reset_timer(pins):
+    Thread(target=reset_timer_target, args=(pins,))
+
