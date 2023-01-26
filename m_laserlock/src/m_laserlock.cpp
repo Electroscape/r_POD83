@@ -449,7 +449,7 @@ int inputDetector() {
     int ticks;
     for (int pin=0; pin<inputCnt; pin++) {
         ticks = 0;
-        while(!inputPCF.digitalRead(pin)) {
+        while(inputPCF.digitalRead(pin)) {
             if (ticks > 5) {
                 return pin;
             }
@@ -475,7 +475,7 @@ void handleInputs() {
         break;
         case room1Light:
             if (lightOn) { return; }
-            // lightOn = true;
+            lightOn = true;
             stage = lightStart;
         break;
         default: break;
