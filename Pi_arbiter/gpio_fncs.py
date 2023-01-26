@@ -93,3 +93,7 @@ def reset_timer_target(pins):
 def reset_timer(pins):
     Thread(target=reset_timer_target, args=(pins,))
 
+
+def cooldown_check(pin, cooldown_list):
+    for cooldown in cooldown_list:
+        print("WIP")

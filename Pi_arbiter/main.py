@@ -1,9 +1,10 @@
-# This is a sample Python script.
+import time
 
+
+@author Martin Pek (martin.pek@web.de)
 
 import json
 import socketio
-from time import sleep
 # not a fan of * impports ... amybe we can make classes
 from event_mapping import *
 import os
@@ -22,13 +23,14 @@ from gpio_fncs import *
     * 🔲 gpio callback from fe event
     * ✅ gpio output cooldowns
     * 🔲 gpio input cooldowns
-    * 🔲 map fe events to events
-    * 🔲 Caught exception socket.error : Already connected
+    * ✅ map fe events to events
+    * 🔲 Caught exception socket.error : Already connected? -> Try: finally: disco?
+    * 🔲 logging
 '''
 
 # standard Python
 sio = socketio.Client()
-bundle_input_groups = []
+gpio_input_cooldowns = []
 
 # asyncio
 # sio = socketio.AsyncClient()
@@ -175,8 +177,9 @@ def scan_gpio_events():
         event_value = event_map[event_key]
         try:
             input_pin = event_value[gpio_in]
-            # @TODO: cooldown here
+            # @TODO: cooldown check here
             if GPIO.input(input_pin) == GPIO.LOW:
+                gpio_input_cooldowns.append((input_pin, time.thread_time() + 5))
                 return event_key
         except KeyError:
             pass
@@ -207,5 +210,8 @@ if __name__ == '__main__':
     connected = connect()
     try:
         main()
+    except KeyboardInterrupt:
+        pass
     finally:
         GPIO.cleanup()
+        sio.disconnect()
