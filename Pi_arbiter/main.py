@@ -17,16 +17,16 @@ from gpio_fncs import *
 '''
 @TODO: 
     * 🔲 expection handling
-    * 🔲 cooldowns, need to consider what time library
+    * ✅ cooldowns, need to consider what time library
     * 🔲 handling of multiple IO reading the same pulldown sensor via level shifter 
-    * 🔲 gpio callback from fe event
+    * ✅ gpio callback from fe event
     * ✅ gpio output cooldowns
-    * 🔲 gpio input cooldowns
+    * ✅ gpio input cooldowns
     * ✅ map fe events to events
     * 🔲 Caught exception socket.error : Already connected? -> Try: finally: disco?
     * 🔲 logging
-    * 🔲 rachel + david
-    * 🔲 cable broken needs to be a delta broadcast
+    * ✅ rachel + david
+    * 🔲 cable broken needs to be a delta check and broadcast... or a specific fncs
     * 🔲 resettime as param
 '''
 
@@ -110,7 +110,7 @@ def handle_event(event_key, event_value=None):
     if event_value is None:
         try:
             event_value = event_map[event_key]
-        except KeyError as err:
+        except KeyError:
             print(f"handle_event received invalid key: {event_key}")
 
     print(f"handling event {event_key}")
