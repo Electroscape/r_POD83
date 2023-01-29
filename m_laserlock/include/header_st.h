@@ -13,7 +13,7 @@
 #define doorOpen    0
 #define doorClosed  1
 
-#define txRelayAmount 2
+#define txRelayAmount 5
 #define ledCnt 13
 
 // how long the system remains in unlock and accepts RFID cards 
@@ -55,11 +55,11 @@ enum relays {
     door,
     uv,
     rel_3,
-    rel_4,
-    rel_5,
-    rel_6,
     RFID_TX_1,
-    RFID_TX_2
+    RFID_TX_2,
+    RFID_TX_3,
+    RFID_TX_4,
+    RFID_TX_5,
 };
 
 
@@ -67,11 +67,11 @@ enum relayInits {
     doorInit = doorClosed,
     uvInit = closed,
     rel_3_init = closed,
-    rel_4_init = closed,
-    rel_5_init = closed,
-    rel_6_init = closed,
     RFID_TX_1_init = closed,
-    RFID_TX_2_init = closed
+    RFID_TX_2_init = closed,
+    RFID_TX_3_init = closed,
+    RFID_TX_4_init = closed,
+    RFID_TX_5_init = closed,
 };
 
 
@@ -79,18 +79,21 @@ int relayPinArray[relayAmount] = {
     door, 
     uv,
     rel_3,
-    rel_4,
-    rel_5,
-    rel_6,
     RFID_TX_1,
-    RFID_TX_2
+    RFID_TX_2,
+    RFID_TX_3,
+    RFID_TX_4,
+    RFID_TX_5
 };
 
 
 // used to send binary signal to RPi to show identity presented
 int rfidTxPins[txRelayAmount] = {
     RFID_TX_1,
-    RFID_TX_2
+    RFID_TX_2,
+    RFID_TX_3,
+    RFID_TX_4,
+    RFID_TX_5,
 };
 
 
@@ -98,11 +101,11 @@ int relayInitArray[relayAmount] = {
     doorInit,
     uvInit,
     rel_3_init,
-    rel_4_init,
-    rel_5_init,
-    rel_6_init,
     RFID_TX_1_init,
-    RFID_TX_2_init
+    RFID_TX_2_init,
+    RFID_TX_3_init,
+    RFID_TX_4_init,
+    RFID_TX_5_init
 };
 
 
