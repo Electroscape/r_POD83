@@ -8,7 +8,7 @@
       "details": "neue Browserseite öffnen",
       "image": "static/imgs/home/petri-dish.png",
       "link": "sample_release",
-      "auth": "Rachel"
+      "auth": false
     },
     {
       "title": "Gasanalyse",
@@ -22,7 +22,7 @@
       "details": "den Gasfluss kontrollieren",
       "image": "static/imgs/home/microscope.png",
       "link": "microscope",
-      "auth": "Rachel"
+      "auth": false
     },
     {
       "title": "Reinraum-Zugang",

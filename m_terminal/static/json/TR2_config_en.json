@@ -8,7 +8,7 @@
       "details": "open new browser page",
       "image": "static/imgs/home/petri-dish.png",
       "link": "sample_release",
-      "auth": "Rachel"
+      "auth": false
     },
     {
       "title": "Gas Analysis",
@@ -22,7 +22,7 @@
       "details": "control the gas flow",
       "image": "static/imgs/home/microscope.png",
       "link": "microscope",
-      "auth": "Rachel"
+      "auth": false
     },
     {
       "title": "Clean Room Access",

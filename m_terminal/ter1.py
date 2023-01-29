@@ -65,18 +65,23 @@ def get_post(name):
 @app.route('/lab_control', methods=['GET', 'POST'])
 def lab_control():
     global airlock_boot
+    global airlock_auth
+    
+    if request.method == "POST":
+        if request.form.get("status"):
+            airlock_boot = request.form.get("status")
+            print(f"airlock boot: {airlock_boot}")
+            return airlock_boot
+        elif request.form.get("auth"):
+            airlock_auth = request.form.get("auth")
+            print(f"airlock auth: {airlock_auth}")
+            return airlock_auth
+
     config = {
         "title": "Lab Control",
-        "password": "4321",
-        "boot": airlock_boot
+        "boot": airlock_boot,
+        "auth": airlock_auth
     }
-
-    if request.method == "POST":
-        res = request.form.get("status")
-        print(f"airlock: {res}")
-        airlock_boot = res
-        return airlock_boot
-
     print("open lab page")
     html_path = f'{terminal_name}/p_lab.html'
     return render_template(html_path, g_config=config)
@@ -89,7 +94,8 @@ def entry_point():  # begin of the code
 
     conf = get_globals()
     airlock_id = "lab-control"
-    return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id)
+    return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id,
+                           airlock_auth=airlock_auth)
 
 
 @app.route('/boot', methods=['GET', 'POST'])
@@ -235,6 +241,7 @@ print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores the whole conversation
 airlock_boot = "normal"
+airlock_auth = "normal"
 usb_boot = "shutdown"
 
 app.register_blueprint(app_pages)

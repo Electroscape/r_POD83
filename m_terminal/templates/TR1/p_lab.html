@@ -27,15 +27,6 @@
             font-family: monospace;
         }
 
-        prtscr {
-            font-family: monospace;
-            white-space: pre;
-        }
-
-        #cmdinputs {
-            display: none;
-        }
-
         button {
             background: none;
             border: solid 1px red;
@@ -61,6 +52,64 @@
             overflow-y: scroll;
             height: 75vh;
         }
+
+        @-webkit-keyframes clack {
+            0% {
+                background-image: repeating-linear-gradient(45deg, #000, #000 25%, yellow 25%, yellow 50%);
+            }
+            50% {
+                background-image: repeating-linear-gradient(45deg, #000, #000 25%, yellow 25%, yellow 50%);
+            }
+            51% {
+                background-image: repeating-linear-gradient(45deg, yellow, yellow 25%, #000 25%, #000 50%);
+            }
+            100% {
+                background-image: repeating-linear-gradient(45deg, yellow, yellow 25%, #000 25%, #000 50%);
+            }
+        }
+
+        @keyframes clack {
+            0% {
+                background-image: repeating-linear-gradient(45deg, #000, #000 25%, yellow 25%, yellow 50%);
+            }
+            50% {
+                background-image: repeating-linear-gradient(45deg, #000, #000 25%, yellow 25%, yellow 50%);
+            }
+            51% {
+                background-image: repeating-linear-gradient(45deg, yellow, yellow 25%, #000 25%, #000 50%);
+            }
+            100% {
+                background-image: repeating-linear-gradient(45deg, yellow, yellow 25%, #000 25%, #000 50%);
+            }
+        }
+
+        .caution {
+            margin-block: 50px;
+            height: 4em;
+            -webkit-animation: 2s clack;
+            animation: 0.3s clack;
+            background-size: 24px 24px;
+            -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+            position: relative;
+        }
+
+        .caution__text {
+            content: "CAUTION";
+            font-family: monospace;
+            font-weight: 900;
+            letter-spacing: 0.25em;
+            background: yellow;
+            font-size: 2vw;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            padding: 0.125em 0.25em;
+            text-align: center;
+            transform: translate(-50%, -50%);
+            border: 0.6vw solid #000;
+            box-shadow: -0.15vw -0.15vw 0 0.15vw yellow, 0.15vw 0.15vw 0 0.15vw yellow;
+        }
     </style>
 {% endblock %}
 
@@ -68,14 +117,17 @@
     <audio id="errorSnd">
         <source src="{{ url_for('static', filename='sounds/error.mp3') }}" type="audio/mpeg">
     </audio>
+    <div id="caution-container" class="d-none">
+        <div class="caution">
+            <div class="caution__text">CAUTION! Laser active</div>
+        </div>
+    </div>
     <div id="bootContainer">
         <!-- <div id="test"></div> -->
 
         <button id="bootup" class="d-none">Power-On Airlock2</button>
 
         <pre id="prtscr"></pre>
-
-        <div id="result"></div>
     </div>
     <div id="k-lab" class="d-none">
         <!-- countdown text -->
@@ -85,6 +137,8 @@
 {% endblock %}
 
 {% block add_js %}
+    <script src="{{ url_for('static', filename='js/bootOutput.js') }}">
+    </script>
     <script type="text/javascript">
         headerLines = [
             "░█████╗░██╗██████╗░██╗░░░░░░█████╗░░█████╗░██╗░░██╗\n",
@@ -123,10 +177,6 @@
             "ERROR 432 - PLEASE CHECK CONNECTIONS"];
 
         successLine = "Laser is ready to use";
-        appHeader = "##################################################################\n\n" +
-            "Boot up successfully"+
-            "AirLock Laser is ready!\n\n" +
-            "##################################################################\n";
 
         function sleep(ms) {
             return new Promise(
@@ -165,16 +215,22 @@
             await sleep(1000);
 
             if (fixed === "fixed") {
-                await sleep(10);
+                await sleep(100);
 
                 $('#prtscr').empty();
-                $('#cmdinputs').show();
-                $('#text').focus();
-                appendLine(appHeader);
+                $('#caution-container').removeClass("d-none");
+                $('#bootContainer').height("65vh");
+                for (const line of outputs) {
+                    appendLine(line + "\n");
+                    await sleep(Math.floor(Math.random() * 50) + 1);
+                }
+
+                await sleep(1000);
+                $('#prtscr').empty();
 
                 $("#bootContainer").css("height", "unset");
                 $("#k-lab").removeClass("d-none");
-                setCountdownTimer(10);
+                setCountdownTimer(30);
 
             } else {
                 $.post("{{ url_for('lab_control') }}", {
@@ -183,7 +239,7 @@
                 let snd = document.getElementById("errorSnd");
                 snd.play();
 
-                for (let i = 1; i < 5; i++) {
+                for (let i = 1; i < 4; i++) {
                     appendLine(`<p style="color: blue">attempt number: ${i}</p>`);
                     appendLine("re-initializing the laser");
                     await sleep(Math.floor(Math.random() * 700) + 1);
@@ -194,7 +250,7 @@
                 }
                 appendLine(`<p style="color: red"><strong>Failed to start the laser airlock..</strong></p>`);
 
-                alert("𝙴𝚁𝚁𝙾𝚁 𝟺𝟹𝟸 - 𝙻𝚊𝚜𝚎𝚛 𝚊𝚒𝚛𝚕𝚘𝚌𝚔 𝚒𝚗𝚝𝚎𝚛𝚏𝚊𝚌𝚎 𝚗𝚘𝚝 𝚏𝚘𝚞𝚗𝚍 - 𝙿𝚕𝚎𝚊𝚜𝚎 𝚌𝚑𝚎𝚌𝚔 𝚌𝚘𝚗𝚗𝚎𝚌𝚝𝚒𝚘𝚗 𝚊𝚗𝚍 𝚝𝚛𝚢 𝚊𝚐𝚊𝚒𝚗");
+                alert("Error 432 - laser airlock interface not found - Please check connection and try again");
                 document.location.href = "/"
             }
             await sleep(0);
@@ -275,21 +331,31 @@
 
             // stopping the timer if the time is up
             if (secondsLeft < 0) {
-                resetCountDown();
+                countDownExpired();
                 return;
             }
 
             // set the .countdown text
             countDown.innerHTML = `${seconds}`;
         };
+
         /* setCountDown function ends */
 
+        function countDownExpired() {
+            // destroy the setInterval()
+            clearInterval(countDownInterval);
+
+            $.post("{{ url_for('lab_control') }}", {
+                auth: "failed"
+            });
+            alert("Timeout! Authentication failed. Please try again!")
+            document.location.href = "/"
+        }
 
         /* resetCountDown function */
         const resetCountDown = () => {
             // destroy the setInterval()
             clearInterval(countDownInterval);
-            document.location.href = "/"
         };
         /* resetCountDown function ends */
     </script>

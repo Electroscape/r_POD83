@@ -91,8 +91,19 @@
             socket.on('usr_auth', function (msg) {
                 console.log(`user ${msg.usr} login`)
                 toastr.success(`user ${msg.usr} login`);
-                loadControlPanel(msg.data)
-
+                {% if request.path == "/lab_control" %}
+                    clearInterval(countDownInterval);
+                    $.post("{{ url_for('lab_control') }}", {
+                        auth: "success"
+                    });
+                    alert(`Hello ${msg.usr}! Welcome to the lab`)
+                    toastr.success('Successful authentication');
+                    setTimeout( () => {
+                        document.location.href = "/"}
+                    , 1500);
+                {% else %}
+                    loadControlPanel(msg.data)
+                {% endif %}
             })
 
             socket.on("airlock_fe", function (msg) {
@@ -178,13 +189,18 @@
             CPanel.innerHTML = resTxt;
 
             let airlock = airlockStatus || "{% if airlock %}{{ airlock }}{% endif %}";
+            let airlockAuth = "{% if airlock_auth %}{{ airlock_auth }}{% endif %}";
             if (airlock === "error") {
                 let air_elem = jsonResponse.btns.find(x => x.id === '{{ airlock_id }}');
                 disableOption(air_elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
             }
 
             for (let jsonResponseElement of jsonResponse.btns) {
-                if (jsonResponseElement.auth) {
+                if (airlockAuth === "failed" && jsonResponseElement.id !== "{{ airlock_id }}") {
+                    disableOption(jsonResponseElement, "Authentication failed");
+                } else if (airlockAuth === "success" && jsonResponseElement.id === "{{ airlock_id }}") {
+                    disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
+                } else if (jsonResponseElement.auth) {
                     disableOption(jsonResponseElement, jsonResponse.auth_msg);
                 }
             }
