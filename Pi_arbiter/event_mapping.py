@@ -120,7 +120,7 @@ event_map = {
         fe_event: "bootDecon",
         gpio_out: 6,
         sound: {
-            sound_id: 4
+            sound_id: 4,
         }
     },
     "laserlock_welcome_david": {
@@ -189,7 +189,7 @@ def activate_sound(event_entry):
 
     try:
         sound_id_value = event_entry[sound_id]
-        if event_entry["is_fx"]:
+        if event_entry.get("is_fx", True):
             payload["fx_id"] = sound_id_value
         else:
             payload["group_id"] = sound_id_value

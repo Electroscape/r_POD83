@@ -126,7 +126,9 @@ def handle_event(event_key, event_value=None):
         pin = event_value[gpio_out]
         print(f"setting output: {pin}")
         GPIO.output(pin, GPIO.LOW)
-        reset_timer([pin])
+        # reset_gpios([pin])
+        sleep(3)
+        GPIO.output(pin, GPIO.HIGH)
     except KeyError:
         pass
 
@@ -160,7 +162,7 @@ def setup_gpios():
 
         try:
             pin = event_value[gpio_in]
-            GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+            GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             # @TODO: callback stuff here?
         except KeyError:
             pass
@@ -184,6 +186,7 @@ def is_gpio_on_cooldown(pin):
             else:
                 print("GPIO is on cooldown")
                 return True
+    return False
 
 
 
@@ -225,18 +228,37 @@ def connect():
 def main():
     while True:
         if scan_for_usb():
+            # print()
             usb_boot()
             # sleep(8)
-        handle_gpio_events()
-
+        # handle_event("laserlock_bootdecon") # Schwarz
+        # handle_event("laserlock_fail") # Grün
         '''
-        handle_event("laserlock_fail")
+        GPIO.output(4, GPIO.LOW)
+        sleep(4)
+        GPIO.output(5, GPIO.LOW)
+        sleep(4)
+        GPIO.output(6, GPIO.LOW)
+        sleep(4)
+
+        GPIO.output(6, GPIO.HIGH)
+        sleep(4)
+        
+        '''
+
+
+        # exit()
+        '''
+
         sleep(3)
+        handle_event("laserlock_fail")
         GPIO.output(5, GPIO.HIGH)
         sleep(25)
         handle_event("laserlock_bootdecon")
         sleep(25)
         '''
+        # handle_gpio_events()
+
 
 
 if __name__ == '__main__':
