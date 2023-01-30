@@ -85,6 +85,8 @@ void gameReset() {
 
 // sets txRelays to 0 to indicate empty RFID presence, may be called after a timeout from the mainloop to keep timing simpler
 void outputRFIDReset() {
+    Serial.println(F("resetting outputs"));
+
     for (int pinNo=0; pinNo<txRelayAmount; pinNo++) {
         Mother.motherRelay.digitalWrite(rfidTxPins[pinNo], closed);
     }
@@ -99,11 +101,15 @@ void outputRFIDReset() {
  * @param index 
 */
 void outputRFID(int index) {
+    Serial.println("outputRFID");
+
     index = index << 1;
     for (int txPin=0; txPin<txRelayAmount; txPin++) {
-        Mother.motherRelay.digitalWrite(rfidTxPins[txPin], ((index & (1 << txPin)) > 0) );
+        Mother.motherRelay.digitalWrite(rfidTxPins[txPin], (index & (1 << txPin)) > 0 );
+        Serial.println(index & (1 << txPin));
     }
     timestamp = millis() + rfidTxDuration;
+    Serial.println();
 }
 
 
@@ -175,6 +181,10 @@ void handleCorrectPassword(int passNo) {
         case unlock: 
             // delay(500);
             stage = unlocked; 
+            // @todo: once upgrade is done on the arbiter just make this simple binary states
+            // outputRFID already does one lshift
+            outputRFID(1 << (1 + passNo));
+
             delay(3000);
             // start polling the 2nd Access since there is no need before
             Mother.rs485SetSlaveCount(2);
@@ -393,6 +403,9 @@ void stageActions() {
         break;
         case seperationLocked:
             Mother.motherRelay.digitalWrite(door, doorOpen);
+            outputRFID(8); // should be all levels high, 
+            delay(rfidTxDuration);
+            outputRFIDReset();
         break;
         case lightStart:
             LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 100, displayFailedUnlock,  PWM::set1 + PWM::set2);
