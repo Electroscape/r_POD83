@@ -66,7 +66,7 @@ def get_post(name):
 def lab_control():
     global airlock_boot
     global airlock_auth
-    
+
     if request.method == "POST":
         if request.form.get("status"):
             airlock_boot = request.form.get("status")

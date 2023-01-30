@@ -42,7 +42,10 @@ sample_icons = {
     "unlocked": "fas fa-lock-open",
     "released": "fa-solid fa-check"
 }
-
+login_users = {
+    "tr1": "",
+    "tr2": ""
+}
 Payload.max_decode_packets = 200
 
 app = Flask(__name__)
@@ -74,6 +77,11 @@ def get_globals():
 @app.route('/get_samples', methods=['GET', 'POST'])
 def get_samples_status() -> dict:
     return samples
+
+
+@app.route('/get_auth_users', methods=['GET', 'POST'])
+def get_auth_users() -> dict:
+    return login_users
 
 
 @sio.on("connect")
@@ -124,7 +132,7 @@ def handle_received_messages(json_msg):
             # for the physical world to take place.
 
         sio.emit("samples", samples)
-    elif "/lab_control" in json_msg:
+    elif "/lab_control" in str(json_msg):
         print("access to laser-lock requested")
         # access the airlock lab
         sio.emit("trigger", {"username": "arb", "cmd": "airlock", "message": "access"})
@@ -137,12 +145,18 @@ def handle_received_messages(json_msg):
 
 @sio.on('events')
 def events_handler(msg):
+    # Filter messages to server
     if msg.get("username") == "server":
         if msg.get("cmd") == "reset":
             global samples
             samples = read_json("json/samples.json")
             sio.emit("samples", samples)
     else:
+        # Filters commands
+        if msg.get("cmd") == "auth":
+            global login_users
+            login_users[msg.get("username")] = msg.get("message")
+
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)
 

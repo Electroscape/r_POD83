@@ -89,8 +89,11 @@
             })
 
             socket.on('usr_auth', function (msg) {
-                console.log(`user ${msg.usr} login`)
-                toastr.success(`user ${msg.usr} login`);
+                if (msg.usr.toLowerCase() === "empty") {
+                    toastr.success(`user logout`);
+                } else {
+                    toastr.success(`user ${msg.usr} login`);
+                }
                 {% if request.path == "/lab_control" %}
                     clearInterval(countDownInterval);
                     $.post("{{ url_for('lab_control') }}", {
