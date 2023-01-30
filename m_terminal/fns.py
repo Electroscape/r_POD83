@@ -65,3 +65,13 @@ server_ip = "http://" + ip_conf["server"]
 def get_samples_status():
     samples = requests.get(f"{server_ip}/get_samples").json()
     return samples
+
+
+def is_unique_users() -> bool:
+    login_users = requests.get(f"{server_ip}/get_auth_users").json()
+    users = login_users.values()
+
+    if "empty" not in users and len(set(users)) == 2:
+        return True
+    else:
+        return False

@@ -43,8 +43,8 @@ sample_icons = {
     "released": "fa-solid fa-check"
 }
 login_users = {
-    "tr1": "",
-    "tr2": ""
+    "tr1": "empty",
+    "tr2": "empty"
 }
 Payload.max_decode_packets = 200
 

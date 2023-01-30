@@ -1,11 +1,14 @@
-from flask import Blueprint, render_template
-from fns import get_samples_status, listdir_no_hidden
+from flask import Blueprint, render_template, redirect, url_for, request
+from fns import get_samples_status, listdir_no_hidden, is_unique_users
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
 
 
 @app_pages.route('/gas_control', methods=['GET', 'POST'])
 def gas_control():
+    if not is_unique_users():
+        return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
+
     config = {
         "title": "Gas Control",
         "samples": get_samples_status()
@@ -44,6 +47,9 @@ def microscope():
 
 @app_pages.route('/gas_analysis', methods=['GET', 'POST'])
 def gas_analysis():
+    if not is_unique_users():
+        return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
+
     config = {
         "title": "Gas Analysis",
         "samples": get_samples_status()
@@ -54,6 +60,9 @@ def gas_analysis():
 
 @app_pages.route('/elancell_upload', methods=['GET', 'POST'])
 def elancell_upload():
+    if not is_unique_users():
+        return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
+
     config = {
         "title": "Upload Results"
     }
@@ -71,6 +80,19 @@ def media_control():
     }
     print("open media page")
     return render_template("TR1/p_media.html", g_config=config)
+
+
+@app_pages.route('/double_auth', methods=['GET', 'POST'])
+def double_auth_block():
+    src_url = request.args.get('src_url', "/")
+    print(f"src url is: {src_url}")
+    config = {
+        "title": "Incomplete Auth!"
+    }
+    if is_unique_users():
+        return redirect(src_url)
+
+    return render_template("noAuthFn.html", g_config=config, from_url=src_url)
 
 
 @app_pages.errorhandler(404)
