@@ -46,6 +46,7 @@ sound = "sound"
 is_fx = "is_fx"
 sound_id = "id"
 gpio_in = "gpio_in"
+gpio_in_high = "gpio_in_high"
 gpio_in_delta = "gpio_in_delta"
 gpio_out = "gpio_out"
 # event triggered from FE
@@ -108,7 +109,7 @@ event_map = {
         }
     },
     "laserlock_cable_broken": {
-        gpio_in: 12,
+        gpio_in_high: 12,
         fe_cb: {
             fe_cb_cmd: "airlock",
             fe_cb_tgt: "tr1",
@@ -123,13 +124,25 @@ event_map = {
         }
     },
     "laserlock_welcome_david": {
+        gpio_in: 17,
         sound: {
             sound_id: 15
+        },
+        fe_cb: {
+            fe_cb_cmd: "auth",
+            fe_cb_tgt: "tr1",
+            fe_cb_msg: "david"
         }
     },
     "laserlock_welcome_rachel": {
+        gpio_in: 18,
         sound: {
             sound_id: 16
+        },
+        fe_cb: {
+            fe_cb_cmd: "auth",
+            fe_cb_tgt: "tr1",
+            fe_cb_msg: "david"
         }
     },
     "laserlock_auth_tr1_david": {
@@ -144,25 +157,28 @@ event_map = {
         gpio_in: 13,
         fe_cb: {
             fe_cb_cmd: "auth",
-            fe_cb_tgt: "tr1",
-            fe_cb_msg: "broken"
+            fe_cb_tgt: "tr2",
+            fe_cb_msg: "rachel"
         }
     },
     "laserlock_auth_tr1_rachel": {
         gpio_in: 16,
         fe_cb: {
             fe_cb_cmd: "auth",
-            fe_cb_tgt: "tr2",
-            fe_cb_msg: "broken"
+            fe_cb_tgt: "tr1",
+            fe_cb_msg: "rachel"
         }
     },
     "laserlock_auth_tr2_david": {
         gpio_in: 16,
         fe_cb: {
             fe_cb_cmd: "auth",
-            fe_cb_tgt: "tr1",
+            fe_cb_tgt: "tr2",
             fe_cb_msg: "david"
         }
+    },
+    "laserlock_lockout": {
+        gpio_in: 19
     }
 }
 

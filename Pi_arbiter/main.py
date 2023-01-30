@@ -28,6 +28,7 @@ from gpio_fncs import *
     * ✅ rachel + david
     * 🔲 cable broken needs to be a delta check and broadcast... or a specific fncs
     * 🔲 resettime as param
+    * init for GPIO_in_high
 '''
 
 # standard Python
@@ -173,29 +174,42 @@ def scan_for_usb():
     return os.path.exists("/dev/sda") and not usb_booted
 
 
+# @Todo: needs to be fixed, thread.time doesnt work on rpi?
 def is_gpio_on_cooldown(pin):
+    return False
     for cooldown in gpio_input_cooldowns:
         if pin == cooldown[0]:
             if cooldown[1] < time.thread_time():
                 gpio_input_cooldowns.remove(cooldown)
-                return False
             else:
+                print("GPIO is on cooldown")
                 return True
 
 
+
 def handle_gpio_events():
-    event_pins_cd = {}
+    event_pins_cd = set()
     for event_key in event_map.keys():
         event_value = event_map[event_key]
+        is_low_trigger = True
         try:
             input_pin = event_value[gpio_in]
-            if GPIO.input(input_pin) == GPIO.LOW and not is_gpio_on_cooldown():
-                handle_event(event_key)
-                event_pins_cd.add(input_pin)
+            # print(f"chacking input: {input_pin}")
         except KeyError:
-            pass
+            try:
+                input_pin = event_value[gpio_in_high]
+                is_low_trigger = False
+            except KeyError:
+                continue
+        if not is_gpio_on_cooldown(input_pin):
+            is_low_state = GPIO.input(input_pin) == GPIO.LOW
+            if  is_low_state and is_low_trigger:
+                # or not (is_low_trigger and is_low_state):
+                handle_event(event_key)
+            # event_pins_cd.add(input_pin)
     for input_pin in event_pins_cd:
-        gpio_input_cooldowns.append((input_pin, time.thread_time() + 5))
+        # time.thread_time() doesnt work on rpi
+        gpio_input_cooldowns.append((input_pin, 0 + 5))
 
 
 def connect():
