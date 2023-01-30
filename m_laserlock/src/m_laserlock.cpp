@@ -92,6 +92,15 @@ void outputRFIDReset() {
     }
 }
 
+void outputInt(int index) {
+    for (int txPin=0; txPin<txRelayAmount; txPin++) {
+        Mother.motherRelay.digitalWrite(rfidTxPins[txPin], (index & (1 << txPin)) > 0 );
+        Serial.println(index & (1 << txPin));
+    }
+    timestamp = millis() + rfidTxDuration;
+    Serial.println();
+}
+
 
 /**
  * @brief converts the passwordindex to a signal on the relays, also leftshifted the passed index once
@@ -102,15 +111,11 @@ void outputRFIDReset() {
 */
 void outputRFID(int index) {
     Serial.println("outputRFID");
-
     index = index << 1;
-    for (int txPin=0; txPin<txRelayAmount; txPin++) {
-        Mother.motherRelay.digitalWrite(rfidTxPins[txPin], (index & (1 << txPin)) > 0 );
-        Serial.println(index & (1 << txPin));
-    }
-    timestamp = millis() + rfidTxDuration;
-    Serial.println();
+    outputInt(index);
 }
+
+
 
 
 /**
@@ -190,6 +195,7 @@ void handleCorrectPassword(int passNo) {
             Mother.rs485SetSlaveCount(2);
         break;
         case seperationLocked:
+        Serial.println("going seperationunlocked");
             stage = seperationUnlocked;
             delay(3000);
         break;
@@ -197,10 +203,13 @@ void handleCorrectPassword(int passNo) {
 
     // this handles the locking and unlocking via presentation on both sides
     timestamp = millis() + rfidTimeout;
-    cardsPresent &= passNo;
+    cardsPresent |= passNo + 1;
+
+    Serial.print("CardsPresent: ");
+    Serial.println(cardsPresent);
 
     // not presented on both sides, hence we exit here
-    if (cardsPresent < PasswordAmount) { return; }
+    if (cardsPresent <= PasswordAmount) { return; }
 
     int cardLocality = passNo + Mother.getPolledSlave();
     // since we trigger we cannot send a 0 so we shift to 1... other output is 2 
@@ -208,13 +217,15 @@ void handleCorrectPassword(int passNo) {
     outputRFID(cardLocality);
     timestamp = millis() + rfidTxDuration;
 
-    switch (stage) {
-        case seperationUnlocked: 
+    // switch (stage) {
+        // case seperationUnlocked: 
             if (!inputPCF.digitalRead(reedDoor)) {
+                Serial.println("going seperationLocked");
                 stage = seperationLocked; 
                 sendResult(true, 0);
                 sendResult(true, 1);
             } else {
+                Serial.println("door not closed, cannot seperate");
                 sendResult(false, 0);
                 sendResult(false, 1);
             }
@@ -222,19 +233,22 @@ void handleCorrectPassword(int passNo) {
             delay(5000);
             wdt_reset();
             // @todo: there needs to be better feedback here currently TBD
-        break;
-    }
+        // break;
+    //}
 
 }
 
 
 bool passwordInterpreter(char* password) {
     // Mother.STB_.defaultOled.clear();
+    Serial.print("Handling pw");
+    Serial.println(password);
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
             // strlen(passwords[passNo]) == strlen(password) &&
             if ( strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
                 handleCorrectPassword(passNo);
+                Serial.println("Correct PW");
                 return true;
             }
         }
@@ -395,6 +409,7 @@ void stageActions() {
             stage = seperationUnlocked;
         break; 
         case seperationUnlocked:
+            Mother.rs485SetSlaveCount(2);
             Mother.motherRelay.digitalWrite(door, doorOpen);
             wdt_disable();
             delay(rfidTxDuration);
@@ -402,8 +417,8 @@ void stageActions() {
             outputRFIDReset();
         break;
         case seperationLocked:
-            Mother.motherRelay.digitalWrite(door, doorOpen);
-            outputRFID(8); // should be all levels high, 
+            Mother.motherRelay.digitalWrite(door, doorClosed);
+            outputInt(16); // should be all levels high, 
             delay(rfidTxDuration);
             outputRFIDReset();
         break;
