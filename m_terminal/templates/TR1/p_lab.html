@@ -6,6 +6,7 @@
         .countdown {
             font-size: 6.5rem;
             margin-top: 20px;
+            color: red;
         }
 
         #lang-box {
@@ -131,7 +132,7 @@
     </div>
     <div id="k-lab" class="d-none">
         <!-- countdown text -->
-        <p>Please authenticate yourself before the time is up!</p>
+        <p style="color: whitesmoke">Please authenticate yourself before the time is up!</p>
         <p class="countdown">00</p>
     </div>
 {% endblock %}
@@ -215,11 +216,11 @@
             await sleep(1000);
 
             if (fixed === "fixed") {
-                await sleep(100);
-
+                $('#btn-main-back').addClass("d-none");
                 $('#prtscr').empty();
                 $('#caution-container').removeClass("d-none");
-                $('#bootContainer').height("65vh");
+                $('#bootContainer').height("60vh");
+                await sleep(100);
                 for (const line of outputs) {
                     appendLine(line + "\n");
                     await sleep(Math.floor(Math.random() * 50) + 1);

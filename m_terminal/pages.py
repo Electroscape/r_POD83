@@ -70,6 +70,19 @@ def elancell_upload():
     return render_template("TR2/p_elancell_upload.html", g_config=config)
 
 
+@app_pages.route('/cleanroom', methods=['GET', 'POST'])
+def cleanroom():
+    if not is_unique_users():
+        return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
+
+    config = {
+        "title": "Cleanroom Access",
+        "passcode": "4321"
+    }
+    print("open cleanroom access page")
+    return render_template("TR2/p_cleanroom.html", g_config=config)
+
+
 @app_pages.route('/media_control', methods=['GET', 'POST'])
 def media_control():
     media_files = listdir_no_hidden('static/media')

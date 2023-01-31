@@ -61,16 +61,6 @@ def switch_language():
             return get_globals()
 
 
-@app.route('/cleanroom', methods=['GET', 'POST'])
-def cleanroom():
-    config = {
-        "title": "Cleanroom Access",
-        "passcode": "4321"
-    }
-    print("open browser page")
-    return render_template("TR2/p_cleanroom.html", g_config=config)
-
-
 @app.route('/get_chat', methods=['GET', 'POST'])
 def get_chat():
     return chat_msgs.get()
