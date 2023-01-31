@@ -99,6 +99,7 @@
                     $.post("{{ url_for('lab_control') }}", {
                         auth: "success"
                     });
+                    stopBootLoop = true;
                     alert(`Hello ${msg.usr}! Welcome to the lab`)
                     toastr.success('Successful authentication');
                     setTimeout( () => {

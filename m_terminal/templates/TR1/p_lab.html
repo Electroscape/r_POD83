@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
 
 {% block head %}
+    <script type="text/javascript">
+        var stopBootLoop = false;
+    </script>
     <style>
         /* countdown */
         .countdown {
@@ -51,6 +54,7 @@
         #bootContainer {
             color: green;
             overflow-y: scroll;
+            overflow-x: hidden;
             height: 75vh;
         }
 
@@ -216,14 +220,21 @@
             await sleep(1000);
 
             if (fixed === "fixed") {
-                $('#btn-main-back').addClass("d-none");
+                setTimeout(() => {
+                    stopBootLoop = true;
+                }, 10000)
+                $('#btn-main-back').addClass("invisible");
                 $('#prtscr').empty();
                 $('#caution-container').removeClass("d-none");
                 $('#bootContainer').height("60vh");
                 await sleep(100);
                 for (const line of outputs) {
-                    appendLine(line + "\n");
-                    await sleep(Math.floor(Math.random() * 50) + 1);
+                    if (stopBootLoop) {
+                        break
+                    } else {
+                        appendLine(line + "\n");
+                        await sleep(Math.floor(Math.random() * 50) + 1);
+                    }
                 }
 
                 await sleep(1000);
@@ -341,7 +352,6 @@
         };
 
         /* setCountDown function ends */
-
         function countDownExpired() {
             // destroy the setInterval()
             clearInterval(countDownInterval);
