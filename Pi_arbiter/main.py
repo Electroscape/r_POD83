@@ -212,11 +212,13 @@ def scan_for_usb():
 
 # @Todo: needs to be fixed, thread.time doesnt work on rpi?
 def is_gpio_on_cooldown(pin):
-    return False
+    # print(gpio_input_cooldowns)
     for cooldown in gpio_input_cooldowns:
         if pin == cooldown[0]:
+            return True
             if cooldown[1] < time.thread_time():
-                gpio_input_cooldowns.remove(cooldown)
+                print()
+                # gpio_input_cooldowns.remove(cooldown)
             else:
                 print("GPIO is on cooldown")
                 return True
@@ -243,7 +245,7 @@ def handle_gpio_events():
             if  is_low_state and is_low_trigger:
                 # or not (is_low_trigger and is_low_state):
                 handle_event(event_key)
-            # event_pins_cd.add(input_pin)
+            event_pins_cd.add(input_pin)
     for input_pin in event_pins_cd:
         # time.thread_time() doesnt work on rpi
         gpio_input_cooldowns.append((input_pin, 0 + 5))
@@ -263,7 +265,9 @@ def main():
     while True:
         if scan_for_usb():
             usb_boot()
+            # handle_event("laserlock_cable_fixed")
             # sleep(8)
+        handle_gpio_events()
         # handle_event("laserlock_bootdecon") # Schwarz
         # handle_event("laserlock_fail") # Grün
         # exit()
@@ -291,7 +295,6 @@ def main():
         handle_event("laserlock_bootdecon")
         sleep(25)
         '''
-        # handle_gpio_events()
 
 
 
