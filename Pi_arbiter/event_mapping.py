@@ -181,6 +181,12 @@ event_map = {
     },
     "laserlock_lockout": {
         gpio_in: 19
+    },
+    "reset_atmo": {
+        sound: {
+            is_fx: False,
+            sound_id: -1
+        },
     }
 }
 
@@ -191,7 +197,7 @@ def activate_sound(event_entry):
 
     try:
         sound_id_value = event_entry[sound_id]
-        if event_entry.get("is_fx", True):
+        if event_entry.get(is_fx, True):
             payload["fx_id"] = sound_id_value
         else:
             payload["group_id"] = sound_id_value
@@ -200,6 +206,7 @@ def activate_sound(event_entry):
 
     try:
         ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
+        print(f"send sound payload: {payload}")
         print(ret)
     except OSError as OSE:
         print(f"failed to request sound due to {OSE}")

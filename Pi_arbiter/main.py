@@ -302,6 +302,9 @@ if __name__ == '__main__':
     settings = load_settings()
     setup_gpios()
     connected = connect()
+    # otherwise calling an already running atmo does not work
+    handle_event("reset_atmo")
+
     try:
         main()
     except KeyboardInterrupt:
