@@ -126,13 +126,11 @@ def handle_event(event_key, event_value=None):
         pin = event_value[gpio_out]
         print(f"setting output: {pin}")
         GPIO.output(pin, GPIO.LOW)
-        # reset_timer([pin])
         sleep(3)
         GPIO.output(pin, GPIO.HIGH)
+        # reset_timer([pin])
     except KeyError:
         pass
-
-    print("FE cbs")
 
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
@@ -170,10 +168,14 @@ def handle_fe(data):
             if msg and msg != data.get("message"):
                 # print(f"wrong msg {msg}")
                 continue
-            if key == "laserlock_fail":
+            # @todo: removed once differentiation is possible
+            if key == "laserlock_fail" or key == "laserlock_bootdecon":
                 pin = event_map["laserlock_cable_fixed"][gpio_in]
-                if GPIO.input(pin) == GPIO.LOW:
+                if False and GPIO.input(pin) == GPIO.LOW:
                     handle_event("laserlock_bootdecon")
+                else:
+                    handle_event("laserlock_fail")
+
             handle_event(key)
         except KeyError:
             pass
