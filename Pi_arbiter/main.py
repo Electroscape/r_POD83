@@ -33,7 +33,7 @@ from gpio_fncs import *
 
 # standard Python
 sio = socketio.Client()
-gpio_input_cooldowns = []
+gpio_input_cooldowns = set()
 
 # asyncio
 # sio = socketio.AsyncClient()
@@ -227,7 +227,7 @@ def is_gpio_on_cooldown(pin):
 
 
 def handle_gpio_events():
-    event_pins_cd = set()
+    event_pins_cd = []
     for event_key in event_map.keys():
         event_value = event_map[event_key]
         is_low_trigger = True
@@ -240,15 +240,17 @@ def handle_gpio_events():
                 is_low_trigger = False
             except KeyError:
                 continue
-        if not is_gpio_on_cooldown(input_pin):
-            is_low_state = GPIO.input(input_pin) == GPIO.LOW
-            if  is_low_state and is_low_trigger:
+
+        is_low_state = GPIO.input(input_pin) == GPIO.LOW
+        if is_low_state and is_low_trigger:
+            # print(f"valid trigger at pin {input_pin}")
+            if not is_gpio_on_cooldown(input_pin):
                 # or not (is_low_trigger and is_low_state):
                 handle_event(event_key)
-            event_pins_cd.add(input_pin)
+                event_pins_cd.append(input_pin)
     for input_pin in event_pins_cd:
         # time.thread_time() doesnt work on rpi
-        gpio_input_cooldowns.append((input_pin, 0 + 5))
+        gpio_input_cooldowns.add((input_pin, 0 + 5))
 
 
 def connect():
