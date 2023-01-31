@@ -50,7 +50,9 @@ gpio_in_high = "gpio_in_high"
 gpio_in_delta = "gpio_in_delta"
 gpio_out = "gpio_out"
 # event triggered from FE
-fe_event = "fe_event"
+trigger_cmd = "trigger_cmd"
+# may not always be required
+trigger_msg = "trigger_msg"
 # event triggering FE
 fe_cb = "fe_cb"
 fe_cb_tgt = "tgt"
@@ -94,7 +96,8 @@ event_map = {
         },
     },
     "laserlock_fail": {
-        fe_event: "bootFail",
+        trigger_cmd: "airlock",
+        trigger_msg: "access",
         gpio_out: 5,
         sound: {
             sound_id: 3
@@ -117,7 +120,6 @@ event_map = {
         }
     },
     "laserlock_bootdecon": {
-        fe_event: "bootDecon",
         gpio_out: 6,
         sound: {
             sound_id: 4,

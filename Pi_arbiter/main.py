@@ -126,21 +126,55 @@ def handle_event(event_key, event_value=None):
         pin = event_value[gpio_out]
         print(f"setting output: {pin}")
         GPIO.output(pin, GPIO.LOW)
-        # reset_gpios([pin])
+        # reset_timer([pin])
         sleep(3)
         GPIO.output(pin, GPIO.HIGH)
     except KeyError:
         pass
 
+    print("FE cbs")
+
+    cb_dict = event_value.get(fe_cb, False)
+    if not cb_dict:
+        return
+    cb_tgt = cb_dict.get(fe_cb_tgt, False)
+    cb_cmb = cb_dict.get(fe_cb_cmd, False)
+    if not cb_cmb or not cb_tgt:
+        return
+    cb_msg = cb_dict.get(fe_cb_msg, "")
+    print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}" )
+    sio.emit("events", {"username": cb_tgt, "cmd": cb_cmb, "message": cb_msg})
+
+
+
 
 @sio.on("trigger")
 def handle_fe(data):
     print(data)
-    for event in event_map.values():
+
+    # Checking first if the arbiter is teh tgt
+    try:
+        if not data.get('username') == 'arb':
+            return False
+    except KeyError:
+        return False
+
+    for key, event in event_map.items():
         try:
-            event_name = event[fe_event]
-            if event_name == data.get('update'):
-                handle_event(event)
+            # event_name = event[fe_event]
+            cmd = event.get(trigger_cmd, False)
+            if not cmd or cmd != data.get('cmd'):
+                # print(f"wrong command {cmd}")
+                continue
+            msg = event.get(trigger_msg, False)
+            if msg and msg != data.get("message"):
+                # print(f"wrong msg {msg}")
+                continue
+            if key == "laserlock_fail":
+                pin = event_map["laserlock_cable_fixed"][gpio_in]
+                if GPIO.input(pin) == GPIO.LOW:
+                    handle_event("laserlock_bootdecon")
+            handle_event(key)
         except KeyError:
             pass
 
@@ -228,11 +262,11 @@ def connect():
 def main():
     while True:
         if scan_for_usb():
-            # print()
             usb_boot()
             # sleep(8)
         # handle_event("laserlock_bootdecon") # Schwarz
         # handle_event("laserlock_fail") # Grün
+        # exit()
         '''
         GPIO.output(4, GPIO.LOW)
         sleep(4)
