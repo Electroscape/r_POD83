@@ -1,12 +1,20 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/dot-luv/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
+            integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/jquery-ui.min.css"
+          integrity="sha512-gCFexX+67Pl9rPa75MMyEH2I5jbD5tqij8VBYcsLVwgVfVEdfon+9CEjVnXPtqoHLXjxrjMcyHLaee65dt/jxw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/theme.min.css"
+          integrity="sha512-pN35/N51n1IeABlNGOSb5ltVKGbvUE8exTMhiB/4ijuy+UOYEWawQZzEs2yUvvCWopRO3uiRueeGnd/mQD0eTQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         $(function () {
-            var dialog, form,
+            let dialog, form,
 
                 // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
                 emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
@@ -62,12 +70,23 @@
 
                 if (!filenameCheck) {
                     $("#ipv4").removeAttr("disabled");
+                    // should I reset the file name?
+                    //$("#name").val("results.csv");
                 }
 
                 if (valid) {
                     let ipVal = ip.val();
-                    dialog.dialog("close");
-                    alert("Sent Successfully to ip " + ipVal);
+                    if (ipVal === "134.231.83.19") {
+                        // upload to POD
+                        dialog.dialog("close");
+                        swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "success");
+                    } else if (ipVal === "134.231.54.23") {
+                        // Upload to Rachel
+                        dialog.dialog("close");
+                        swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "warning");
+                    } else {
+                        swal("Forbidden Connection", "The server failed to validate the certificate, please make sure of the configuration", "error");
+                    }
                 }
                 return valid;
             }
@@ -101,8 +120,33 @@
         });
     </script>
     <style>
+        h3 {
+            font-size: unset;
+        }
+
         #lang-box {
             visibility: hidden;
+        }
+
+        .ui-widget {
+            font-family: unset;
+        }
+
+        .ui-widget button {
+            font-family: unset;
+        }
+
+        .form-control:disabled {
+            background-color: black;
+            opacity: 0.8;
+        }
+
+        .form-control:enabled {
+            background-color: lightskyblue;
+        }
+
+        .form-label {
+            color: lightskyblue;
         }
 
         label, input {
@@ -113,16 +157,13 @@
             margin-bottom: 12px;
             width: 95%;
             padding: .4em;
+            font-family: unset;
         }
 
         fieldset {
             padding: 0;
             border: 0;
             margin-top: 25px;
-        }
-
-        .ui-dialog .ui-state-error {
-            padding: .3em;
         }
 
         .validateTips {
@@ -201,25 +242,24 @@
             <fieldset class="form-outline">
                 <h3>Network Configuration</h3>
                 <label class="form-label" for="ipv4">ip
-                    <input id="ipv4" type='text' name='text1' value="134.231.54.19"
+                    <input id="ipv4" type='text' name='text1' value="134.231.83.19"
                            class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 
                 <label class="form-label" for="email">account
                     <input type="email" name="email" id="email" value="david@elancell.com"
-                           class="form-control text ui-widget-content ui-corner-all" disabled>
+                           class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
                 <label class="form-label" for="password">password
                     <input type="text" name="password" id="password" value="xxxxxxx"
-                           style="-webkit-text-security: square;"
-                           class="form-control text ui-widget-content ui-corner-all" disabled>
+                           style="-webkit-text-security: disc;"
+                           class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 
                 <h3>File Info</h3>
                 <label class="form-label" for="name">name</label>
                 <input type="text" name="name" id="name" value="results.csv"
-                       class="form-control text ui-widget-content ui-corner-all">
-
+                       class="form-control text ui-widget-content ui-corner-all"/>
                 <!-- Allow form submission with keyboard without duplicating the dialog button -->
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
             </fieldset>
