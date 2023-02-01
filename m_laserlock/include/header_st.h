@@ -22,6 +22,7 @@ unsigned long deconRFIDTimeout = 10000;
 unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 8000;
 unsigned long rfidTimeout = 3000;
+unsigned long lightStartDuration = 20000;
 
 // FL lamps shall be some industrial reddish light 
 static constexpr int clrLight[3] = {255,200,120};

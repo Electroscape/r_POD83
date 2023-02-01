@@ -423,7 +423,7 @@ void stageActions() {
             outputRFIDReset();
         break;
         case lightStart:
-            LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 100, displayFailedUnlock,  PWM::set1 + PWM::set2);
+            LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 20, lightStartDuration,  PWM::set1 + PWM::set2);
             stage = idle;
             delay(8000);
         break;
