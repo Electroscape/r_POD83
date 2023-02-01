@@ -120,21 +120,24 @@ function drop(event) {
 }
 
 function submitBtnClick(index) {
+    $(".loader-wrapper").removeClass("d-none")
     if (itemsList[index].length === total[index] && correct[index] === total[index]) { // Game Over!!
         socket.emit('msg_to_backend', {
             keypad_update: `${window.location.pathname} dragDropGame ${index} correct`
         })
         setTimeout(() => {
             alert("Stable Correct Solution");
-        }, 2000)
+            $(".loader-wrapper").addClass("d-none");
+        }, 5000)
     } else if (itemsList[index].length === total[index]) {
         socket.emit('msg_to_backend', {
             keypad_update: `${window.location.pathname} dragDropGame ${index} wrong`
         })
         setTimeout(() => {
             alert("Unstable combination")
+            $(".loader-wrapper").addClass("d-none");
             $("#reset-btn-" + index).click()
-        }, 2000)
+        }, 5000)
     }
 }
 
