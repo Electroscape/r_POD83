@@ -188,6 +188,8 @@ void checkDualRfid(int passNo) {
     // not presented on both sides, hence we exit here
     if (cardsPresent <= PasswordAmount) { return; }
 
+    cardsPresent = 0;
+
     // since we trigger we cannot send a 0 so we shift to 1... other output is 2 
     /* TODO: place this in the stage
         int cardLocality = passNo + Mother.getPolledSlave();
@@ -200,7 +202,6 @@ void checkDualRfid(int passNo) {
         case seperationUnlocked: 
             if (!inputPCF.digitalRead(reedDoor)) {
                 Mother.motherRelay.digitalWrite(door, doorClosed); // first thing bec we dont want people abusing this
-                cardsPresent = 0;
                 stage = seperationLocked; 
                 sendResult(true, 0);
                 sendResult(true, 1);
@@ -243,42 +244,6 @@ void handleCorrectPassword(int passNo) {
             checkDualRfid(passNo);
         break;
     }
-
-    // this handles the locking and unlocking via presentation on both sides
-    timestamp = millis() + rfidTimeout;
-    cardsPresent |= passNo + 1;
-
-    Serial.print("CardsPresent: ");
-    Serial.println(cardsPresent);
-
-    // not presented on both sides, hence we exit here
-    if (cardsPresent <= PasswordAmount) { return; }
-
-    int cardLocality = passNo + Mother.getPolledSlave();
-    // since we trigger we cannot send a 0 so we shift to 1... other output is 2 
-    if (cardLocality == 0) { cardLocality++; }
-    outputRFID(cardLocality);
-    timestamp = millis() + rfidTxDuration;
-
-    // switch (stage) {
-        // case seperationUnlocked: 
-            if (!inputPCF.digitalRead(reedDoor)) {
-                Serial.println("going seperationLocked");
-                stage = seperationLocked; 
-                sendResult(true, 0);
-                sendResult(true, 1);
-            } else {
-                Serial.println("door not closed, cannot seperate");
-                sendResult(false, 0);
-                sendResult(false, 1);
-            }
-            wdt_reset();
-            delay(5000);
-            wdt_reset();
-            // @todo: there needs to be better feedback here currently TBD
-        // break;
-    //}
-
 }
 
 
