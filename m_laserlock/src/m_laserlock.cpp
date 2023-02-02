@@ -175,6 +175,48 @@ void timedTrigger() {
 }
 
 
+
+/**
+ * @brief  handles RFId scanning required on both sides
+ * @param passNo 
+*/
+void checkDualRfid(int passNo) {
+     
+    timestamp = millis() + rfidTimeout;
+    cardsPresent |= passNo + 1;
+
+    // not presented on both sides, hence we exit here
+    if (cardsPresent <= PasswordAmount) { return; }
+
+    // since we trigger we cannot send a 0 so we shift to 1... other output is 2 
+    /* TODO: place this in the stage
+        int cardLocality = passNo + Mother.getPolledSlave();
+        if (cardLocality == 0) { cardLocality++; }
+        outputRFID(cardLocality);
+        timestamp = millis() + rfidTxDuration;
+    */
+
+    switch (stage) {
+        case seperationUnlocked: 
+            if (!inputPCF.digitalRead(reedDoor)) {
+                Mother.motherRelay.digitalWrite(door, doorClosed); // first thing bec we dont want people abusing this
+                cardsPresent = 0;
+                stage = seperationLocked; 
+                sendResult(true, 0);
+                sendResult(true, 1);
+            } else {
+                Serial.println("door is not closed");
+                sendResult(false, 0);
+                sendResult(false, 1);
+            }
+            wdt_reset();
+            delay(5000);
+            wdt_reset();
+        break;
+    }
+}
+
+
 /**
  * @brief handles room specific actions
  * @param passNo 
@@ -189,15 +231,16 @@ void handleCorrectPassword(int passNo) {
             // @todo: once upgrade is done on the arbiter just make this simple binary states
             // outputRFID already does one lshift
             outputRFID(1 << (1 + passNo));
-
-            delay(3000);
             // start polling the 2nd Access since there is no need before
             Mother.rs485SetSlaveCount(2);
         break;
         case seperationLocked:
-        Serial.println("going seperationunlocked");
+            Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
+            // Serial.println("going seperationunlocked");
             stage = seperationUnlocked;
-            delay(3000);
+        break;
+        case seperationUnlocked:
+            checkDualRfid(passNo);
         break;
     }
 
@@ -409,6 +452,7 @@ void stageActions() {
             stage = seperationUnlocked;
         break; 
         case seperationUnlocked:
+            cardsPresent = 0;
             Mother.rs485SetSlaveCount(2);
             Mother.motherRelay.digitalWrite(door, doorOpen);
             wdt_disable();
@@ -417,6 +461,7 @@ void stageActions() {
             outputRFIDReset();
         break;
         case seperationLocked:
+            cardsPresent = 0;
             Mother.motherRelay.digitalWrite(door, doorClosed);
             outputInt(16); // should be all levels high, 
             delay(rfidTxDuration);
@@ -546,10 +591,10 @@ void setup() {
 
 void loop() {
     Mother.rs485PerformPoll();
+    timedTrigger();
     interpreter();
     handleInputs();    
     stageUpdate();
-    timedTrigger();
     wdt_reset();
 }
 
