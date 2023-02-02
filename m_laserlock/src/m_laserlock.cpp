@@ -137,13 +137,6 @@ void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
         sprintf(noString, "%d", KeypadCmds::wrong);
     }
     strcat(msg, noString);
-  
-    // improper way of doing things really,
-    if (brainNo >= labAccess) {
-        for (int i=0; i<labAccess; i++) {
-            Mother.sendCmdToSlave(msg, i);
-        }
-    }
 }
 
 
@@ -164,13 +157,6 @@ void timedTrigger() {
             sendResult(false, 0);
             sendResult(false, 1);
         break;
-
-        /*
-            if (cardsPresent == 0) {return;}
-            cardsPresent = 0;
-            sendResult(false, 0);
-            sendResult(false, 1);
-        */
     }
 }
 
