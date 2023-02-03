@@ -16,6 +16,9 @@
  * ✅ add numbering of brains to header to make changes easiers
  * in between stage or text for unlocking with rfid
  *  Q:
+ * 🔲 Timeout needs to send wrongres
+ * 🔲 booting text on startup
+ * 🔲 consider using laststage for the switch cases?
  * 
  */
 
@@ -124,19 +127,21 @@ void outputRFID(int index) {
  * @param brainNo can be set to > labAccess so it sends to both brains
 */
 void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
-
     // prepare return msg with correct or incorrect
     char msg[10] = "";
     char noString[3] = "";
     strcpy(msg, keypadCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
 
+    // can i make an integer oneliner?
     if (result) {
         sprintf(noString, "%d", KeypadCmds::correct);
     } else {
         sprintf(noString, "%d", KeypadCmds::wrong);
     }
     strcat(msg, noString);
+
+    Mother.sendCmdToSlave(msg, brainNo);
 }
 
 
@@ -146,7 +151,7 @@ void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
 void timedTrigger() {
     // may need to fix this exit condition and reset
     if (timestamp > millis()) { return; }
-    switch (stage) {
+    switch (lastStage) {
         case unlock: 
             stage = failedUnlock;
         break;
@@ -196,11 +201,16 @@ void checkDualRfid(int passNo) {
                 sendResult(false, 0);
                 sendResult(false, 1);
             }
-            wdt_reset();
-            delay(5000);
-            wdt_reset();
+        break;
+        case seperationLocked:
+            Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
+            stage = seperationUnlocked;
         break;
     }
+
+    wdt_reset();
+    delay(5000);
+    wdt_reset();
 }
 
 
@@ -210,7 +220,6 @@ void checkDualRfid(int passNo) {
 */
 void handleCorrectPassword(int passNo) {
 
-    // rather specifi logic... prefer to make a negation so things could switch easier
     switch (stage) {
         case unlock: 
             // delay(500);
@@ -221,12 +230,8 @@ void handleCorrectPassword(int passNo) {
             // start polling the 2nd Access since there is no need before
             Mother.rs485SetSlaveCount(2);
         break;
-        case seperationLocked:
-            Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
-            // Serial.println("going seperationunlocked");
-            stage = seperationUnlocked;
-        break;
-        case seperationUnlocked:
+        // be careful here if we change stages
+        default:
             checkDualRfid(passNo);
         break;
     }
@@ -262,7 +267,8 @@ void handleResult() {
     Mother.STB_.rcvdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
     if (passwordInterpreter(Mother.STB_.rcvdPtr) && (Mother.STB_.rcvdPtr != NULL)) {
         // excluding the cases where both cards need to be present
-        if (stage != seperationUnlocked) {
+        // here may be the ussie... keep the sendresult stuff in one place
+        if ((stage & (seperationUnlocked + seperationLocked)) == 0) {
             sendResult(true);
         }
     } else {
@@ -360,6 +366,7 @@ void stageActions() {
             stage = decon;
         break;
         case decon:
+            /*
             // @todo: check timing here
             int effektTime;
             for (int brightness = 10; brightness <= 100; brightness += 10) {
@@ -375,6 +382,7 @@ void stageActions() {
             // LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100, 0);
             // doesnt specify fade but may aswell see how it works
             LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
+            */
             timestamp = millis() + deconRFIDTimeout;
             stage = unlock;
         break;
