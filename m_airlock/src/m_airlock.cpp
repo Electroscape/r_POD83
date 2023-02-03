@@ -364,6 +364,7 @@ void stageActions() {
         case airlockRequest: break;
         case airlockOpening:
             wdt_disable();
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             Mother.motherRelay.digitalWrite(alarm, open);
             LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,500,1500,100,15,PWM::set3);
             delay(gateWarningDelay);
@@ -383,7 +384,7 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(gate_pwr, closed);
             // the gateup remains, but no power no change due to relay logic &
             // technically we could use runningLightDuration
-            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 30, 500, 4);
+            LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 30, 2000, 4);
             wdt_disable();
             delay(runningLightDuration);
             wdt_enable(WDTO_8S);
