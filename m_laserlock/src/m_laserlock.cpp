@@ -361,7 +361,7 @@ void stageActions() {
             enableWdt();
             stage = idle;
         break;
-        case operational:
+        case successfulBoot:
             LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
             wdt_disable();
             delay(10000);
@@ -506,7 +506,7 @@ void handleInputs() {
             stage = failedBoot;
         break;
         case bootupTrigger: 
-            stage = operational;
+            stage = successfulBoot;
         break;
         case room1Light:
             if (lightOn) { return; }

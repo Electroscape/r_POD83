@@ -114,7 +114,7 @@ enum stages {
     setupStage = 1, 
     idle = 2, 
     failedBoot = 4,     // trigger boot
-    operational = 8,    // trigger boot & connectionfixed
+    successfulBoot = 8,    // trigger boot & connectionfixed
     decon = 16,          // trigger decon
     unlock = 32,
     failedUnlock = 64,
@@ -134,7 +134,7 @@ int flagMapping[StageCount] {
     0,          // setupStage
     0,          // idle
     0,          // failedBoot
-    0,          // operational
+    0,          // successfulBoot
     0,          // decon
     rfidFlag,   // unlock
     0,          // failedUnlock
@@ -161,7 +161,7 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "",                     // setupStage
     "",                     // idle 
     "Booting",              // failedBoot
-    "",                     // operational
+    "Booting",                     // successfulBoot
     "",                     // decon
     "Scan Arm",             // unlock
     "Timeout",              // failedUnlock
