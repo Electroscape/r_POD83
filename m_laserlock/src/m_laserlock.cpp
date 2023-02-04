@@ -149,18 +149,19 @@ void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
  * @brief handles timeouts rfidTX and timeout of the RFID presentation
 */
 void timedTrigger() {
-    // may need to fix this exit condition and reset
-    if (timestamp > millis()) { return; }
-    switch (lastStage) {
+    if (timestamp > millis() || lastStage != stage) { return; }
+    switch (stage) {
         case unlock: 
             stage = failedUnlock;
         break;
         // alternatively use cardspresent to send evaluation
-        case seperationUnlocked:  
-            if (cardsPresent == 0) {return;}
-            cardsPresent = 0;
-            sendResult(false, 0);
-            sendResult(false, 1);
+        default: 
+            if ((stage & (seperationLocked + seperationUnlocked)) > 0) {
+                if (cardsPresent == 0) {return;}
+                cardsPresent = 0;
+                sendResult(false, 0);
+                sendResult(false, 1);
+            }
         break;
     }
 }
@@ -189,18 +190,17 @@ void checkDualRfid(int passNo) {
         timestamp = millis() + rfidTxDuration;
     */
 
+
+    if (stage == seperationUnlocked && inputPCF.digitalRead(reedDoor)) {
+        Serial.println("door is not closed");
+        sendResult(false, 0);
+        sendResult(false, 1);
+        return;
+    }
     switch (stage) {
         case seperationUnlocked: 
-            if (!inputPCF.digitalRead(reedDoor)) {
-                Mother.motherRelay.digitalWrite(door, doorClosed); // first thing bec we dont want people abusing this
-                stage = seperationLocked; 
-                sendResult(true, 0);
-                sendResult(true, 1);
-            } else {
-                Serial.println("door is not closed");
-                sendResult(false, 0);
-                sendResult(false, 1);
-            }
+            Mother.motherRelay.digitalWrite(door, doorClosed); 
+            stage = seperationLocked; 
         break;
         case seperationLocked:
             Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
@@ -208,6 +208,9 @@ void checkDualRfid(int passNo) {
         break;
     }
 
+    sendResult(true, 0);
+    sendResult(true, 1);
+ 
     wdt_reset();
     delay(5000);
     wdt_reset();
