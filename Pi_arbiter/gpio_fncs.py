@@ -13,6 +13,8 @@ except (RuntimeError, ModuleNotFoundError):
     # GPIO.VERBOSE = False
     from GPIOEmulator.EmulatorGUI import GPIO
 
+
+from pcf8574 import PCF8574
 # GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 

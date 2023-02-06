@@ -1,6 +1,7 @@
 
 python-socketio==5.7.2
 requests
+PCF8574
 
 # optional for on pc testing
 # tkinter?
