@@ -470,7 +470,8 @@ void stageUpdate() {
 void inputInit() {
     for (int pin=0; pin<inputCnt; pin++) {
         inputPCF.begin(RESET_I2C_ADD);
-        inputPCF.pinMode((uint8_t) pin, INPUT_PULLUP);
+        inputPCF.pinMode((uint8_t) pin, INPUT);
+        inputPCF.digitalWrite((uint8_t) pin, HIGH);
     }
 }
 
