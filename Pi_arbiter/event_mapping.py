@@ -2,46 +2,9 @@ import requests
 from gpio_fncs import GPIOBundle
 
 
-
-'''
-double post of teh same atmo is not possible
-
-we could connect the cables to both the RPi and Mother
-
-sio event?
-
-and then how to handle cooldowns?
-
-RPi 3.3V -> 5V Pulldown on arduino
-
-4 5 6 13 GPIO out
-### airlock
- * rel 1 beamerIntro
- * PCF? x Steril 
- * rel 2 beamerDecon
- * PCF? x gateOperation
-
-### laserlock
- * usb-boot -> arbiter -> PCF 0 & sound
- ### Possible to use the same GND here and save on the signal
- * failed boot -> arbiter -> PCF 1 & sound 
- * boot & decon -> arbiter > 
- - rel TX 1-2 -> arbiter -> login & logout
- 
- ### terminal 
-  * boot cmd -> pcf arduino -> 
-  
-  
-  # @sio.on('usbBoot','boot')
-  
-  # receive an event would be 
-    @sio.on('channel_name')
-    def authenticate_usr(msg):
- 
-'''
-
 # http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
 # defaults?
+
 sound = "sound"
 is_fx = "is_fx"
 sound_id = "id"
