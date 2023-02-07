@@ -45,15 +45,18 @@ RPi 3.3V -> 5V Pulldown on arduino
 sound = "sound"
 is_fx = "is_fx"
 sound_id = "id"
-gpio_in = "gpio_in"
-gpio_in_high = "gpio_in_high"
-gpio_in_delta = "gpio_in_delta"
-gpio_out = "gpio_out"
+
+pcf_in = "pcf_in"
+pcf_in_add = "pcf_in_add"
+pcf_out = "pcf_out"
+pcf_out_add = "pcf_out_add"
+
 # event triggered from FE
 trigger_cmd = "trigger_cmd"
 # may not always be required
 trigger_msg = "trigger_msg"
 # event triggering FE
+
 fe_cb = "fe_cb"
 fe_cb_tgt = "tgt"
 fe_cb_cmd = "cmd"
@@ -89,7 +92,8 @@ event_map = {
         }
     },
     "usb_boot": {
-        gpio_out: 4,
+        pcf_out_add: 0,
+        pcf_out: 1 << 0,
         sound: {
             is_fx: False,
             sound_id: 2
@@ -98,19 +102,23 @@ event_map = {
     "laserlock_fail": {
         trigger_cmd: "airlock",
         trigger_msg: "access",
-        gpio_out: 5,
+        pcf_out_add: 0,
+        pcf_out: 1 << 1,
         sound: {
             sound_id: 3
         }
     },
     "laserlock_cable_fixed": {
-        gpio_in: 12,
+        pcf_in_add: 1,
+        pcf_in: 1 << 0,
         fe_cb: {
             fe_cb_cmd: "airlock",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "fixed"
         }
     },
+    '''
+    unused for now
     "laserlock_cable_broken": {
         gpio_in_high: 12,
         fe_cb: {
@@ -119,14 +127,17 @@ event_map = {
             fe_cb_msg: "broken"
         }
     },
+    '''
     "laserlock_bootdecon": {
-        gpio_out: 6,
+        pcf_out_add: 0,
+        pcf_out: 1 << 2,
         sound: {
             sound_id: 4,
         }
     },
     "laserlock_welcome_david": {
-        gpio_in: 17,
+        pcf_in_add: 1,
+        pcf_in: 17,
         sound: {
             sound_id: 15
         },
@@ -137,7 +148,8 @@ event_map = {
         }
     },
     "laserlock_welcome_rachel": {
-        gpio_in: 18,
+        pcf_in_add: 1,
+        pcf_in: 18,
         sound: {
             sound_id: 16
         },
@@ -148,7 +160,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr1_david": {
-        gpio_in: 13,
+        pcf_in_add: 1,
+        pcf_in: 13,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -156,7 +169,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr2_rachel": {
-        gpio_in: 13,
+        pcf_in_add: 1,
+        pcf_in: 13,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -164,7 +178,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr1_rachel": {
-        gpio_in: 16,
+        pcf_in_add: 1,
+        pcf_in: 16,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -172,7 +187,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr2_david": {
-        gpio_in: 16,
+        pcf_in_add: 1,
+        pcf_in: 16,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -180,7 +196,8 @@ event_map = {
         }
     },
     "laserlock_lockout": {
-        gpio_in: 19
+        pcf_in_add: 1,
+        pcf_in: 19
     },
     "reset_atmo": {
         sound: {

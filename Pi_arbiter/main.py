@@ -123,7 +123,7 @@ def handle_event(event_key, event_value=None):
         pass
 
     try:
-        pin = event_value[gpio_out]
+        pin = event_value[pcf_out]
         print(f"setting output: {pin}")
         GPIO.output(pin, GPIO.LOW)
         sleep(3)
@@ -170,7 +170,7 @@ def handle_fe(data):
                 continue
             # @todo: removed once differentiation is possible
             if key == "laserlock_fail" or key == "laserlock_bootdecon":
-                pin = event_map["laserlock_cable_fixed"][gpio_in]
+                pin = event_map["laserlock_cable_fixed"][pcf_in]
                 if False and GPIO.input(pin) == GPIO.LOW:
                     handle_event("laserlock_bootdecon")
                 else:
@@ -186,7 +186,7 @@ def setup_gpios():
 
     for event_value in event_map.values():
         try:
-            pin = event_value[gpio_out]
+            pin = event_value[pcf_out]
             GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
             GPIO.output(pin, GPIO.HIGH)
         except KeyError:
@@ -197,7 +197,7 @@ def setup_gpios():
             exit()
 
         try:
-            pin = event_value[gpio_in]
+            pin = event_value[pcf_in]
             GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             # @TODO: callback stuff here?
         except KeyError:
@@ -234,7 +234,7 @@ def handle_gpio_events():
         event_value = event_map[event_key]
         is_low_trigger = True
         try:
-            input_pin = event_value[gpio_in]
+            input_pin = event_value[pcf_in]
             # print(f"chacking input: {input_pin}")
         except KeyError:
             try:
