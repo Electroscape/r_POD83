@@ -8,17 +8,17 @@ import socketio
 from event_mapping import *
 import os
 import logging
-from gpio_fncs import *
+import ArbiterIO
 # standard Python would be python-socketIo
+from time import sleep
 
-# GPIO.add_event_detect(data.gpio, GPIO.RISING, callback=callback, bouncetime=20)
-#
+IO = ArbiterIO
 
 '''
 @TODO: 
     * 🔲 expection handling
     * ✅ cooldowns, need to consider what time library
-    * 🔲 handling of multiple IO reading the same pulldown sensor via level shifter 
+    * 🔲 handling of multiple IO reading the same 
     * ✅ gpio callback from fe event
     * ✅ gpio output cooldowns
     * ✅ gpio input cooldowns
@@ -28,25 +28,17 @@ from gpio_fncs import *
     * ✅ rachel + david
     * 🔲 cable broken needs to be a delta check and broadcast... or a specific fncs
     * 🔲 resettime as param
-    * init for GPIO_in_high
+    * 🔲 designated PCFS as input or output
+    * 🔲 make a fnc for checking if pin/binary value present in pcf value
 '''
 
-# standard Python
 sio = socketio.Client()
 gpio_input_cooldowns = set()
 
-# asyncio
-# sio = socketio.AsyncClient()
 gpio_thread = None
 # used to prevent multiple boots
 usb_booted = False
 connected = False
-
-'''
-class event:
-    def __init__(self, name, gpio_trigger, gpio_out, sock):
-        self.name = name
-'''
 
 
 class Settings:
@@ -83,7 +75,6 @@ def disconnect():
     connected = False
     sio.disconnect()
     connect()
-
 '''
 
 
@@ -114,6 +105,7 @@ def handle_event(event_key, event_value=None):
         except KeyError:
             print(f"handle_event received invalid key: {event_key}")
 
+    # Sound, may be moved to a fnc
     print(f"handling event {event_key}")
     try:
         event_entry = event_value[sound]
@@ -122,16 +114,18 @@ def handle_event(event_key, event_value=None):
     except KeyError:
         pass
 
+    # IO pins
     try:
-        pin = event_value[pcf_out]
-        print(f"setting output: {pin}")
-        GPIO.output(pin, GPIO.LOW)
+        pcf_no = event_value[pcf_out_add]
+        value = event_value[pcf_out]
+        print(f"setting output: {pcf_no}{value}")
+        IO.write_pcf(pcf_no, value)
         sleep(3)
-        GPIO.output(pin, GPIO.HIGH)
-        # reset_timer([pin])
+        IO.write_pcf(pcf_no, 0)
     except KeyError:
         pass
 
+    # Frontend
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
         return
@@ -140,10 +134,8 @@ def handle_event(event_key, event_value=None):
     if not cb_cmb or not cb_tgt:
         return
     cb_msg = cb_dict.get(fe_cb_msg, "")
-    print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}" )
+    print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}")
     sio.emit("events", {"username": cb_tgt, "cmd": cb_cmb, "message": cb_msg})
-
-
 
 
 @sio.on("trigger")
@@ -168,10 +160,12 @@ def handle_fe(data):
             if msg and msg != data.get("message"):
                 # print(f"wrong msg {msg}")
                 continue
+
             # @todo: removed once differentiation is possible
             if key == "laserlock_fail" or key == "laserlock_bootdecon":
-                pin = event_map["laserlock_cable_fixed"][pcf_in]
-                if False and GPIO.input(pin) == GPIO.LOW:
+                pcf_value = event_map["laserlock_cable_fixed"][pcf_in]
+                pcf_add = event_map["laserlock_cable_fixed"][pcf_in_add]
+                if IO.read_pcf(pcf_add) & pcf_value == pcf_value:
                     handle_event("laserlock_bootdecon")
                 else:
                     handle_event("laserlock_fail")
@@ -179,33 +173,6 @@ def handle_fe(data):
             handle_event(key)
         except KeyError:
             pass
-
-
-# this needs to move to gpio_fncs
-def setup_gpios():
-
-    for event_value in event_map.values():
-        try:
-            pin = event_value[pcf_out]
-            GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
-            GPIO.output(pin, GPIO.HIGH)
-        except KeyError:
-            pass
-        except Exception as exp:
-            print(f"issue setting up GPIO {pin} "
-                  f"resulting in {exp} ")
-            exit()
-
-        try:
-            pin = event_value[pcf_in]
-            GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            # @TODO: callback stuff here?
-        except KeyError:
-            pass
-        except Exception as exp:
-            print(f"issue setting up GPIO {pin} "
-                  f"resulting in {exp} ")
-            exit()
 
 
 def scan_for_usb():
@@ -227,32 +194,30 @@ def is_gpio_on_cooldown(pin):
     return False
 
 
+def handle_pcf_input(input_pcf, value):
 
-def handle_gpio_events():
-    event_pins_cd = []
-    for event_key in event_map.keys():
-        event_value = event_map[event_key]
-        is_low_trigger = True
+    for event_key, event_dict in event_map.items():
         try:
-            input_pin = event_value[pcf_in]
-            # print(f"chacking input: {input_pin}")
-        except KeyError:
-            try:
-                input_pin = event_value[gpio_in_high]
-                is_low_trigger = False
-            except KeyError:
+            if event_dict.get(pcf_in_add) != input_pcf:
                 continue
+            event_pcf_value = event_dict.get(pcf_in)
 
-        is_low_state = GPIO.input(input_pin) == GPIO.LOW
-        if is_low_state and is_low_trigger:
-            # print(f"valid trigger at pin {input_pin}")
-            if not is_gpio_on_cooldown(input_pin):
-                # or not (is_low_trigger and is_low_state):
+            # checks if all pins to form the value of that event are present on the inputs
+            # this way its possible mix and match multiple inputs as single pin inputs and binary
+            if event_pcf_value & value == event_pcf_value:
+                # @TODO: cooldown
+                # if not is_gpio_on_cooldown(input_pin):
+                # gpio_input_cooldowns.add((input_pin, 0 + 5))
                 handle_event(event_key)
-                event_pins_cd.append(input_pin)
-    for input_pin in event_pins_cd:
-        # time.thread_time() doesnt work on rpi
-        gpio_input_cooldowns.add((input_pin, 0 + 5))
+
+        except KeyError:
+            continue
+
+
+def handle_pcf_inputs():
+    active_inputs = IO.get_inputs()
+    for active in active_inputs:
+        handle_pcf_input(active)
 
 
 def connect():
@@ -271,27 +236,11 @@ def main():
             usb_boot()
             # handle_event("laserlock_cable_fixed")
             # sleep(8)
-        handle_gpio_events()
+        handle_pcf_inputs()
         # handle_event("laserlock_bootdecon") # Schwarz
         # handle_event("laserlock_fail") # Grün
         # exit()
         '''
-        GPIO.output(4, GPIO.LOW)
-        sleep(4)
-        GPIO.output(5, GPIO.LOW)
-        sleep(4)
-        GPIO.output(6, GPIO.LOW)
-        sleep(4)
-
-        GPIO.output(6, GPIO.HIGH)
-        sleep(4)
-        
-        '''
-
-
-        # exit()
-        '''
-
         sleep(3)
         handle_event("laserlock_fail")
         GPIO.output(5, GPIO.HIGH)
@@ -301,10 +250,8 @@ def main():
         '''
 
 
-
 if __name__ == '__main__':
     settings = load_settings()
-    setup_gpios()
     connected = connect()
     # otherwise calling an already running atmo does not work
     handle_event("reset_atmo")
@@ -314,5 +261,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     finally:
-        GPIO.cleanup()
         sio.disconnect()

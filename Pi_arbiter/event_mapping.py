@@ -1,5 +1,4 @@
 import requests
-from gpio_fncs import GPIOBundle
 
 
 # http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
