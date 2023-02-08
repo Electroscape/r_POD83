@@ -17,7 +17,6 @@ class ArbiterIO:
             for pin in range(0, 8):
                 pcf_list[index].port[pin] = True
         return pcf_list
-
     def read_pcf(self, pcf_index):
         pcf = self.pcfs[pcf_index]
         result = 0
@@ -30,7 +29,6 @@ class ArbiterIO:
             except IOError:
                 print(f"error reading PCF {pcf_index}")
         return result
-
     def write_pcf(self, pcf_index, value):
         for pin_index in range(0, 8):
             pin = 7 - pin_index
@@ -41,7 +39,6 @@ class ArbiterIO:
             except IOError:
                 print("IOError")
                 pass
-
     def get_inputs(self):
         inputs = []
         for input_pcf in range(3, 6):

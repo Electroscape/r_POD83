@@ -8,11 +8,11 @@ import socketio
 from event_mapping import *
 import os
 import logging
-import ArbiterIO
+from ArbiterIO import ArbiterIO
 # standard Python would be python-socketIo
 from time import sleep
 
-IO = ArbiterIO
+IO = ArbiterIO()
 
 '''
 @TODO: 
@@ -118,11 +118,12 @@ def handle_event(event_key, event_value=None):
     try:
         pcf_no = event_value[pcf_out_add]
         value = event_value[pcf_out]
-        print(f"setting output: {pcf_no}{value}")
+        print(f"setting output: PCF={pcf_no} Value={value}")
         IO.write_pcf(pcf_no, value)
         sleep(3)
         IO.write_pcf(pcf_no, 0)
-    except KeyError:
+    except KeyError as err:
+        print(err)
         pass
 
     # Frontend
@@ -169,6 +170,7 @@ def handle_fe(data):
                     handle_event("laserlock_bootdecon")
                 else:
                     handle_event("laserlock_fail")
+                return
 
             handle_event(key)
         except KeyError:
@@ -180,7 +182,7 @@ def scan_for_usb():
 
 
 # @Todo: needs to be fixed, thread.time doesnt work on rpi?
-def is_gpio_on_cooldown(pin):
+def is_input_on_cooldown(pin):
     # print(gpio_input_cooldowns)
     for cooldown in gpio_input_cooldowns:
         if pin == cooldown[0]:
@@ -217,7 +219,7 @@ def handle_pcf_input(input_pcf, value):
 def handle_pcf_inputs():
     active_inputs = IO.get_inputs()
     for active in active_inputs:
-        handle_pcf_input(active)
+        handle_pcf_input(*active)
 
 
 def connect():

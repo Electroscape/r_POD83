@@ -25,8 +25,7 @@ fe_cb_cmd = "cmd"
 fe_cb_msg = "msg"
 
 
-test_name = "airlock_intro"
-
+# [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
 
 event_map = {
     "airlock_intro": {
@@ -71,7 +70,7 @@ event_map = {
         }
     },
     "laserlock_cable_fixed": {
-        pcf_in_add: 1,
+        pcf_in_add: 3,
         pcf_in: 1 << 0,
         fe_cb: {
             fe_cb_cmd: "airlock",
