@@ -2,7 +2,7 @@ try:
     from pcf8574 import PCF8574
 except ImportError:
     from PCF_dummy import PCF8574
-
+from time import thread_time
 
 class ArbiterIO:
     def __init__(self):
@@ -17,6 +17,7 @@ class ArbiterIO:
             for pin in range(0, 8):
                 pcf_list[index].port[pin] = True
         return pcf_list
+
     def read_pcf(self, pcf_index):
         pcf = self.pcfs[pcf_index]
         result = 0
@@ -29,6 +30,7 @@ class ArbiterIO:
             except IOError:
                 print(f"error reading PCF {pcf_index}")
         return result
+
     def write_pcf(self, pcf_index, value):
         for pin_index in range(0, 8):
             pin = 7 - pin_index
@@ -39,6 +41,7 @@ class ArbiterIO:
             except IOError:
                 print("IOError")
                 pass
+
     def get_inputs(self):
         inputs = []
         for input_pcf in range(3, 6):
@@ -47,4 +50,16 @@ class ArbiterIO:
                 inputs.append((input_pcf, pin_value))
         return inputs
 
+
+class CooldownHandler:
+    def __init__(self):
+        self.cooldowns = set()
+
+    def is_input_on_cooldown(self, input_pcf, event_pcf_value):
+        for cooldown in self.cooldowns:
+            if input_pcf == cooldown[0] and event_pcf_value == cooldown[1]:
+                if cooldown[2] > thread_time():
+                    print("GPIO is on cooldown")
+                    return True
+        return False
 

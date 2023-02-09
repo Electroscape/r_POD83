@@ -8,9 +8,9 @@ import socketio
 from event_mapping import *
 import os
 import logging
-from ArbiterIO import ArbiterIO
+from ArbiterIO import ArbiterIO, CooldownHandler
 # standard Python would be python-socketIo
-from time import sleep
+from time import sleep, thread_time
 
 IO = ArbiterIO()
 
@@ -33,7 +33,7 @@ IO = ArbiterIO()
 '''
 
 sio = socketio.Client()
-gpio_input_cooldowns = set()
+cooldowns = CooldownHandler()
 
 gpio_thread = None
 # used to prevent multiple boots
@@ -181,22 +181,10 @@ def scan_for_usb():
     return os.path.exists("/dev/sda") and not usb_booted
 
 
-# @Todo: needs to be fixed, thread.time doesnt work on rpi?
-def is_input_on_cooldown(pin):
-    # print(gpio_input_cooldowns)
-    for cooldown in gpio_input_cooldowns:
-        if pin == cooldown[0]:
-            return True
-            if cooldown[1] < time.thread_time():
-                print()
-                # gpio_input_cooldowns.remove(cooldown)
-            else:
-                print("GPIO is on cooldown")
-                return True
-    return False
-
-
 def handle_pcf_input(input_pcf, value):
+
+    # local version so we can have one PCF input potentially trigger multiple events
+    temporary_cooldowns = set()
 
     for event_key, event_dict in event_map.items():
         try:
@@ -207,13 +195,14 @@ def handle_pcf_input(input_pcf, value):
             # checks if all pins to form the value of that event are present on the inputs
             # this way its possible mix and match multiple inputs as single pin inputs and binary
             if event_pcf_value & value == event_pcf_value:
-                # @TODO: cooldown
-                # if not is_gpio_on_cooldown(input_pin):
-                # gpio_input_cooldowns.add((input_pin, 0 + 5))
-                handle_event(event_key)
+                # @TODO: consider simply using the eventkeys
+                if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
+                    temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
+                    handle_event(event_key)
 
         except KeyError:
             continue
+    cooldowns.cooldowns.update(temporary_cooldowns)
 
 
 def handle_pcf_inputs():
