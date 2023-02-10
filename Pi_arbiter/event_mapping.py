@@ -78,17 +78,6 @@ event_map = {
             fe_cb_msg: "fixed"
         }
     },
-    '''
-    unused for now
-    "laserlock_cable_broken": {
-        gpio_in_high: 12,
-        fe_cb: {
-            fe_cb_cmd: "airlock",
-            fe_cb_tgt: "tr1",
-            fe_cb_msg: "broken"
-        }
-    },
-    '''
     "laserlock_bootdecon": {
         pcf_out_add: 0,
         pcf_out: 1 << 2,

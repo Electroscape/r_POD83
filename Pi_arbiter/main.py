@@ -97,16 +97,16 @@ def catch_all(event, data):
 
 
 def handle_event(event_key, event_value=None):
-    if event_key is None:
-        return
     if event_value is None:
         try:
             event_value = event_map[event_key]
         except KeyError:
             print(f"handle_event received invalid key: {event_key}")
+            return
 
     # Sound, may be moved to a fnc
     print(f"handling event {event_key}")
+    print(event_value)
     try:
         event_entry = event_value[sound]
         print(f"activating sound: {event_entry}")
@@ -231,14 +231,6 @@ def main():
         # handle_event("laserlock_bootdecon") # Schwarz
         # handle_event("laserlock_fail") # Grün
         # exit()
-        '''
-        sleep(3)
-        handle_event("laserlock_fail")
-        GPIO.output(5, GPIO.HIGH)
-        sleep(25)
-        handle_event("laserlock_bootdecon")
-        sleep(25)
-        '''
 
 
 if __name__ == '__main__':
