@@ -24,6 +24,7 @@
 
 
 #include <stb_mother.h>
+#include <stb_mother_IO.h>
 #include <stb_keypadCmds.h>
 #include <stb_oledCmds.h>
 #include <stb_mother_ledCmds.h>
@@ -34,6 +35,7 @@
 // using the reset PCF for this
 PCF8574 inputPCF;
 STB_MOTHER Mother;
+STB_MOTHER_IO MotherIO;
 int stage = setupStage;
 // since stages are single binary bits and we still need to d some indexing
 int stageIndex = 0;
@@ -86,41 +88,6 @@ void gameReset() {
 }
 
 
-// sets txRelays to 0 to indicate empty RFID presence, may be called after a timeout from the mainloop to keep timing simpler
-void outputRFIDReset() {
-    Serial.println(F("resetting outputs"));
-
-    for (int pinNo=0; pinNo<txRelayAmount; pinNo++) {
-        Mother.motherRelay.digitalWrite(rfidTxPins[pinNo], closed);
-    }
-}
-
-void outputInt(int index) {
-    for (int txPin=0; txPin<txRelayAmount; txPin++) {
-        Mother.motherRelay.digitalWrite(rfidTxPins[txPin], (index & (1 << txPin)) > 0 );
-        Serial.println(index & (1 << txPin));
-    }
-    timestamp = millis() + rfidTxDuration;
-    Serial.println();
-}
-
-
-/**
- * @brief converts the passwordindex to a signal on the relays, also leftshifted the passed index once
- * 0 for no RFID
- * 1 for David
- * 2 for Rachel
- * @param index 
-*/
-void outputRFID(int index) {
-    Serial.println("outputRFID");
-    index = index << 1;
-    outputInt(index);
-}
-
-
-
-
 /**
  * @brief  
  * @param result 
@@ -167,7 +134,6 @@ void timedTrigger() {
 }
 
 
-
 /**
  * @brief  handles RFId scanning required on both sides
  * @param passNo 
@@ -181,15 +147,6 @@ void checkDualRfid(int passNo) {
     if (cardsPresent <= PasswordAmount) { return; }
 
     cardsPresent = 0;
-
-    // since we trigger we cannot send a 0 so we shift to 1... other output is 2 
-    /* TODO: place this in the stage
-        int cardLocality = passNo + Mother.getPolledSlave();
-        if (cardLocality == 0) { cardLocality++; }
-        outputRFID(cardLocality);
-        timestamp = millis() + rfidTxDuration;
-    */
-
 
     if (stage == seperationUnlocked && inputPCF.digitalRead(reedDoor)) {
         Serial.println("door is not closed");
@@ -210,10 +167,26 @@ void checkDualRfid(int passNo) {
 
     sendResult(true, 0);
     sendResult(true, 1);
+
+    if (stage == seperationUnlocked) {
+        if (Mother.getPolledSlave() == 0) {
+            switch (passNo) {
+                case 0: MotherIO.setOuput(david + isSeperation);
+                case 1: MotherIO.setOuput(rachel + isSeperation);
+            }
+        } else {
+            switch (passNo) {
+                case 0: MotherIO.setOuput(rachel + isSeperation);
+                case 1: MotherIO.setOuput(david + isSeperation);
+            }
+        }
+    }
+
  
     wdt_reset();
     delay(5000);
     wdt_reset();
+    MotherIO.outputReset();
 }
 
 
@@ -227,9 +200,11 @@ void handleCorrectPassword(int passNo) {
         case unlock: 
             // delay(500);
             stage = unlocked; 
-            // @todo: once upgrade is done on the arbiter just make this simple binary states
-            // outputRFID already does one lshift
-            outputRFID(1 << (1 + passNo));
+            if (passNo == 0) {
+                MotherIO.setOuput(david);
+            } else {
+                MotherIO.setOuput(rachel);
+            }
             // start polling the 2nd Access since there is no need before
             Mother.rs485SetSlaveCount(2);
         break;
@@ -369,7 +344,6 @@ void stageActions() {
             stage = decon;
         break;
         case decon:
-            /*
             // @todo: check timing here
             int effektTime;
             for (int brightness = 10; brightness <= 100; brightness += 10) {
@@ -385,7 +359,6 @@ void stageActions() {
             // LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100, 0);
             // doesnt specify fade but may aswell see how it works
             LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100, LED_CMDS::clrBlue, 50, 6830, PWM::set1);
-            */
             timestamp = millis() + deconRFIDTimeout;
             stage = unlock;
         break;
@@ -408,7 +381,7 @@ void stageActions() {
             wdt_disable();
             delay(rfidTxDuration);
             enableWdt();
-            outputRFIDReset();
+            MotherIO.outputReset();
             wdt_reset();
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 20);
             stage = seperationUnlocked;
@@ -417,17 +390,17 @@ void stageActions() {
             cardsPresent = 0;
             Mother.rs485SetSlaveCount(2);
             Mother.motherRelay.digitalWrite(door, doorOpen);
-            wdt_disable();
-            delay(rfidTxDuration);
-            enableWdt();
-            outputRFIDReset();
+            // wdt_disable();
+            // enableWdt();
+            // delay(rfidTxDuration);
+            // MotherIO.outputReset();
         break;
         case seperationLocked:
             cardsPresent = 0;
             Mother.motherRelay.digitalWrite(door, doorClosed);
-            outputInt(16); // should be all levels high, 
-            delay(rfidTxDuration);
-            outputRFIDReset();
+            MotherIO.setOuput(seperationEnd);
+            // delay(rfidTxDuration);
+            // MotherIO.outputReset();
         break;
         case lightStart:
             LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 20, lightStartDuration,  PWM::set1 + PWM::set2);
@@ -525,6 +498,7 @@ void setup() {
     Mother.begin();
     // starts serial and default oled
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
+    MotherIO.ioInit(intputArray, inputCnt, outputArray, outputCnt);
 
     Serial.println("WDT endabled");
     enableWdt();

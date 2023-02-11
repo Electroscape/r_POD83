@@ -6,14 +6,13 @@
 // may aswell move this into the Oled lib?
 #define headLineMaxSize 16
 
-#define relayAmount 8
+#define relayAmount 1
 #define open        0
 #define closed      1
 
 #define doorOpen    0
 #define doorClosed  1
 
-#define txRelayAmount 5
 #define ledCnt 13
 
 // how long the system remains in unlock and accepts RFID cards 
@@ -27,8 +26,6 @@ unsigned long lightStartDuration = 20000;
 // FL lamps shall be some industrial reddish light 
 static constexpr int clrLight[3] = {255,200,120};
 
-#define inputCnt 4
-
 enum brains {
     airlockAccess,      // access module on the outside
     labAccess,          // access module on the inside of the lab
@@ -37,12 +34,20 @@ enum brains {
 };
 
 
-enum inputs {
+// --- Inputs
+enum IO {
     room1Light,             // red
     failedBootTrigger,      // black  
     bootupTrigger,          // Green
     reedDoor,               // white    
+    isSeperation,
+    david,
+    rachel,
+    seperationEnd
 };
+
+#define outputCnt 4
+#define inputCnt 4
 
 uint8_t inputTypes[inputCnt] = {
     INPUT_PULLUP,
@@ -51,62 +56,36 @@ uint8_t inputTypes[inputCnt] = {
     INPUT_PULLUP
 };
 
-
-enum relays {
-    door,
-    uv,
-    rel_3,
-    RFID_TX_1,
-    RFID_TX_2,
-    RFID_TX_3,
-    RFID_TX_4,
-    RFID_TX_5,
+int intputArray[inputCnt] = {
+    room1Light,             // red
+    failedBootTrigger,      // black  
+    bootupTrigger,          // Green
+    reedDoor,               // white    
 };
 
+int outputArray[outputCnt] = {
+    isSeperation,
+    david,
+    rachel,
+    seperationEnd
+};
+
+
+// -- relays
+enum relays {
+    door,
+};
 
 enum relayInits {
     doorInit = doorClosed,
-    uvInit = closed,
-    rel_3_init = closed,
-    RFID_TX_1_init = closed,
-    RFID_TX_2_init = closed,
-    RFID_TX_3_init = closed,
-    RFID_TX_4_init = closed,
-    RFID_TX_5_init = closed,
 };
-
 
 int relayPinArray[relayAmount] = {
     door, 
-    uv,
-    rel_3,
-    RFID_TX_1,
-    RFID_TX_2,
-    RFID_TX_3,
-    RFID_TX_4,
-    RFID_TX_5
 };
-
-
-// used to send binary signal to RPi to show identity presented
-int rfidTxPins[txRelayAmount] = {
-    RFID_TX_1,
-    RFID_TX_2,
-    RFID_TX_3,
-    RFID_TX_4,
-    RFID_TX_5,
-};
-
 
 int relayInitArray[relayAmount] = {
     doorInit,
-    uvInit,
-    rel_3_init,
-    RFID_TX_1_init,
-    RFID_TX_2_init,
-    RFID_TX_3_init,
-    RFID_TX_4_init,
-    RFID_TX_5_init
 };
 
 
