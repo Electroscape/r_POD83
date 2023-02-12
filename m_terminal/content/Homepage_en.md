@@ -1,7 +1,6 @@
 ---
-title: Dummy Md Story 
+title: Elancell Homepage
 date: 2013-08-27
-excerpt_separator: <!--more-->
 ---
 
 # One morning, when Gregor Samsa woke from troubled dreams.

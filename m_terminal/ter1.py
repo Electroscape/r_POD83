@@ -30,7 +30,6 @@ terminal_name = "TR1"  # which config file to load
 
 FLATPAGES_EXTENSION = '.md'
 FLATPAGES_ROOT = 'content'
-POST_DIR = 'posts'
 
 
 @app.route("/browser/", methods=['GET', 'POST'])
@@ -39,24 +38,29 @@ def browser():
         "title": "Wiki Page",
         "lang": g_lang
     }
+
+    folders = {}
+    for p in get_posts():
+        if not folders.get(p["folder"]):
+            folders[p["folder"]] = []
+        folders[p["folder"]].append(p)
+
     print("open wiki page")
-    posts = {
-        "en": [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith("en")],
-        "de": [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith("de")]
-    }
     html_path = f'{terminal_name}/p_browser.html'
-    return render_template(html_path, g_config=config, g_lang=g_lang, posts=posts)
+    return render_template(html_path, g_config=config, g_lang=g_lang, folders=folders)
 
 
-@app.route('/browser/<name>/', methods=['GET', 'POST'])
-def get_post(name):
+@app.route('/browser/<post_path>', methods=['GET', 'POST'])
+def get_post(post_path):
+    name = post_path.split("+")[-1]
+    post_dir = post_path.split("+")[-2]
     name_lang = name[:-2] + g_lang
     config = {
         "title": name[:-3],
         "lang": g_lang
     }
 
-    path = '{}/{}'.format(POST_DIR, name_lang)
+    path = '{}/{}'.format(post_dir, name_lang)
     post = flatpages.get_or_404(path)
     html_path = f'{terminal_name}/post.html'
     return render_template(html_path, g_config=config, post=post)
@@ -143,15 +147,20 @@ def switch_language():
 
 
 def get_posts():
-    posts = [p for p in flatpages if p.path.startswith(POST_DIR) and p.path.endswith(g_lang)]
+    posts = [p for p in flatpages if p.path.endswith(g_lang)]
     posts_json = []
     for p in posts:
+        try:
+            post_dir = p.path.split("/")[-2]
+        except IndexError:
+            post_dir = "/"
         posts_json.append(
             {
                 "html": p.html,
                 "title": p.meta["title"],
                 "date": p.meta["date"],
-                "url": url_for('get_post', name=p.path.replace('posts/', '')),
+                "folder": post_dir,
+                "url": url_for('get_post', post_path=p.path.replace("/", "+")),
                 "exert": p.body[:100] + "..."
             }
         )

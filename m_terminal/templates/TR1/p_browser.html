@@ -12,22 +12,31 @@
 
 {% block content %}
     <div class="container">
-        <div class="row" id="posts-container">
-            {% for post in posts[g_lang] %}
-                <div class="card col-md-6 m-sm-auto">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a class="stretched-link"
-                               href="{{ url_for('get_post', name=post.path.replace('posts/', '')) }}">
-                                {{ post.title }}
-                            </a>
-                        </h5>
-                        <p class="card-text">{{ post.body|striptags|truncate(100) }}</p>
-                        <small>{{ post.date }}</small>
+        <ul class="collapsible" data-collapsible="expandable">
+            {% for folder, posts in folders.items() %}
+                <li>
+                    <div class="collapsible-header"><i class="fa-solid fa-folder"></i> {{ folder }}</div>
+                    <div class="collapsible-body">
+                        <div class="row" id="posts-container">
+                            {% for post in posts %}
+                                <div class="card col-md-6 m-sm-auto">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <a class="stretched-link"
+                                               href="{{ post.url }}">
+                                                {{ post.title }}
+                                            </a>
+                                        </h5>
+                                        <p class="card-text">{{ post.body|striptags|truncate(100) }}</p>
+                                        <small>Last edit: {{ post.date }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
+                </li>
             {% endfor %}
-        </div>
+        </ul>
     </div>
 
 {% endblock %}
