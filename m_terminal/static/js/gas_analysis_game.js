@@ -9,16 +9,21 @@ function initiateGame(index, randomDraggableBrands) {
     const submitBtn = document.querySelector("#submit-btn-" + index);
 
     submitBtn.disabled = true;
-    shadow.hidden = true
+    shadow.hidden = true;
 
+    for (let i = 0; i < randomDraggableBrands.length; i++) {
+        randomDraggableBrands[i]["id"] = randomDraggableBrands[i].iconName.substring(0, 3) + "-" + index + "-" + i;
+    }
     itemsList[index] = randomDraggableBrands.concat([]);
-    const alphabeticallySortedRandomDroppableBrands = [...randomDraggableBrands].sort((a, b) => a.brandName.toLowerCase().localeCompare(b.brandName.toLowerCase()));
+    const alphabeticallySortedRandomDroppableBrands = [...randomDraggableBrands].sort(
+        (a, b) => b.brandName.toLowerCase().localeCompare(a.brandName.toLowerCase()));
 
 
     // Create "draggable-items" and append to DOM
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         draggableItems.insertAdjacentHTML("beforeend", `
-      <i class="fab fa-${randomDraggableBrands[i].iconName} draggable drag-g${index}" draggable="true" style="color: ${randomDraggableBrands[i].color};" id="${randomDraggableBrands[i].iconName}-${index}"></i>
+      <iconify-icon icon="mdi:${randomDraggableBrands[i].iconName}" class="draggable drag-g${index}" draggable="true"
+                    id="${randomDraggableBrands[i].id}"></iconify-icon>
     `);
     }
 
@@ -27,7 +32,7 @@ function initiateGame(index, randomDraggableBrands) {
         matchingPairs.insertAdjacentHTML("beforeend", `
       <div class="matching-pair">
         <span class="gameLabel">${alphabeticallySortedRandomDroppableBrands[i].brandName}</span>
-        <span class="drop-g${index} droppable" data-brand="${alphabeticallySortedRandomDroppableBrands[i].iconName}-${index}"></span>
+        <span class="drop-g${index} droppable" data-brand="${alphabeticallySortedRandomDroppableBrands[i].id}"></span>
       </div>
     `);
     }
@@ -96,9 +101,8 @@ function drop(event) {
     event.target.classList.add("dropped");
     draggableElement.classList.add("dragged");
     draggableElement.setAttribute("draggable", "false");
-    let iconName = draggableElementBrand.split("-");
-    iconName.pop()
-    event.target.innerHTML = `<i class="fab fa-${iconName.join("-")}" style="color: ${draggableElement.style.color};"></i>`;
+    let iconName = itemsList[index][draggableElementBrand.split("-").pop()]
+    event.target.innerHTML = `<iconify-icon icon="mdi:${iconName.iconName}"></iconify-icon>`;
 
     if (isCorrectMatching) {
         correct[index]++;
@@ -113,7 +117,7 @@ function drop(event) {
         submitBtn.disabled = false;
     } else if (itemsList[index].length === total[index]) {
         setTimeout(() => {
-            alert("Unstable combination")
+            swal("Forbidden Connection", "The server failed to validate the certificate, please make sure of the configuration", "error");
             $("#reset-btn-" + index).click()
         }, 600)
     }
@@ -126,7 +130,7 @@ function submitBtnClick(index) {
             keypad_update: `${window.location.pathname} dragDropGame ${index} correct`
         })
         setTimeout(() => {
-            alert("Stable Correct Solution");
+            swal("Stable Combination", "Sample has been released", "success");
             $(".loader-wrapper").addClass("d-none");
         }, 5000)
     } else if (itemsList[index].length === total[index]) {
@@ -134,7 +138,7 @@ function submitBtnClick(index) {
             keypad_update: `${window.location.pathname} dragDropGame ${index} wrong`
         })
         setTimeout(() => {
-            alert("Unstable combination")
+            swal("Unstable Combination", "Please try again", "error");
             $(".loader-wrapper").addClass("d-none");
             $("#reset-btn-" + index).click()
         }, 5000)
