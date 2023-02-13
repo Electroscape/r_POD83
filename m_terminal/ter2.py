@@ -41,6 +41,15 @@ def chat_control():
     return render_template("p_chat.html", g_config=config)
 
 
+@app.route('/puzzle_test', methods=['GET', 'POST'])
+def puzzle_control():
+    config = {
+        "title": "puzzle test"
+    }
+    print("open puzzle test page")
+    return render_template("testPuzzleGame.html", g_config=config)
+
+
 @app.route('/get_globals', methods=['GET', 'POST'])
 def get_globals():
     g_config = js_r(f"json/{terminal_name}_config_{g_lang}.json", auth=login_user)
@@ -101,6 +110,7 @@ def events_handler(data):
     else:
         global login_user
         global elancell_upload
+        global microscope
 
         msg = data.get("message")
 
@@ -113,6 +123,12 @@ def events_handler(data):
     elif data.get("cmd") == "elancell":
         elancell_upload = msg
         print(f"elancell msg: {msg}")
+    elif data.get("cmd") == "microscope":
+        microscope = f"PD_{msg}.png"
+        print(f"microscope msg: {msg}")
+    elif data.get("cmd") == "mSwitch":
+        microscope = ""
+        print(f"microscope msg: {msg}")
 
 
 @sio.on('samples')
@@ -137,8 +153,9 @@ sio.connect(server_ip)
 
 print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
-chat_msgs = RingList(100)  # stores the whole conversation
+chat_msgs = RingList(100)  # stores chat history max 100 msgs
 elancell_upload = "disable"
+microscope = ""  # which sample to show
 
 app.register_blueprint(app_pages)
 

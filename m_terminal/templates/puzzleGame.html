@@ -1,0 +1,270 @@
+<style>
+    :root {
+        --color: lightgray;
+        --border-radius: 10px;
+        --image-{{ gameID }}: url('{{ url_for("static", filename=image_path) }} ');
+    }
+
+    #puz-{{ gameID }}, #puzzle-{{ gameID }} {
+        position: absolute;
+        border-radius: var(--border-radius) 0 var(--border-radius) 0;
+        user-select: none;
+    }
+
+    #puz-{{ gameID }} {
+        width: 306px;
+        height: 300px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 3px dashed lightgray;
+        overflow: hidden;
+    }
+
+    #puzzle-{{ gameID }} {
+        left: 0;
+        top: 0;
+        border: 0;
+    }
+
+    #puz-{{ gameID }} i {
+        float: left;
+        width: 100px;
+        height: 100px;
+        outline: 1px dashed lightgray;
+    }
+
+    #puzzle-{{ gameID }} i {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: var(--color);
+        background-image: var(--image-{{ gameID }});
+        background-size: 300px 300px;
+        cursor: move;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+    }
+
+    .first-{{ gameID }} {
+        border-top-left-radius: var(--border-radius);
+        background-position: left top !important;
+    }
+
+    .second-{{ gameID }} {
+        background-position: center top !important;
+    }
+
+    .third-{{ gameID }} {
+        /*   border-top-right-radius:var(--border-radius); */
+        background-position: right top !important;
+    }
+
+    .forth-{{ gameID }} {
+        background-position: left center !important;
+    }
+
+    .fifth-{{ gameID }} {
+        background-position: center center !important;
+    }
+
+    .sixth-{{ gameID }} {
+        background-position: right center !important;
+    }
+
+    .seven-{{ gameID }} {
+        /*   border-bottom-left-radius:var(--border-radius); */
+        background-position: left bottom !important;
+    }
+
+    .eight-{{ gameID }} {
+        background-position: center bottom !important;
+    }
+
+    .ninth-{{ gameID }} {
+        border-bottom-right-radius: var(--border-radius);
+        background-position: right bottom !important;
+    }
+
+    .clicked-{{ gameID }} {
+        box-shadow: 0 0 0 4px gray !important;
+    }
+
+    .dropped-{{ gameID }} {
+        background: var(--color);
+        background-image: var(--image-{{ gameID }});
+        background-size: 300px 300px;
+    }
+
+    .done-{{ gameID }} {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .allDone-{{ gameID }} {
+        animation: allDone 1s linear forwards;
+        border: 3px solid lightgray !important;
+        outline: 0 !important;
+    }
+
+    @keyframes allDone {
+        50% {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+    }
+
+</style>
+<div class="spacer" style="margin: 1rem;"></div>
+<button class="resetBtn" id="reset-btn-{{ gameID }}" name="{{ gameID }}" onclick="randomize(name)">shuffle</button>
+<button class="resetBtn" id="reload-btn-{{ gameID }}" name="{{ gameID }}" onclick="reload(name)">reset</button>
+<button class="submitBtn" id="submit-btn-{{ gameID }}" name="{{ gameID }}" onclick="puzzleSubmit(name)">submit
+</button>
+<div id='puz_box-{{ gameID }}'>
+    <div id='puz-{{ gameID }}'>
+        <i class='first-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='second-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='third-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='forth-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='fifth-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='sixth-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='seven-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='eight-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+        <i class='ninth-{{ gameID }}' ondrop='puzzleDrop(event)' ondragover='allowDrop(event)'></i>
+    </div>
+    <div id='puzzle-{{ gameID }}'>
+        <i class='first-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='second-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='third-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='forth-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='fifth-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='sixth-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='seven-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='eight-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+        <i class='ninth-{{ gameID }}' draggable='true' ondragstart='drag(event)'></i>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function randomize(index) {
+        $('#puzzle-' + index + ' i').each(function () {
+            let wid = 100;
+            for (let i = 0; i < $(".option").length; i++) {
+                wid = $('#option' + i).width();
+                if (wid > 100) {
+                    break;
+                }
+            }
+            $(this).css({
+                left: Math.random() * (wid - 50 - $(this).width()),
+                top: Math.random() * (wid - 50 - $(this).height())
+            });
+        });
+
+        // for (let i = 0; i < ul.length; i++) {
+        //     ul[i].style.left = Math.random() * (window.innerWidth - 10) + 'px'
+        //     ul[i].style.top = Math.random() * (window.innerHeight - 10) + 'px'
+        //}
+        // for (var i = ul.children.length; i >= 0; i--) {
+        //   ul.appendChild(ul.children[Math.random() * i | 0]);
+        // }
+    }
+
+    function reload(index) {
+        let done = document.querySelectorAll('.done-' + index)
+        done.forEach(function (e) {
+            e.classList.toggle('done-' + index)
+        })
+        let dropped = document.querySelectorAll('.dropped-' + index)
+        dropped.forEach(function (e) {
+            e.classList.toggle('dropped-' + index)
+        })
+    }
+
+    randomize({{ gameID }});
+    document.querySelector("#submit-btn-{{ gameID }}").disabled = true;
+
+    function addListeners(index) {
+        // mobile functionality
+        let p = document.querySelectorAll('#puzzle-' + index + ' i')
+        p.forEach(function (e) {
+            e.addEventListener('mousedown', function () {
+                // calculate clicks
+            })
+            e.addEventListener('click', function () {
+                if (document.querySelector('.clicked-' + index)) {
+                    document.querySelector('.clicked-' + index).classList.toggle('clicked-' + index)
+                    e.classList.toggle('clicked-' + index)
+                } else {
+                    e.classList.toggle('clicked-' + index)
+                }
+            })
+        })
+
+        let fp = document.querySelectorAll('#puz-' + index + ' i')
+        fp.forEach(function (el) {
+            el.addEventListener('click', function () {
+                if (document.querySelector('.clicked-' + index)) {
+                    let c = document.querySelector('.clicked-' + index)
+                    if (c.classList.contains(el.classList)) {
+                        el.classList.add('dropped-' + index)
+                        c.classList.add('done-' + index)
+                        c.classList.toggle('clicked-' + index)
+
+                        if (document.querySelectorAll('.dropped-' + index).length === 9) {
+                            document.querySelector('#puz-' + index).classList.add('allDone-' + index)
+                            document.querySelector('#puz-' + index).style.border = 'none'
+                            document.querySelector('#puz-' + index).style.animation = 'allDone 1s linear forwards'
+
+                            setTimeout(function () {
+                                reload(index)
+                                randomize(index)
+                            }, 1500)
+                        }
+                    }
+                }
+            })
+        })
+    }
+
+    addListeners({{ gameID }});
+
+    // desktop drag and drop
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.className);
+    }
+
+    function puzzleDrop(ev) {
+        ev.preventDefault();
+        let data = ev.dataTransfer.getData("text")
+        let index = data.split("-").pop()
+        const submitBtn = document.querySelector("#submit-btn-" + index);
+        if (ev.target.className === data) {
+            ev.target.classList.add('dropped-' + index)
+            document.querySelector('.' + data + "[draggable='true']").classList.add('done-' + index)
+
+            if (document.querySelectorAll('.dropped-' + index).length === 9) {
+                submitBtn.disabled = false;
+            }
+        }
+    }
+
+    function puzzleSubmit(index) {
+        $(".loader-wrapper").removeClass("d-none")
+        document.querySelector('#puz-' + index).classList.add('allDone-' + index)
+        document.querySelector('#puz-' + index).style.border = 'none'
+        document.querySelector('#puz-' + index).style.animation = 'allDone 1s linear forwards'
+
+        socket.emit('msg_to_backend', {
+            keypad_update: `${window.location.pathname} puzzleGame ${index} correct`
+        })
+        setTimeout(() => {
+            swal("Stable Combination", "Sample has been released", "success");
+            $(".loader-wrapper").addClass("d-none");
+        }, 5000)
+
+    }
+</script>

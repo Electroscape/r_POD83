@@ -194,9 +194,15 @@
                     <div class="gameContentClass {% if loop.index0 != 0 %}
                             d-none
                             {% endif %}" id="gameContent{{ loop.index0 }}">
-                        {% with elements=sample.elements|tojson, gameID=loop.index0 %}
-                            {% include "dragDropGame.html" %}
-                        {% endwith %}
+                        {% if "elements" in sample %}
+                            {% with elements=sample.elements|tojson, gameID=loop.index0 %}
+                                {% include "dragDropGame.html" %}
+                            {% endwith %}
+                        {% elif "img" in sample %}
+                            {% with image_path=sample.img, gameID=loop.index0 %}
+                                {% include "puzzleGame.html" %}
+                            {% endwith %}
+                        {% endif %}
                     </div>
 
                     <div class="label">

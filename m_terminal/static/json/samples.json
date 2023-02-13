@@ -2,33 +2,7 @@
   {
     "name": "sample 1",
     "passcode": "1111",
-    "elements": [
-      {
-        "iconName": "bluetooth",
-        "brandName": "Bluetooth",
-        "color": "#3b5998"
-      },
-      {
-        "iconName": "patreon",
-        "brandName": "Patreon",
-        "color": "#f96854"
-      },
-      {
-        "iconName": "firefox",
-        "brandName": "Firefox",
-        "color": "#e66000"
-      },
-      {
-        "iconName": "vuejs",
-        "brandName": "Vue.js",
-        "color": "#42b883"
-      },
-      {
-        "iconName": "laravel",
-        "brandName": "Laravel",
-        "color": "#f55247"
-      }
-    ],
+    "img": "media/gas_puzzle/AN_1.png",
     "status": "locked",
     "icon": "fas fa-lock",
     "info": "toxic"
@@ -36,16 +10,7 @@
   {
     "name": "sample 2",
     "passcode": "1112",
-    "elements": [
-      {
-        "iconName": "sass",
-        "brandName": "Sass"
-      },
-      {
-        "iconName": "twitter",
-        "brandName": "Twitter"
-      }
-    ],
+    "img": "media/gas_puzzle/AN_2.png",
     "status": "locked",
     "icon": "fas fa-lock",
     "info": "non-toxic"
@@ -53,20 +18,7 @@
   {
     "name": "sample 3",
     "passcode": "1113",
-    "elements": [
-      {
-        "iconName": "meetup",
-        "brandName": "Meetup"
-      },
-      {
-        "iconName": "digital-ocean",
-        "brandName": "Digital Ocean"
-      },
-      {
-        "iconName": "docker",
-        "brandName": "Docker"
-      }
-    ],
+    "img": "media/gas_puzzle/AN_3.png",
     "status": "locked",
     "icon": "fas fa-lock",
     "info": "non-active"
@@ -81,11 +33,11 @@
       },
       {
         "iconName": "hexagon-outline\" rotate=\"90deg",
-        "brandName": "level 2"
+        "brandName": "level 3"
       },
       {
         "iconName": "checkbox-blank-circle-outline",
-        "brandName": "Level 3"
+        "brandName": "Level 2"
       },
       {
         "iconName": "square\" style=\"color: navy;",
