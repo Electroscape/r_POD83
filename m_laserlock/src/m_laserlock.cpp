@@ -474,15 +474,15 @@ void handleInputs() {
 
     if (stage != idle) { return; }
     lastStage = idle;
-    int result = inputDetector();
+    int result = MotherIO.getInputs();
     switch (result) {
-        case failedBootTrigger: 
+        case 1 << failedBootTrigger: 
             stage = failedBoot;
         break;
-        case bootupTrigger: 
+        case 1 << bootupTrigger: 
             stage = successfulBoot;
         break;
-        case room1Light:
+        case 1 << room1Light:
             if (lightOn) { return; }
             lightOn = true;
             stage = lightStart;
@@ -498,7 +498,7 @@ void setup() {
     Mother.begin();
     // starts serial and default oled
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
-    MotherIO.ioInit(intputArray, inputCnt, outputArray, outputCnt);
+    MotherIO.ioInit(intputArray, sizeof(intputArray), outputArray, sizeof(outputArray));
 
     Serial.println("WDT endabled");
     enableWdt();

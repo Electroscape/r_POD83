@@ -40,11 +40,16 @@ enum IO {
     failedBootTrigger,      // black  
     bootupTrigger,          // Green
     reedDoor,               // white    
-    isSeperation,
-    david,
-    rachel,
-    seperationEnd
+    isSeperation_pin,
+    david_pin,
+    rachel_pin,
+    seperationEnd_pin
 };
+
+int isSeperation = 1 << isSeperation_pin;
+int david = 1 << david_pin;
+int rachel = 1 << rachel_pin;
+int seperationEnd = 1 << seperationEnd_pin; 
 
 #define outputCnt 4
 #define inputCnt 4
@@ -64,10 +69,10 @@ int intputArray[inputCnt] = {
 };
 
 int outputArray[outputCnt] = {
-    isSeperation,
-    david,
-    rachel,
-    seperationEnd
+    isSeperation_pin,
+    david_pin,
+    rachel_pin,
+    seperationEnd_pin
 };
 
 
