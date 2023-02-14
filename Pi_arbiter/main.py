@@ -187,10 +187,11 @@ def handle_pcf_input(input_pcf, value):
     temporary_cooldowns = set()
 
     for event_key, event_dict in event_map.items():
+
         try:
             if event_dict.get(pcf_in_add) != input_pcf:
                 continue
-            event_pcf_value = event_dict.get(pcf_in)
+            event_pcf_value = event_dict.get(pcf_in, -1)
 
             # checks if all pins to form the value of that event are present on the inputs
             # this way its possible mix and match multiple inputs as single pin inputs and binary
@@ -202,6 +203,7 @@ def handle_pcf_input(input_pcf, value):
 
         except KeyError:
             continue
+
     cooldowns.cooldowns.update(temporary_cooldowns)
 
 
