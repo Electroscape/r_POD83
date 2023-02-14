@@ -24,6 +24,12 @@ fe_cb_tgt = "tgt"
 fe_cb_cmd = "cmd"
 fe_cb_msg = "msg"
 
+laserlock_io_isSeperation = 1 << 7
+laserlock_io_david = 1 << 6
+laserlock_io_rachel = 1 << 5
+laserlock_io_seperationEnd = 1 << 4
+laserlock_input = 4
+
 
 # [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
 
@@ -86,8 +92,8 @@ event_map = {
         }
     },
     "laserlock_welcome_david": {
-        pcf_in_add: 1,
-        pcf_in: 17,
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_david,
         sound: {
             sound_id: 15
         },
@@ -98,8 +104,8 @@ event_map = {
         }
     },
     "laserlock_welcome_rachel": {
-        pcf_in_add: 1,
-        pcf_in: 18,
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_rachel,
         sound: {
             sound_id: 16
         },
@@ -110,8 +116,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr1_david": {
-        pcf_in_add: 1,
-        pcf_in: 13,
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -119,8 +125,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr2_rachel": {
-        pcf_in_add: 1,
-        pcf_in: 13,
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -128,8 +134,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr1_rachel": {
-        pcf_in_add: 1,
-        pcf_in: 16,
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -137,8 +143,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr2_david": {
-        pcf_in_add: 1,
-        pcf_in: 16,
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -146,8 +152,8 @@ event_map = {
         }
     },
     "laserlock_lockout": {
-        pcf_in_add: 1,
-        pcf_in: 19
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_seperationEnd
     },
     "reset_atmo": {
         sound: {

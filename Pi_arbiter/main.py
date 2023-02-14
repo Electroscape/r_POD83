@@ -225,6 +225,8 @@ def main():
     while True:
         if scan_for_usb():
             usb_boot()
+            # sio.emit("events", {"username": "tr1", "cmd": "auth", "message": "david"})
+            # handle_event("laserlock_bootdecon")
             # handle_event("laserlock_cable_fixed")
             # sleep(8)
         handle_pcf_inputs()

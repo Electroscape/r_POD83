@@ -59,7 +59,7 @@ class CooldownHandler:
         for cooldown in self.cooldowns:
             if input_pcf == cooldown[0] and event_pcf_value == cooldown[1]:
                 if cooldown[2] > thread_time():
-                    print("GPIO is on cooldown")
+                    # print("GPIO is on cooldown")
                     return True
         return False
 
