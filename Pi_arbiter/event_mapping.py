@@ -30,29 +30,47 @@ laserlock_io_rachel = 1 << 5
 laserlock_io_seperationEnd = 1 << 4
 laserlock_input = 4
 
+airlock_input = 5
+
 
 # [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
 
 event_map = {
+    "airlock_begin": {
+        pcf_in_add: airlock_input,
+        pcf_in: 1,
+        sound: {
+            is_fx: True,
+            sound_id: 0
+        }
+    },
     "airlock_intro": {
-        # if several pins are used we need a state aswell
+        pcf_in_add: airlock_input,
+        pcf_in: 2,
+        # this is the sound to go along with teh video
         sound: {
             is_fx: True,
             sound_id: 7
         }
     },
     "airlock_sterilisation": {
+        pcf_in_add: airlock_input,
+        # pcf_in: 1,
         sound: {
             is_fx: True,
             sound_id: 8
         }
     },
     "airlock_decon": {
+        pcf_in_add: airlock_input,
+        pcf_in: 4,
         sound: {
             sound_id: 2
         }
     },
     "airlock_wrong": {
+        pcf_in_add: airlock_input,
+        pcf_in: 3,
         sound: {
             is_fx: True,
             sound_id: 1
