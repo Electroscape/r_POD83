@@ -1,5 +1,5 @@
 import requests
-
+import subprocess
 
 # http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
 # defaults?
@@ -24,6 +24,8 @@ fe_cb_tgt = "tgt"
 fe_cb_cmd = "cmd"
 fe_cb_msg = "msg"
 
+event_script = "script"
+
 laserlock_io_isSeperation = 1 << 7
 laserlock_io_david = 1 << 6
 laserlock_io_rachel = 1 << 5
@@ -33,7 +35,12 @@ laserlock_input = 4
 airlock_input = 5
 
 
+def play_elancell_intro():
+    subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
+                      "--no-embedded-video", "--fullscreen", '--no-video-title'])
+
 # [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
+
 
 event_map = {
     "airlock_begin": {
@@ -47,6 +54,7 @@ event_map = {
     "airlock_intro": {
         pcf_in_add: airlock_input,
         pcf_in: 2,
+        event_script: play_elancell_intro,
         # this is the sound to go along with teh video
         sound: {
             is_fx: True,

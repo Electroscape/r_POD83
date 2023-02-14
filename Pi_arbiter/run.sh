@@ -1,3 +1,3 @@
 pkill python3
 source venv/bin/activate
-python3 main.py
+DISPLAY=:0 python3 main.py

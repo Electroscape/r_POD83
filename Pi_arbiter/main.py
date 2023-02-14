@@ -126,6 +126,8 @@ def handle_event(event_key, event_value=None):
         print(err)
         pass
 
+    event_value.get(event_script, lambda: 'Invalid')()
+
     # Frontend
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
