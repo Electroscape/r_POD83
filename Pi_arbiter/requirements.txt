@@ -1,8 +1,6 @@
 
 python-socketio==5.7.2
 requests
-PCF8574
-smbus-cffi
 
 # optional for on pc testing
 # tkinter?
