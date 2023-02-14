@@ -6,11 +6,11 @@ date: 2013-08-27
   <table class="datatable table table-striped table-bordered">
     <thead>
       <tr>
-        <th>Rendering engine</th>
-        <th>Browser</th>
-        <th>Platform(s)</th>
-        <th>Engine version</th>
-        <th>CSS grade</th>
+        <th>Error Code</th>
+        <th>Severity</th>
+        <th>Description</th>
+        <th>Resolution</th>
+        <th>Notes</th>
       </tr>
     </thead>
     <tbody>
@@ -423,11 +423,11 @@ date: 2013-08-27
     </tbody>
     <tfoot>
       <tr>
-        <th>Rendering engine</th>
-        <th>Browser</th>
-        <th>Platform(s)</th>
-        <th>Engine version</th>
-        <th>CSS grade</th>
+        <th>Error Code</th>
+        <th>Severity</th>
+        <th>Description</th>
+        <th>Resolution</th>
+        <th>Notes</th>
       </tr>
     </tfoot>
   </table>

@@ -41,15 +41,6 @@ def chat_control():
     return render_template("p_chat.html", g_config=config)
 
 
-@app.route('/puzzle_test', methods=['GET', 'POST'])
-def puzzle_control():
-    config = {
-        "title": "puzzle test"
-    }
-    print("open puzzle test page")
-    return render_template("testPuzzleGame.html", g_config=config)
-
-
 @app.route('/get_globals', methods=['GET', 'POST'])
 def get_globals():
     g_config = js_r(f"json/{terminal_name}_config_{g_lang}.json", auth=login_user)

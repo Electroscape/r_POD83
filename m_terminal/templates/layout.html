@@ -102,9 +102,10 @@
                     stopBootLoop = true;
                     alert(`Hello ${msg.usr}! Welcome to the lab`)
                     toastr.success('Successful authentication');
-                    setTimeout( () => {
-                        document.location.href = "/"}
-                    , 1500);
+                    setTimeout(() => {
+                            document.location.href = "/"
+                        }
+                        , 1500);
                 {% else %}
                     loadControlPanel(msg.data)
                 {% endif %}
@@ -212,19 +213,36 @@
 
         } else if (PContainer) {
             let resTxt = ""
-            for (const post of jsonResponse) {
-                resTxt += `<div class="card col-md-6 m-sm-auto">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a class="stretched-link"
-                           href=${post.url}>
-                            ${post.title}
-                        </a>
-                    </h5>
-                    <p class="card-text"> ${post.exert} </p>
-                    <small> ${post.date} </small>
-                </div>
-            </div>`
+            for (const [folder, posts] of Object.entries(jsonResponse)) {
+                resTxt += `<div class="accordion-item bg-transparent">
+                                <h2 class="accordion-header bg-transparent" id="headingOne">
+                                    <button class="accordion-button bg-black" type="button" data-mdb-toggle="collapse"
+                                        data-mdb-target="#dir-${folder.replaceAll(" ", "")}" aria-expanded="true"
+                                        aria-controls="dir-${folder.replaceAll(" ", "")}">
+                                        <span><i class="fa-solid fa-folder"></i> ${folder} </span>
+                                    </button>
+                                </h2>
+                            <div id="dir-${folder.replace(" ", "")}" class="accordion-collapse collapse show"
+                                 aria-labelledby="headingOne">
+                                <div class="accordion-body">
+                                    <div class="row">`
+                for (const post of posts) {
+                    resTxt += `
+                                <div class="card col-md-6 m-sm-auto">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fa-solid fa-file me-2"></i>
+                                            <a class="stretched-link"
+                                               href="${post.url}">
+                                                ${post.title}
+                                            </a>
+                                        </h5>
+                                        <small>Last edit: ${post.date}</small>
+                                    </div>
+                                </div>
+                                `
+                }
+                resTxt += `</div></div></div></div>`
             }
             PContainer.innerHTML = resTxt
         }

@@ -39,28 +39,26 @@ def browser():
         "lang": g_lang
     }
 
-    folders = {}
-    for p in get_posts():
-        if not folders.get(p["folder"]):
-            folders[p["folder"]] = []
-        folders[p["folder"]].append(p)
-
     print("open wiki page")
     html_path = f'{terminal_name}/p_browser.html'
-    return render_template(html_path, g_config=config, g_lang=g_lang, folders=folders)
+    return render_template(html_path, g_config=config, g_lang=g_lang, folders=get_posts())
 
 
 @app.route('/browser/<post_path>', methods=['GET', 'POST'])
 def get_post(post_path):
-    name = post_path.split("+")[-1]
-    post_dir = post_path.split("+")[-2]
-    name_lang = name[:-2] + g_lang
+    if len(post_path.split("+")) >= 2:
+        name = post_path.split("+")[-1]
+        path = '{}/{}'.format(post_path.split("+")[-2], name[:-2] + g_lang)
+    else:
+        name = post_path
+        path = '{}'.format(name[:-2] + g_lang)
+
     config = {
         "title": name[:-3],
         "lang": g_lang
     }
 
-    path = '{}/{}'.format(post_dir, name_lang)
+    print(f"post path: {path}")
     post = flatpages.get_or_404(path)
     html_path = f'{terminal_name}/post.html'
     return render_template(html_path, g_config=config, post=post)
@@ -152,19 +150,31 @@ def get_posts():
     for p in posts:
         try:
             post_dir = p.path.split("/")[-2]
+            post_url = url_for('get_post', post_path=p.path.replace("/", "+"))
         except IndexError:
-            post_dir = "/"
+            post_dir = "root"
+            post_url = url_for('get_post', post_path=p.path)
         posts_json.append(
             {
                 "html": p.html,
                 "title": p.meta["title"],
                 "date": p.meta["date"],
                 "folder": post_dir,
-                "url": url_for('get_post', post_path=p.path.replace("/", "+")),
+                "url": post_url,
                 "exert": p.body[:100] + "..."
             }
         )
-    return posts_json
+
+    # group posts by folder name
+    folders = {}
+    for p in posts_json:
+        if p["folder"] == "/":
+            p["folder"] = "root"
+        if not folders.get(p["folder"]):
+            folders[p["folder"]] = []
+        folders[p["folder"]].append(p)
+
+    return folders
 
 
 @app.route('/video_feed')

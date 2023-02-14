@@ -12,31 +12,39 @@
 
 {% block content %}
     <div class="container">
-        <ul class="collapsible" data-collapsible="expandable">
+        <div class="accordion" id="posts-container">
             {% for folder, posts in folders.items() %}
-                <li>
-                    <div class="collapsible-header"><i class="fa-solid fa-folder"></i> {{ folder }}</div>
-                    <div class="collapsible-body">
-                        <div class="row" id="posts-container">
-                            {% for post in posts %}
-                                <div class="card col-md-6 m-sm-auto">
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            <a class="stretched-link"
-                                               href="{{ post.url }}">
-                                                {{ post.title }}
-                                            </a>
-                                        </h5>
-                                        <p class="card-text">{{ post.body|striptags|truncate(100) }}</p>
-                                        <small>Last edit: {{ post.date }}</small>
+                <div class="accordion-item bg-transparent">
+                    <h2 class="accordion-header bg-transparent" id="headingOne">
+                        <button class="accordion-button bg-black" type="button" data-mdb-toggle="collapse"
+                                data-mdb-target="#dir-{{ folder.replace(" ", "") }}" aria-expanded="true"
+                                aria-controls="dir-{{ folder.replace(" ", "") }}">
+                            <span><i class="fa-solid fa-folder"></i> {{ folder }} </span>
+                        </button>
+                    </h2>
+                    <div id="dir-{{ folder.replace(" ", "") }}" class="accordion-collapse collapse show"
+                         aria-labelledby="headingOne">
+                        <div class="accordion-body">
+                            <div class="row">
+                                {% for post in posts %}
+                                    <div class="card col-md-6 m-sm-auto">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="fa-solid fa-file me-2"></i>
+                                                <a class="stretched-link"
+                                                   href="{{ post.url }}">
+                                                    {{ post.title }}
+                                                </a>
+                                            </h5>
+                                            <small>Last edit: {{ post.date }}</small>
+                                        </div>
                                     </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                </li>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
-
 {% endblock %}
