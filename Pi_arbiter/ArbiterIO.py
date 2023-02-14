@@ -2,7 +2,8 @@ try:
     from pcf8574 import PCF8574
 except ImportError:
     from PCF_dummy import PCF8574
-from time import thread_time
+from time import thread_time, sleep
+
 
 class ArbiterIO:
     def __init__(self):
@@ -31,16 +32,29 @@ class ArbiterIO:
                 print(f"error reading PCF {pcf_index}")
         return result
 
-    def write_pcf(self, pcf_index, value):
+    # since we may pickup the inputs before all pins got switched, adding a small delay
+    def detect_inputs(self, pcf_index):
+        pcf = self.pcfs[pcf_index]
         for pin_index in range(0, 8):
             pin = 7 - pin_index
-            pin_value = 1 << (7 - pin_index)
+            try:
+                ret = bool(pcf.port[pin])
+                if not ret:
+                    sleep(5 / 1000)
+                    return self.read_pcf(pcf_index)
+            except IOError:
+                print(f"error reading PCF {pcf_index}")
+
+    def write_pcf(self, pcf_index, value):
+        for pin in range(0, 8):
+            pin_value = 1 << (7 - pin)
+            # print(f'{pin}: {pin_value}')
             output = not value & pin_value
             try:
                 self.pcfs[pcf_index].port[pin] = output
             except IOError:
                 print("IOError")
-                pass
+                return False
 
     def get_inputs(self):
         inputs = []
