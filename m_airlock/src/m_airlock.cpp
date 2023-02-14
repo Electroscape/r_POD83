@@ -22,13 +22,15 @@
 #include <stb_keypadCmds.h>
 #include <stb_oledCmds.h>
 #include <stb_mother_ledCmds.h>
-
+#include <stb_mother_IO.h>
 
 #include "header_st.h"
 
 // using the reset PCF for this
 PCF8574 inputPCF;
 STB_MOTHER Mother;
+STB_MOTHER_IO MotherIO;
+
 int stage = setupStage;
 // since stages are single binary bits and we still need to d some indexing
 int stageIndex=0;
@@ -240,11 +242,11 @@ void airlockDenied() {
 
 
 void waitForGameStart() {
-
+    wdt_disable();
     int inputTicks = 0;
     // waitin for the door to be opened
     while (inputTicks < 5) {
-        if (inputPCF.digitalRead(0) != 0) {
+        if (MotherIO.getInputs() != (1 << door_reed)) {
             inputTicks++;
             delay(25);
         } else {
@@ -256,7 +258,7 @@ void waitForGameStart() {
     // and checking if the door is closed, being quicker here
     inputTicks = 0;
     while (inputTicks < 5) {
-        if (inputPCF.digitalRead(0) == 0) {
+        if (MotherIO.getInputs() == (1 << door_reed)) {
             inputTicks++;
             delay(25);
         } else {
@@ -271,11 +273,7 @@ void waitForGameStart() {
     LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,2);
     LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,4);
     
-    /* for (int i=100; i>=30; i-=5) {
-        LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, i);
-        delay(300);
-    }
- */
+    MotherIO.setOuput(IOEvents::doorClosed);
     wdt_enable(WDTO_8S);
 
     stage = preStage;
@@ -286,7 +284,7 @@ void waitForGameStart() {
  * @brief  its a big stage so its a seperate function, split could be when
 */
 void setupRoom() {
-
+    wdt_disable();
     // provide warning to gate operation
     Mother.motherRelay.digitalWrite(alarm, open);
     airLockBlink(gateWarningDelay);
@@ -297,7 +295,8 @@ void setupRoom() {
     airLockBlink(gateDuration);
     Mother.motherRelay.digitalWrite(gate_pwr, closed);
     Mother.motherRelay.digitalWrite(alarm, closed);
-    wdt_disable();
+    wdt_enable(WDTO_8S);
+
 }
 
 
@@ -329,6 +328,7 @@ void stageActions() {
         case intro: 
             Serial.println("running Into");
             Mother.motherRelay.digitalWrite(beamerIntro, open);
+            MotherIO.setOuput(IOEvents::welcomeVideo);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             wdt_disable();
             delay(10000);
@@ -394,6 +394,7 @@ void stageActions() {
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 15);
         break;
         case airlockFailed: 
+            MotherIO.setOuput(wrongCode);
             airlockDenied();
             stage = startStage;
         break;
@@ -430,17 +431,12 @@ void stageUpdate() {
 }
 
 
-void inputInit() {
-    inputPCF.begin(RESET_I2C_ADD);
-    inputPCF.pinMode(0, INPUT_PULLUP);
-}
-
-
 void setup() {
 
     Mother.begin();
     // starts serial and default oled
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
+    MotherIO.ioInit(intputArray, sizeof(intputArray), outputArray, sizeof(outputArray));
 
     Serial.println("WDT endabled");
     wdt_enable(WDTO_8S);
@@ -449,7 +445,6 @@ void setup() {
     Mother.rs485SetSlaveCount(1);
 
     setStageIndex();
-    inputInit();
 
     /*
     Mother.setFlags(0, flagMapping[stageIndex]);

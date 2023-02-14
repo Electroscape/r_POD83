@@ -60,6 +60,36 @@ int relayInitArray[relayAmount] = {
 };
 
 
+#define outputCnt 4
+// technically we already got one but ... changing the code is no prio here
+#define inputCnt 1
+
+enum IO {
+    IO0,             // red, MSB
+    IO1,             // blk
+    IO2,             // green
+    IO3,             // white
+    door_reed
+};
+
+int intputArray[inputCnt] = {
+    door_reed
+};
+
+int outputArray[outputCnt] = {
+    IO0,             // red, MSB
+    IO1,             // blk
+    IO2,             // green
+    IO3,             // white
+};
+
+enum IOEvents{
+    doorClosed = 1,
+    welcomeVideo,
+    wrongCode,
+    deconAirlock,
+};
+
 enum stages {
     setupStage = 1,
     preStage = 2,
