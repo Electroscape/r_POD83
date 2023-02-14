@@ -216,12 +216,16 @@ void airLockBlink(unsigned long blinkDuration) {
  * @brief effects in case they code is entered wrong and airlock cleans again
 */
 void airlockDenied() {
-
+    bool reset = false;
     for (int i=0; i<5; i++) {
         LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 100);
         delay(200);
         LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 1);
         delay(500);
+        if (!reset) {
+            reset = true;
+            MotherIO.outputReset();
+        }
         wdt_reset();
     }
 
@@ -326,12 +330,14 @@ void stageActions() {
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
         case intro: 
+            wdt_disable();
             Serial.println("running Into");
             Mother.motherRelay.digitalWrite(beamerIntro, open);
             MotherIO.setOuput(IOEvents::welcomeVideo);
+            delay(1000);
+            MotherIO.outputReset();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
-            wdt_disable();
-            delay(10000);
+            delay(9000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(beamerIntro, closed);
             //stage = decontamination;
@@ -408,6 +414,7 @@ void stageActions() {
 */
 void stageUpdate() {
     if (lastStage == stage) { return; }
+    MotherIO.outputReset();
     Serial.print("Stage is:");
     Serial.println(stage);
     // if we go ailrockfailed, we have to keep the failed text on display 
