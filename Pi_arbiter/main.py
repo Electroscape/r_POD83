@@ -137,7 +137,7 @@ def handle_event(event_key, event_value=None):
     if not cb_cmb or not cb_tgt:
         return
     cb_msg = cb_dict.get(fe_cb_msg, "")
-    print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}")
+    print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}\n\n")
     sio.emit("events", {"username": cb_tgt, "cmd": cb_cmb, "message": cb_msg})
 
 
@@ -197,11 +197,18 @@ def handle_pcf_input(input_pcf, value):
 
             # checks if all pins to form the value of that event are present on the inputs
             # this way its possible mix and match multiple inputs as single pin inputs and binary
-            if event_pcf_value & value == event_pcf_value:
-                # @TODO: consider simply using the eventkeys
-                if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
-                    temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
-                    handle_event(event_key)
+            if input_pcf in binary_pcfs:
+                if event_pcf_value == value:
+                    # @TODO: consider simply using the eventkeys
+                    if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
+                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
+                        handle_event(event_key)
+            else:
+                if event_pcf_value & value == event_pcf_value:
+                    # @TODO: consider simply using the eventkeys
+                    if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
+                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
+                        handle_event(event_key)
 
         except KeyError:
             continue

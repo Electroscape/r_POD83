@@ -34,6 +34,8 @@ laserlock_input = 4
 
 airlock_input = 5
 
+binary_pcfs = [airlock_input]
+
 
 def play_elancell_intro():
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
