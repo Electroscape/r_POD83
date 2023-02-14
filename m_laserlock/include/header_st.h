@@ -1,36 +1,58 @@
 #pragma once
 
-#define StageCount 8
+#define StageCount 11
 #define PasswordAmount 2
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
 #define headLineMaxSize 16
 
-#define relayAmount 8
+#define relayAmount 1
 #define open        0
 #define closed      1
 
 #define doorOpen    0
 #define doorClosed  1
 
-#define ledBrain 1
-#define txRelayAmount 2
 #define ledCnt 13
 
 // how long the system remains in unlock and accepts RFID cards 
-unsigned long presentationTime = 10000;
+unsigned long deconRFIDTimeout = 10000;
 // how long the signal of RFID identity remains active 
 unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 8000;
+unsigned long rfidTimeout = 3000;
+unsigned long lightStartDuration = 20000;
 
-#define inputCnt 4
+// FL lamps shall be some industrial reddish light 
+static constexpr int clrLight[3] = {255,200,120};
 
-enum inputs {
-    bootTrigger,        // Red
-    deconTrigger,       // Black
-    connectionFixed,    // Green
-    resetTrigger        // white
+enum brains {
+    airlockAccess,      // access module on the outside
+    labAccess,          // access module on the inside of the lab
+    ledLaserBrain,
+    ledCeilBrain
 };
+
+
+// --- Inputs
+enum IO {
+    room1Light,             // red
+    failedBootTrigger,      // black  
+    bootupTrigger,          // Green
+    reedDoor,               // white    
+    isSeperation_pin,
+    david_pin,
+    rachel_pin,
+    seperationEnd_pin
+};
+
+int isSeperation = 1 << isSeperation_pin;
+int david = 1 << david_pin;
+int rachel = 1 << rachel_pin;
+int seperationEnd = 1 << seperationEnd_pin; 
+
+#define outputCnt 4
+#define inputCnt 4
 
 uint8_t inputTypes[inputCnt] = {
     INPUT_PULLUP,
@@ -39,71 +61,51 @@ uint8_t inputTypes[inputCnt] = {
     INPUT_PULLUP
 };
 
-
-enum relays {
-    door,
-    uv,
-    rel_3,
-    rel_4,
-    rel_5,
-    rel_6,
-    RFID_TX_1,
-    RFID_TX_2
+int intputArray[inputCnt] = {
+    room1Light,             // red
+    failedBootTrigger,      // black  
+    bootupTrigger,          // Green
+    reedDoor,               // white    
 };
 
+int outputArray[outputCnt] = {
+    isSeperation_pin,
+    david_pin,
+    rachel_pin,
+    seperationEnd_pin
+};
+
+
+// -- relays
+enum relays {
+    door,
+};
 
 enum relayInits {
     doorInit = doorClosed,
-    uvInit = closed,
-    rel_3_init = closed,
-    rel_4_init = closed,
-    rel_5_init = closed,
-    rel_6_init = closed,
-    RFID_TX_1_init = closed,
-    RFID_TX_2_init = closed,
 };
-
 
 int relayPinArray[relayAmount] = {
     door, 
-    uv,
-    rel_3,
-    rel_4,
-    rel_5,
-    rel_6,
-    RFID_TX_1,
-    RFID_TX_2
 };
-
-
-// used to send binary signal to RPi to show identity presented
-int rfidTxPins[txRelayAmount] = {
-    RFID_TX_1,
-    RFID_TX_2
-};
-
 
 int relayInitArray[relayAmount] = {
     doorInit,
-    uvInit,
-    rel_3_init,
-    rel_4_init,
-    rel_5_init,
-    rel_6_init,
-    RFID_TX_1_init,
-    RFID_TX_2_init
 };
 
 
 enum stages {
     setupStage = 1, 
-    failedBoot = 2,     // trigger boot
-    operational = 4,    // trigger boot & connectionfixed
-    decon = 8,          // trigger decon
-    unlock = 16,
-    failedUnlock = 32,
-    unlocked = 64,
-    idle = 128
+    idle = 2, 
+    failedBoot = 4,     // trigger boot
+    successfulBoot = 8,    // trigger boot & connectionfixed
+    decon = 16,          // trigger decon
+    unlock = 32,
+    failedUnlock = 64,
+    unlocked = 128,
+    seperationUnlocked = 256,       // waiting for Auth on both sides to lock
+    seperationLocked = 512,         // waiting for Auth on one side to unlock
+    lightStart = 1024,
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -113,14 +115,17 @@ int stageSum = ~( ~0 << StageCount );
 // could have multiple brains listed here making up a matrix
 // for now its only an Access module mapped here
 int flagMapping[StageCount] {
-    0,
+    0,          // setupStage
+    0,          // idle
     0,          // failedBoot
-    0,          // operational
+    0,          // successfulBoot
     0,          // decon
     rfidFlag,   // unlock
     0,          // failedUnlock
-    0,          // unlocked
-    0           // idle
+    0,          // unlocked ... there is a cooldown on the access module so it should be fine to reactivate
+    rfidFlag,   // seperationUnlocked
+    rfidFlag,   // seperationLocked
+    0           // lightStart from "USB-Boot"
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -130,19 +135,22 @@ char passwords[PasswordAmount][MaxPassLen] = {
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    unlock,
-    unlock
+    unlock + seperationLocked + seperationUnlocked,
+    unlock + seperationLocked + seperationUnlocked
 };
 // make a mapping of what password goes to what stage
 
 
 char stageTexts[StageCount][headLineMaxSize] = {
-    "",
+    "",                     // setupStage
+    "",                     // idle 
     "Booting",              // failedBoot
-    "",                     // operational
+    "Booting",                     // successfulBoot
     "",                     // decon
     "Scan Arm",             // unlock
     "Timeout",              // failedUnlock
     "Access Granted",       // unlocked
-    ""
+    "Present To Lock",      // seperationUnlocked
+    "Present to Open"       // seperationLocked
+    ""                      // lightStart
 };
