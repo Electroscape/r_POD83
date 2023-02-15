@@ -191,6 +191,8 @@ def handle_pcf_input(input_pcf, value):
     # local version so we can have one PCF input potentially trigger multiple events
     temporary_cooldowns = set()
 
+    rejected = True
+
     for event_key, event_dict in event_map.items():
 
         try:
@@ -206,16 +208,20 @@ def handle_pcf_input(input_pcf, value):
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
                         temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
                         handle_event(event_key)
+                        rejected = False
             else:
                 if event_pcf_value & value == event_pcf_value:
                     # @TODO: consider simply using the eventkeys
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
                         temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
                         handle_event(event_key)
+                        rejected = False
 
         except KeyError:
             continue
 
+    if rejected:
+        print(f"\n\nInvalid PCF input\n PCFNo {input_pcf} value {value}\n\n")
     cooldowns.cooldowns.update(temporary_cooldowns)
 
 
@@ -237,16 +243,15 @@ def connect():
 
 def main():
     while True:
+        # blank_screen_pid.kill()
+        # handle_event("airlock_intro")
+        # handle_event("laserlock_bootdecon")
+        # handle_event("laserlock_fail")
+        # continue
+        # exit()
         if scan_for_usb():
             usb_boot()
-            # sio.emit("events", {"username": "tr1", "cmd": "auth", "message": "david"})
-            # handle_event("laserlock_bootdecon")
-            # handle_event("laserlock_cable_fixed")
-            # sleep(8)
         handle_pcf_inputs()
-        # handle_event("laserlock_bootdecon") # Schwarz
-        # handle_event("laserlock_fail") # Grün
-        # exit()
 
 
 if __name__ == '__main__':
