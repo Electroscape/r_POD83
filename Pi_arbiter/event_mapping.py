@@ -39,7 +39,7 @@ binary_pcfs = [airlock_input]
 
 def play_elancell_intro():
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
-                      "--no-embedded-video", "--fullscreen", '--no-video-title'])
+                      "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top'])
 
 # [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
 
