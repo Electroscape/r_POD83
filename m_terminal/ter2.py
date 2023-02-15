@@ -115,11 +115,18 @@ def events_handler(data):
         elancell_upload = msg
         print(f"elancell msg: {msg}")
     elif data.get("cmd") == "microscope":
-        microscope = f"PD_{msg}.png"
+        if msg != "0":
+            file_path = f"static/media/microscope/PD_{msg}.png"
+        else:
+            file_path = f"static/media/microscope/PD_{msg}.mp4"
+
+        microscope["show"] = file_path
         print(f"microscope msg: {msg}")
+        self_sio.emit('microscope_fe', microscope)
     elif data.get("cmd") == "mSwitch":
-        microscope = ""
-        print(f"microscope msg: {msg}")
+        # microscope["show"] = ""
+        microscope["status"] = msg
+        self_sio.emit('microscope_fe', microscope)
 
 
 @sio.on('samples')
@@ -146,7 +153,7 @@ print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores chat history max 100 msgs
 elancell_upload = "disable"
-microscope = ""  # which sample to show
+microscope = {"show": "0", "status": "on"}
 
 app.register_blueprint(app_pages)
 

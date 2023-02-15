@@ -10,6 +10,13 @@
             box-sizing: unset;
         }
 
+        .img-container {
+            background-color: aliceblue;
+            text-align: center;
+            margin: auto;
+            padding: 10px;
+        }
+
         .container {
             justify-content: center;
             align-items: center;
@@ -208,18 +215,58 @@
 {% block content %}
     <div class="container">
         <div class="tv">
-            <label>
-                <input type="checkbox" class="switch-input" checked>
-            </label>
+            <label style="position: absolute" for="switchCheck"></label>
+            <input id="switchCheck" type="checkbox" class="switch-input" checked>
             <div class="switch"></div>
-            <div class="video">
-                <video id="vid" autoplay="" muted="" loop="" width="100%" height="100%">
-                    <source id="mp4"
-                            src="{{ url_for('static', filename='media/microscope/microscopeReady.mp4') }}"
-                            type="video/mp4">
-                </video>
+            <div id="display-content">
+                <div class="video">
+                    <video id="vid" autoplay="" muted="" loop="" width="100%" height="100%">
+                        <source id="mp4"
+                                src="{{ url_for('static', filename='media/microscope/PD_on.mp4') }}"
+                                type="video/mp4">
+                    </video>
+                </div>
             </div>
             <div class="cover"></div>
         </div>
     </div>
+{% endblock %}
+
+{% block add_js %}
+    <script type="text/javascript">
+
+        function displayContent(path, status) {
+            let disContent = document.getElementById("display-content")
+            let txt = "";
+            if (path.endsWith(".mp4")) {
+                txt = `<div class="video">
+                    <video id="vid" autoplay="" muted="" loop="" width="100%" height="100%">
+                        <source id="mp4"
+                                src="${path}"
+                                type="video/mp4">
+                    </video>
+                </div>`;
+                disContent.innerHTML = txt;
+            } else if (path.endsWith(".png")) {
+                txt = `<div class="img-container">
+                            <img
+                            src="${path}"
+                            class="img-fluid"
+                            alt="${path}"
+                            style="max-height: 65vh"
+                            />
+                        </div>`
+                disContent.innerHTML = txt;
+            } else {
+                console.log("no content");
+            }
+
+            $("#switchCheck").prop('checked', status === "on");
+        }
+
+        socket.on('microscope_fe', function (data) {
+            console.log(data);
+            displayContent(data.show, data.status);
+        })
+    </script>
 {% endblock %}
