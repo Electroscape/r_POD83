@@ -30,6 +30,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
+    <!-- sweet alert -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
     <!-- import local files -->
     <link rel="stylesheet" href="{{ url_for('static',filename='css/home.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/floatChat.css') }}" media="screen">
@@ -100,12 +103,14 @@
                         auth: "success"
                     });
                     stopBootLoop = true;
-                    alert(`Hello ${msg.usr}! Welcome to the lab`)
+                    swal("Login", `Hello ${msg.usr}! Welcome to the lab`, "success").then(
+                        () => {
+                            setTimeout(() => {
+                                document.location.href = "/"
+                            }, 1500);
+                        });
                     toastr.success('Successful authentication');
-                    setTimeout(() => {
-                            document.location.href = "/"
-                        }
-                        , 1500);
+
                 {% else %}
                     loadControlPanel(msg.data)
                 {% endif %}

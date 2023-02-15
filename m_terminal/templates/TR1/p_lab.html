@@ -262,8 +262,10 @@
                 }
                 appendLine(`<p style="color: red"><strong>Failed to start the laser airlock..</strong></p>`);
 
-                alert("Error 432 - laser airlock interface not found - Please check connection and try again");
-                document.location.href = "/"
+                swal("Error 432", "laser airlock interface not found - Please check connection and try again", "error"
+                ).then(() => {
+                    document.location.href = "/";
+                })
             }
             await sleep(0);
 
@@ -359,8 +361,11 @@
             $.post("{{ url_for('lab_control') }}", {
                 auth: "failed"
             });
-            alert("Timeout! Authentication failed. Please try again!")
-            document.location.href = "/"
+            swal("Timeout!", "Authentication failed. Please try again!", "warning").then(function () {
+                /*code to execute after alert*/
+                document.location.href = "/";
+            });
+
         }
 
         /* resetCountDown function */
