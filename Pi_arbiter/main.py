@@ -30,6 +30,7 @@ IO = ArbiterIO()
     * 🔲 resettime as param
     * 🔲 designated PCFS as input or output
     * 🔲 make a fnc for checking if pin/binary value present in pcf value
+    * 🔲 make one event capable to trigger multiple outputs via PCF and sound
 '''
 
 sio = socketio.Client()
