@@ -16,7 +16,7 @@ unsigned long introDuration = 5000;
 unsigned long gateDuration = 22500;
 unsigned long runningLightDuration = 10000;
 // provide blinking and warning before the game moves on startup
-unsigned long gateWarningDelay = 5000;
+unsigned long gateWarningDelay = 4500;
 
 enum relays {
     beamerIntro,
@@ -87,7 +87,9 @@ enum IOEvents{
     doorClosed = 1,
     welcomeVideo,
     wrongCode,
-    deconAirlock,
+    uvEvent,
+    sterilisationEvent,
+    airlockOpeningEvent,
 };
 
 enum stages {

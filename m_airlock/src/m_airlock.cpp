@@ -46,7 +46,7 @@ void setStageIndex() {
     for (int i=0; i<StageCount; i++) {
         if (stage <= 1 << i) {
             stageIndex = i;
-            Serial.print("stageIndex:");
+            Serial.print(F("stageIndex:"));
             Serial.println(stageIndex);
             delay(1000);
             return;
@@ -331,13 +331,13 @@ void stageActions() {
         break;
         case intro: 
             wdt_disable();
-            Serial.println("running Into");
+            // Serial.println("running Into");
             Mother.motherRelay.digitalWrite(beamerIntro, open);
             MotherIO.setOuput(IOEvents::welcomeVideo);
             delay(1000);
             MotherIO.outputReset();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
-            delay(9000);
+            delay(39000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(beamerIntro, closed);
             //stage = decontamination;
@@ -347,9 +347,10 @@ void stageActions() {
         case sterilisation:
             // starting with a bright light than green blinking
             wdt_disable();
-            
+            MotherIO.setOuput(sterilisationEvent);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(10);
+            MotherIO.outputReset();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
             delay(400);
             LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,30,PWM::set1_2_3);
@@ -362,13 +363,19 @@ void stageActions() {
         break;
         case decontamination:
             Mother.motherRelay.digitalWrite(beamerDecon, open);
-            delay(3000);
+            delay(2950);
+            MotherIO.setOuput(uvEvent);
+            delay(50);
+            MotherIO.outputReset();
             uvSequence();
             Mother.motherRelay.digitalWrite(beamerDecon, closed);
             stage = airlockRequest;
         break;
         case airlockRequest: break;
         case airlockOpening:
+            MotherIO.setOuput(airlockOpeningEvent);
+            delay(500);
+            MotherIO.outputReset();
             wdt_disable();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             Mother.motherRelay.digitalWrite(alarm, open);
@@ -445,7 +452,7 @@ void setup() {
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
     MotherIO.ioInit(intputArray, sizeof(intputArray), outputArray, sizeof(outputArray));
 
-    Serial.println("WDT endabled");
+    // Serial.println("WDT endabled");
     wdt_enable(WDTO_8S);
 
     // technicall 2 but no need to poll the 2nd 
