@@ -475,6 +475,7 @@ void handleInputs() {
     if (stage != idle) { return; }
     lastStage = idle;
     int result = MotherIO.getInputs();
+    result -= result & (1 << reedDoor);
     switch (result) {
         case 1 << failedBootTrigger: 
             stage = failedBoot;
