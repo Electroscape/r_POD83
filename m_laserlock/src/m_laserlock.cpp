@@ -171,13 +171,13 @@ void checkDualRfid(int passNo) {
     if (stage == seperationUnlocked) {
         if (Mother.getPolledSlave() == 0) {
             switch (passNo) {
-                case 0: MotherIO.setOuput(david + isSeperation);
-                case 1: MotherIO.setOuput(rachel + isSeperation);
+                case 0: MotherIO.setOuput(david + isSeperation); break;
+                case 1: MotherIO.setOuput(rachel + isSeperation); break;
             }
         } else {
             switch (passNo) {
-                case 0: MotherIO.setOuput(rachel + isSeperation);
-                case 1: MotherIO.setOuput(david + isSeperation);
+                case 0: MotherIO.setOuput(rachel + isSeperation); break;
+                case 1: MotherIO.setOuput(david + isSeperation); break;
             }
         }
     }
@@ -399,8 +399,8 @@ void stageActions() {
             cardsPresent = 0;
             Mother.motherRelay.digitalWrite(door, doorClosed);
             MotherIO.setOuput(seperationEnd);
-            // delay(rfidTxDuration);
-            // MotherIO.outputReset();
+            delay(50);
+            MotherIO.outputReset();
         break;
         case lightStart:
             LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 20, lightStartDuration,  PWM::set1 + PWM::set2);
@@ -436,6 +436,7 @@ void stageUpdate() {
         Mother.setFlags(brainNo, flagMapping[stageIndex]);
         oledUpdate(brainNo);
     }
+    MotherIO.outputReset();
     stageActions();
 }
 
