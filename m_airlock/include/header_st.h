@@ -31,7 +31,8 @@ enum relays {
 };
 
 enum relayInits {
-    beamer_init = closed,
+    beamer_init = open,
+    beamerDecon_init = closed,
     gate_pwr_init = closed,
     gate_direction_init = gateUp,
     alarm_init = closed,
@@ -51,7 +52,7 @@ int relayPinArray[relayAmount] = {
 
 int relayInitArray[relayAmount] = {
     beamer_init,
-    beamer_init,
+    beamerDecon_init,
     gate_pwr_init,
     gate_direction_init,
     alarm_init,

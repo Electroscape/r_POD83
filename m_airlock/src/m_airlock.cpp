@@ -332,7 +332,7 @@ void stageActions() {
         case intro: 
             wdt_disable();
             // Serial.println("running Into");
-            Mother.motherRelay.digitalWrite(beamerIntro, open);
+            // Mother.motherRelay.digitalWrite(beamerIntro, open);
             MotherIO.setOuput(IOEvents::welcomeVideo);
             delay(1000);
             MotherIO.outputReset();
