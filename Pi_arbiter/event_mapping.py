@@ -53,6 +53,14 @@ event_map = {
             sound_id: 0
         }
     },
+    "airlock_begin_atmo": {
+        pcf_in_add: airlock_input,
+        pcf_in: 1,
+        sound: {
+            is_fx: False,
+            sound_id: 0
+        }
+    },
     "airlock_intro": {
         pcf_in_add: airlock_input,
         pcf_in: 2,
@@ -65,13 +73,13 @@ event_map = {
     },
     "airlock_sterilisation": {
         pcf_in_add: airlock_input,
-        # pcf_in: 1,
+        # pcf_in: 5,
         sound: {
             is_fx: True,
             sound_id: 8
         }
     },
-    "airlock_decon": {
+    "airlock_UV": {
         pcf_in_add: airlock_input,
         pcf_in: 4,
         sound: {
@@ -83,6 +91,14 @@ event_map = {
         pcf_in: 3,
         sound: {
             is_fx: True,
+            sound_id: 1
+        }
+    },
+    "airlock_opening": {
+        pcf_in_add: airlock_input,
+        pcf_in: 6,
+        sound: {
+            is_fx: False,
             sound_id: 1
         }
     },
