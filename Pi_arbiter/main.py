@@ -12,6 +12,7 @@ from ArbiterIO import ArbiterIO, CooldownHandler
 # standard Python would be python-socketIo
 from time import sleep, thread_time
 from subprocess import Popen
+from communication.TESocketServer import TESocketServer
 
 IO = ArbiterIO()
 
@@ -84,6 +85,8 @@ def disconnect():
 def usb_boot():
     sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "boot"})
     handle_event("usb_boot")
+    # maybe move this to the dict and handleevent
+    nw_sock.transmit("usb_boot")
     global usb_booted
     usb_booted = True
 
@@ -261,6 +264,9 @@ if __name__ == '__main__':
     handle_event("reset_atmo")
     blank_screen_pid = Popen(["cvlc", "media/black_screen.jpg", "--no-embedded-video", "--fullscreen",
                              "--no-video-title", "--video-wallpaper"])
+    # used to trigger rpis via regular network for videos
+    nw_sock = TESocketServer(12345)
+
     try:
         main()
     except KeyboardInterrupt:
