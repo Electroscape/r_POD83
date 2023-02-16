@@ -1,5 +1,8 @@
+#!/bin/bash 
+
 from socket_client import SocketClient
 from subprocess import Popen
+from time import sleep
 
 
 sock = SocketClient('raspi-4-pod-arbiter', 12345)
@@ -7,10 +10,15 @@ video_dict = {
     "usb_boot": "welcome.mp4"
 }
 
+
+def start_backgroound():
+    return Popen(["cvlc", "black_screen.jpg", "--no-embedded-video", "--fullscreen", "--no-video-title", "--video-wallpaper",
+           "--loop"])
+
 def main():
     video_proc = None
 
-    background = Popen(["cvlc", "black_screen.jpg", "--no-embedded-video", "--fullscreen", "--no-video-title", "--video-wallpaper"])
+    background = start_backgroound()
 
     while True:
         msg = sock.read_buffer()
@@ -22,9 +30,12 @@ def main():
             video_proc.kill()
         try:
             video_name = video_dict[msg]
+            background.kill()
             print(f"playing video {video_name}")
             video_proc = Popen(['cvlc', video_name,
                "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top'])
+            sleep(67)
+            background = start_backgroound()
         except KeyError:
             print(f"unknown key received {msg}")
 
