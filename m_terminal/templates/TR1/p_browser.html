@@ -16,13 +16,13 @@
             {% for folder, posts in folders.items() %}
                 <div class="accordion-item bg-transparent">
                     <h2 class="accordion-header bg-transparent" id="headingOne">
-                        <button class="accordion-button bg-black" type="button" data-mdb-toggle="collapse"
+                        <button class="accordion-button bg-black collapsed" type="button" data-mdb-toggle="collapse"
                                 data-mdb-target="#dir-{{ folder.replace(" ", "") }}" aria-expanded="false"
                                 aria-controls="dir-{{ folder.replace(" ", "") }}">
                             <span><i class="fa-solid fa-folder"></i> {{ folder }} </span>
                         </button>
                     </h2>
-                    <div id="dir-{{ folder.replace(" ", "") }}" class="accordion-collapse collapse show"
+                    <div id="dir-{{ folder.replace(" ", "") }}" class="accordion-collapse collapse"
                          aria-labelledby="headingOne">
                         <div class="accordion-body">
                             <div class="row">
