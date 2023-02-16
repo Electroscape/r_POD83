@@ -206,19 +206,17 @@ def handle_pcf_input(input_pcf, value):
             # checks if all pins to form the value of that event are present on the inputs
             # this way its possible mix and match multiple inputs as single pin inputs and binary
             if input_pcf in binary_pcfs:
-                if event_pcf_value == value:
+                if event_pcf_value & value == value:
                     # @TODO: consider simply using the eventkeys
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
                         temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
                         handle_event(event_key)
-                        rejected = False
             else:
                 if event_pcf_value & value == event_pcf_value:
                     # @TODO: consider simply using the eventkeys
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
                         temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
                         handle_event(event_key)
-                        rejected = False
 
         except KeyError:
             continue
