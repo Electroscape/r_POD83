@@ -86,6 +86,8 @@ def usb_boot():
     sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "boot"})
     handle_event("usb_boot")
     # maybe move this to the dict and handleevent
+    sleep(20)
+    print("sending usb_boot video trigger")
     nw_sock.transmit("usb_boot")
     global usb_booted
     usb_booted = True
@@ -206,17 +208,19 @@ def handle_pcf_input(input_pcf, value):
             # checks if all pins to form the value of that event are present on the inputs
             # this way its possible mix and match multiple inputs as single pin inputs and binary
             if input_pcf in binary_pcfs:
-                if event_pcf_value & value == value:
+                if event_pcf_value == value:
                     # @TODO: consider simply using the eventkeys
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
                         temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
                         handle_event(event_key)
+                        rejected = False
             else:
                 if event_pcf_value & value == event_pcf_value:
                     # @TODO: consider simply using the eventkeys
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
                         temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
                         handle_event(event_key)
+                        rejected = False
 
         except KeyError:
             continue
@@ -264,6 +268,8 @@ if __name__ == '__main__':
                              "--no-video-title", "--video-wallpaper"])
     # used to trigger rpis via regular network for videos
     nw_sock = TESocketServer(12345)
+
+    print("\n\n=== Arbiter setup complete! ===\n\n")
 
     try:
         main()
