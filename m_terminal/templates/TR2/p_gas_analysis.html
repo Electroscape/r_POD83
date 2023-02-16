@@ -127,7 +127,7 @@
             shadowTxt.classList.remove("d-none");
             shadow.hidden = false;
             shadow.style.backgroundColor = "grey";
-            shadow.style.opacity = 0.5;
+            shadow.style.opacity = 0.9;
         }
 
         function releasedSeq(index) {
@@ -180,6 +180,7 @@
             <script src="{{ url_for('static',filename='js/g_analysis_brands.js') }}">
             </script>
             <script src="{{ url_for('static',filename='js/gas_analysis_game.js') }}">
+            </script><script src="{{ url_for('static',filename='js/puzzleGame.js') }}">
             </script>
             {% for sample in g_config.samples %}
                 <div id="option{{ loop.index0 }}" class="option {% if loop.index0 == 0 %}
@@ -198,7 +199,7 @@
                                 {% include "dragDropGame.html" %}
                             {% endwith %}
                         {% elif "img" in sample %}
-                            {% with image_path=sample.img, gameID=loop.index0 %}
+                            {% with image_path=sample.img, gameID=loop.index0, status=sample.status %}
                                 {% include "puzzleGame.html" %}
                             {% endwith %}
                         {% endif %}

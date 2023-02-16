@@ -363,6 +363,7 @@
     position: absolute;
     right: 0;
     height: 40px;
+    z-index: 900;
     transition: 0.5s cubic-bezier(0.05, 0.61, 0.41, 0.95);
 }
 
