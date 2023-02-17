@@ -77,6 +77,17 @@
                 message: msg
             })
         }
+
+        function onClickTrigger(cmd_msg) {
+            let [cmd, msg] = cmd_msg.split("_");
+            // send to backend on "triggers" channel
+            socket.emit("triggers", {
+                username: "arb",
+                cmd: cmd,
+                message: msg
+            })
+        }
+
     </script>
 {% endblock %}
 
@@ -176,11 +187,15 @@
         </div>
 
         <div>
-            reset samples:
+            reset:
             <div class="switch-toggle switch-candy">
                 <input id="ser_reset" name="server_reset" type="radio" value="reset" checked="checked"
                        onclick="onClickTerminal(name)"/>
-                <label for="ser_reset">Reset</label>
+                <label for="ser_reset">samples</label>
+
+                <input id="ser_resetAll" name="server_reset" type="radio" value="resetAll"
+                       onclick="onClickTerminal(name)"/>
+                <label for="ser_resetAll">all</label>
             </div>
         </div>
     </div>
@@ -202,6 +217,19 @@
         </label>
         <input type="submit" value="Send">
     </form>
+    <br>
+    <h3>Triggers</h3>
+    <div class="outer">
+        <button class="btn btn-outline-light" name="airlock_access" onclick="onClickTrigger(name)">Airlock Access
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_0 wrong" onclick="onClickTrigger(name)">Dispense Wrong
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_0 correct" onclick="onClickTrigger(name)">Dispense
+            Correct
+        </button>
+        <button class="btn btn-outline-light" name="cmd_message" onclick="onClickTrigger(name)">Example</button>
+    </div>
+
 {% endblock %}
 
 {% block add_js %}

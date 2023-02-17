@@ -143,18 +143,46 @@ def handle_received_messages(json_msg):
     frontend_server_messages(json_msg)
 
 
+@sio.on('triggers')
+def override_triggers(msg):
+    # Display message on frontend chatbox
+    frontend_server_messages(msg)
+    # print in console for debugging
+    print(f"msg to arb pi: sio.on('trigger', {str(msg)})")
+    # emit message on "trigger" channel for the arb RPi
+    # Therefore listener on the arb Pi is @sio.on("trigger")
+    sio.emit("trigger", msg)
+
+
 @sio.on('events')
 def events_handler(msg):
+    global login_users
     # Filter messages to server
     if msg.get("username") == "server":
+        global samples
         if msg.get("cmd") == "reset":
-            global samples
             samples = read_json("json/samples.json")
             sio.emit("samples", samples)
+            if msg.get("message") == "resetAll":
+                print("Server: Reset all")
+                # reset global variables
+                login_users = {
+                    "tr1": "empty",
+                    "tr2": "empty"
+                }
+                # emit default state messages to terminals
+                sio.emit("samples", samples)
+                sio.emit("events", {"username": "tr1", "cmd": "auth", "message": "empty"})
+                sio.emit("events", {"username": "tr2", "cmd": "auth", "message": "empty"})
+                sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
+                sio.emit("events", {"username": "tr1", "cmd": "airlock", "message": "broken"})
+                sio.emit("events", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
+                sio.emit("events", {"username": "tr2", "cmd": "elancell", "message": "disable"})
+                sio.emit("events", {"username": "tr2", "cmd": "microscope", "message": "0"})
+
     else:
         # Filters commands
         if msg.get("cmd") == "auth":
-            global login_users
             login_users[msg.get("username")] = msg.get("message")
 
         sio.emit("to_clients", msg)
