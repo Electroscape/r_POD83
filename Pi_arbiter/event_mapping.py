@@ -27,9 +27,9 @@ fe_cb_msg = "msg"
 event_script = "script"
 
 laserlock_io_isSeperation = 1 << 7
-laserlock_io_david = 1 << 6
-laserlock_io_rachel = 1 << 5
-laserlock_io_seperationEnd = 1 << 4
+laserlock_io_david = 5
+laserlock_io_rachel = 3
+laserlock_io_seperationEnd = 8
 laserlock_input = 4
 
 airlock_input = 5
@@ -47,6 +47,8 @@ def play_elancell_intro():
 
 event_map = {
     "airlock_begin": {
+        trigger_cmd: "airlock",
+        trigger_msg: "begin",
         pcf_in_add: airlock_input,
         pcf_in: 1,
         sound: {
@@ -55,6 +57,8 @@ event_map = {
         }
     },
     "airlock_begin_atmo": {
+        trigger_cmd: "airlock",
+        trigger_msg: "begin",
         pcf_in_add: airlock_input,
         pcf_in: 1,
         sound: {
@@ -63,6 +67,8 @@ event_map = {
         }
     },
     "airlock_intro": {
+        trigger_cmd: "airlock",
+        trigger_msg: "intro",
         pcf_in_add: airlock_input,
         pcf_in: 2,
         event_script: play_elancell_intro,
@@ -81,6 +87,8 @@ event_map = {
         }
     },
     "airlock_UV": {
+        trigger_cmd: "airlock",
+        trigger_msg: "UV",
         pcf_in_add: airlock_input,
         pcf_in: 4,
         sound: {
@@ -88,6 +96,8 @@ event_map = {
         }
     },
     "airlock_wrong": {
+        trigger_cmd: "airlock",
+        trigger_msg: "wrong",
         pcf_in_add: airlock_input,
         pcf_in: 3,
         sound: {
@@ -104,6 +114,8 @@ event_map = {
         }
     },
     "usb_boot": {
+        trigger_cmd: "usb",
+        trigger_msg: "boot",
         pcf_out_add: 0,
         pcf_out: 1 << 0,
         sound: {
