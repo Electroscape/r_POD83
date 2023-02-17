@@ -41,6 +41,7 @@ def play_elancell_intro():
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
                       "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top'])
 
+# these are the pcf addresses, first 3 are input last 3 are outputs
 # [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
 
 
