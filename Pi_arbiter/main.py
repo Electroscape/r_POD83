@@ -225,7 +225,7 @@ def handle_pcf_input(input_pcf, value):
         except KeyError:
             continue
 
-    if rejected:
+    if rejected and False:
         print(f"\n\nInvalid PCF input\n PCFNo {input_pcf} value {value}\n\n")
     cooldowns.cooldowns.update(temporary_cooldowns)
 
@@ -264,8 +264,8 @@ if __name__ == '__main__':
     connected = connect()
     # otherwise calling an already running atmo does not work
     handle_event("reset_atmo")
-    blank_screen_pid = Popen(["cvlc", "media/black_screen.jpg", "--no-embedded-video", "--fullscreen",
-                             "--no-video-title", "--video-wallpaper"])
+    # blank_screen_pid = Popen(["cvlc", "media/black_screen.jpg", "--no-embedded-video", "--fullscreen",
+    #                         "--no-video-title", "--video-wallpaper"])
     # used to trigger rpis via regular network for videos
     nw_sock = TESocketServer(12345)
 
