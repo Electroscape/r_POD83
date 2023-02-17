@@ -16,7 +16,7 @@ unsigned long introDuration = 5000;
 unsigned long gateDuration = 22500;
 unsigned long runningLightDuration = 10000;
 // provide blinking and warning before the game moves on startup
-unsigned long gateWarningDelay = 5000;
+unsigned long gateWarningDelay = 4500;
 
 enum relays {
     beamerIntro,
@@ -31,7 +31,8 @@ enum relays {
 };
 
 enum relayInits {
-    beamer_init = closed,
+    beamer_init = open,
+    beamerDecon_init = closed,
     gate_pwr_init = closed,
     gate_direction_init = gateUp,
     alarm_init = closed,
@@ -51,7 +52,7 @@ int relayPinArray[relayAmount] = {
 
 int relayInitArray[relayAmount] = {
     beamer_init,
-    beamer_init,
+    beamerDecon_init,
     gate_pwr_init,
     gate_direction_init,
     alarm_init,
@@ -87,7 +88,9 @@ enum IOEvents{
     doorClosed = 1,
     welcomeVideo,
     wrongCode,
-    deconAirlock,
+    uvEvent,
+    sterilisationEvent,
+    airlockOpeningEvent,
 };
 
 enum stages {
