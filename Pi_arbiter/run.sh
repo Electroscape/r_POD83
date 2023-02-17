@@ -6,7 +6,7 @@ pkill vlc
 
 export DISPLAY=:0.0
 # sudo fbi -T 1 -a media/black_screen.jpg &
-# cvlc media/black_screen.jpg --no-embedded-video --fullscreen --no-video-title --video-wallpaper 2> /dev/null &
+cvlc media/black_screen.jpg --no-embedded-video --fullscreen --no-video-title --video-wallpaper --loop 2> /dev/null &
 
 # sleep 5
 
