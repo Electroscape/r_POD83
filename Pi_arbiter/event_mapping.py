@@ -76,7 +76,7 @@ event_map = {
         # this is the sound to go along with teh video
         sound: {
             is_fx: True,
-            sound_id: 7
+            sound_id: 24
         }
     },
     "airlock_sterilisation": {
