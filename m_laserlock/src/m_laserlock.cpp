@@ -157,10 +157,22 @@ void checkDualRfid(int passNo) {
     switch (stage) {
         case seperationUnlocked: 
             Mother.motherRelay.digitalWrite(door, doorClosed); 
+            if (Mother.getPolledSlave() == 0) {
+                switch (passNo) {
+                    case 0: MotherIO.setOuput(david + isSeperation); break;
+                    case 1: MotherIO.setOuput(rachel + isSeperation); break;
+                }
+            } else {
+                switch (passNo) {
+                    case 0: MotherIO.setOuput(rachel + isSeperation); break;
+                    case 1: MotherIO.setOuput(david + isSeperation); break;
+                }
+            }
             stage = seperationLocked; 
         break;
         case seperationLocked:
             Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
+            MotherIO.setOuput(seperationEnd);
             stage = seperationUnlocked;
         break;
     }
@@ -168,25 +180,11 @@ void checkDualRfid(int passNo) {
     sendResult(true, 0);
     sendResult(true, 1);
 
-    if (stage == seperationUnlocked) {
-        if (Mother.getPolledSlave() == 0) {
-            switch (passNo) {
-                case 0: MotherIO.setOuput(david + isSeperation); break;
-                case 1: MotherIO.setOuput(rachel + isSeperation); break;
-            }
-        } else {
-            switch (passNo) {
-                case 0: MotherIO.setOuput(rachel + isSeperation); break;
-                case 1: MotherIO.setOuput(david + isSeperation); break;
-            }
-        }
-    }
-
- 
     wdt_reset();
-    delay(5000);
-    wdt_reset();
+    delay(500);
     MotherIO.outputReset();
+    delay(4500);
+    wdt_reset();
 }
 
 
@@ -398,9 +396,7 @@ void stageActions() {
         case seperationLocked:
             cardsPresent = 0;
             Mother.motherRelay.digitalWrite(door, doorClosed);
-            MotherIO.setOuput(seperationEnd);
-            delay(50);
-            MotherIO.outputReset();
+            // MotherIO.setOuput(seperationEnd);
         break;
         case lightStart:
             LED_CMDS::fade2color(Mother, ledCeilBrain, clrLight, 0, clrLight, 20, lightStartDuration,  PWM::set1 + PWM::set2);
