@@ -26,18 +26,19 @@ fe_cb_msg = "msg"
 
 event_script = "script"
 
-laserlock_io_isSeperation = 1 << 7
-laserlock_io_david = 5
-laserlock_io_rachel = 3
-laserlock_io_seperationEnd = 8
+laserlock_io_isSeperation = 16
+laserlock_io_david = 32
+laserlock_io_rachel = 64
+laserlock_io_seperationEnd = 128
 laserlock_input = 4
 
 airlock_input = 5
 
-binary_pcfs = [airlock_input]
+binary_pcfs = [airlock_input, laserlock_input]
 
 
 def play_elancell_intro():
+    # subprocess.call(['pkill -f', "vlc"])
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
                       "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top'])
 
@@ -177,13 +178,13 @@ event_map = {
         pcf_in: laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
             fe_cb_cmd: "auth",
-            fe_cb_tgt: "tr2",
+            fe_cb_tgt: "tr1",
             fe_cb_msg: "david"
         }
     },
     "laserlock_auth_tr2_rachel": {
         pcf_in_add: laserlock_input,
-        pcf_in: laserlock_io_isSeperation + laserlock_io_david,
+        pcf_in:  laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
