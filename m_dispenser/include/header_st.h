@@ -21,14 +21,14 @@ enum relays {
 };
 
 enum relayInits {
-    Relay1_init = closed,
-    Relay2_init = closed,
-    Relay3_init = closed,
-    Relay4_init = closed, 
+    Relay1_init = open,
+    Relay2_init = open,
+    Relay3_init = open,
+    Relay4_init = open, 
     Relay5_init = open, 
     Relay6_init = closed,  
     Relay7_init = closed,  
-    Relay8_init = open, 
+    Relay8_init = closed, 
 };
 
 int relayPinArray[relayAmount] = {
@@ -39,7 +39,7 @@ int relayPinArray[relayAmount] = {
     Relay5,
     Relay6,
     Relay7,
-    Relay8
+    Relay8,
 };
 
 int relayInitArray[relayAmount] = {

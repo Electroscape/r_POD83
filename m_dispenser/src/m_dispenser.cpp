@@ -17,6 +17,7 @@
 
 #include <stb_mother.h>
 #include <stb_mother_ledCmds.h>
+//#include <stb_mother_IO.h>
 
 
 #include "header_st.h"
@@ -25,6 +26,7 @@
 PCF8574 inputPCF;
 STB_MOTHER Mother;
 
+//STB_MOTHER_IO MotherIO;
 
 
 
@@ -35,6 +37,7 @@ void setup() {
     // starts serial and default oled
     Mother.begin();
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
+   // MotherIO.ioInit(relayPinArray, relayInitArray, relayAmount);
 
     Serial.println("WDT endabled");
     //wdt_enable(WDTO_8S);
@@ -45,20 +48,39 @@ void setup() {
 
 
 void loop() {
-    
-    Mother.motherRelay.digitalWrite(Relay8, closed);
-    delay(100);
-    Mother.motherRelay.digitalWrite(Relay8, open);
 
-    delay(8000);
-    Mother.motherRelay.digitalWrite(Relay8, closed);
+    // Für Zwei Minuten Blubbern ohne Förderband
+    Mother.motherRelay.digitalWrite(Relay1, closed);
+    Mother.motherRelay.digitalWrite(Relay2, closed);
+    Mother.motherRelay.digitalWrite(Relay3, closed);
+    Mother.motherRelay.digitalWrite(Relay4, closed);
+    Mother.motherRelay.digitalWrite(Relay5, closed);
+    Mother.motherRelay.digitalWrite(Relay8, open);
+    delay(120000); // 2min Blubbern
+
+    // Säule Nummer 2 aus und dann Förderband in eine Richtung
+    Mother.motherRelay.digitalWrite(Relay2, open);
+    Mother.motherRelay.digitalWrite(Relay7, closed);
+    Mother.motherRelay.digitalWrite(Relay6, closed);
     delay(100);
+    Mother.motherRelay.digitalWrite(Relay8, closed);
+    delay(45000); // 45s Förderband
+    
+
+    // Für Zwei Minuten Blubbern ohne Förderband
+    Mother.motherRelay.digitalWrite(Relay8, open);
+    Mother.motherRelay.digitalWrite(Relay2, open);
+    delay(120000); // 2min Blubbern 
+
+    // Säule Nummer 2 aus und dann Förderband in die andere Richtung
+    Mother.motherRelay.digitalWrite(Relay2, open);
     Mother.motherRelay.digitalWrite(Relay7, open);
     Mother.motherRelay.digitalWrite(Relay6, open);
     delay(100);
-    Mother.motherRelay.digitalWrite(Relay8, open);
+    Mother.motherRelay.digitalWrite(Relay8, closed);
+    delay(45000); // 45s Förderband
 
-    delay(5000);
+    
 
 
     //wdt_reset();
