@@ -170,10 +170,12 @@ event_map = {
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
-            fe_cb_msg: "david"
+            fe_cb_msg: "rachel"
         }
     },
     "laserlock_auth_tr1_david": {
+        trigger_cmd: "ter1",
+        trigger_msg: "david",
         pcf_in_add: laserlock_input,
         pcf_in: laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
@@ -183,6 +185,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr2_rachel": {
+        trigger_cmd: "ter2",
+        trigger_msg: "rachel",
         pcf_in_add: laserlock_input,
         pcf_in:  laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
@@ -192,6 +196,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr1_rachel": {
+        trigger_cmd: "ter1",
+        trigger_msg: "rachel",
         pcf_in_add: laserlock_input,
         pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
         fe_cb: {
@@ -201,6 +207,8 @@ event_map = {
         }
     },
     "laserlock_auth_tr2_david": {
+        trigger_cmd: "ter2",
+        trigger_msg: "david",
         pcf_in_add: laserlock_input,
         pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
         fe_cb: {
@@ -210,6 +218,8 @@ event_map = {
         }
     },
     "laserlock_lockout_tr1": {
+        trigger_cmd: "ter1",
+        trigger_msg: "empty",
         pcf_in_add: laserlock_input,
         pcf_in: laserlock_io_seperationEnd,
         fe_cb: {
@@ -219,6 +229,8 @@ event_map = {
         }
     },
     "laserlock_lockout_tr2": {
+        trigger_cmd: "ter1",
+        trigger_msg: "empty",
         pcf_in_add: laserlock_input,
         pcf_in: laserlock_io_seperationEnd,
         fe_cb: {
