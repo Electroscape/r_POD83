@@ -19,9 +19,24 @@ class ArbiterIO:
                 pcf_list[index].port[pin] = True
         return pcf_list
 
+    def pcf_has_input(self, pcf):
+        sleep(0.01)
+        for pin_index in range(0, 8):
+            pin = 7 - pin_index
+            try:
+                ret = bool(pcf.port[pin])
+                if not ret:
+                    return True
+            except IOError:
+                pass
+                # print(f"error reading PCF {pcf_index}")
+        return False
+
     def read_pcf(self, pcf_index):
         pcf = self.pcfs[pcf_index]
         result = 0
+        if not self.pcf_has_input(pcf):
+            return result
         for pin_index in range(0, 8):
             pin = 7 - pin_index
             try:
@@ -31,19 +46,6 @@ class ArbiterIO:
             except IOError:
                 print(f"error reading PCF {pcf_index}")
         return result
-
-    # since we may pickup the inputs before all pins got switched, adding a small delay
-    def detect_inputs(self, pcf_index):
-        pcf = self.pcfs[pcf_index]
-        for pin_index in range(0, 8):
-            pin = 7 - pin_index
-            try:
-                ret = bool(pcf.port[pin])
-                if not ret:
-                    sleep(5 / 1000)
-                    return self.read_pcf(pcf_index)
-            except IOError:
-                print(f"error reading PCF {pcf_index}")
 
     def write_pcf(self, pcf_index, value):
         for pin in range(0, 8):
