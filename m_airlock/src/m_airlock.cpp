@@ -37,6 +37,7 @@ int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 bool repeatDecontamination = false;
+int firstRun = 1;
 
 /**
  * @brief Set the Stage Index object
@@ -276,6 +277,8 @@ void waitForGameStart() {
     LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,1);
     LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,2);
     LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrRed,30,3000,4);
+    delay(3000);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
     
     MotherIO.setOuput(IOEvents::doorClosed);
     wdt_enable(WDTO_8S);
@@ -338,13 +341,15 @@ void stageActions() {
             MotherIO.outputReset();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(39000);
+            //delay(5000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(beamerIntro, closed);
-            //stage = decontamination;
-            stage = sterilisation; // One time sterilisation
+            //stage = sterilisation;// One time sterilisation
+            stage = fumigation; // One time sterilisation
         break;
         // have to check if need some sort of synchronisation ... or have a bit of padding in the decontimnation video
-        case sterilisation:
+        // Decontamination besteht aus Fumigation (weiß) - Sterilization(blau) - Biometric scan(grün)
+        case sterilisation: 
             // starting with a bright light than green blinking
             wdt_disable();
             MotherIO.setOuput(sterilisationEvent);
@@ -361,7 +366,7 @@ void stageActions() {
             stage = decontamination;
 
         break;
-        case decontamination:
+        case decontamination: 
             Mother.motherRelay.digitalWrite(beamerDecon, open);
             delay(2950);
             MotherIO.setOuput(uvEvent);
@@ -371,6 +376,118 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(beamerDecon, closed);
             stage = airlockRequest;
         break;
+
+        case fumigation: //Fumigation
+            // starting with a bright light than green blinking
+            wdt_disable();    
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
+            delay(800);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 50);
+            delay(200);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 75);
+            delay(200);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            delay(1000);   
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
+            delay(800);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 50);
+            delay(200);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 75);
+            delay(200);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            delay(1000);   
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
+            delay(800);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 50);
+            delay(200);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 75);
+            delay(200);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(50);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            delay(1000);   
+
+            /* LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(500); */
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrGreen,30,1000,PWM::set1_2_3);
+            delay(1200);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
+            delay(5000);
+
+            wdt_enable(WDTO_8S);
+            stage = sterilization;
+
+        break;
+        case sterilization:
+            Mother.motherRelay.digitalWrite(beamerDecon, open);
+            delay(3000);
+            uvSequence();
+            Mother.motherRelay.digitalWrite(beamerDecon, closed);
+            if (firstRun == 1){
+                stage = BiometricScan;
+            }
+            else{
+                stage = airlockRequest;
+            }
+
+        break;
+        case BiometricScan:
+            wdt_disable();            
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(10);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
+            delay(400);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,30,PWM::set1_2_3);
+            delay(3100);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+            delay(250);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
+            wdt_enable(WDTO_8S);
+            stage = airlockRequest;
+        break;
+        
         case airlockRequest: break;
         case airlockOpening:
             MotherIO.setOuput(airlockOpeningEvent);

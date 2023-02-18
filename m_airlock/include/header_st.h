@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 11
+#define StageCount 14
 #define PasswordAmount 6
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
@@ -13,7 +13,7 @@
 
 unsigned long introDuration = 5000;
 // duration of the operation of the gate
-unsigned long gateDuration = 22500;
+unsigned long gateDuration = 30000;
 unsigned long runningLightDuration = 10000;
 // provide blinking and warning before the game moves on startup
 unsigned long gateWarningDelay = 4500;
@@ -108,8 +108,10 @@ enum stages {
     idle = 256, 
     airlockFailed = 512,
     sterilisation = 1024,
+    fumigation = 2048,
+    sterilization = 4096,
+    BiometricScan = 8192,
 };
-
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
 
@@ -126,7 +128,10 @@ int flagMapping[StageCount] {
     0,
     0,
     0,
-    0
+    0,
+    rfidFlag,
+    rfidFlag,
+    rfidFlag,
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -153,5 +158,6 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Caution",
     "",
     "Access denied",
-    "Sterilisation"
+    "Sterilisation",
+    "Fumigation"
 };
