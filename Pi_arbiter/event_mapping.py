@@ -209,9 +209,23 @@ event_map = {
             fe_cb_msg: "david"
         }
     },
-    "laserlock_lockout": {
+    "laserlock_lockout_tr1": {
         pcf_in_add: laserlock_input,
-        pcf_in: laserlock_io_seperationEnd
+        pcf_in: laserlock_io_seperationEnd,
+        fe_cb: {
+            fe_cb_cmd: "auth",
+            fe_cb_tgt: "tr1",
+            fe_cb_msg: "empty"
+        }
+    },
+    "laserlock_lockout_tr2": {
+        pcf_in_add: laserlock_input,
+        pcf_in: laserlock_io_seperationEnd,
+        fe_cb: {
+            fe_cb_cmd: "auth",
+            fe_cb_tgt: "tr2",
+            fe_cb_msg: "empty"
+        }
     },
     "reset_atmo": {
         sound: {
