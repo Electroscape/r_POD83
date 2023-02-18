@@ -24,7 +24,8 @@ unsigned long rfidTimeout = 3000;
 unsigned long lightStartDuration = 20000;
 
 // FL lamps shall be some industrial reddish light 
-static constexpr int clrLight[3] = {255,200,120};
+//static constexpr int clrLight[3] = {255,200,120};
+static constexpr int clrLight[3] = {255,200,30};
 
 enum brains {
     airlockAccess,      // access module on the outside
