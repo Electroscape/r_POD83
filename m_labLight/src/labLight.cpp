@@ -66,6 +66,11 @@ void handleInputs() {
         break;
         case lightRedBright:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+        case lightBlue:
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 20);
+        break;
+        case lightBlueBright:
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 50);
         break;
         default: break;
     }
