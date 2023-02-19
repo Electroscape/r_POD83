@@ -81,7 +81,7 @@ event_map = {
     },
     "airlock_sterilisation": {
         pcf_in_add: airlock_input,
-        # pcf_in: 5,
+        pcf_in: 5,
         sound: {
             is_fx: True,
             sound_id: 8
@@ -177,7 +177,7 @@ event_map = {
         trigger_cmd: "ter1",
         trigger_msg: "david",
         pcf_in_add: laserlock_input,
-        pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
+        pcf_in: laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -188,7 +188,7 @@ event_map = {
         trigger_cmd: "ter2",
         trigger_msg: "rachel",
         pcf_in_add: laserlock_input,
-        pcf_in:  laserlock_io_isSeperation + laserlock_io_rachel,
+        pcf_in:  laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -199,7 +199,7 @@ event_map = {
         trigger_cmd: "ter1",
         trigger_msg: "rachel",
         pcf_in_add: laserlock_input,
-        pcf_in: laserlock_io_isSeperation + laserlock_io_david,
+        pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -210,7 +210,7 @@ event_map = {
         trigger_cmd: "ter2",
         trigger_msg: "david",
         pcf_in_add: laserlock_input,
-        pcf_in: laserlock_io_isSeperation + laserlock_io_david,
+        pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",

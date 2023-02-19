@@ -128,6 +128,7 @@ def handle_event(event_key, event_value=None):
         value = event_value[pcf_out]
         print(f"setting output: PCF={pcf_no} Value={value}")
         IO.write_pcf(pcf_no, value)
+        print("sleeping... ")
         sleep(3)
         IO.write_pcf(pcf_no, 0)
     except KeyError as err:
@@ -211,21 +212,21 @@ def handle_pcf_input(input_pcf, value):
                 if event_pcf_value == value:
                     # @TODO: consider simply using the eventkeys
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
-                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
+                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 3))
                         handle_event(event_key)
                         rejected = False
             else:
                 if event_pcf_value & value == event_pcf_value:
                     # @TODO: consider simply using the eventkeys
                     if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
-                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 5))
+                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 3))
                         handle_event(event_key)
                         rejected = False
 
         except KeyError:
             continue
 
-    if rejected and False:
+    if rejected and input_pcf == 4:
         print(f"\n\nInvalid PCF input\n PCFNo {input_pcf} value {value}\n\n")
     cooldowns.cooldowns.update(temporary_cooldowns)
 
