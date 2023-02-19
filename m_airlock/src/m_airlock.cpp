@@ -281,6 +281,7 @@ void waitForGameStart() {
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
     
     MotherIO.setOuput(IOEvents::doorClosed);
+    delay(50);
     wdt_enable(WDTO_8S);
 
     stage = preStage;

@@ -160,8 +160,9 @@ void checkDualRfid(int passNo) {
             delay(100);
             if (Mother.getPolledSlave() == 0) {
                 switch (passNo) {
-                    case 1: MotherIO.setOuput(david + isSeperation); break;
-                    case 0: MotherIO.setOuput(rachel + isSeperation); break;
+                    // either this case?
+                    case 0: MotherIO.setOuput(david + isSeperation); break;
+                    case 1: MotherIO.setOuput(rachel + isSeperation); break;
                 }
             } else {
                 switch (passNo) {
