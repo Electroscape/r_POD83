@@ -157,10 +157,11 @@ void checkDualRfid(int passNo) {
     switch (stage) {
         case seperationUnlocked: 
             Mother.motherRelay.digitalWrite(door, doorClosed); 
+            delay(100);
             if (Mother.getPolledSlave() == 0) {
                 switch (passNo) {
-                    case 0: MotherIO.setOuput(david + isSeperation); break;
-                    case 1: MotherIO.setOuput(rachel + isSeperation); break;
+                    case 1: MotherIO.setOuput(david + isSeperation); break;
+                    case 0: MotherIO.setOuput(rachel + isSeperation); break;
                 }
             } else {
                 switch (passNo) {
@@ -172,6 +173,7 @@ void checkDualRfid(int passNo) {
         break;
         case seperationLocked:
             Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
+            delay(100);
             MotherIO.setOuput(seperationEnd);
             stage = seperationUnlocked;
         break;
@@ -431,6 +433,7 @@ void stageUpdate() {
     for (int brainNo=0; brainNo < Mother.getSlaveCnt(); brainNo++) {
         Mother.setFlags(brainNo, flagMapping[stageIndex]);
         oledUpdate(brainNo);
+        delay(5);
     }
     MotherIO.outputReset();
     stageActions();
@@ -529,7 +532,8 @@ void loop() {
     timedTrigger();
     interpreter();
     handleInputs();    
-    stageUpdate();
+    stageUpdate(); 
+    delay(5);
     wdt_reset();
 }
 
