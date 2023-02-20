@@ -10,6 +10,9 @@ import json
 
 # Next two lines are for the issue: https://github.com/miguelgrinberg/python-engineio/issues/142
 from engineio.payload import Payload
+
+Payload.max_decode_packets = 200
+
 from ring_list import RingList
 
 chat_history = RingList(100)
@@ -46,7 +49,6 @@ login_users = {
     "tr1": "empty",
     "tr2": "empty"
 }
-Payload.max_decode_packets = 200
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
