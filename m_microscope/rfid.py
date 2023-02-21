@@ -6,9 +6,6 @@ import socketio
 from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A
 from adafruit_pn532.i2c import PN532_I2C
 
-# standard Python
-sio = socketio.Client()
-
 # I2C connection:
 i2c = busio.I2C(board.SCL, board.SDA)
 pn532 = PN532_I2C(i2c, debug=False)
@@ -75,57 +72,83 @@ def rfid_read(uid):
     return read_data
 
 
-class RFID(socketio.AsyncClientNamespace):
+class RFID():
     # Check door status
-    def __init__(self, cards, server_ip):
-        super().__init__()
+    def __init__(self, server_ip, cards=[0], **config):
+        self.name = config.get("name", "rfid")
         self.cards = cards
         self.ip = server_ip
+        self.sio = socketio.Client()
+        self.setup_sio()
+
         self.data = {
-            "message": cards["0"],
-            "status": "off"
+            "data": cards[-1],
+            "status": config.get("init", "on")
         }
-        self.task = sio.start_background_task(self.check_loop)
+        self.connected = False
+        self.reconnect_task = self.sio.start_background_task(self.keep_reconnecting)
+        self.rfid_task = self.sio.start_background_task(self.check_loop)
 
-    def on_connect(self):
-        pass
+    def setup_sio(self):
 
-    def on_disconnect(self):
-        # attempt to reconnect, otherwise sleep for 2 seconds
-        try:
-            self.connect((host, port))
-            connected = True
-            print("re-connection successful")
-        except socket.error:
-            sleep(2)
+        @self.sio.on('connect')
+        def on_connect():
+            self.connected = True
+            print(f"{self.name} is connected to server")
+
+
+        @self.sio.on('disconnect')
+        def on_disconnect():
+            self.connected = False
+            print(f"{self.name} is disconnected!")
+
+
+        @self.sio.on('set_status')
+        def on_set_status(status):
+            print(f"change status to: {status}")
+            self.data["status"] = status
+
+    def keep_reconnecting(self):
+        while True:
+            # attempt to reconnect, otherwise sleep for 2 seconds
+            if not self.connected:
+                try:
+                    self.sio.connect(self.ip)
+                    self.connected = True
+                    print("re-connection successful")
+                except Exception as e:
+                    print(e)
+                    sleep(2)
+            else:
+                sleep(2)
 
     def get_data(self):
-        return self.data
+        return self.data["data"]
 
-    async def on_set_status(self, status):
-        self.data["status"] = status
 
-    async def check_loop(self):
+    def check_loop(self):
         while True:
             card_uid = rfid_present()
             if card_uid:
                 print(f"Card found uid: {card_uid}")
 
-                card_read = rfid_read(card_uid)
+                card_read = rfid_read(card_uid)[0]
 
                 print(f"Data on card: {card_read}")
-                if card_read in self.cards.keys():
-                    self.data["show"] = card_read
-                    print(self.cards[card_read])
-                    await self.emit('rfid_update', self.data)
+                if card_read in self.cards:
+                    self.data["data"] = card_read
+                    print(f"chosen card: {card_read}")
+                    self.sio.emit(f'{self.name}_update', self.data)
                 else:
                     print('Wrong Card')
-                    await self.emit('rfid_update', self.data)
+                    self.sio.emit(f'{self.name}_update', self.data)
 
                 # wait here until card is removed
                 # if wrong card should it stuck?!
                 while rfid_present() and card_read:
                     continue
-
-                await self.emit('rfid_update', "0")
+                
+                self.data["data"] = self.cards[-1]
+                self.sio.emit(f'{self.name}_update', self.data)
                 print("card removed")
+                print(f"sio.emit('{self.name}_update', '{self.data}')")

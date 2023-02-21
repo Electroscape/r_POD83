@@ -6,13 +6,23 @@
     <meta charset="UTF-8">
     <title>Microscope</title>
 
-    <!-- AJAX and socketio -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
-            integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
-            crossorigin="anonymous"></script>
-
+    <!-- socketio -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.1.js"
+            integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+            
     <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            height: 100vh;
+        }
+
+        #display-content {
+            height: 100%;
+        }
+
         *, :after, :before {
             box-sizing: unset;
         }
@@ -219,8 +229,9 @@
     const socket = io.connect('http://' + document.domain + ':' + location.port);
 
     socket.on('connect', function () {
+        console.log("connected to backend")
         socket.emit('msg_to_backend', {
-            update: `'${myDispName}' is on page {{ request.path }}`
+            update: `'microscope' is on page {{ request.path }}`
         })
     })
 

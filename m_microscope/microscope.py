@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
 sio = socketio.Client()
-server_ip = "http://" + "192.168.178.35:5500"
+server_ip = "http://" + "192.168.178.20:5500"
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 cards = {
@@ -21,7 +21,9 @@ cards = {
     "0": "0.mp4"
 }
 
-valid_cards = cards.keys()
+valid_cards = list(cards.keys())
+for c in valid_cards:
+    cards[c] = f"static/media/microscope/PD_{cards[c]}"
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -31,12 +33,16 @@ def index():
 
 @app.route("/get_status", methods=["GET", "POST"])
 def get_status():
-    return microscope
+    card_url = cards[nfc_reader.get_data()]
+    return {
+        "show": card_url,
+        "status": "on"
+    }
 
 
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory("static", 'server_favicon.ico',
+    return send_from_directory("static", 'favicon.ico',
                                mimetype='image/vnd.microsoft.icon')
 
 
@@ -44,21 +50,27 @@ def favicon():
 def connect():
     print("Connected to Server!")
 
+@sio.on("rfid_event")
+def rfid_updates(data):
+    print(f"rfid message: {data}")
+    self_sio.emit("microscope_fe", get_status())
 
 @self_sio.event
 def connect():
     print("Self is connected!")
 
 
-microscope = {
-    "show": url_for("static", filename="media/microscope/0.mp4"),
-    "status": "off"
-}
+@self_sio.on("msg_to_backend")
+def on_msg(data):
+    print(f"from frontend: {data} -> forward to server")
+    #sio.emit("msg_to_server", data)
+
+
+# connecting to sio
+sio.connect(server_ip)
+
+print("creating RFID instance")
+nfc_reader = RFID(server_ip=server_ip, cards=valid_cards)
 
 if __name__ == "__main__":
-    print("connecting to server")
-    sio.connect(server_ip)
-
-    nfc_reader = RFID(valid_cards)
-
     app.run(debug=True, host='0.0.0.0', port=5555)
