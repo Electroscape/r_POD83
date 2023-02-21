@@ -84,10 +84,10 @@
 
     socket.on('microscope_fe', function (data) {
         console.log(data);
-        if (data === "off") {
+        if (data.status === "off") {
             document.getElementById("btn-off").click();
         } else {
-            document.getElementById("btn-" + data).click();
+            document.getElementById("btn-" + data.data).click();
         }
     })
 

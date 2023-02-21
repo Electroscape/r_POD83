@@ -33,10 +33,10 @@ def index():
 
 @app.route("/get_status", methods=["GET", "POST"])
 def get_status():
-    card_url = cards[nfc_reader.get_data()]
+    res_dict = nfc_reader.get_data()
     return {
-        "show": card_url,
-        "status": "on"
+        "show": cards[res_dict["data"]],
+        "status": res_dict["status"]
     }
 
 
@@ -54,7 +54,13 @@ def connect():
 @sio.on("rfid_event")
 def rfid_updates(data):
     print(f"rfid message: {data}")
-    self_sio.emit("microscope_fe", data["data"])
+    if data.get("cmd") == "status":
+        sio.emit("set_status", data["message"])
+        data["status"] = data["message"]
+    elif data.get("cmd") == "sample":
+        data["data"] = data["message"]
+
+    self_sio.emit("microscope_fe", data)
 
 
 @self_sio.event

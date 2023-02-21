@@ -123,7 +123,7 @@ class RFID():
                 sleep(2)
 
     def get_data(self):
-        return self.data["data"]
+        return self.data
 
 
     def check_loop(self):
