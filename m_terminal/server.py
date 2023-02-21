@@ -156,6 +156,16 @@ def override_triggers(msg):
     sio.emit("trigger", msg)
 
 
+@sio.on('rfid_update')
+def rfid_updates(msg):
+    # Display message on frontend chatbox
+    frontend_server_messages(msg)
+    # print in console for debugging
+    print(f"from microscope: {str(msg)})")
+    # emit to microscope flask
+    sio.emit("rfid_event", msg)
+
+
 @sio.on('events')
 def events_handler(msg):
     global login_users
@@ -174,14 +184,17 @@ def events_handler(msg):
                 }
                 # emit default state messages to terminals
                 sio.emit("samples", samples)
-                sio.emit("events", {"username": "tr1", "cmd": "auth", "message": "empty"})
-                sio.emit("events", {"username": "tr2", "cmd": "auth", "message": "empty"})
-                sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
-                sio.emit("events", {"username": "tr1", "cmd": "airlock", "message": "broken"})
-                sio.emit("events", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
-                sio.emit("events", {"username": "tr2", "cmd": "elancell", "message": "disable"})
-                sio.emit("events", {"username": "tr2", "cmd": "microscope", "message": "0"})
-
+                sio.emit("to_clients", {"username": "tr1", "cmd": "auth", "message": "empty"})
+                sio.emit("to_clients", {"username": "tr2", "cmd": "auth", "message": "empty"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "airlock", "message": "broken"})
+                sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
+                sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
+                sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
+                # set microscope off
+    elif msg.get("username") == "mcrp":
+        print(f"to microscope: {str(msg)})")
+        sio.emit("rfid_event", msg)
     else:
         # Filters commands
         if msg.get("cmd") == "auth":

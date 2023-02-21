@@ -72,9 +72,11 @@ def rfid_read(uid):
     return read_data
 
 
-class RFID():
+class RFID:
     # Check door status
-    def __init__(self, server_ip, cards=[0], **config):
+    def __init__(self, server_ip, cards=None, **config):
+        if cards is None:
+            cards = [0]
         self.name = config.get("name", "rfid")
         self.cards = cards
         self.ip = server_ip
@@ -82,7 +84,7 @@ class RFID():
         self.setup_sio()
 
         self.data = {
-            "data": cards[-1],
+            "data": str(cards[-1]),
             "status": config.get("init", "on")
         }
         self.connected = False
@@ -96,12 +98,10 @@ class RFID():
             self.connected = True
             print(f"{self.name} is connected to server")
 
-
         @self.sio.on('disconnect')
         def on_disconnect():
             self.connected = False
             print(f"{self.name} is disconnected!")
-
 
         @self.sio.on('set_status')
         def on_set_status(status):
@@ -125,7 +125,6 @@ class RFID():
     def get_data(self):
         return self.data
 
-
     def check_loop(self):
         while True:
             card_uid = rfid_present()
@@ -147,8 +146,8 @@ class RFID():
                 # if wrong card should it stuck?!
                 while rfid_present() and card_read:
                     continue
-                
-                self.data["data"] = self.cards[-1]
+
+                self.data["data"] = str(self.cards[-1])
                 self.sio.emit(f'{self.name}_update', self.data)
                 print("card removed")
                 print(f"sio.emit('{self.name}_update', '{self.data}')")
