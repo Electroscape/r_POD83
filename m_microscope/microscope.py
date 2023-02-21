@@ -28,7 +28,7 @@ for c in valid_cards:
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("m_microscope.html", microscope=get_status())
+    return render_template("m_microscope.html", cards=cards, microscope=get_status())
 
 
 @app.route("/get_status", methods=["GET", "POST"])
@@ -50,10 +50,12 @@ def favicon():
 def connect():
     print("Connected to Server!")
 
+
 @sio.on("rfid_event")
 def rfid_updates(data):
     print(f"rfid message: {data}")
-    self_sio.emit("microscope_fe", get_status())
+    self_sio.emit("microscope_fe", data["data"])
+
 
 @self_sio.event
 def connect():
@@ -63,7 +65,7 @@ def connect():
 @self_sio.on("msg_to_backend")
 def on_msg(data):
     print(f"from frontend: {data} -> forward to server")
-    #sio.emit("msg_to_server", data)
+    # sio.emit("msg_to_server", data)
 
 
 # connecting to sio

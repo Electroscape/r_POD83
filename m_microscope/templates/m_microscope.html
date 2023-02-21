@@ -7,224 +7,45 @@
     <title>Microscope</title>
 
     <!-- socketio -->
-    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+            integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+            crossorigin="anonymous"></script>
     <!-- JQuery -->
     <script src="https://code.jquery.com/jquery-3.6.1.js"
             integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
-            
+
     <style>
-        body {
+        /* Set height of body and the document to 100% to enable "full page tabs" */
+        body, html {
+            height: 100%;
             margin: 0;
-            background-color: #000;
-            height: 100vh;
         }
 
-        #display-content {
+        /* Style tab links */
+        .btns {
+            display: none;
+        }
+
+        /* Style the tab content (and add height:100% for full page content) */
+        .tab-content {
+            display: none;
             height: 100%;
         }
 
-        *, :after, :before {
-            box-sizing: unset;
-        }
-
-        .img-container {
-            background-color: aliceblue;
-            text-align: center;
-            margin: auto;
-            padding: 10px;
-        }
-
-        .container {
-            justify-content: center;
-            align-items: center;
-        }
-
-        .tv {
+        #id-off-tab {
+            display: block;
             background-color: black;
         }
 
-        .video {
-            height: 100%;
-            width: 80%;
-            margin-inline: auto;
-            overflow: hidden;
-        }
-
-        .video video {
-            width: 100%;
+        .container {
             height: 100%;
         }
 
-        .switch-input {
-            width: 3vmax;
-            height: 3vmax;
-            border: 0;
-            position: absolute;
-            z-index: 6;
-            bottom: -4vmax;
-            left: calc(50% - 1.85vmax);
-            opacity: 0;
-            cursor: pointer;
+        .img-container {
+            text-align: center;
         }
 
-        .switch {
-            background: #1b1b1b;
-            width: 3vmax;
-            height: 3vmax;
-            position: absolute;
-            left: calc(50% - 1.5vmax);
-            bottom: -3.95vmax;
-            border: 0.25vmax solid #4e4e4e;
-            z-index: 5;
-            border-radius: 100%;
-            box-shadow: 0 0 1vmax 0 #272727, 0 0 0.5vmax 0.1vmax #000 inset;
-            box-sizing: border-box;
-        }
-
-        input:checked + .switch {
-            background: linear-gradient(to bottom, #151515, #3c3c3c);
-            color: #fff;
-            box-shadow: 0 0 1vmax 0 #03a9f480, 0 0 0.15vmax 1px #03a9f46e inset,
-            0 0 0.25vmax 0.15vmax #000000 inset;
-            border-color: #2196f3;
-        }
-
-        input:checked + .switch:before {
-            border-color: transparent #03a9f4 #03a9f4 #03a9f4;
-        }
-
-        input:checked + .switch:after {
-            background: #03a9f4;
-        }
-
-        .cover {
-            position: absolute;
-            background: radial-gradient(transparent, transparent, #00000080);
-            width: 100%;
-            height: 100%;
-            top: 0;
-            overflow: hidden;
-            box-shadow: 0 0 1vmin 0 #000 inset;
-        }
-
-        .cover:before {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            border: 19.65vw solid #0a0a0a;
-            border-left-width: 35.1vw;
-            border-right-width: 35.1vw;
-            animation: turn-off 0.15s ease 0s 1, turned-off 1s ease 0.15s infinite,
-            white-dot 0.35s ease 0.15s 1;
-        }
-
-        .cover:after {
-            content: "";
-            background: linear-gradient(
-                    45deg,
-                    #ffffff00 15%,
-                    #ffffff0d 35%,
-                    #ffffff00,
-                    #ffffff05,
-                    #ffffff20
-            );
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        input:checked ~ .cover:before {
-            animation: turn-on 0.15s ease 0s 1, turned-on 1s ease 0.15s infinite;
-        }
-
-        @keyframes turn-on {
-            0% {
-                border-width: 19.65vw;
-                border-left-width: 35.1vw;
-                border-right-width: 35.1vw;
-            }
-            50% {
-                border-width: 19.65vw;
-                border-left-width: 10vw;
-                border-right-width: 10vw;
-            }
-            100% {
-                border-width: 0;
-            }
-        }
-
-        @keyframes turned-on {
-            0% {
-                border-width: 0;
-            }
-            100% {
-                border-width: 0;
-            }
-        }
-
-        @keyframes turn-off {
-            0% {
-                border-width: 0;
-            }
-            50% {
-                border-width: 19.65vw;
-                border-left-width: 10vw;
-                border-right-width: 10vw;
-            }
-            100% {
-                border-width: 19.65vw;
-                border-left-width: 35.1vw;
-                border-right-width: 35.1vw;
-            }
-        }
-
-        @keyframes turned-off {
-            0% {
-                border-width: 19.65vw;
-                border-left-width: 35.1vw;
-                border-right-width: 35.1vw;
-                background: #111111;
-            }
-            100% {
-                border-width: 19.65vw;
-                border-left-width: 35.1vw;
-                border-right-width: 35.1vw;
-                background: #111111;
-            }
-        }
-
-        @keyframes white-dot {
-            0% {
-                background: #ffffff80;
-            }
-            100% {
-                background: #111111;
-            }
-        }
     </style>
-
-</head>
-<body>
-<div class="container">
-    <div class="tv">
-        <label style="position: absolute" for="switchCheck"></label>
-        <input id="switchCheck" type="checkbox" class="switch-input" checked>
-        <div id="display-content">
-            <div class="video">
-                <video id="vid" autoplay="" muted="" loop="" width="100%" height="100%">
-                    <source id="mp4"
-                            src="{{ microscope.show }}"
-                            type="video/mp4">
-                </video>
-            </div>
-        </div>
-        <div class="cover"></div>
-    </div>
-</div>
-
 <script type="text/javascript">
     const socket = io.connect('http://' + document.domain + ':' + location.port);
 
@@ -235,8 +56,8 @@
         })
     })
 
-    function displayContent(path, status) {
-        let disContent = document.getElementById("display-content")
+    function displayContent(path, key) {
+        let disContent = document.getElementById("id-" + key)
         let txt = "";
         if (path.endsWith(".mp4")) {
             txt = `<div class="video">
@@ -253,22 +74,58 @@
                             src="${path}"
                             class="img-fluid"
                             alt="${path}"
-                            style="max-height: 65vh"
                             />
                         </div>`
             disContent.innerHTML = txt;
         } else {
             console.log("no content");
         }
-
-        $("#switchCheck").prop('checked', status === "on");
     }
 
     socket.on('microscope_fe', function (data) {
         console.log(data);
-        displayContent(data.show, data.status);
+        if (data === "off") {
+            document.getElementById("btn-off").click();
+        } else {
+            document.getElementById("btn-" + data).click();
+        }
     })
+
+    function openPage(pageName) {
+        // Hide all elements with class="tab-content" by default */
+        let tabContent;
+        tabContent = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContent.length; i++) {
+            tabContent[i].style.display = "none";
+        }
+
+        // Show the specific tab content
+        document.getElementById("id-" + pageName).style.display = "block";
+    }
 </script>
+</head>
+<body>
+<div class="container">
+    <div class="btns">
+        {% for key in cards.keys() %}
+            <button class="tab-link" id="btn-{{ key }}" onclick="openPage('{{ key }}')">{{ key }}</button>
+        {% endfor %}
+        <button class="tab-link"  id="btn-off" onclick="openPage('off-tab')">off</button>
+    </div>
+
+    {% for k, v in cards.items() %}
+        <div id="id-{{ k }}" class="tab-content">
+            <h3>{{ k }}</h3>
+            <p>{{ v }}</p>
+        </div>
+        <script type="text/javascript">
+            displayContent("{{ v }}", "{{ k }}");
+        </script>
+    {% endfor %}
+
+    <div id="id-off-tab" class="tab-content">
+    </div>
+</div>
 
 </body>
 </html>
