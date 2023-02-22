@@ -429,29 +429,6 @@ void stageActions() {
             delay(50);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
             delay(1000);   
-
-            /* LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
-            delay(1000);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
-            delay(1000);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
-            delay(1000);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
-            delay(1000);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,80,1000,PWM::set1_2_3);
-            delay(1000);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500); */
             LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrGreen,30,1000,PWM::set1_2_3);
             delay(1200);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
@@ -463,6 +440,8 @@ void stageActions() {
         break;
         case sterilization:
             Mother.motherRelay.digitalWrite(beamerDecon, open);
+            MotherIO.setOuput(sterilisationEvent);
+            //LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(3000);
             uvSequence();
             Mother.motherRelay.digitalWrite(beamerDecon, closed);

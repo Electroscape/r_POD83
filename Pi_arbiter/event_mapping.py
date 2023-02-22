@@ -72,12 +72,16 @@ event_map = {
         }
     },
     "airlock_sterilisation": {
+        trigger_cmd: "airlock1",
+        trigger_msg: "sterilisation",
         sound: {
             is_fx: True,
             sound_id: 8
         }
     },
     "airlock_decon": {
+        trigger_cmd: "airlock1",
+        trigger_msg: "decon",
         sound: {
             sound_id: 2
         }
