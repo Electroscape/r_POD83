@@ -71,6 +71,16 @@ def get_elancell():
     return elancell_upload
 
 
+@app.route('/microscope', methods=['GET', 'POST'])
+def microscope():
+    config = {
+        "title": "Microscope",
+        "src": "http://" + ip_conf["mcrp"]
+    }
+    print("open microscope page")
+    return render_template("TR2/p_microscope.html", g_config=config)
+
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory("static", f'favicon_{terminal_name}.ico',
@@ -101,7 +111,6 @@ def events_handler(data):
     else:
         global login_user
         global elancell_upload
-        global microscope
 
         msg = data.get("message")
 

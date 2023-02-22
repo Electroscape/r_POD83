@@ -36,15 +36,6 @@ def sample_release():
     return render_template("TR2/p_sample_release.html", g_config=config)
 
 
-@app_pages.route('/microscope', methods=['GET', 'POST'])
-def microscope():
-    config = {
-        "title": "Microscope"
-    }
-    print("open microscope page")
-    return render_template("TR2/p_microscope.html", g_config=config)
-
-
 @app_pages.route('/gas_analysis', methods=['GET', 'POST'])
 def gas_analysis():
     if not is_unique_users():
