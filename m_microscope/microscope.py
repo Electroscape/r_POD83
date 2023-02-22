@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
 sio = socketio.Client()
-server_ip = "http://" + "192.168.178.20:5500"
+server_ip = "http://raspi-4-pod-t1:5500"
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 cards = {
@@ -51,16 +51,23 @@ def connect():
     print("Connected to Server!")
 
 
+@sio.event
+def disconnect():
+    global connected
+    print("microscope is disconnected from server")
+    connected = False
+
 @sio.on("rfid_event")
 def rfid_updates(data):
     print(f"rfid message: {data}")
     if data.get("cmd") == "status":
-        sio.emit("set_status", data["message"])
         data["status"] = data["message"]
+        nfc_reader.set_rfid_status(data["message"])
     elif data.get("cmd") == "sample":
         data["data"] = data["message"]
+        nfc_reader.set_rfid_data(data["message"])
 
-    self_sio.emit("microscope_fe", data)
+    self_sio.emit("microscope_fe", nfc_reader.get_data())
 
 
 @self_sio.event
@@ -74,11 +81,42 @@ def on_msg(data):
     # sio.emit("msg_to_server", data)
 
 
-# connecting to sio
-sio.connect(server_ip)
-
 print("creating RFID instance")
 nfc_reader = RFID(server_ip=server_ip, cards=valid_cards)
+def check_for_updates():
+    prev_data = nfc_reader.get_data().copy()
+    while True:
+        self_sio.sleep(2)
+        while not nfc_reader.connected:
+            print(f"in polling mode {prev_data}")
+            if prev_data == nfc_reader.get_data():
+                self_sio.sleep(2)
+            else:
+                prev_data = nfc_reader.get_data().copy()
+                print("updates to frontend from polling")
+                self_sio.emit("microscope_fe", prev_data)
+                print(f"sent: {prev_data}")
+
+
+def keep_reconnecting():
+    global connected
+
+    while True:
+        if not connected: 
+            try:
+                # connecting to sio
+                sio.connect(server_ip)
+                connected = True
+            except Exception:
+                self_sio.sleep(2)
+                print(f"re-try connect to server: {server_ip}")
+
+
+# polling updates if server is offline
+self_sio.start_background_task(check_for_updates)
+
+connected = False
+self_sio.start_background_task(keep_reconnecting)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5555)
