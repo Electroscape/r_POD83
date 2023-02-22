@@ -45,7 +45,7 @@ def authenticate(uid) -> bool:
     return rc
 
 
-def rfid_read(uid):
+def rfid_read(uid) -> str:
     """
     Reads data written on the card
     """
@@ -63,7 +63,7 @@ def rfid_read(uid):
         if data:
             read_data = data.decode('utf-8')[:2]
         else:
-            read_data = ""
+            read_data = "x"
             print("None block")
 
     except Exception as e:
@@ -108,6 +108,14 @@ class RFID:
             print(f"change status to: {status}")
             self.data["status"] = status
 
+    def set_rfid_status(self, status):
+        print(f"change status to: {status}")
+        self.data["status"] = status
+
+    def set_rfid_data(self, msg):
+        print(f"override data to: {msg}")
+        self.data["data"] = msg
+
     def keep_reconnecting(self):
         while True:
             # attempt to reconnect, otherwise sleep for 2 seconds
@@ -115,9 +123,9 @@ class RFID:
                 try:
                     self.sio.connect(self.ip)
                     self.connected = True
-                    print("re-connection successful")
+                    print(f"{self.name} is connected to sio")
                 except Exception as e:
-                    print(e)
+                    print("trying to reconnect")
                     sleep(2)
             else:
                 sleep(2)
@@ -125,22 +133,29 @@ class RFID:
     def get_data(self):
         return self.data
 
+    def emit(self, channel, message):
+        if self.connected:
+            self.sio.emit(channel, message)
+        else:
+            print("not connected to server!")
+
     def check_loop(self):
         while True:
             card_uid = rfid_present()
             if card_uid:
                 print(f"Card found uid: {card_uid}")
 
-                card_read = rfid_read(card_uid)[0]
+                card_all = rfid_read(card_uid)
+                card_read = card_all[0]
 
                 print(f"Data on card: {card_read}")
                 if card_read in self.cards:
                     self.data["data"] = card_read
                     print(f"chosen card: {card_read}")
-                    self.sio.emit(f'{self.name}_update', self.data)
+                    self.emit(f'{self.name}_update', self.data)
                 else:
-                    print('Wrong Card')
-                    self.sio.emit(f'{self.name}_update', self.data)
+                    print(f'Wrong data: {card_all}')
+                    self.emit(f'{self.name}_extra', card_all)
 
                 # wait here until card is removed
                 # if wrong card should it stuck?!
@@ -148,6 +163,6 @@ class RFID:
                     continue
 
                 self.data["data"] = str(self.cards[-1])
-                self.sio.emit(f'{self.name}_update', self.data)
+                self.emit(f'{self.name}_update', self.data)
                 print("card removed")
                 print(f"sio.emit('{self.name}_update', '{self.data}')")
