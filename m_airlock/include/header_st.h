@@ -91,6 +91,8 @@ enum IOEvents{
     uvEvent,
     sterilisationEvent,
     airlockOpeningEvent,
+    fumigationEvent, // ab hier neu!!
+    BiometricScanEvent,
 };
 
 enum stages {

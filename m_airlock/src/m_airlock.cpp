@@ -383,6 +383,7 @@ void stageActions() {
             wdt_disable();    
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(500);
+            MotherIO.setOuput(fumigationEvent); // fx26
             LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
             delay(800);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
@@ -440,7 +441,7 @@ void stageActions() {
         break;
         case sterilization:
             Mother.motherRelay.digitalWrite(beamerDecon, open);
-            MotherIO.setOuput(sterilisationEvent);
+            MotherIO.setOuput(sterilisationEvent); //fx23 surface oder fx8
             //LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(3000);
             uvSequence();
@@ -457,6 +458,7 @@ void stageActions() {
             wdt_disable();            
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(10);
+            MotherIO.setOuput(BiometricScanEvent); //fx25
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
             delay(400);
             LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,30,PWM::set1_2_3);
