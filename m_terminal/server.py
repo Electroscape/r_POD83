@@ -166,6 +166,23 @@ def rfid_updates(msg):
     sio.emit("rfid_event", msg)
 
 
+
+@sio.on('rfid_extra')
+def rfid_extras(msg):
+    # Display message on frontend chatbox
+    frontend_server_messages(msg)
+    # print in console for debugging
+    print(f"extra from rfid: {str(msg)})")
+    # emit extras
+    msg_splitted = str(msg).split("_")
+    if len(msg_splitted) == 2:
+        sio.emit("to_clients", {
+            "username": msg_splitted[0],
+            "cmd": "auth",
+            "message": msg_splitted[1]
+        })
+
+
 @sio.on('events')
 def events_handler(msg):
     global login_users
