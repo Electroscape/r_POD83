@@ -7,12 +7,19 @@ from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A
 from adafruit_pn532.i2c import PN532_I2C
 
 # I2C connection:
-i2c = busio.I2C(board.SCL, board.SDA)
-pn532 = PN532_I2C(i2c, debug=False)
-ic, ver, rev, support = pn532.firmware_version
-print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
-sleep(0.5)
-pn532.SAM_configuration()  # Configure PN532 to communicate with MiFare cards
+while True:
+    try:
+        i2c = busio.I2C(board.SCL, board.SDA)
+        pn532 = PN532_I2C(i2c, debug=False)
+        ic, ver, rev, support = pn532.firmware_version
+        print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
+        sleep(0.5)
+        pn532.SAM_configuration()  # Configure PN532 to communicate with MiFare cards
+        break
+    except Exception:
+        print("failed to init rfid! re-trying after 3 secs")
+        sleep(3)
+
 
 classic_read_block = 1
 ntag_read_block = 4
