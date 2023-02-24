@@ -49,7 +49,7 @@ def rfid_read(uid) -> str:
     """
     Reads data written on the card
     """
-    read_data = ""
+    read_data = "x"
 
     auth = authenticate(uid)
 

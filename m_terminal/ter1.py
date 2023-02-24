@@ -250,12 +250,38 @@ def on_message(data):
 @self_sio.on("msg_to_backend")
 def on_msg(data):
     print(f"from frontend: {data} -> forward to server")
-    sio.emit("msg_to_server", data)
+    if connected:
+        sio.emit("msg_to_server", data)
+    else:
+        print(f"server is offline! lost data: {data}")
 
 
 print("connecting to server")
-sio.connect(server_ip)
+connected = False
 
+
+@sio.event
+def disconnect():
+    global connected
+    print("Disconnected from server")
+    connected = False
+
+
+def keep_reconnecting():
+    global connected
+
+    while True:
+        if not connected:
+            try:
+                # connecting to sio
+                sio.connect(server_ip)
+                connected = True
+            except Exception as e:
+                self_sio.sleep(2)
+                print(f"re-try connect to server: {server_ip}")
+
+
+self_sio.start_background_task(keep_reconnecting)
 print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores the whole conversation

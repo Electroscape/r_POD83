@@ -123,19 +123,6 @@ def events_handler(data):
     elif data.get("cmd") == "elancell":
         elancell_upload = msg
         print(f"elancell msg: {msg}")
-    elif data.get("cmd") == "microscope":
-        if msg != "0":
-            file_path = f"static/media/microscope/PD_{msg}.png"
-        else:
-            file_path = f"static/media/microscope/PD_{msg}.mp4"
-
-        microscope["show"] = file_path
-        print(f"microscope msg: {msg}")
-        self_sio.emit('microscope_fe', microscope)
-    elif data.get("cmd") == "mSwitch":
-        # microscope["show"] = ""
-        microscope["status"] = msg
-        self_sio.emit('microscope_fe', microscope)
 
 
 @sio.on('samples')
@@ -152,17 +139,43 @@ def on_message(data):
 @self_sio.on("msg_to_backend")
 def on_msg(data):
     print(f"from frontend: {data} -> forward to server")
-    sio.emit("msg_to_server", data)
+    if connected:
+        sio.emit("msg_to_server", data)
+    else:
+        print(f"server is offline! lost data: {data}")
 
 
 print("connecting to server")
-sio.connect(server_ip)
+connected = False
+
+
+@sio.event
+def disconnect():
+    global connected
+    print("Disconnected from server")
+    connected = False
+
+
+def keep_reconnecting():
+    global connected
+
+    while True:
+        if not connected:
+            try:
+                # connecting to sio
+                sio.connect(server_ip)
+                connected = True
+            except Exception as e:
+                self_sio.sleep(2)
+                print(f"re-try connect to server: {server_ip}")
+
+
+self_sio.start_background_task(keep_reconnecting)
 
 print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores chat history max 100 msgs
 elancell_upload = "disable"
-microscope = {"show": "0", "status": "on"}
 
 app.register_blueprint(app_pages)
 

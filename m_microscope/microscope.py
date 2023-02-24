@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory, url_for
+from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 import socketio
 
@@ -57,6 +57,7 @@ def disconnect():
     print("microscope is disconnected from server")
     connected = False
 
+
 @sio.on("rfid_event")
 def rfid_updates(data):
     print(f"rfid message: {data}")
@@ -83,6 +84,8 @@ def on_msg(data):
 
 print("creating RFID instance")
 nfc_reader = RFID(server_ip=server_ip, cards=valid_cards)
+
+
 def check_for_updates():
     prev_data = nfc_reader.get_data().copy()
     while True:
@@ -102,7 +105,7 @@ def keep_reconnecting():
     global connected
 
     while True:
-        if not connected: 
+        if not connected:
             try:
                 # connecting to sio
                 sio.connect(server_ip)
