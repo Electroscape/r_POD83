@@ -38,9 +38,9 @@ def authenticate(uid) -> bool:
             uid, classic_read_block, MIFARE_CMD_AUTH_A, key)
         print("classic card authenticate successfully")
     except Exception as e:
-        print(e)
+        # print(e)
         rc = False
-        print("authentication failed! It might be ntag")
+        print("ntag needs no authentication")
 
     return rc
 
@@ -61,13 +61,15 @@ def rfid_read(uid) -> str:
             data = pn532.ntag2xx_read_block(ntag_read_block)
 
         if data:
-            read_data = data.decode('utf-8')[:2]
+            # get useful data only
+            read_data = data.decode('utf-8').split().pop(0)
         else:
             read_data = "x"
             print("None block")
 
     except Exception as e:
-        print(e)
+        pass
+        # print(e)
 
     return read_data
 
@@ -145,17 +147,19 @@ class RFID:
             if card_uid:
                 print(f"Card found uid: {card_uid}")
 
-                card_all = rfid_read(card_uid)
-                card_read = card_all[0]
+                card_read = rfid_read(card_uid)
 
                 print(f"Data on card: {card_read}")
                 if card_read in self.cards:
                     self.data["data"] = card_read
                     print(f"chosen card: {card_read}")
                     self.emit(f'{self.name}_update', self.data)
+                elif card_read in ["off", "on"]:
+                    self.data["status"] = card_read
+                    print(f"update status to: {card_read}")
                 else:
-                    print(f'Wrong data: {card_all}')
-                    self.emit(f'{self.name}_extra', card_all)
+                    print(f'Wrong data: {card_read}')
+                    self.emit(f'{self.name}_extra', card_read)
 
                 # wait here until card is removed
                 # if wrong card should it stuck?!
@@ -165,4 +169,4 @@ class RFID:
                 self.data["data"] = str(self.cards[-1])
                 self.emit(f'{self.name}_update', self.data)
                 print("card removed")
-                print(f"sio.emit('{self.name}_update', '{self.data}')")
+                #print(f"sio.emit('{self.name}_update', '{self.data}')")
