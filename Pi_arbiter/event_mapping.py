@@ -32,9 +32,13 @@ laserlock_io_rachel = 64
 laserlock_io_seperationEnd = 128
 laserlock_input = 4
 
-airlock_input = 5
+airlock_input = 10 #Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
 
-binary_pcfs = [airlock_input, laserlock_input]
+dispenser_output = 1 # put out current dish 
+
+analyzer_input = 2 # first four placed right; placed right with dish no5
+
+binary_pcfs = [airlock_input, laserlock_input, analyzer_input]
 
 
 def play_elancell_intro():
@@ -67,7 +71,7 @@ event_map = {
             sound_id: 0
         }
     },
-    "airlock_intro": {
+    "airlock_intro": { # Sound stopps to early?
         trigger_cmd: "airlock",
         trigger_msg: "intro",
         pcf_in_add: airlock_input,
@@ -79,12 +83,22 @@ event_map = {
             sound_id: 24
         }
     },
-    "airlock_sterilisation": {
+     "airlock_fumigation": {
+        trigger_cmd: "airlock",
+        trigger_msg: "fumigation",
         pcf_in_add: airlock_input,
-        pcf_in: 5,
+        pcf_in: 6, 
         sound: {
-            is_fx: True,
-            sound_id: 8
+            sound_id: 26
+        }
+    },
+     "airlock_sterilizationIntro": {
+        trigger_cmd: "airlock",
+        trigger_msg: "sterilizationIntro",
+        pcf_in_add: airlock_input,
+        pcf_in: 5, 
+        sound: {
+            sound_id: 23
         }
     },
     "airlock_UV": {
@@ -94,6 +108,33 @@ event_map = {
         pcf_in: 4,
         sound: {
             sound_id: 2
+        }
+    },
+    "airlock_BioScanIntro": {
+        trigger_cmd: "airlock",
+        trigger_msg: "BioScanIntro",
+        pcf_in_add: airlock_input,
+        pcf_in: 8,
+        sound: {
+            sound_id: 22
+        }
+    },
+    "airlock_BioScan": {
+        trigger_cmd: "airlock",
+        trigger_msg: "BioScan",
+        pcf_in_add: airlock_input,
+        pcf_in: 9,
+        sound: {
+            sound_id: 25
+        }
+    },
+    "airlock_BioScanDenied": {
+        trigger_cmd: "airlock",
+        trigger_msg: "BioScanDenied",
+        pcf_in_add: airlock_input,
+        pcf_in: 10,
+        sound: {
+            sound_id: 21
         }
     },
     "airlock_wrong": {
@@ -114,6 +155,7 @@ event_map = {
             sound_id: 1
         }
     },
+    # Airlock 2 (Laserlock Functions)
     "usb_boot": {
         trigger_cmd: "usb",
         trigger_msg: "boot",
@@ -238,6 +280,24 @@ event_map = {
             fe_cb_tgt: "tr2",
             fe_cb_msg: "empty"
         }
+    },
+    "dispenser_dishout": {
+        trigger_cmd: "dispenser",
+        trigger_msg: "dishout",
+        pcf_out_add: 0,
+        pcf_out: 1 << 3
+    },
+    "analyzer_run1": {
+        trigger_cmd: "analyzer",
+        trigger_msg: "run1Right",
+        pcf_in_add: analyzer_input,
+        pcf_in: 1 << 0
+    },
+    "analyzer_run2": {
+        trigger_cmd: "analyzer",
+        trigger_msg: "run2Right",
+        pcf_in_add: analyzer_input,
+        pcf_in: 1 << 1
     },
     "reset_atmo": {
         sound: {
