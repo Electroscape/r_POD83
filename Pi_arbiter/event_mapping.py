@@ -32,13 +32,13 @@ laserlock_io_rachel = 64
 laserlock_io_seperationEnd = 128
 laserlock_input = 4
 
-airlock_input = 10 #Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
+airlock_input = 5 #Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
 
 dispenser_output = 1 # put out current dish 
 
 analyzer_input = 2 # first four placed right; placed right with dish no5
 
-binary_pcfs = [airlock_input, laserlock_input, analyzer_input]
+binary_pcfs = [airlock_input, laserlock_input]
 
 
 def play_elancell_intro():
