@@ -113,7 +113,7 @@ def handle_event(event_key, event_value=None):
             return
     # Start Video before Sound
     event_value.get(event_script, lambda: 'Invalid')()
-    sleep(0.5)    
+    sleep(1.5)    
     # Sound, may be moved to a fnc
     print(f"handling event {event_key}")
     print(event_value)
