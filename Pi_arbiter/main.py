@@ -136,6 +136,7 @@ def handle_event(event_key, event_value=None):
         pass
 
     event_value.get(event_script, lambda: 'Invalid')()
+    sleep(0.5) #Video Start Delay
 
     # Frontend
     cb_dict = event_value.get(fe_cb, False)
