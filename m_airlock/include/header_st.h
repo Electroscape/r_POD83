@@ -132,9 +132,9 @@ int flagMapping[StageCount] {
     0,
     0,
     0,
-    rfidFlag,
-    rfidFlag,
-    rfidFlag,
+    0,
+    0,
+    0,
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -161,6 +161,7 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Caution",
     "",
     "Access denied",
+    "Fumigation",
     "Sterilisation",
-    "Fumigation"
+    "Biometric Scan"
 };

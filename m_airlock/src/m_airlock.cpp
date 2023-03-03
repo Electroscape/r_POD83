@@ -172,7 +172,7 @@ void uvSequence() {
     wdt_disable();
     Mother.motherRelay.digitalWrite(uvLight, open);
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
-    delay(1000);
+    delay(100);
     int repCnt = 5;
     // if (repeatDecontamination) { repCnt = 2; }
     // are UV light supposed to be flashing or only LEDs? Assumed the latter 
@@ -185,7 +185,7 @@ void uvSequence() {
         if (rep == repCnt -1) { break; }
         delay(2000);
     }
-    delay(1000);
+    delay(1500);
     wdt_enable(WDTO_8S);
     LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
     Mother.motherRelay.digitalWrite(uvLight, closed);
@@ -326,7 +326,7 @@ void stageActions() {
         // could be integrated to the setupStage and trashed
         case preStage:        
             wdt_reset();
-            delay(5000);
+            delay(2000);
             stage = startStage;
         break;
         case startStage:   
@@ -340,7 +340,7 @@ void stageActions() {
             delay(1000);
             MotherIO.outputReset();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
-            delay(39000);
+            delay(39000); // Video Delay 
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(beamerIntro, closed); // stop Beamer after Video
             //stage = sterilisation;// One time sterilisation
@@ -348,9 +348,11 @@ void stageActions() {
         break;
         // have to check if need some sort of synchronisation ... or have a bit of padding in the decontimnation video
         // Decontamination besteht aus Fumigation (weiß) - Sterilization(blau) - Biometric scan(grün)
-        case decontamination: 
-            delay(2950);
+        case decontamination: // in case of wrong code
+            //delay(2950);?? woher kommt das?
+            delay(1000);
             MotherIO.setOuput(uvEvent);
+            delay(300); // Output Delay
             delay(50);
             MotherIO.outputReset();
             uvSequence();
@@ -361,73 +363,42 @@ void stageActions() {
             // starting with a bright light than green blinking
             wdt_disable();    
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            MotherIO.setOuput(fumigationEvent); // fx26 dauer 19s aber auch mit 6s Delay
+            //delay(500);
+            MotherIO.setOuput(fumigationEvent); // fx26 dauer 14s 
             delay(100);  // Output Delay
             MotherIO.outputReset();
-            delay(19000); //Dauer Sound
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
-            delay(800);
-            MotherIO.outputReset();
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 50);
-            delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 75);
-            delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
-            delay(1000);   
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
-            delay(800);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 50);
-            delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 75);
-            delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
-            delay(1000);   
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
-            delay(800);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 50);
-            delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 75);
-            delay(200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(50);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
-            delay(1000);   
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrWhite,30,1000,PWM::set1_2_3);
-            delay(1200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 30);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,10,900,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrWhite,50,200,100,10,PWM::set1_2_3);
+            delay(2500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,900,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrWhite,50,200,100,30,PWM::set1_2_3);
+            delay(2500);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,60,700,PWM::set1_2_3);
+            delay(1000);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrWhite,50,200,100,60,PWM::set1_2_3);
+            delay(2500); 
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrWhite,20,1500,PWM::set1_2_3);
+            delay(1600);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 20);
 
             wdt_enable(WDTO_8S);
             stage = sterilization;
 
         break;
         case sterilization:
+            wdt_disable();   
             MotherIO.setOuput(sterilisationEvent); //fx23 surface SterilizationIntro 13s
             delay(100); // Delay Output
             MotherIO.outputReset();
             delay(13000); //Dauer Sound
+            MotherIO.setOuput(uvEvent);
+            delay(50);
+            MotherIO.outputReset();
             uvSequence();
-
+            wdt_enable(WDTO_8S);
+            stage = BiometricScan;
         break;
         case BiometricScan:
             wdt_disable();       
@@ -435,16 +406,18 @@ void stageActions() {
             delay(100); // Delay Output 
             MotherIO.outputReset();
             delay(22000); //Dauer Sound  
-            MotherIO.setOuput(BioScanEvent); //fx25 Bioscan (Greenn) 17s aber die ersten 6s ohne Sound? sollte angepasst werden...
-            //delay(17000) kein Delay da mit Lichtfrequenz abläuft
+            MotherIO.setOuput(BioScanEvent); //fx25 Bioscan (Greenn) 11s 
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(500);
-            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,30,PWM::set1_2_3);
-            delay(4000);
+            delay(750);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,20,PWM::set1_2_3);
+            delay(3000);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(250);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 100);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrGreen,100,LED_CMDS::clrGreen,30,1000,PWM::set1_2_3);
+            delay(750);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,50,PWM::set1_2_3);
+            delay(3000);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrGreen,100,LED_CMDS::clrGreen,30,2000,PWM::set1_2_3);
+            delay(2000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
             MotherIO.setOuput(BioScanDenied); //fx21   biometric scann 18s
             delay(100); // Delay Output 
             MotherIO.outputReset();
@@ -458,6 +431,7 @@ void stageActions() {
         case airlockOpening:
             MotherIO.setOuput(airlockOpeningEvent);
             delay(100);
+            delay(2700); //Ouput Delay
             MotherIO.outputReset();
             wdt_disable();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
@@ -523,6 +497,7 @@ void stageUpdate() {
     lastStage = stage;
 
     Mother.setFlags(0, flagMapping[stageIndex]);
+    delay(100);
     oledUpdate();
     stageActions();
 }
