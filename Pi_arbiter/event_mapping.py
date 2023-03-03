@@ -87,7 +87,7 @@ event_map = {
         trigger_cmd: "airlock",
         trigger_msg: "fumigation",
         pcf_in_add: airlock_input,
-        pcf_in: 6, 
+        pcf_in: 7, 
         sound: {
             sound_id: 26
         }
