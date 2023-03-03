@@ -92,7 +92,9 @@ enum IOEvents{
     sterilisationEvent,
     airlockOpeningEvent,
     fumigationEvent, // ab hier neu!!
-    BiometricScanEvent,
+    BioScanIntro,
+    BioScanEvent,
+    BioScanDenied,
 };
 
 enum stages {
@@ -109,10 +111,9 @@ enum stages {
     airlockOpen = 128,
     idle = 256, 
     airlockFailed = 512,
-    sterilisation = 1024,
-    fumigation = 2048,
-    sterilization = 4096,
-    BiometricScan = 8192,
+    fumigation = 1024,
+    sterilization = 2048,
+    BiometricScan = 4096,
 };
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );

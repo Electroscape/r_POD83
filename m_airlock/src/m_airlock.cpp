@@ -37,7 +37,6 @@ int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 bool repeatDecontamination = false;
-int firstRun = 1;
 
 /**
  * @brief Set the Stage Index object
@@ -342,39 +341,19 @@ void stageActions() {
             MotherIO.outputReset();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(39000);
-            //delay(5000);
             wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(beamerIntro, closed);
+            Mother.motherRelay.digitalWrite(beamerIntro, closed); // stop Beamer after Video
             //stage = sterilisation;// One time sterilisation
             stage = fumigation; // One time sterilisation
         break;
         // have to check if need some sort of synchronisation ... or have a bit of padding in the decontimnation video
         // Decontamination besteht aus Fumigation (weiß) - Sterilization(blau) - Biometric scan(grün)
-        case sterilisation: 
-            // starting with a bright light than green blinking
-            wdt_disable();
-            MotherIO.setOuput(sterilisationEvent);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(10);
-            MotherIO.outputReset();
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
-            delay(400);
-            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,30,PWM::set1_2_3);
-            delay(3100);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-
-            wdt_enable(WDTO_8S);
-            stage = decontamination;
-
-        break;
         case decontamination: 
-            Mother.motherRelay.digitalWrite(beamerDecon, open);
             delay(2950);
             MotherIO.setOuput(uvEvent);
             delay(50);
             MotherIO.outputReset();
             uvSequence();
-            Mother.motherRelay.digitalWrite(beamerDecon, closed);
             stage = airlockRequest;
         break;
 
@@ -383,9 +362,13 @@ void stageActions() {
             wdt_disable();    
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(500);
-            MotherIO.setOuput(fumigationEvent); // fx26
+            MotherIO.setOuput(fumigationEvent); // fx26 dauer 19s aber auch mit 6s Delay
+            delay(100);  // Output Delay
+            MotherIO.outputReset();
+            delay(19000); //Dauer Sound
             LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,700,PWM::set1_2_3);
             delay(800);
+            MotherIO.outputReset();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(50);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 50);
@@ -430,42 +413,43 @@ void stageActions() {
             delay(50);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
             delay(1000);   
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrGreen,30,1000,PWM::set1_2_3);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrWhite,100,LED_CMDS::clrWhite,30,1000,PWM::set1_2_3);
             delay(1200);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
-            delay(5000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 30);
 
             wdt_enable(WDTO_8S);
             stage = sterilization;
 
         break;
         case sterilization:
-            Mother.motherRelay.digitalWrite(beamerDecon, open);
-            MotherIO.setOuput(sterilisationEvent); //fx23 surface oder fx8
-            //LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(3000);
+            MotherIO.setOuput(sterilisationEvent); //fx23 surface SterilizationIntro 13s
+            delay(100); // Delay Output
+            MotherIO.outputReset();
+            delay(13000); //Dauer Sound
             uvSequence();
-            Mother.motherRelay.digitalWrite(beamerDecon, closed);
-            if (firstRun == 1){
-                stage = BiometricScan;
-            }
-            else{
-                stage = airlockRequest;
-            }
 
         break;
         case BiometricScan:
-            wdt_disable();            
+            wdt_disable();       
+            MotherIO.setOuput(BioScanIntro); //fx22   biometric scann 22s
+            delay(100); // Delay Output 
+            MotherIO.outputReset();
+            delay(22000); //Dauer Sound  
+            MotherIO.setOuput(BioScanEvent); //fx25 Bioscan (Greenn) 17s aber die ersten 6s ohne Sound? sollte angepasst werden...
+            //delay(17000) kein Delay da mit Lichtfrequenz abläuft
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-            delay(10);
-            MotherIO.setOuput(BiometricScanEvent); //fx25
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrWhite, 100);
-            delay(400);
+            delay(500);
             LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,50,100,30,PWM::set1_2_3);
-            delay(3100);
+            delay(4000);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
             delay(250);
-            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 30);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 100);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrGreen,100,LED_CMDS::clrGreen,30,1000,PWM::set1_2_3);
+            MotherIO.setOuput(BioScanDenied); //fx21   biometric scann 18s
+            delay(100); // Delay Output 
+            MotherIO.outputReset();
+            delay(18000); //Dauer Sound 
+
             wdt_enable(WDTO_8S);
             stage = airlockRequest;
         break;
@@ -473,7 +457,7 @@ void stageActions() {
         case airlockRequest: break;
         case airlockOpening:
             MotherIO.setOuput(airlockOpeningEvent);
-            delay(500);
+            delay(100);
             MotherIO.outputReset();
             wdt_disable();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
