@@ -7,6 +7,7 @@ sys.path.append(file_dir)
 from flask import request, Flask, render_template, send_from_directory, Response, url_for, redirect
 from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
+from flask_cors import CORS, cross_origin
 
 from cam_stream import gen_frames
 from ring_list import RingList
@@ -16,6 +17,8 @@ import socketio
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
+app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app, resources={r"/foscam_control": {"origins": "*"}})
 
 # standard Python
 sio = socketio.Client()
@@ -177,6 +180,16 @@ def get_posts():
     return folders
 
 
+@app.route('/foscam_control', methods=['GET', 'POST'])
+@cross_origin()
+def foscam_control():
+    config = {
+        "title": "CCTV Cameras"
+    }
+    print("open CCTV page")
+    return render_template("TR1/p_cctv.html", g_config=config, cam1=ip_conf["cam1"])
+
+
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
@@ -260,6 +273,12 @@ print("connecting to server")
 connected = False
 
 
+@self_sio.event
+def disconnect():
+    print("self is disconnected!")
+    raise "SelfDisconnected"
+
+
 @sio.event
 def disconnect():
     global connected
@@ -281,7 +300,7 @@ def keep_reconnecting():
                 print(f"re-try connect to server: {server_ip}")
 
 
-self_sio.start_background_task(keep_reconnecting)
+reconnection_task = self_sio.start_background_task(keep_reconnecting)
 print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores the whole conversation

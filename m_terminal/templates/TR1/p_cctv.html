@@ -1,32 +1,232 @@
 {% extends 'layout.html' %}
 {% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.7/dist/iconify-icon.min.js"></script>
     <style>
         #lang-box {
             visibility: hidden;
         }
+
+        a:link {
+            color: white;
+        }
+
+        a:visited {
+            color: white;
+        }
+
+        #matrix {
+            border: 1px solid gray;
+            margin: 0 auto;
+            padding: 5px;
+        }
+
+        #matrix tr,
+        td {
+            padding: 3px;
+        }
+
+        #matrix button {
+            height: 25px;
+            width: 90px;
+            border: 1px solid black;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(150, 150, 150, 0.5);
+            border-radius: 10px;
+        }
+
+        #matrix button:hover {
+            background-color: rgb(200, 200, 200);
+            color: black;
+        }
+
+        #matrix button:active {
+            background-color: rgb(255, 0, 0);
+            color: white;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 0;
+        }
+
+        .grid-child {
+            text-align: center;
+        }
+
+        .holds-the-iframe {
+            min-width: 100px;
+            min-height: 100px;
+            float: right;
+            background-repeat: no-repeat;
+            background-size: 100px;
+            background-image: url("https://icon-library.com/images/progress-icon-gif/progress-icon-gif-8.jpg");
+        }
+
     </style>
     <script type="text/javascript">
-        function startStream() {
-            let startBtn = document.getElementById("startBtn");
-            startBtn.hidden = true;
-            let streamContainer = document.getElementById("streamContainer");
-            streamContainer.innerHTML = `<h3 class="mt-5">Live Streaming</h3>
-        <img src="{{ url_for('video_feed') }}" width="100%">`;
+        const cameraIP = "{{ cam1.ip }}";
+        const cameraUsr = "{{ cam1.user }}";
+        const cameraPwd = "{{ cam1.pass }}";
+
+
+        function ptzGotoPresetPoint(position) {
+            // first set http://{{ cam1.ip }}:port/cgi-bin/CGIProxy.fcgi?cmd=setSubStreamFormat&format=1&usr={{ cam1.user }}&pwd={{ cam1.pass }}
+            let URL =
+                "http://" +
+                cameraIP +
+                "/cgi-bin/CGIProxy.fcgi?cmd=ptzGotoPresetPoint" +
+                "&name=" +
+                position +
+                "&usr=" +
+                cameraUsr +
+                "&pwd=" +
+                cameraPwd;
+            console.log("[ACTION ptzGotoPresetPoint(" + position + ")]: " + URL);
+            /*
+            fetch(URL)
+              .then((response) => response.json())
+              .then((data) => {
+                console.log(data);
+                //     console.log(data.localidade);
+              });
+            //return;
+          */
+            fetch(URL, {mode: 'cors'})
+                .then(function (response) {
+                    if (response.ok) {
+                        console.log("[INFO OK]: Network response was ok.");
+                        console.log(response);
+                    } else {
+                        console.log("[INFO NOT OK]: Network response was not ok.");
+                    }
+                })
+                .catch(function (error) {
+                    console.log(
+                        "[ERROR]: There has been a problem with your fetch operation: " + error.message
+                    );
+                });
         }
+
+        function ptzCmd(cmd) {
+            let URL =
+                "http://" +
+                cameraIP +
+                "/cgi-bin/CGIProxy.fcgi?cmd=" +
+                cmd +
+                "&usr=" +
+                cameraUsr +
+                "&pwd=" +
+                cameraPwd;
+            console.log("[ACTION " + cmd + "]: " + URL);
+            /*
+            fetch(URL)
+              .then((response) => response.json())
+              .then((data) => {
+                console.log(data);
+                //     console.log(data.localidade);
+              });
+            //return;
+          */
+            fetch(URL, {mode: 'cors'})
+                .then(function (response) {
+                    if (response.ok) {
+                        console.log("[INFO OK]: Network response was ok.");
+                        console.log(response);
+                    } else {
+                        console.log("[INFO NOT OK]: Network response was not ok.");
+                    }
+                })
+                .catch(function (error) {
+                    console.log(
+                        "[ERROR]: There has been a problem with your fetch operation: " + error.message
+                    );
+                });
+        }
+
     </script>
 {% endblock %}
 {% block content %}
-
-    <button id="startBtn" class="btn btn-info btn-lg" type="button" onclick=startStream()>Start Camera Stream!</button>
-    <div id="streamContainer" class="col-lg-8  offset-lg-2">
+    <div class="grid-container">
+        <div class="grid-child">
+            <div class="holds-the-iframe">
+                <iframe
+                        height="480px"
+                        width="600px"
+                        src="http://{{ cam1.ip }}/cgi-bin/CGIStream.cgi?cmd=GetMJStream&usr={{ cam1.user }}&pwd={{ cam1.pass }}">
+                </iframe>
+            </div>
+        </div>
+        <div class="grid-child">
+            <table id="matrix">
+                <tr>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveTopLeft')" onmouseup="ptzCmd('ptzStopRun')">
+                            <iconify-icon icon="fluent:caret-down-right-16-filled" rotate="180deg"></iconify-icon>
+                        </button>
+                    </td>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveUp')" onmouseup="ptzCmd('ptzStopRun')">
+                            <i class="fa-solid fa-caret-up"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveTopRight')" onmouseup="ptzCmd('ptzStopRun')">
+                            <iconify-icon icon="fluent:caret-down-right-16-filled" rotate="270deg"></iconify-icon>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveLeft')" onmouseup="ptzCmd('ptzStopRun')">
+                            <i class="fa-solid fa-caret-left"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzReset')">RESET</button>
+                    </td>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveRight')" onmouseup="ptzCmd('ptzStopRun')">
+                            <i class="fa-solid fa-caret-right"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveBottomLeft')" onmouseup="ptzCmd('ptzStopRun')">
+                            <iconify-icon icon="fluent:caret-down-right-16-filled" rotate="90deg"></iconify-icon>
+                        </button>
+                    </td>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveDown')" onmouseup="ptzCmd('ptzStopRun')">
+                            <i class="fa-solid fa-caret-down"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button onmousedown="ptzCmd('ptzMoveBottomRight')" onmouseup="ptzCmd('ptzStopRun')">
+                            <iconify-icon icon="fluent:caret-down-right-16-filled"></iconify-icon>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button onmousedown="ptzCmd('zoomOut')" onmouseup="ptzCmd('zoomStop')">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    </td>
+                    <td>
+                        ZOOM
+                    </td>
+                    <td>
+                        <button onmousedown="ptzCmd('zoomIn')" onmouseup="ptzCmd('zoomStop')">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
-    <!--
-    <iframe src="rtsp://TeamEscape:EscapeHH2014@192.168.88.21:88/videoMain" width="800px" height="600px">
-    </iframe>
-
-    <video id="main" width="640" height="480"
-           src="rtsp://TeamEscape:EscapeHH2014@192.168.88.21:88/videoMain"></video>
-    -->
     {% include "floating_chat.html" %}
 {% endblock %}
 

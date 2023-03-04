@@ -17,15 +17,6 @@ def gas_control():
     return render_template("TR1/p_gas_control.html", g_config=config)
 
 
-@app_pages.route('/foscam_control', methods=['GET', 'POST'])
-def foscam_control():
-    config = {
-        "title": "CCTV Cameras"
-    }
-    print("open CCTV page")
-    return render_template("TR1/p_cctv.html", g_config=config)
-
-
 @app_pages.route('/sample_release', methods=['GET', 'POST'])
 def sample_release():
     config = {
