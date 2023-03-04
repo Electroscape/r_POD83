@@ -1,22 +1,49 @@
 #pragma once
 
-#define StageCount 7
-#define PasswordAmount 10
+#define StageCount 8
+#define PasswordAmount 1 //only for debugg
 #define MaxPassLen 5
 #define closed 1
 #define open   0
 
-const unsigned long rfidCheckInterval = 250;
 
+const unsigned long rfidCheckInterval = 1000;
+
+enum brains {
+    LED_Brain,     
+    Servo_Brain1,         
+    Servo_Brain2
+};
+
+// --- Inputs
+enum IO {
+    DispenserAction
+};
+#define inputCnt 1
+#define outputCnt 0
+
+uint8_t inputTypes[inputCnt] = {
+    INPUT_PULLUP
+};
+
+int intputArray[inputCnt] = {
+    DispenserAction   
+};
+
+int outputArray[outputCnt] = {
+};
+
+
+// -- relays
 enum relays {
-    Relay1,
-    Relay2,
-    Relay3,
-    Relay4,
-    Relay5,
-    Relay6,
-    Relay7,
-    Relay8,
+    Pump1,
+    Pump2,
+    Pump3,
+    Pump4,
+    Pump5,
+    Belt1,
+    Belt2,
+    BeltOn,
     relayAmount
 };
 
@@ -32,14 +59,14 @@ enum relayInits {
 };
 
 int relayPinArray[relayAmount] = {
-    Relay1,
-    Relay2,
-    Relay3,
-    Relay4, 
-    Relay5,
-    Relay6,
-    Relay7,
-    Relay8,
+    Pump1,
+    Pump2,
+    Pump3,
+    Pump4,
+    Pump5,
+    Belt1,
+    Belt2,
+    BeltOn
 };
 
 int relayInitArray[relayAmount] = {
@@ -53,16 +80,16 @@ int relayInitArray[relayAmount] = {
     Relay8_init, 
 };
 
-
+// Stages
 enum stages {
     setupStage = 1,
-    runMode1 = 2,
-    analyze = 4,
-    runMode1_fast = 8,
-    firstSolution  = 16,
-    waitfordish5 = 32,
-    runMode2 = 64
-
+    waitRequest = 2,
+    Dish1 = 4,
+    Dish2 = 8,
+    Dish3  = 16,
+    Dish4 = 32,
+    Dish5 = 64,
+    WorldsEnd =128
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -72,39 +99,21 @@ int stageSum = ~( ~0 << StageCount );
 // could have multiple brains listed here making up a matrix
 // for now its only an Access module mapped here
 int flagMapping[StageCount] {
-    0,
-    ledFlag+rfidFlag,
     ledFlag,
     ledFlag+rfidFlag,
     ledFlag,
-    rfidFlag,
-    ledFlag+rfidFlag
+    ledFlag,
+    ledFlag,
+    ledFlag,
+    ledFlag,
+    ledFlag
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
-    "P1 ",
-    "P2 ",
-    "P3 ",
-    "P4 ",
-    "ZERO",    
-    "P1 ",
-    "P2 ",
-    "P3 ",
-    "P4 ",
-    "ZERO"
+    "P1",
 };
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
-    runMode1,
-    runMode1,
-    runMode1,
-    runMode1,
-    runMode1,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast
+    waitRequest
 };
-
