@@ -61,16 +61,20 @@ void stageActions() {
     int DishPos;
     switch (stage) {
         case setupStage: 
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, 0);
-            delay(500);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, 0);
-            delay(500);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, 0);
-            delay(500);
             
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, 1, 0);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, 2, 0);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 100, 3, 0);
+            delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, 1, 1);
+            delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 100, 1, 2);
+            delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 50, 1, 3);
+            delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 20, 1, 4);
+            delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 40, 1, 5);
+            delay(500);
+            
             stage = waitRequest;
         break;
         
@@ -79,7 +83,7 @@ void stageActions() {
         case Dish1: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
             DishPos = 5;
-            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0); // Second Servo Brain!
+            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
             LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, 0, DishPos);
             Mother.motherRelay.digitalWrite(Pump5, closed);  //Start Belt normalDirection
             delay(3000);
@@ -90,7 +94,7 @@ void stageActions() {
         case Dish2: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
             DishPos = 3;
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos, 180);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, 0, DishPos);
             Mother.motherRelay.digitalWrite(Pump3, closed);  //Start Belt normalDirection
             delay(3000);
@@ -101,7 +105,7 @@ void stageActions() {
         case Dish3: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
             DishPos = 4;
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos, 180);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, 0, DishPos);
             Mother.motherRelay.digitalWrite(Pump4, closed);  //Start Belt normalDirection
             delay(3000);
@@ -112,7 +116,7 @@ void stageActions() {
         case Dish4: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
             DishPos = 1;
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos, 180);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, 0, DishPos);
             Mother.motherRelay.digitalWrite(Pump1, closed);  //Start Belt normalDirection
             delay(2000);
@@ -126,7 +130,7 @@ void stageActions() {
             delay(100);
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
             DishPos = 2;
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,DishPos, 180);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, 0, DishPos);
             Mother.motherRelay.digitalWrite(Pump2, closed);  //Start Belt normalDirection
             delay(3000);
@@ -141,15 +145,15 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
             LED_CMDS::blinking(Mother, LED_Brain , LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 200, 100, 100,0);
             delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
             delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
             delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
             delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
             delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
             delay(3000);
             Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt 
         break;
@@ -286,7 +290,12 @@ void setup() {
     setStageIndex();
     inputInit();
 
-    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 3);
+    Serial.println("Servo Strip3");
+    SERVO_CMDS::moveServo(Mother, LED_Brain, 1, 0);
+    Serial.println("Servo Strip3");
+    delay(1000); 
+    SERVO_CMDS::moveServo(Mother, LED_Brain, 1, 180);
+    delay(6000);
     LED_CMDS::setLEDToClr(Mother, LED_Brain ,LED_CMDS::clrBlue, 100, 1, 0);
     wdt_reset();
 }
