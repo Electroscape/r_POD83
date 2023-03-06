@@ -1,5 +1,6 @@
 Flask~=2.2.2
 Flask-FlatPages
+Flask-Cors
 flask-socketio
 python-socketio==5.7.2
 numpy==1.23.4

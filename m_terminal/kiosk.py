@@ -12,7 +12,7 @@ with open(f"ip_config.json", "r") as f_in:
 @app.route("/", methods=["GET", "POST"])
 def index():
     # ips are found in ip_config.json
-    ip_vals = {k: "http://" + v  for k,v in ips.items()}
+    ip_vals = {k: "http://" + v  for k,v in ips.items()  if isinstance(v, str)}
     return render_template("kiosk_tabs.html", ips=ip_vals)
 
 
