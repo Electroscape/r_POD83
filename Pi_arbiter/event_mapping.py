@@ -13,6 +13,8 @@ laserlock_out_pcf = 0
 lab_light_out_pcf = 2
 # inputs
 laserlock_in_pcf = 4
+# If we need more inputs this is the prime candidate to consolidate with the above
+laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
 
 dispenser_output = 1    # put out current dish
@@ -212,7 +214,7 @@ event_map = {
         }
     },
     "laserlock_cable_fixed": {
-        pcf_in_add: 3,
+        pcf_in_add: laserlock_in_2_pcf,
         pcf_in: 1 << 0,
         fe_cb: {
             fe_cb_cmd: "airlock",
@@ -221,7 +223,7 @@ event_map = {
         }
     },
     "laserlock_door_opened": {
-        pcf_in_add: 3,
+        pcf_in_add: laserlock_in_2_pcf,
         pcf_in: 1 << 1,
         event_condition: laserlock_door_open_condition,
         event_script: laserlock_set_door_opened_state,
