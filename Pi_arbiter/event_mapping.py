@@ -32,11 +32,11 @@ laserlock_io_rachel = 64
 laserlock_io_seperationEnd = 128
 laserlock_input = 4
 
-airlock_input = 5 #Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
+airlock_input = 5   # Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
+dispenser_output = 1    # put out current dish
+analyzer_input = 2  # first four placed right; placed right with dish no5
 
-dispenser_output = 1 # put out current dish 
-
-analyzer_input = 2 # first four placed right; placed right with dish no5
+delay_event = "IPreferWeDidNot"
 
 binary_pcfs = [airlock_input, laserlock_input]
 
@@ -83,7 +83,7 @@ event_map = {
             sound_id: 24
         }
     },
-     "airlock_fumigation": {
+    "airlock_fumigation": {
         trigger_cmd: "airlock",
         trigger_msg: "fumigation",
         pcf_in_add: airlock_input,
@@ -92,7 +92,7 @@ event_map = {
             sound_id: 26
         }
     },
-     "airlock_sterilizationIntro": {
+    "airlock_sterilizationIntro": {
         trigger_cmd: "airlock",
         trigger_msg: "sterilizationIntro",
         pcf_in_add: airlock_input,
@@ -187,6 +187,7 @@ event_map = {
     "laserlock_bootdecon": {
         pcf_out_add: 0,
         pcf_out: 1 << 2,
+        delay_event: 1.5,
         sound: {
             sound_id: 4,
         }
