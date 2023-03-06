@@ -17,7 +17,7 @@ enum brains {
 
 // --- Inputs
 enum IO {
-    DispenserAction
+    DispenserAction = 1
 };
 #define inputCnt 1
 #define outputCnt 0
@@ -50,12 +50,12 @@ enum relays {
 enum relayInits {
     Relay1_init = open,
     Relay2_init = open,
-    Relay3_init = open,
+    Relay3_init = closed,
     Relay4_init = open, 
     Relay5_init = open, 
     Relay6_init = closed,  
     Relay7_init = closed,  
-    Relay8_init = closed, 
+    Relay8_init = open, 
 };
 
 int relayPinArray[relayAmount] = {
