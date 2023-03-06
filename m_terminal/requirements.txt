@@ -1,10 +1,9 @@
-Flask~=2.2.2
+Flask==2.2.3
 Flask-FlatPages
-Flask-Cors
-flask-socketio
-python-socketio==5.7.2
-numpy==1.23.4
-requests
-opencv-python~=4.6.0.66
-gevent
+flask-socketio==5.3.2
+python-socketio
+Flask-Cors==3.0.10
+numpy==1.24.2
+requests==2.28.2
+gevent==22.10.2
 gevent-websocket

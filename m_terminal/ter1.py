@@ -187,7 +187,7 @@ def foscam_control():
         "title": "CCTV Cameras"
     }
     print("open CCTV page")
-    return render_template("TR1/p_cctv.html", g_config=config, cam1=ip_conf["cam1"])
+    return render_template("TR1/p_cctv.html", g_config=config, cams=ip_conf["cams"])
 
 
 @app.route('/video_feed')

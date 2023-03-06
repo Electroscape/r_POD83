@@ -4,9 +4,16 @@
     "ter2": "raspi-4-pod-t2:5552",
     "arb": "raspi-4-pod-Arbiter:9999",
     "mcrp": "raspi-4-pod-Arbiter:5555",
-    "cam1": {
-        "ip": "cam_ter2:88",
-        "user": "username",
-        "pass": "password"
-    }
+    "cams": [
+        {
+          "ip": "cam1_tr1:88",
+          "user": "username",
+          "pass": "password"
+        },
+        {
+          "ip": "cam2_tr1:88",
+          "user": "username",
+          "pass": "password"
+        }
+    ]
 }

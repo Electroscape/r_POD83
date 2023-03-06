@@ -6,6 +6,11 @@
             visibility: hidden;
         }
 
+        #cams-content {
+            background-color: darkgrey;
+            padding-top: 10px;
+        }
+
         a:link {
             color: white;
         }
@@ -66,50 +71,12 @@
 
     </style>
     <script type="text/javascript">
-        const cameraIP = "{{ cam1.ip }}";
-        const cameraUsr = "{{ cam1.user }}";
-        const cameraPwd = "{{ cam1.pass }}";
+        const cams = JSON.parse('{{ cams|tojson }}');
 
-
-        function ptzGotoPresetPoint(position) {
-            // first set http://{{ cam1.ip }}:port/cgi-bin/CGIProxy.fcgi?cmd=setSubStreamFormat&format=1&usr={{ cam1.user }}&pwd={{ cam1.pass }}
-            let URL =
-                "http://" +
-                cameraIP +
-                "/cgi-bin/CGIProxy.fcgi?cmd=ptzGotoPresetPoint" +
-                "&name=" +
-                position +
-                "&usr=" +
-                cameraUsr +
-                "&pwd=" +
-                cameraPwd;
-            console.log("[ACTION ptzGotoPresetPoint(" + position + ")]: " + URL);
-            /*
-            fetch(URL)
-              .then((response) => response.json())
-              .then((data) => {
-                console.log(data);
-                //     console.log(data.localidade);
-              });
-            //return;
-          */
-            fetch(URL, {mode: 'cors'})
-                .then(function (response) {
-                    if (response.ok) {
-                        console.log("[INFO OK]: Network response was ok.");
-                        console.log(response);
-                    } else {
-                        console.log("[INFO NOT OK]: Network response was not ok.");
-                    }
-                })
-                .catch(function (error) {
-                    console.log(
-                        "[ERROR]: There has been a problem with your fetch operation: " + error.message
-                    );
-                });
-        }
-
-        function ptzCmd(cmd) {
+        function ptzCmd(cmd, index) {
+            let cameraIP = cams[index].ip;
+            let cameraUsr = cams[index].user;
+            let cameraPwd = cams[index].pass;
             let URL =
                 "http://" +
                 cameraIP +
@@ -148,85 +115,130 @@
     </script>
 {% endblock %}
 {% block content %}
-    <div class="grid-container">
-        <div class="grid-child">
-            <div class="holds-the-iframe">
-                <iframe
-                        height="480px"
-                        width="600px"
-                        src="http://{{ cam1.ip }}/cgi-bin/CGIStream.cgi?cmd=GetMJStream&usr={{ cam1.user }}&pwd={{ cam1.pass }}">
-                </iframe>
+    <!-- Tabs navs -->
+
+    <ul class="nav nav-tabs mb-3" id="cams" role="tablist">
+        {% for cam in cams %}
+            <li class="nav-item btn-info" role="presentation">
+                <a
+                        class="nav-link {% if loop.index0 == 0 %}active{% endif %}"
+                        id="cams-tab-{{ loop.index0 }}"
+                        data-mdb-toggle="tab"
+                        href="#cams-tabs-{{ loop.index0 }}"
+                        role="tab"
+                        aria-controls="cams-tabs-{{ loop.index0 }}"
+                        aria-selected="{% if loop.index0 == 0 %}true{% else %}false{% endif %}"
+                ><i class="fa-solid fa-video"></i> Cam {{ loop.index }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <!-- Tabs navs -->
+
+    <!-- Tabs content -->
+
+    <div class="tab-content" id="cams-content">
+        {% for cam in cams %}
+            <div
+                    class="tab-pane fade {% if loop.index0 == 0 %}show active{% endif %}"
+                    id="cams-tabs-{{ loop.index0 }}"
+                    role="tabpanel"
+                    aria-labelledby="cams-tab-{{ loop.index0 }}"
+            >
+                <div class="grid-container">
+                    <div class="grid-child">
+                        <div class="holds-the-iframe">
+                            <iframe
+                                    height="480px"
+                                    width="600px"
+                                    src="http://{{ cam.ip }}/cgi-bin/CGIStream.cgi?cmd=GetMJStream&usr={{ cam.user }}&pwd={{ cam.pass }}">
+                            </iframe>
+                        </div>
+                    </div>
+                    <div class="grid-child">
+                        <table id="matrix">
+                            <tr>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveTopLeft', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <iconify-icon icon="fluent:caret-down-right-16-filled"
+                                                      rotate="180deg"></iconify-icon>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveUp', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <i class="fa-solid fa-caret-up"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveTopRight', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <iconify-icon icon="fluent:caret-down-right-16-filled"
+                                                      rotate="270deg"></iconify-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveLeft', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <i class="fa-solid fa-caret-left"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzReset', {{ loop.index0 }})">RESET</button>
+                                </td>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveRight', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <i class="fa-solid fa-caret-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveBottomLeft', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <iconify-icon icon="fluent:caret-down-right-16-filled"
+                                                      rotate="90deg"></iconify-icon>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveDown', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <i class="fa-solid fa-caret-down"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button onmousedown="ptzCmd('ptzMoveBottomRight', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                        <iconify-icon icon="fluent:caret-down-right-16-filled"></iconify-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button onmousedown="ptzCmd('zoomOut', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('zoomStop', {{ loop.index0 }})">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    ZOOM
+                                </td>
+                                <td>
+                                    <button onmousedown="ptzCmd('zoomIn', {{ loop.index0 }})"
+                                            onmouseup="ptzCmd('zoomStop', {{ loop.index0 }})">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="grid-child">
-            <table id="matrix">
-                <tr>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveTopLeft')" onmouseup="ptzCmd('ptzStopRun')">
-                            <iconify-icon icon="fluent:caret-down-right-16-filled" rotate="180deg"></iconify-icon>
-                        </button>
-                    </td>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveUp')" onmouseup="ptzCmd('ptzStopRun')">
-                            <i class="fa-solid fa-caret-up"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveTopRight')" onmouseup="ptzCmd('ptzStopRun')">
-                            <iconify-icon icon="fluent:caret-down-right-16-filled" rotate="270deg"></iconify-icon>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveLeft')" onmouseup="ptzCmd('ptzStopRun')">
-                            <i class="fa-solid fa-caret-left"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzReset')">RESET</button>
-                    </td>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveRight')" onmouseup="ptzCmd('ptzStopRun')">
-                            <i class="fa-solid fa-caret-right"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveBottomLeft')" onmouseup="ptzCmd('ptzStopRun')">
-                            <iconify-icon icon="fluent:caret-down-right-16-filled" rotate="90deg"></iconify-icon>
-                        </button>
-                    </td>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveDown')" onmouseup="ptzCmd('ptzStopRun')">
-                            <i class="fa-solid fa-caret-down"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <button onmousedown="ptzCmd('ptzMoveBottomRight')" onmouseup="ptzCmd('ptzStopRun')">
-                            <iconify-icon icon="fluent:caret-down-right-16-filled"></iconify-icon>
-                        </button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button onmousedown="ptzCmd('zoomOut')" onmouseup="ptzCmd('zoomStop')">
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                    </td>
-                    <td>
-                        ZOOM
-                    </td>
-                    <td>
-                        <button onmousedown="ptzCmd('zoomIn')" onmouseup="ptzCmd('zoomStop')">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        {% endfor %}
     </div>
-    {% include "floating_chat.html" %}
+    <!-- Tabs content -->
 {% endblock %}
 
