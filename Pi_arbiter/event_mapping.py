@@ -233,6 +233,7 @@ event_map = {
     "laserlock_bootdecon": {
         pcf_out_add: laserlock_out_pcf,
         pcf_out: 1 << 2,
+        event_script: laserlock_arm_door,
         event_delay: 1.5,
         sound: {
             sound_id: 4,

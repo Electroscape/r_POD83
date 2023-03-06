@@ -112,7 +112,7 @@ def handle_event(event_key, event_value=None):
             print(f"handle_event received invalid key: {event_key}")
             return
 
-    if not event_value.get(event_condition, lambda: True):
+    if not event_value.get(event_condition, lambda: True)():
         return
 
     # Start Video before Sound
