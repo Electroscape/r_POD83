@@ -37,6 +37,7 @@ PCF8574 inputPCF;
 STB_MOTHER Mother;
 STB_MOTHER_IO MotherIO;
 
+int lastState = -1;
 
 
 void enableWdt() {
@@ -50,6 +51,11 @@ void handleInputs() {
 
     int result = MotherIO.getInputs();
     Serial.println(result);
+
+    if (lastState == result) {
+        return;
+    }
+    lastState = result;
 
     switch (result) {
         case lightOff: 
@@ -74,7 +80,6 @@ void handleInputs() {
         break;
         default: break;
     }
-    delay(5000);
 
 }
 
