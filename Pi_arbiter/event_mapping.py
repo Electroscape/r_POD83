@@ -4,6 +4,20 @@ import subprocess
 # http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
 # defaults?
 
+# these are the pcf addresses, first 3 are Arbiter -> Brain as outputs
+# last 3 are Brain -> Arbiter inputs
+# [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
+
+#
+laserlock_out_pcf = 0
+lab_light_out_pcf = 2
+# inputs
+laserlock_in_pcf = 4
+airlock_in_pcf = 5
+
+dispenser_output = 1    # put out current dish
+analyzer_input = 2      # first four placed right; placed right with dish no5
+
 sound = "sound"
 is_fx = "is_fx"
 sound_id = "id"
@@ -26,19 +40,22 @@ fe_cb_msg = "msg"
 
 event_script = "script"
 event_condition = "condition"
-event_delay = "event_delay"
+event_delay = "delay"
+
 
 laserlock_io_isSeperation = 16
 laserlock_io_david = 32
 laserlock_io_rachel = 64
 laserlock_io_seperationEnd = 128
-laserlock_input = 4
 
-airlock_input = 5   # Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
-dispenser_output = 1    # put out current dish
-analyzer_input = 2  # first four placed right; placed right with dish no5
 
-binary_pcfs = [airlock_input, laserlock_input]
+lab_light_standby = 1 << 0
+lab_light_on = 1 << 1
+
+# Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
+
+
+binary_pcfs = [airlock_in_pcf, laserlock_in_pcf]
 
 
 class States:
@@ -67,15 +84,12 @@ def laserlock_set_door_opened_state():
 def laserlock_door_open_condition():
     return states.laserlock_door_armed and not states.laserlock_door_opened
 
-# these are the pcf addresses, first 3 are input last 3 are outputs
-# [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
-
 
 event_map = {
     "airlock_begin": {
         trigger_cmd: "airlock",
         trigger_msg: "begin",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 1,
         sound: {
             is_fx: True,
@@ -85,7 +99,7 @@ event_map = {
     "airlock_begin_atmo": {
         trigger_cmd: "airlock",
         trigger_msg: "begin",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 1,
         sound: {
             is_fx: False,
@@ -96,7 +110,7 @@ event_map = {
     "airlock_intro": {
         trigger_cmd: "airlock",
         trigger_msg: "intro",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 2,
         event_script: play_elancell_intro,
         # this is the sound to go along with teh video
@@ -108,7 +122,7 @@ event_map = {
     "airlock_fumigation": {
         trigger_cmd: "airlock",
         trigger_msg: "fumigation",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 7, 
         sound: {
             sound_id: 26
@@ -117,7 +131,7 @@ event_map = {
     "airlock_sterilizationIntro": {
         trigger_cmd: "airlock",
         trigger_msg: "sterilizationIntro",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 5, 
         sound: {
             sound_id: 23
@@ -126,7 +140,7 @@ event_map = {
     "airlock_UV": {
         trigger_cmd: "airlock",
         trigger_msg: "UV",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 4,
         sound: {
             sound_id: 2
@@ -135,7 +149,7 @@ event_map = {
     "airlock_BioScanIntro": {
         trigger_cmd: "airlock",
         trigger_msg: "BioScanIntro",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 8,
         sound: {
             sound_id: 22
@@ -144,7 +158,7 @@ event_map = {
     "airlock_BioScan": {
         trigger_cmd: "airlock",
         trigger_msg: "BioScan",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 9,
         sound: {
             sound_id: 25
@@ -153,7 +167,7 @@ event_map = {
     "airlock_BioScanDenied": {
         trigger_cmd: "airlock",
         trigger_msg: "BioScanDenied",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 10,
         sound: {
             sound_id: 21
@@ -162,7 +176,7 @@ event_map = {
     "airlock_wrong": {
         trigger_cmd: "airlock",
         trigger_msg: "wrong",
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 3,
         sound: {
             is_fx: True,
@@ -170,18 +184,18 @@ event_map = {
         }
     },
     "airlock_opening": {
-        pcf_in_add: airlock_input,
+        pcf_in_add: airlock_in_pcf,
         pcf_in: 6,
         sound: {
             is_fx: False,
             sound_id: 1
         }
     },
-    # Airlock 2 (Laserlock Functions)
+    # Airlock 2 (Laserlock Function)
     "usb_boot": {
         trigger_cmd: "usb",
         trigger_msg: "boot",
-        pcf_out_add: 0,
+        pcf_out_add: laserlock_out_pcf,
         pcf_out: 1 << 0,
         sound: {
             is_fx: False,
@@ -191,7 +205,7 @@ event_map = {
     "laserlock_fail": {
         trigger_cmd: "airlock",
         trigger_msg: "access",
-        pcf_out_add: 0,
+        pcf_out_add: laserlock_out_pcf,
         pcf_out: 1 << 1,
         sound: {
             sound_id: 3
@@ -217,7 +231,7 @@ event_map = {
         }
     },
     "laserlock_bootdecon": {
-        pcf_out_add: 0,
+        pcf_out_add: laserlock_out_pcf,
         pcf_out: 1 << 2,
         event_delay: 1.5,
         sound: {
@@ -225,7 +239,7 @@ event_map = {
         }
     },
     "laserlock_welcome_david": {
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_david,
         sound: {
             sound_id: 15
@@ -237,7 +251,7 @@ event_map = {
         }
     },
     "laserlock_welcome_rachel": {
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_rachel,
         sound: {
             sound_id: 16
@@ -251,18 +265,24 @@ event_map = {
     "laserlock_auth_tr1_david": {
         trigger_cmd: "ter1",
         trigger_msg: "david",
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_isSeperation + laserlock_io_david,
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_light_on,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "david"
+        },
+        sound: {
+            sound_id: 4,
+            is_fx: False
         }
     },
     "laserlock_auth_tr2_rachel": {
         trigger_cmd: "ter2",
         trigger_msg: "rachel",
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in:  laserlock_io_isSeperation + laserlock_io_david,
         fe_cb: {
             fe_cb_cmd: "auth",
@@ -273,18 +293,24 @@ event_map = {
     "laserlock_auth_tr1_rachel": {
         trigger_cmd: "ter1",
         trigger_msg: "rachel",
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_light_on,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "rachel"
+        },
+        sound: {
+            sound_id: 4,
+            is_fx: False
         }
     },
     "laserlock_auth_tr2_david": {
         trigger_cmd: "ter2",
         trigger_msg: "david",
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
         fe_cb: {
             fe_cb_cmd: "auth",
@@ -295,8 +321,10 @@ event_map = {
     "laserlock_lockout_tr1": {
         trigger_cmd: "ter1",
         trigger_msg: "empty",
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_seperationEnd,
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_light_standby,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -306,8 +334,10 @@ event_map = {
     "laserlock_lockout_tr2": {
         trigger_cmd: "ter2",
         trigger_msg: "empty",
-        pcf_in_add: laserlock_input,
+        pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_seperationEnd,
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_light_standby,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
