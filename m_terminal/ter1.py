@@ -279,7 +279,8 @@ connected = False
 @self_sio.event
 def disconnect():
     print("self is disconnected!")
-    raise "SelfDisconnected"
+    # it disconnects when navigate pages
+    # raise "SelfDisconnected"
 
 
 @sio.event

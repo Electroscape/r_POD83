@@ -2,26 +2,244 @@
 title: Personell Files
 date: 2013-08-27
 ---
+<style>
+    .carousel-team-card-cell {
+        margin: 0 20px 20px 0;
+        background: #661032;
+        min-height: 400px;
+        height: 90%;
+        border-radius: 10px;
+    }
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit turpis orci faucibus sollicitudin odio massa pharetra volutpat,
-placerat sed erat tincidunt vulputate maecenas eleifend vehicula taciti sem blandit viverra ullamcorper ligula. Vel
-congue magna interdum aenean mus rhoncus id montes, neque nunc quis luctus ornare convallis habitant penatibus,
-dignissim velit felis orci dis netus accumsan. Etiam varius nullam facilisi parturient dignissim tempor dis orci curae
-erat, eros convallis potenti primis ut ornare accumsan at vivamus, fermentum aptent et sociosqu platea dictum lobortis
-augue mattis.
+    .carousel-team-card-cell * {
+        color: #ffffff;
+    }
 
-Magna cursus pharetra et venenatis gravida bibendum phasellus malesuada orci egestas quis, nullam purus nam elementum
-curabitur nascetur ornare dignissim maecenas convallis, lectus varius leo odio facilisis lacus ad dictumst scelerisque
-proin. Vehicula habitasse urna est primis luctus tortor inceptos condimentum, augue libero suscipit cursus torquent sem
-integer, vivamus felis ultricies id sapien ut varius.
+    .carousel-team-card-cell .carousel-card-team {
+        text-align: center;
+        border-radius: 10px;
+        height: 100%
+    }
 
-Ut porta nisl elementum taciti dictum enim suscipit tristique eros, vel sodales est et sociis mattis aenean imperdiet
-orci, ullamcorper hac primis eget odio curae quis ante. Felis dis nullam lacus placerat habitasse nulla semper, volutpat
-taciti ultricies condimentum laoreet vehicula sodales, urna cum leo quam eget dui.
+    .carousel-team-card-cell .card-team-img {
+        width: 100%;
+        padding: 10px;
+        margin: 20px auto 0;
+    }
 
-Condimentum pharetra quisque nisi habitant blandit quis torquent cum sem, elementum penatibus fames orci sodales potenti
-erat tempor, accumsan praesent platea turpis facilisis imperdiet tellus integer. Morbi vel ligula aenean condimentum non
-curae iaculis habitasse, neque venenatis tempor eu et dictum hac consequat, fusce feugiat nulla elementum cras integer
-vitae. Blandit dictum rhoncus diam venenatis non conubia vulputate vitae magna a ridiculus augue, aliquet tortor
-habitasse fames per fermentum mus at parturient curae dignissim faucibus, habitant nunc vehicula metus risus rutrum
-imperdiet volutpat quis nascetur fusce. 
+    .carousel-team-card-cell .card-team-img img {
+        border-radius: 50%;
+        border: 5px solid white;
+        max-width: 150px;
+        -o-object-fit: cover;
+        -o-object-position: center;
+        object-fit: cover;
+        object-position: center;
+        width: 100%;
+        height: 150px;
+    }
+
+    .carousel-team-card-cell .card-team-name {
+        margin: 20px 0;
+        padding: 0 40px 0 40px;
+    }
+
+    .carousel-team-card-cell .card-team-content p {
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+
+    .carousel-team-card-cell .card-team-content {
+        margin: 0 40px 30px 40px;
+        border-bottom: 1px solid white;
+        padding-bottom: 30px;
+    }
+
+</style>
+<section class="pt-5 pb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h3 class="mb-3">Our team</h3>
+            </div>
+            <div class="col-6 float-end">
+                <a class="btn btn-light mb-3 mr-1" role="button" data-mdb-target="#carouselIndicator" data-mdb-slide="prev">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
+                <a class="btn btn-light mb-3" role="button" data-mdb-target="#carouselIndicator" data-mdb-slide="next">
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-12">
+                <div id="carouselIndicator" class="carousel slide" data-mdb-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>David</h3>
+                                                <span>Researcher</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/42/ai-generated-7809883_1280.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Rachel</h3>
+                                                <span>Team Leader</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2022/07/24/23/46/artificial-intelligence-7342613_1280.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Abdullah</h3>
+                                                <span>Software developer</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Works in Technical Support department for the POD terminals</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2020/12/23/08/50/woman-5854291_1280.png" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Ms. Marvel</h3>
+                                                <span>Manager</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/42/ai-generated-7809883_1280.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Rachel?</h3>
+                                                <span>Clone</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>David?</h3>
+                                                <span>Clone</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Name</h3>
+                                                <span>Position</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Name</h3>
+                                                <span>Position</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Name</h3>
+                                                <span>Position</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
+                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
