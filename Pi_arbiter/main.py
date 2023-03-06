@@ -112,9 +112,12 @@ def handle_event(event_key, event_value=None):
             print(f"handle_event received invalid key: {event_key}")
             return
 
+    if not event_value.get(event_condition, lambda: True):
+        return
+
     # Start Video before Sound
     event_value.get(event_script, lambda: 'Invalid')()
-    sleep(event_value.get(delay_event, 0))
+    sleep(event_value.get(event_delay, 0))
 
     # Sound, may be moved to a fnc
     print(f"handling event {event_key}")

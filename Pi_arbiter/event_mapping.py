@@ -25,6 +25,8 @@ fe_cb_cmd = "cmd"
 fe_cb_msg = "msg"
 
 event_script = "script"
+event_condition = "condition"
+event_delay = "event_delay"
 
 laserlock_io_isSeperation = 16
 laserlock_io_david = 32
@@ -36,15 +38,34 @@ airlock_input = 5   # Begin, Video, Fumigation, SterilizationIntro, Sterilizatio
 dispenser_output = 1    # put out current dish
 analyzer_input = 2  # first four placed right; placed right with dish no5
 
-delay_event = "IPreferWeDidNot"
-
 binary_pcfs = [airlock_input, laserlock_input]
+
+
+class States:
+    def __init__(self):
+        self.laserlock_door_armed = False
+        self.laserlock_door_opened = False
+
+
+states = States()
 
 
 def play_elancell_intro():
     # subprocess.call(['pkill -f', "vlc"])
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
                       "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top'])
+
+
+def laserlock_arm_door():
+    states.laserlock_door_armed = True
+
+
+def laserlock_set_door_opened_state():
+    states.laserlock_door_opened = True
+
+
+def laserlock_door_open_condition():
+    return states.laserlock_door_armed and not states.laserlock_door_opened
 
 # these are the pcf addresses, first 3 are input last 3 are outputs
 # [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
@@ -71,7 +92,8 @@ event_map = {
             sound_id: 0
         }
     },
-    "airlock_intro": { # Sound stopps to early?
+    # Sound stops to early?
+    "airlock_intro": {
         trigger_cmd: "airlock",
         trigger_msg: "intro",
         pcf_in_add: airlock_input,
@@ -184,10 +206,20 @@ event_map = {
             fe_cb_msg: "fixed"
         }
     },
+    "laserlock_door_opened": {
+        pcf_in_add: 3,
+        pcf_in: 1 << 1,
+        event_condition: laserlock_door_open_condition,
+        event_script: laserlock_set_door_opened_state,
+        sound: {
+            sound_id: 3,
+            is_fx: False
+        }
+    },
     "laserlock_bootdecon": {
         pcf_out_add: 0,
         pcf_out: 1 << 2,
-        delay_event: 1.5,
+        event_delay: 1.5,
         sound: {
             sound_id: 4,
         }
