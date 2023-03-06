@@ -8,52 +8,6 @@
 
 const unsigned long rfidCheckInterval = 250;
 
-enum relays {
-    Relay1,
-    Relay2,
-    Relay3,
-    Relay4,
-    Relay5,
-    Relay6,
-    Relay7,
-    Relay8,
-    relayAmount
-};
-
-enum relayInits {
-    Relay1_init = closed,
-    Relay2_init = closed,
-    Relay3_init = closed,
-    Relay4_init = closed, 
-    Relay5_init = open, 
-    Relay6_init = closed,  
-    Relay7_init = closed,  
-    Relay8_init = open, 
-};
-
-int relayPinArray[relayAmount] = {
-    Relay1,
-    Relay2,
-    Relay3,
-    Relay4, 
-    Relay5,
-    Relay6,
-    Relay7,
-    Relay8
-};
-
-int relayInitArray[relayAmount] = {
-    Relay1_init,
-    Relay2_init,
-    Relay3_init,
-    Relay4_init, 
-    Relay5_init,
-    Relay6_init,
-    Relay7_init,
-    Relay8_init, 
-};
-
-
 enum stages {
     setupStage = 1,
     runMode1 = 2,
@@ -86,25 +40,16 @@ char passwords[PasswordAmount][MaxPassLen] = {
     "P2 ",
     "P3 ",
     "P4 ",
-    "ZERO",    
-    "P1 ",
-    "P2 ",
-    "P3 ",
-    "P4 ",
-    "ZERO"
+    "ZERO",  
+    "P5 "
 };
 
-// defines what password/RFIDCode is used at what stage, if none is used its -1
+/* // defines what password/RFIDCode is used at what stage, if none is used its -1
 int passwordMap[PasswordAmount] = {
     runMode1,
     runMode1,
     runMode1,
     runMode1,
     runMode1,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast
-};
+}; */
 
