@@ -16,15 +16,15 @@ laserlock_in_pcf = 4
 # If we need more inputs this is the prime candidate to consolidate with the above
 laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
-
-dispenser_output = 1    # put out current dish
-analyzer_input = 2      # first four placed right; placed right with dish no5
+analyzer_in_pcf = 1      
 
 sound = "sound"
 is_fx = "is_fx"
 sound_id = "id"
 
 pcf_in = "pcf_in"
+# if a specific pin must be set to high in order to trigger, only works on non-binary
+pcf_in_negated = "pcf_in_negated"
 pcf_in_add = "pcf_in_add"
 pcf_out = "pcf_out"
 pcf_out_add = "pcf_out_add"
@@ -224,7 +224,7 @@ event_map = {
     },
     "laserlock_door_opened": {
         pcf_in_add: laserlock_in_2_pcf,
-        pcf_in: 1 << 1,
+        pcf_in_negated: 1 << 1,
         event_condition: laserlock_door_open_condition,
         event_script: laserlock_set_door_opened_state,
         sound: {
@@ -236,7 +236,7 @@ event_map = {
         pcf_out_add: laserlock_out_pcf,
         pcf_out: 1 << 2,
         event_script: laserlock_arm_door,
-        event_delay: 1.5,
+        # event_delay: 0,
         sound: {
             sound_id: 4,
         }
@@ -350,20 +350,20 @@ event_map = {
     "dispenser_dishout": {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
-        pcf_out_add: 0,
-        pcf_out: 1 << 3
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: 3
     },
     "analyzer_run1": {
         trigger_cmd: "analyzer",
         trigger_msg: "run1Right",
-        pcf_in_add: analyzer_input,
-        pcf_in: 1 << 0
+        pcf_in_add: analyzer_in_pcf,
+        pcf_in: 0
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
         trigger_msg: "run2Right",
-        pcf_in_add: analyzer_input,
-        pcf_in: 1 << 1
+        pcf_in_add: analyzer_in_pcf,
+        pcf_in: 1
     },
     "reset_atmo": {
         sound: {
