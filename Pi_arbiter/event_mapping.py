@@ -244,6 +244,8 @@ event_map = {
     "laserlock_welcome_david": {
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_david,
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_light_standby,
         sound: {
             sound_id: 15
         },
@@ -256,6 +258,8 @@ event_map = {
     "laserlock_welcome_rachel": {
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_rachel,
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_light_standby,
         sound: {
             sound_id: 16
         },
