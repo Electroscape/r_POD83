@@ -370,6 +370,12 @@ event_map = {
             is_fx: False,
             sound_id: -1
         },
+    },
+    "cleanroom": {
+        trigger_cmd: "cleanroom",
+        trigger_msg: "open",
+        pcf_out_add: 1,
+        pcf_out: 1 << 0,
     }
 }
 
