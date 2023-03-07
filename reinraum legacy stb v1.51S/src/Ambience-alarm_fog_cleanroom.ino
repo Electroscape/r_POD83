@@ -153,8 +153,8 @@ int resetTimer = 0;
 
 long timenow = 0;
 /*==PCF8574=================================================================================================*/
-Expander_PCF8574 relay;
-Expander_PCF8574 iTrigger;
+PCF8574 relay;
+PCF8574 iTrigger;
 
 /*============================================================================================================
 //===LED======================================================================================================
@@ -234,9 +234,9 @@ void stage_check() {
 
     switch (stage) {
         case 0: {
-            if (!iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
+            if (iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
                 delay(100);
-                if (!iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
+                if (iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
                     delay(3000);
                     relay.digitalWrite(REL_RPI_VIDEO_PIN, !REL_RPI_VIDEO_INIT);
                     delay(1000);
@@ -271,28 +271,18 @@ void stage_check() {
 void arm_check() {
     if (iTrigger.digitalRead(RESET_BUTTON)) {
 
-        // in case the SL forgets to cloose the labdoor we give him a hint
-        if (!iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
-            relay.digitalWrite(REL_KEYPAD_PIN, ON);
-            delay(1000);
-            relay.digitalWrite(REL_KEYPAD_PIN, !ON);
-            delay(1000);
-            relay.digitalWrite(REL_KEYPAD_PIN, ON);
-            delay(1000);
-            relay.digitalWrite(REL_KEYPAD_PIN, !ON);
-        } else {
-            dbg_println("reset pressed");
-            Serial.println(resetTimer);
-            relay.digitalWrite(REL_PNDOOR_OPEN, !REL_PNDOOR_OPEN);
+        dbg_println("reset pressed");
+        Serial.println(resetTimer);
+        relay.digitalWrite(REL_PNDOOR_OPEN, !REL_PNDOOR_OPEN);
 
-            if (resetTimer >= ARMTIME) {
-                dbg_println("!parse room has been reset");
-                arm_room();
-                roomArmed = true;
-                resetTimer = 0;
-            }
-            resetTimer += 50;
+        if (resetTimer >= ARMTIME) {
+            dbg_println("!parse room has been reset");
+            arm_room();
+            roomArmed = true;
+            resetTimer = 0;
         }
+        resetTimer += 50;
+
 
     } else {
 
