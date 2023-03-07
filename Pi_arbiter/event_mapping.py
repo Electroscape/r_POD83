@@ -16,7 +16,7 @@ laserlock_in_pcf = 4
 # If we need more inputs this is the prime candidate to consolidate with the above
 laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
-analyzer_in_pcf = 1      
+analyzer_in_pcf = laserlock_in_2_pcf
 
 sound = "sound"
 is_fx = "is_fx"
@@ -359,19 +359,19 @@ event_map = {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
         pcf_out_add: lab_light_out_pcf,
-        pcf_out: 3
+        pcf_out: 1 << 2
     },
     "analyzer_run1": {
         trigger_cmd: "analyzer",
         trigger_msg: "run1Right",
         pcf_in_add: analyzer_in_pcf,
-        pcf_in: 0
+        pcf_in: 1 << 0
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
         trigger_msg: "run2Right",
         pcf_in_add: analyzer_in_pcf,
-        pcf_in: 1
+        pcf_in: 1 << 1
     },
     "reset_atmo": {
         sound: {
