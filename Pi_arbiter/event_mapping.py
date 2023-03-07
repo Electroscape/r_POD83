@@ -336,7 +336,11 @@ event_map = {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "empty"
-        }
+        },
+        sound: {
+            is_fx: False,
+            sound_id: 2
+        },
     },
     "laserlock_lockout_tr2": {
         trigger_cmd: "ter2",
