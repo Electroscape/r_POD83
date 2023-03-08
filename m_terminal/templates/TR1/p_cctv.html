@@ -73,6 +73,33 @@
     <script type="text/javascript">
         const cams = JSON.parse('{{ cams|tojson }}');
 
+        function init_cams(cams) {
+            let url = "http://((ip))/cgi-bin/CGIProxy.fcgi?cmd=setSubStreamFormat&format=1&usr=((user))&pwd=((pass))"
+            for (const cam of cams) {
+                url = url.replace("((ip))", cam.ip);
+                url = url.replace("((user))", cam.user);
+                url = url.replace("((pass))", cam.pass);
+                console.log("[ACTION INIT]: " + URL);
+
+                fetch(url, {mode: 'no-cors'})
+                    .then(function (response) {
+                        if (response.ok) {
+                            console.log("[INFO OK]: Network response was ok.");
+                        } else {
+                            console.log(response);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(
+                            "[ERROR]: There has been a problem with your fetch operation: " + error.message
+                        );
+                    });
+            }
+
+        }
+
+        init_cams(cams);
+
         function ptzCmd(cmd, index) {
             let cameraIP = cams[index].ip;
             let cameraUsr = cams[index].user;
@@ -87,22 +114,13 @@
                 "&pwd=" +
                 cameraPwd;
             console.log("[ACTION " + cmd + "]: " + URL);
-            /*
-            fetch(URL)
-              .then((response) => response.json())
-              .then((data) => {
-                console.log(data);
-                //     console.log(data.localidade);
-              });
-            //return;
-          */
+
             fetch(URL, {mode: 'no-cors'})
                 .then(function (response) {
                     if (response.ok) {
                         console.log("[INFO OK]: Network response was ok.");
-                        console.log(response);
                     } else {
-                        console.log("[INFO NOT OK]: Network response was not ok.");
+                        console.log(response);
                     }
                 })
                 .catch(function (error) {
