@@ -1,14 +1,11 @@
 import os
 import sys
 
-from markupsafe import Markup
-
 file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
 
-from flask import request, Flask, render_template, send_from_directory, Response, url_for, redirect, \
-    render_template_string
-from flask_flatpages import FlatPages, pygmented_markdown
+from flask import request, Flask, render_template, send_from_directory, url_for, redirect
+from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
 
 from ring_list import RingList
@@ -304,14 +301,6 @@ usb_boot = "shutdown"
 
 app.register_blueprint(app_pages)
 flatpages = FlatPages(app)
-
-
-def prerender_jinja(text):
-    pre_rendered_body = render_template_string(Markup(text))
-    return pygmented_markdown(pre_rendered_body)
-
-
-app.config['FLATPAGES_HTML_RENDERER'] = prerender_jinja
 app.config.from_object(__name__)
 
 if __name__ == "__main__":

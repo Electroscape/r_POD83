@@ -2,6 +2,11 @@
 title: Maintenance Locker
 date: 2013-08-27
 ---
+<style>
+p {
+ text-align: center;
+}
+</style>
 
 ![1.png](../../static/imgs/locker/1.png)
 ![2.png](../../static/imgs/locker/2.png)
