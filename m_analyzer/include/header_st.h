@@ -1,12 +1,33 @@
 #pragma once
 
-#define StageCount 7
+#define StageCount 8
 #define PasswordAmount 10
 #define MaxPassLen 5
 #define closed 1
 #define open   0
 
 const unsigned long rfidCheckInterval = 250;
+
+#define outputCnt 2
+#define inputCnt 0
+
+enum IO {
+    IO0,            
+    IO1
+};
+
+int intputArray[inputCnt] = {
+};
+int outputArray[outputCnt] = {
+    IO0,             
+    IO1,             
+};
+enum IOEvents{
+    firstSolutionEvent = 1,
+    secondSolutionEvent
+};
+
+
 
 enum stages {
     setupStage = 1,
@@ -15,8 +36,8 @@ enum stages {
     runMode1_fast = 8,
     firstSolution  = 16,
     waitfordish5 = 32,
-    runMode2 = 64
-
+    runMode2 = 64,
+    secondSolution =128
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -32,6 +53,7 @@ int flagMapping[StageCount] {
     ledFlag+rfidFlag,
     ledFlag,
     rfidFlag,
+    ledFlag+rfidFlag,
     ledFlag+rfidFlag
 };
 
