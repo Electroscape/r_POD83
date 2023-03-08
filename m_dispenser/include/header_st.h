@@ -17,17 +17,18 @@ enum brains {
 
 // --- Inputs
 enum IO {
-    DispenserAction = 1
+    dispenserAction_pin
 };
 #define inputCnt 1
 #define outputCnt 0
 
-uint8_t inputTypes[inputCnt] = {
+/* uint8_t inputTypes[inputCnt] = {
     INPUT_PULLUP
-};
+}; */
+int dispenserAction = 1 << dispenserAction_pin;
 
 int intputArray[inputCnt] = {
-    DispenserAction   
+    dispenserAction_pin
 };
 
 int outputArray[outputCnt] = {
@@ -48,14 +49,14 @@ enum relays {
 };
 
 enum relayInits {
-    Relay1_init = open,
-    Relay2_init = open,
+    Relay1_init = closed,
+    Relay2_init = closed,
     Relay3_init = closed,
-    Relay4_init = open, 
-    Relay5_init = open, 
+    Relay4_init = closed, 
+    Relay5_init = closed, 
     Relay6_init = closed,  
     Relay7_init = closed,  
-    Relay8_init = open, 
+    Relay8_init = closed, 
 };
 
 int relayPinArray[relayAmount] = {
@@ -107,13 +108,4 @@ int flagMapping[StageCount] {
     ledFlag,
     ledFlag,
     ledFlag
-};
-
-char passwords[PasswordAmount][MaxPassLen] = {
-    "P1",
-};
-
-// defines what password/RFIDCode is used at what stage, if none is used its -1
-int passwordMap[PasswordAmount] = {
-    waitRequest
 };
