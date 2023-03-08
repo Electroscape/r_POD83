@@ -10,7 +10,6 @@ from flask import request, Flask, render_template, send_from_directory, Response
     render_template_string
 from flask_flatpages import FlatPages, pygmented_markdown
 from flask_socketio import SocketIO
-from flask_cors import CORS, cross_origin
 
 from ring_list import RingList
 from fns import js_r
@@ -19,8 +18,6 @@ import socketio
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
-app.config['CORS_HEADERS'] = 'Content-Type'
-CORS(app, resources={r"/foscam_control": {"origins": "*"}})
 
 # standard Python
 sio = socketio.Client()
@@ -183,7 +180,6 @@ def get_posts():
 
 
 @app.route('/foscam_control', methods=['GET', 'POST'])
-@cross_origin()
 def foscam_control():
     config = {
         "title": "CCTV Cameras"

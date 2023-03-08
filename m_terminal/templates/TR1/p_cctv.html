@@ -96,7 +96,7 @@
               });
             //return;
           */
-            fetch(URL, {mode: 'cors'})
+            fetch(URL, {mode: 'no-cors'})
                 .then(function (response) {
                     if (response.ok) {
                         console.log("[INFO OK]: Network response was ok.");
