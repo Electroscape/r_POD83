@@ -9,7 +9,7 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
 sio = socketio.Client()
-server_ip = "http://raspi-4-pod-t1:5500"
+server_ip = "http://raspi-4-pod-t1:5500"  # <= change server ip here
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 cards = {

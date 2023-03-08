@@ -7,3 +7,5 @@ numpy==1.24.2
 requests==2.28.2
 gevent==22.10.2
 gevent-websocket
+socketio~=0.2.1
+MarkupSafe==2.1.2

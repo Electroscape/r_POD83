@@ -12,7 +12,6 @@ from flask_flatpages import FlatPages, pygmented_markdown
 from flask_socketio import SocketIO
 from flask_cors import CORS, cross_origin
 
-from cam_stream import gen_frames
 from ring_list import RingList
 from fns import js_r
 from pages import app_pages
@@ -191,11 +190,6 @@ def foscam_control():
     }
     print("open CCTV page")
     return render_template("TR1/p_cctv.html", g_config=config, cams=ip_conf["cams"])
-
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/get_chat', methods=['GET', 'POST'])
