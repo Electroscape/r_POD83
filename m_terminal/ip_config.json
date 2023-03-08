@@ -6,12 +6,12 @@
     "mcrp": "raspi-4-pod-Arbiter:5555",
     "cams": [
         {
-          "ip": "cam1_tr1:88",
+            "ip": "Kamera-4-Pod83-Reinraum:88",
           "user": "username",
           "pass": "password"
         },
         {
-          "ip": "cam2_tr1:88",
+            "ip": "Kamera-4-Pod83-Locker-Rechts:88",
           "user": "username",
           "pass": "password"
         }
