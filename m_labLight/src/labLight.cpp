@@ -51,6 +51,12 @@ void handleInputs() {
 
     int result = MotherIO.getInputs();
     Serial.println(result);
+    if (result & door) {
+        result -= door;
+        MotherIO.outputReset();
+    } else {
+        MotherIO.setOuput(inverted_door);
+    }
 
     if (lastState == result) {
         return;
@@ -75,8 +81,6 @@ void handleInputs() {
         case lightBlue:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 20);
         break;
-        case lightBlueBright:
-            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 50);
         break;
         default: break;
     }
