@@ -4,5 +4,6 @@ python-socketio==5.7.2
 requests
 gevent==22.10.2
 gevent-websocket
+RPi.GPIO
 adafruit-blinka
 adafruit-circuitpython-pn532
