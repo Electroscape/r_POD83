@@ -113,6 +113,7 @@ def handle_event(event_key, event_value=None):
             return
 
     if not event_value.get(event_condition, lambda: True)():
+        # print(f"conditions not fullfilled {event_key}")
         return
 
     # Start Video before Sound
@@ -141,7 +142,6 @@ def handle_event(event_key, event_value=None):
     except KeyError as err:
         print(err)
         pass
-
 
     # Frontend
     cb_dict = event_value.get(fe_cb, False)
@@ -254,6 +254,7 @@ def connect():
 
 
 def main():
+    # handle_event("laserlock_bootdecon")
     while True:
         # blank_screen_pid.kill()
         # handle_event("airlock_intro")

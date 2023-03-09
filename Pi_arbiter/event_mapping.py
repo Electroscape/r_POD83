@@ -64,6 +64,7 @@ class States:
     def __init__(self):
         self.laserlock_door_armed = False
         self.laserlock_door_opened = False
+        self.laserlock_fixed = False
 
 
 states = States()
@@ -85,6 +86,15 @@ def laserlock_set_door_opened_state():
 
 def laserlock_door_open_condition():
     return states.laserlock_door_armed and not states.laserlock_door_opened
+
+
+def laserlock_fixed_condition():
+    # print(states.laserlock_fixed)
+    return not states.laserlock_fixed
+
+
+def laserlock_set_fixed():
+    states.laserlock_fixed = True
 
 
 event_map = {
@@ -216,6 +226,8 @@ event_map = {
     "laserlock_cable_fixed": {
         pcf_in_add: laserlock_in_2_pcf,
         pcf_in: 1 << 0,
+        event_condition: laserlock_fixed_condition,
+        event_script: laserlock_set_fixed,
         fe_cb: {
             fe_cb_cmd: "airlock",
             fe_cb_tgt: "tr1",
@@ -224,7 +236,7 @@ event_map = {
     },
     "laserlock_door_opened": {
         pcf_in_add: laserlock_in_2_pcf,
-        pcf_in_negated: 1 << 1,
+        pcf_in: 1 << 1,
         event_condition: laserlock_door_open_condition,
         event_script: laserlock_set_door_opened_state,
         sound: {
