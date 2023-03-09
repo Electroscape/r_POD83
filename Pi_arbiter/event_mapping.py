@@ -58,6 +58,9 @@ lab_light_on = 1 << 1
 
 binary_pcfs = [airlock_in_pcf, laserlock_in_pcf]
 
+blank_screen_pid = subprocess.Popen(["cvlc", "media/black_screen.jpg", "--no-embedded-video", "--fullscreen",
+                                     "--no-video-title", "--video-wallpaper", "--quiet", "--loop"])
+
 
 class States:
     def __init__(self):
@@ -70,9 +73,10 @@ states = States()
 
 
 def play_elancell_intro():
-    # subprocess.call(['pkill -f', "vlc"])
+    blank_screen_pid.kill()
+    print("playing elancell intro")
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
-                      "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top'])
+                      "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top', '--quiet'])
 
 
 def laserlock_arm_door():

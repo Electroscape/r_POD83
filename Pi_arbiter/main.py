@@ -42,7 +42,6 @@ gpio_thread = None
 # used to prevent multiple boots
 usb_booted = False
 connected = False
-blank_screen_pid = None
 
 
 class Settings:
@@ -272,8 +271,6 @@ if __name__ == '__main__':
     connected = connect()
     # otherwise calling an already running atmo does not work
     handle_event("reset_atmo")
-    # blank_screen_pid = Popen(["cvlc", "media/black_screen.jpg", "--no-embedded-video", "--fullscreen",
-    #                         "--no-video-title", "--video-wallpaper"])
     # used to trigger rpis via regular network for videos
     nw_sock = TESocketServer(12345)
 
