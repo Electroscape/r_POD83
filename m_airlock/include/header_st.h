@@ -139,7 +139,7 @@ int flagMapping[StageCount] {
 
 char passwords[PasswordAmount][MaxPassLen] = {
     "GF",
-    "1234",
+    "1984",
 };
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
