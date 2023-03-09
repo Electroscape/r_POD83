@@ -60,9 +60,9 @@ void stageActions() {
         case setupStage: 
             wdt_reset();
             // Set Color
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 50);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20); 
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 0);
+            /* LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 0);
             delay(500);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 1);
             delay(500);
@@ -70,8 +70,7 @@ void stageActions() {
             delay(500);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 100, PWM::set1, 3);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrYellow, 100, PWM::set1, 4);
-            delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrYellow, 100, PWM::set1, 4); */
             delay(500);
             // Set all Servos to 0
             wdt_reset();
@@ -97,11 +96,11 @@ void stageActions() {
             delay(500);
             SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
             delay(500); 
-            LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set1, 4);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
             delay(500);
-            Mother.motherRelay.digitalWrite(Pump5, open);  //Stop Pump
+            Mother.motherRelay.digitalWrite(Pump5, closed);  //Stop Pump
             wdt_disable();
-            delay(10000); // long time for Belt
+            delay(12000); // long time for Belt
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;
@@ -114,9 +113,9 @@ void stageActions() {
             delay(500); 
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, PWM::set1, 2);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 2);
             delay(500);
-            Mother.motherRelay.digitalWrite(Pump3, open);  //Start Belt normalDirection
+            Mother.motherRelay.digitalWrite(Pump3, closed);  //Start Belt normalDirection
             wdt_disable();
             delay(10000);
             wdt_enable(WDTO_8S);
@@ -132,9 +131,9 @@ void stageActions() {
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, PWM::set1, 3);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 3);
             delay(500);
-            Mother.motherRelay.digitalWrite(Pump4, open);  //Start Belt normalDirection
+            Mother.motherRelay.digitalWrite(Pump4, closed);  //Start Belt normalDirection
             wdt_disable();
             delay(10000);
             wdt_enable(WDTO_8S);
@@ -149,9 +148,9 @@ void stageActions() {
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, PWM::set1, 0);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 0);
             delay(500);
-            Mother.motherRelay.digitalWrite(Pump1, open);  //Start Belt normalDirection
+            Mother.motherRelay.digitalWrite(Pump1, closed);  //Start Belt normalDirection
             wdt_disable();
             delay(3000);
             wdt_enable(WDTO_8S);
@@ -169,9 +168,9 @@ void stageActions() {
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100, PWM::set1, 1);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 1);
             delay(500);
-            Mother.motherRelay.digitalWrite(Pump2, open);  //Start Belt normalDirection
+            Mother.motherRelay.digitalWrite(Pump2, closed);  //Start Belt normalDirection
             wdt_disable();
             delay(10000);
             wdt_enable(WDTO_8S);
@@ -186,7 +185,34 @@ void stageActions() {
         case WorldsEnd: 
             wdt_reset();
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
-            LED_CMDS::blinking(Mother, LED_Brain , LED_CMDS::clrBlack, LED_CMDS::clrRed, 100, 400, 100, 100,PWM::set1);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+            delay(300);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+            delay(100);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+            delay(300);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+            delay(100);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+            delay(300);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+            delay(100);
+            wdt_reset();
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+            delay(300);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+            delay(100);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+            delay(300);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+            delay(100);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+            delay(300);
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+            delay(100);
+            wdt_reset();
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+            //LED_CMDS::blinking(Mother, LED_Brain , LED_CMDS::clrBlack, LED_CMDS::clrRed, 100, 400, 100, 100,PWM::set1);
             delay(300);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
             delay(300);

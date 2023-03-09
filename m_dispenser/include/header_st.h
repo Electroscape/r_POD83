@@ -47,11 +47,11 @@ enum relays {
 };
 
 enum relayInits {
-    Relay1_init = closed,
-    Relay2_init = closed,
-    Relay3_init = closed,
-    Relay4_init = closed, 
-    Relay5_init = closed, 
+    Relay1_init = open,
+    Relay2_init = open,
+    Relay3_init = open,
+    Relay4_init = open, 
+    Relay5_init = open, 
     Relay6_init = closed,  
     Relay7_init = closed,  
     Relay8_init = closed, 
