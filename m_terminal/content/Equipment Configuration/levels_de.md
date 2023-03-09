@@ -2,13 +2,14 @@
 title: Levels
 date: 2013-08-27
 ---
-Here is the new post
-American-style dates. I know, I know.
 
-You can have:
-* Lists
-* More Lists
+To determine the levels, all relevant environments have to be entered to proceed to the next experiment.
+The order is dependent on time of the initial synthesis. Use the last synthesized environment first.
 
-> And block quotes
+- Triangular 1
+- Circular 2
+- Square 3
+- Dot 4
+- Hexagonial 5 
+- Pentagonial 6
 
-    And event highlighted code if you indent :)

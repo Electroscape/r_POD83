@@ -2,75 +2,103 @@
 title: Elancell Homepage
 date: 2013-08-27
 ---
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.150.1/three.min.js" integrity="sha512-pHIFefLE+ZH/TmpBDxPoDyC8kBxD773LqGShSv9VSiMFLluVRKKOFO9JA+TgnQruQEKovPtZ3vEz1Hwo/F4J2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+#canvas, canvas {
+  width: 300px;
+  height: 300px;
+}
 
-# One morning, when Gregor Samsa woke from troubled dreams.
+.crt {
+ letter-spacing: 1px;
+ font-family: 'VT323', monospace;
+ color: #95e208;
+ -webkit-filter: blur(.2px);
+ text-transform: uppercase;
+ text-shadow: 0 0 5px #22ff22, 0 0 5px #aaffaa;
+ font-size: 22px;
+}
 
-One morning, when Gregor Samsa woke from troubled dreams, he found himself *transformed* in his bed into a horrible  [vermin](http://en.wikipedia.org/wiki/Vermin "Wikipedia Vermin"). He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly domed and divided by arches into stiff sections. The bedding was hardly able to cover **strong** it and seemed ready to slide off any moment. His many legs, pitifully thin compared with the size of the rest of him, link waved abouthelplessly as he looked. <cite>“What's happened to me?”</cite> he thought. It wasn't a dream. His room, a proper human room although a little too small, lay peacefully between its four familiar walls.</p>
+#monitor {
+ background-color: #161913;
+ 
+ position: relative;
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ width: 100%;
+ height: 100%;
+ text-transform: uppercase;
+ padding: 15px;
+}
 
-## The bedding was hardly able to cover it
+.content {
+  white-space: nowrap;
+  text-align: center;
+  display: inline-block;
+}
 
-It showed a lady fitted out with a fur hat and fur boa who sat upright, raising a heavy fur muff that covered the whole of her lower arm towards the viewer a solid fur muff into which her entire forearm disappeared..
+.foreground, .background {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
-### Things we know about Gregor's sleeping habits
+.message {
+  position: absolute;
+  left: 90px;
+}
+</style>
 
-- He always slept on his right side.
-- He has to get up early (to start another dreadful day).
-- He has a drawer and a alarm clock next to his bed.
-- His mother calls him when he gets up to late.
+<div id="monitor" class="crt">
+  <pre class="content crt">
+  <div id="canvas"></div><br>
+    ═══════[Elancell]═══════
+    <br><br>Under Construction
+  <span class="message"></span>
 
+  </pre>
+  <div class="foreground"></div>
+</div>
 
-<table class="data">
-  <tr>
-    <th>Writer</th>
-    <th>Nationality</th>
-    <th>Genre</th>
-    <th>Most famous book</th>
-  </tr>
-  <tr>
-    <td>Franz Kafka</td>
-    <td>Leo Tolstoy</td>
-    <td>F. Scott Fitzgerald</td>
-    <td>H.G. Wells</td>
-  </tr>
-  <tr>
-    <td>Austrian</td>
-    <td>Russia</td>
-    <td>American</td>
-    <td>British</td>
-  </tr>
-  <tr>
-    <td>Literature & Fiction, Philosophy, Short Stories</td>
-    <td>Literature & Fiction, Philosophy</td>
-    <td>Literature & Fiction, Short Stories</td>
-    <td>Science Fiction</td>
-  </tr>
-    <tr>
-    <td>The Metamorphosis</td>
-    <td>War & Piece</td>
-    <td>The Great Gatsby</td>
-    <td>War of the Worlds</td>
-  </tr>
-  </table>
+<script>
 
-First he wanted to stand up quietly and undisturbed, get dressed, above all have breakfast, and only then consider further action, for (he noticed this clearly) by thinking things over in bed he would not reach a reasonable conclusion. He remembered that he had already often felt a light pain or other in bed, perhaps the result of an awkward lying position, which later turned out to be purely imaginary when he stood up, and he was eager to see how his present fantasies would gradually dissipate. That the change in his voice was nothing other than the onset of a real chill, an occupational illness of commercial travelers, of that he had not the slightest doubt.
+/* ThreeJS */
+let container = $("#canvas");
+let canvasWidth = container.width();
+let canvasHeight = container.height();
 
-    function metamorphose(protagonist,author){
-        if( protagonist.name.first === 'Gregor' && author.name.last === 'Kafka' ){
-            protagonist.species = 'insect';
-        }
-    }
+console.log(canvasWidth);
 
-It was very easy to throw aside the blanket. He needed only to push himself up a little, and it fell by itself. But to continue was difficult, particularly because he was so unusually wide. He needed arms and hands to push himself upright. Instead of these, however, he had only many small limbs which were incessantly moving with very different motions and which, in addition, he was unable to control. If he wanted to bend one of them, then it was the first to extend itself, and if he finally succeeded doing with this limb what he wanted, in the meantime all the others, as if left free, moved around in an excessively painful agitation. "But I must not stay in bed uselessly," said Gregor to himself.
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera( 75, canvasWidth / canvasHeight, 0.1, 1000 );
 
-> At first, he wanted to get off the bed with the lower part of his body, but this lower part (which he incidentally had not yet looked at and which he also couldn't picture clearly) proved itself too difficult to move. The attempt went so slowly. When, having become almost frantic, he finally hurled himself forward with all his force and without thinking, he chose his direction incorrectly, and he hit the lower bedpost hard. The violent pain he felt revealed to him that the lower part of his body was at the moment probably the most sensitive.
+let renderer = new THREE.WebGLRenderer( { alpha: true } );
+renderer.setSize( canvasWidth, canvasHeight );
+renderer.setClearColor( 0x000000, 0 );
 
-Thus, he tried to get his upper body out of the bed first and turned his head carefully toward the edge of the bed. He managed to do this easily, and in spite of its width and weight his body mass at last slowly followed the turning of his head. But as he finally raised his head outside the bed in the open air, he became anxious about moving forward any further in this manner, for if he allowed himself eventually to fall by this process, it would take a miracle to prevent his head from getting injured. And at all costs he must not lose consciousness right now. He preferred to remain in bed.
+container.get(0).appendChild( renderer.domElement );
 
-#### First five selected publications in English
-1. The Castle
-2. The Great Wall of China
-3. The Trial
-4. America	
-5. The Diaries Of Franz Kafka
+let geometry = new THREE.SphereGeometry( 2, 12, 12 );
+let material = new THREE.MeshBasicMaterial({
+      color : 0x92ff38,
+      wireframe : true,
+      wireframeLinewidth: 2
+    });
+let cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
 
-***
+camera.position.z = 5;
+
+function render() {
+	requestAnimationFrame( render );
+    cube.rotation.x += 0.0;
+    cube.rotation.y += 0.01;
+	renderer.render( scene, camera );
+}
+render();
+</script>

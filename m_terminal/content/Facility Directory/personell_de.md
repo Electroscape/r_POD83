@@ -96,15 +96,14 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/42/ai-generated-7809883_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/rachel.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Rachel</h3>
-                                                <span>Team Leader</span>
+                                                <h3>Rachel Taylor</h3>
+                                                <span>Lead Scientist</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p>19.09.1984</p>
                                             </div>
                                         </div>
                                     </div>

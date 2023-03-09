@@ -14,6 +14,7 @@ This database is here to help identify and resolve errors within your facility
 .tg .tg-baqh{text-align:center;vertical-align:top}
 .tg .tg-u5z2{font-family:inherit;text-align:center;vertical-align:top}
 .tg .tg-0lax{text-align:left;vertical-align:top}
+tr:hover {background-color: coral;}
 </style>
 <table class="tg">
 <thead>
