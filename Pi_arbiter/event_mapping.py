@@ -24,7 +24,6 @@ sound_id = "id"
 
 pcf_in = "pcf_in"
 # if a specific pin must be set to high in order to trigger, only works on non-binary
-pcf_in_negated = "pcf_in_negated"
 pcf_in_add = "pcf_in_add"
 pcf_out = "pcf_out"
 pcf_out_add = "pcf_out_add"
@@ -377,13 +376,13 @@ event_map = {
         trigger_cmd: "analyzer",
         trigger_msg: "run1Right",
         pcf_in_add: analyzer_in_pcf,
-        pcf_in: 1 << 0
+        pcf_in: 1 << 2
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
         trigger_msg: "run2Right",
         pcf_in_add: analyzer_in_pcf,
-        pcf_in: 1 << 1
+        pcf_in: 1 << 3
     },
     "reset_atmo": {
         sound: {
