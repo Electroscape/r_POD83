@@ -141,10 +141,9 @@
                 <a
                         class="nav-link {% if loop.index0 == 0 %}active{% endif %}"
                         id="cams-tab-{{ loop.index0 }}"
-                        data-mdb-toggle="tab"
+                        data-toggle="tab"
                         href="#cams-tabs-{{ loop.index0 }}"
                         role="tab"
-                        aria-controls="cams-tabs-{{ loop.index0 }}"
                         aria-selected="{% if loop.index0 == 0 %}true{% else %}false{% endif %}"
                 ><i class="fa-solid fa-video"></i> Cam {{ loop.index }}</a>
             </li>
@@ -260,3 +259,40 @@
     <!-- Tabs content -->
 {% endblock %}
 
+{% block add_js %}
+    <script type="text/javascript">
+        $('#cams-tab-1').click(function (e) {
+            swal({
+                title: "An input!",
+                text: "Write something interesting:",
+                type: "input",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                animation: "slide-from-top",
+                content: {
+                    element: "input",
+                    attributes: {
+                        placeholder: "4-digit PIN Code",
+                        type: "password",
+                    },
+                }
+            }).then(
+                function (inputValue) {
+                    console.log(inputValue)
+                    if (inputValue === "1010") {
+                        swal("Access Granted", "Correct PIN Code", "success");
+                        $("#cams-tab-1").tab("show");
+                    } else {
+                        swal("Access Denied", "Wrong PIN: " + inputValue, "error");
+                    }
+                }
+            );
+
+            return true;
+        })
+
+        $('#cams-tab-0').click(function (e) {
+            $("#cams-tab-0").tab("show");
+        })
+    </script>
+{% endblock %}
