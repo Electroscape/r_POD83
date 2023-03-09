@@ -1,7 +1,7 @@
 #pragma once
 
 #define StageCount 8
-#define PasswordAmount 10
+#define PasswordAmount 6
 #define MaxPassLen 5
 #define closed 1
 #define open   0

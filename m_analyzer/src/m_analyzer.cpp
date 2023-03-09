@@ -99,17 +99,17 @@ bool passwordInterpreter() {
                 if(stage == runMode2){
                     switch(i_RFID){
                         case 0:
-                            if (passNo == 1){ RFID[i_RFID].status = 2;} // Card at right position
+                            if (passNo == 0){ RFID[i_RFID].status = 2;} // Card at right position
                             else if (passNo == 4){ RFID[i_RFID].status = 0;} // No Card                            
                             else { RFID[i_RFID].status = 1;} // Card at wrong position                            
                         break;
                         case 1:
-                            if (passNo == 2){ RFID[i_RFID].status = 2;} // Card at right position
+                            if (passNo == 1){ RFID[i_RFID].status = 2;} // Card at right position
                             else if (passNo == 4){ RFID[i_RFID].status = 0;} // No Card                            
                             else { RFID[i_RFID].status = 1;} // Card at wrong position                            
                         break;
                         case 2:
-                            if (passNo == 0){ RFID[i_RFID].status = 2;} // Card at right position
+                            if (passNo == 2){ RFID[i_RFID].status = 2;} // Card at right position
                             else if (passNo == 4){ RFID[i_RFID].status = 0;} // No Card                            
                             else { RFID[i_RFID].status = 1;} // Card at wrong position                            
                         break;
@@ -171,7 +171,9 @@ void handleResult(char *cmdPtr) {
         Serial.print(RFID[2].status);
         Serial.println(RFID[3].status);
         if (stage != waitfordish5 ){
-            checkSum = RFID[0].status+RFID[1].status+RFID[2].status+RFID[3].status;
+            checkSum = RFID[0]. status+RFID[1].status+RFID[2].status+RFID[3].status;
+            Serial.print("Checksum is: ");
+            Serial.println(checkSum);
         }
         wdt_disable();  
         // Stage runMode 1 if a Dish is placed LEDs should get white, blink red and stay at this position on white until all 4 dishes are placed
@@ -246,9 +248,16 @@ void handleResult(char *cmdPtr) {
                 for(int i_RFID = 0; i_RFID < 4; i_RFID++){ //check where a Dish is laying
                     if (RFID[i_RFID].status == 3){
                         stage = runMode2;
-                    return;
+                        Serial.println("Dish5 found");
+            LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrWhite, 100);
+                        wdt_disable();
+                        delay(10000);
+                        wdt_enable(WDTO_8S); 
+
+                        return;
                     }
                 }
+            break;
                 
             case(runMode2):
                 if (checkSum == 8){ // Right Solution found -> change state
@@ -267,14 +276,14 @@ void handleResult(char *cmdPtr) {
                     delay(800); // short delay blinking red  
                     LED_CMDS::setAllStripsToClr(Mother,0,LED_CMDS::clrBlack,100); 
                     delay(100);
-                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,500,PWM::set1,1); 
+                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,500,0,PWM::set1); 
                     delay(500);
-                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,500,PWM::set2,2);
+                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,250,1,PWM::set2);
                     delay(500);
-                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,500,PWM::set3,0);
+                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,500,2,PWM::set3);
                     delay(500);
-                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,500,PWM::set4,3); 
-                    delay(500);
+                    LED_CMDS::running(Mother,0,LED_CMDS::clrWhite,100,750,3,PWM::set4); 
+                    delay(2000);
                     return;     
                 }
                 break;
@@ -338,7 +347,7 @@ void stageActions() {
         break;
         case analyze: // After 4 dishs are placed run Analyze LightShow
             wdt_disable();   
-            LED_CMDS::runningPWM(Mother, 0, LED_CMDS::clrWhite, 100,1000,4);
+            LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrWhite, 100);
             delay(2000);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);
             delay(500);
@@ -366,6 +375,9 @@ void stageActions() {
             wdt_disable();
             LED_CMDS::blinking(Mother,0,LED_CMDS::clrBlack,LED_CMDS::clrGreen,40,200,100,100,PWM::set1_2_3_4); // let all LEDs blink 
             MotherIO.setOuput(firstSolutionEvent); // //Ouput to Arbiter!!!
+            delay(100);
+            Serial.println("output send!!");
+            MotherIO.outputReset();
             delay(2000);            
             wdt_enable(WDTO_8S);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);
@@ -383,7 +395,8 @@ void stageActions() {
             wdt_disable();
             LED_CMDS::blinking(Mother,0,LED_CMDS::clrBlack,LED_CMDS::clrGreen,10,200,100,100,PWM::set1_2_3_4); // let all LEDs blink 
             MotherIO.setOuput(secondSolutionEvent); // //Ouput to Arbiter!!!
-            delay(20000);            
+            delay(100);
+            MotherIO.outputReset();          
             wdt_enable(WDTO_8S);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);
         break;
