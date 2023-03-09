@@ -380,13 +380,20 @@ event_map = {
         trigger_cmd: "analyzer",
         trigger_msg: "run1Right",
         pcf_in_add: analyzer_in_pcf,
-        pcf_in: 1 << 2
+        pcf_in: 1 << 2,
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: 1 << 2
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
         trigger_msg: "run2Right",
         pcf_in_add: analyzer_in_pcf,
-        pcf_in: 1 << 3
+        pcf_in: 1 << 3,
+        fe_cb: {
+            fe_cb_cmd: "elancell",
+            fe_cb_msg: "enable",
+            fe_cb_tgt: "tr2"
+        }
     },
     "reset_atmo": {
         sound: {
