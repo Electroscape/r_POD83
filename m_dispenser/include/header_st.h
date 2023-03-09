@@ -7,8 +7,6 @@
 #define open   0
 
 
-const unsigned long rfidCheckInterval = 1000;
-
 enum brains {
     LED_Brain,     
     Servo_Brain1,         
@@ -90,7 +88,7 @@ enum stages {
     Dish3  = 16,
     Dish4 = 32,
     Dish5 = 64,
-    WorldsEnd =128
+    WorldsEnd =128,
 };
 
 // the sum of all stages sprinkled with a bit of black magic
