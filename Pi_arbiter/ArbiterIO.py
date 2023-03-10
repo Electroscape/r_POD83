@@ -20,12 +20,12 @@ class ArbiterIO:
         return pcf_list
 
     def pcf_has_input(self, pcf):
-        sleep(0.01)
         for pin_index in range(0, 8):
             pin = 7 - pin_index
             try:
                 ret = bool(pcf.port[pin])
                 if not ret:
+                    sleep(0.01)
                     return True
             except IOError:
                 pass
