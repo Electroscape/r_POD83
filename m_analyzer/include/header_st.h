@@ -58,11 +58,11 @@ int flagMapping[StageCount] {
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
-    "P1 ",
+    "P1 ", // runmode1
     "P2 ",
     "P3 ",
     "P4 ",
-    "ZERO",  
+    "ZERO", 
     "P5 "
 };
 
@@ -73,5 +73,16 @@ int passwordMap[PasswordAmount] = {
     runMode1,
     runMode1,
     runMode1,
+    runMode1_fast,
+    runMode1_fast,
+    runMode1_fast,
+    runMode1_fast,
+    runMode1_fast,
+    waitfordish5,
+    runMode2,
+    runMode2,
+    runMode2,
+    runMode2,
+    runMode2
 }; */
 
