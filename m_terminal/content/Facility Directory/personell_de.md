@@ -82,12 +82,11 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>David</h3>
-                                                <span>Researcher</span>
+                                                <h3>A. Saei</h3>
+                                                <span>10.10.1993</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p>Military Application/Pharmaceutical OLD-WING 11</p>
                                             </div>
                                         </div>
                                     </div>
@@ -99,11 +98,11 @@ date: 2013-08-27
                                                 <img src="../../static/imgs/team/rachel.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Rachel Taylor</h3>
-                                                <span>Lead Scientist</span>
+                                                <h3>Dr. D. Hugo</h3>
+                                                <span>Genetics Research POD 134</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>19.09.1984</p>
+                                                <p></p>
                                             </div>
                                         </div>
                                     </div>
@@ -115,11 +114,13 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2022/07/24/23/46/artificial-intelligence-7342613_1280.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Abdullah</h3>
-                                                <span>Software developer</span>
+                                                <h3>Dr. D. Coverstone</h3>
+                                                <span>02.11.1982</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Works in Technical Support department for the POD terminals</p>
+                                                <p>Security Analyst POD 83<br>
+                                                    Nano-Technology
+                                                    </p>
                                             </div>
                                         </div>
                                     </div>
@@ -135,12 +136,11 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2020/12/23/08/50/woman-5854291_1280.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Ms. Marvel</h3>
-                                                <span>Manager</span>
+                                                <h3>Dr. J. Winnie</h3>
+                                                <span>Genetics Research POD 231</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p></p>
                                             </div>
                                         </div>
                                     </div>
@@ -152,12 +152,11 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2023/02/24/00/42/ai-generated-7809883_1280.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Rachel?</h3>
-                                                <span>Clone</span>
+                                                <h3>M. Pek</h3>
+                                                <span>18.01.1991</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p>Military Application/Pharmaceutical OLD-WING 10</p>
                                             </div>
                                         </div>
                                     </div>
@@ -169,12 +168,11 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>David?</h3>
-                                                <span>Clone</span>
+                                                <h3>Dr. C. Walter</h3>
+                                                <span>26.09.1989</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p>Bio-Technology Division 5</p>
                                             </div>
                                         </div>
                                     </div>
@@ -190,12 +188,11 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Name</h3>
-                                                <span>Position</span>
+                                                <h3>D. Mensah-Bonsu</h3>
+                                                <span>19.09.1984</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p>Nano-Technology POD 85</p>
                                             </div>
                                         </div>
                                     </div>
@@ -207,12 +204,11 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Name</h3>
-                                                <span>Position</span>
+                                                <h3>K.T. Walti</h3>
+                                                <span>11.01.1990</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p>Virology Division 1</p>
                                             </div>
                                         </div>
                                     </div>
@@ -224,12 +220,65 @@ date: 2013-08-27
                                                 <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>Name</h3>
-                                                <span>Position</span>
+                                                <h3>Dr. A. Finn</h3>
+                                                <span>Virology Division 54</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et nisi id arcu bibendum
-                                                    efficitur. Pellentesque maximus ac libero non iaculis.</p>
+                                                <p></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>J. Gerst</h3>
+                                                <span>17.08.1990</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Bio-Vita Testing Lab 24</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="../../static/imgs/team/rachel.png" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Dr. R. Taylor</h3>
+                                                <span>19.09.1984</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Lead Scientist POD 83<br>
+                                                    Nano-Technology
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="carousel-team-card-cell">
+                                        <div class="carousel-card-team">
+                                            <div class="card-team-img">
+                                                <img src="https://cdn.pixabay.com/photo/2022/07/24/23/46/artificial-intelligence-7342613_1280.jpg" alt=""/>
+                                            </div>
+                                            <div class="card-team-name">
+                                                <h3>Dr. U. E. Baum</h3>
+                                                <span>20.10.1949</span>
+                                            </div>
+                                            <div class="card-team-content">
+                                                <p>Military Application/Pharmaceutical OLD-WING 1</p>
                                             </div>
                                         </div>
                                     </div>
