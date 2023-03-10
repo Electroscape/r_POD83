@@ -155,7 +155,8 @@ class RFID:
                 print(f"Card found uid: {card_uid}")
 
                 card_read = rfid_read(card_uid)
-
+                if card_read.startswith("P"):
+                    card_read = card_read[1:]
                 print(f"Data on card: {card_read}")
                 if card_read in self.cards:
                     self.data["data"] = card_read
