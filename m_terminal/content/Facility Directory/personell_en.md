@@ -95,7 +95,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/rachel.png" alt=""/>
+                                                <img src="https://cdn.pixabay.com/photo/2023/01/31/07/50/hunter-7757371_1280.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. D. Hugo</h3>
@@ -217,7 +217,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
+                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/42/ai-generated-7809882_1280.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. A. Finn</h3>
@@ -237,14 +237,14 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
+                                                <img src="https://cdn.pixabay.com/photo/2023/01/31/07/52/hunter-7757376_1280.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
-                                                <h3>J. Gerst</h3>
-                                                <span>17.08.1990</span>
+                                                <h3>Dr. M. Henry</h3>
+                                                <span></span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Bio-Vita Testing Lab 24</p>
+                                                <p>Bio-Vita Testing Lab 23</p>
                                             </div>
                                         </div>
                                     </div>
