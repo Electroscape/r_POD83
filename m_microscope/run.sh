@@ -13,4 +13,4 @@ sleep 5 &
 
 # modify the IP address you want to display
 # comment or uncomment to run the browser on the webpage you choose
-DISPLAY=:0 /usr/bin/chromium-browser --noerrdialogs --disable-infobars --kiosk 192.168.87.176:5555 &
+DISPLAY=:0 /usr/bin/chromium-browser --noerrdialogs --disable-infobars --kiosk localhost:5555 &

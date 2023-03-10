@@ -3,24 +3,30 @@ import busio
 from time import sleep
 import socketio
 
-from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A
+from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A, BusyError
 from adafruit_pn532.i2c import PN532_I2C
 
-# I2C connection:
-while True:
-    try:
-        i2c = busio.I2C(board.SCL, board.SDA)
-        pn532 = PN532_I2C(i2c, debug=False)
-        ic, ver, rev, support = pn532.firmware_version
-        print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
-        sleep(0.5)
-        pn532.SAM_configuration()  # Configure PN532 to communicate with MiFare cards
-        break
-    except Exception:
-        print("failed to init rfid! re-trying after 3 secs")
-        sleep(3)
 
+def init_rfid():
+    # I2C connection:
+    while True:
+        print("init loop")
+        try:
+            i2c = busio.I2C(board.SCL, board.SDA)
+            sleep(1)
+            pn532 = PN532_I2C(i2c, debug=False)  # <= always breaks here
+            ic, ver, rev, support = pn532.firmware_version
+            print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
+            sleep(0.5)
+            pn532.SAM_configuration()  # Configure PN532 to communicate with cards
+            print("we live")
+            return pn532 
+        except Exception as err:
+            print(err)
+            print("failed to init rfid! re-trying after 3 secs")
+            sleep(3)
 
+pn532 = init_rfid()
 classic_read_block = 1
 ntag_read_block = 4
 
@@ -30,24 +36,27 @@ def rfid_present() -> bytearray:
     checks if the card is present inside the box
     @return: (bytearray) with uid or empty value.
     """
-    try:
-        uid = pn532.read_passive_target(timeout=0.5)  # read the card
-    except RuntimeError:
-        uid = b''
+    uid = b''
+    if pn532:
+        try:
+            uid = pn532.read_passive_target(timeout=0.5)  # read the card
+        except (RuntimeError, OSError, BusyError) as err:
+            print(err)
 
     return uid
 
 
 def authenticate(uid) -> bool:
     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
-    try:
-        rc = pn532.mifare_classic_authenticate_block(
-            uid, classic_read_block, MIFARE_CMD_AUTH_A, key)
-        print("classic card authenticate successfully")
-    except Exception as e:
-        # print(e)
-        rc = False
-        print("ntag needs no authentication")
+    rc = False
+    if pn532:
+        try:
+            rc = pn532.mifare_classic_authenticate_block(
+                uid, classic_read_block, MIFARE_CMD_AUTH_A, key)
+            print("classic card authenticate successfully")
+        except Exception as e:
+            print(e)
+            #print("ntag needs no authentication")
 
     return rc
 
@@ -57,8 +66,9 @@ def rfid_read(uid) -> str:
     Reads data written on the card
     """
     read_data = "x"
-
     auth = authenticate(uid)
+    if not pn532:
+        return read_data
 
     try:
         # Switch between ntag and classic
