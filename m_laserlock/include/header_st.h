@@ -16,7 +16,7 @@
 #define ledCnt 13
 
 // how long the system remains in unlock and accepts RFID cards 
-unsigned long deconRFIDTimeout = 10000;
+unsigned long deconRFIDTimeout = 30000;
 // how long the signal of RFID identity remains active 
 unsigned long rfidTxDuration = 5000;
 unsigned long displayFailedUnlock = 8000;
