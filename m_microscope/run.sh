@@ -8,7 +8,7 @@ source venv/bin/activate
 sleep 5 &
 
 # comment or uncomment to run microscope
-FLASK_APP=microscope.py FLASK_DEBUG=true flask run --host 0.0.0.0 --port 5555 &
+FLASK_APP=microscope:app flask run --host 0.0.0.0 --port 5555  --no-debugger --no-reload  &
 sleep 5 &
 
 # modify the IP address you want to display

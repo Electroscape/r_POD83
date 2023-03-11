@@ -93,7 +93,7 @@ def check_for_updates():
         while not nfc_reader.connected:
             print(f"in polling mode {prev_data}")
             if prev_data == nfc_reader.get_data():
-                self_sio.sleep(2)
+                self_sio.sleep(1)
             else:
                 prev_data = nfc_reader.get_data().copy()
                 print("updates to frontend from polling")

@@ -7,31 +7,11 @@ from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A, BusyError
 from adafruit_pn532.i2c import PN532_I2C
 
 
-def init_rfid():
-    # I2C connection:
-    while True:
-        print("init loop")
-        try:
-            i2c = busio.I2C(board.SCL, board.SDA)
-            sleep(1)
-            pn532 = PN532_I2C(i2c, debug=False)  # <= always breaks here
-            ic, ver, rev, support = pn532.firmware_version
-            print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
-            sleep(0.5)
-            pn532.SAM_configuration()  # Configure PN532 to communicate with cards
-            print("we live")
-            return pn532 
-        except Exception as err:
-            print(err)
-            print("failed to init rfid! re-trying after 3 secs")
-            sleep(3)
-
-pn532 = init_rfid()
 classic_read_block = 1
 ntag_read_block = 4
 
 
-def rfid_present() -> bytearray:
+def rfid_present(pn532) -> bytearray:
     """
     checks if the card is present inside the box
     @return: (bytearray) with uid or empty value.
@@ -46,7 +26,7 @@ def rfid_present() -> bytearray:
     return uid
 
 
-def authenticate(uid) -> bool:
+def authenticate(uid, pn532) -> bool:
     key = [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]
     rc = False
     if pn532:
@@ -55,20 +35,22 @@ def authenticate(uid) -> bool:
                 uid, classic_read_block, MIFARE_CMD_AUTH_A, key)
             print("classic card authenticate successfully")
         except Exception as e:
-            print(e)
-            #print("ntag needs no authentication")
+            #print(e)
+            print("ntag needs no authentication")
 
     return rc
 
 
-def rfid_read(uid) -> str:
+def rfid_read(uid, pn532) -> str:
     """
     Reads data written on the card
     """
     read_data = "x"
-    auth = authenticate(uid)
     if not pn532:
         return read_data
+
+
+    auth = authenticate(uid, pn532)
 
     try:
         # Switch between ntag and classic
@@ -107,8 +89,11 @@ class RFID:
             "status": config.get("init", "on")
         }
         self.connected = False
+        self.pn532 = None
+        self.rfid_task = self.sio.start_background_task(self.init_rfid)
         self.reconnect_task = self.sio.start_background_task(self.keep_reconnecting)
         self.rfid_task = self.sio.start_background_task(self.check_loop)
+
 
     def setup_sio(self):
 
@@ -157,14 +142,36 @@ class RFID:
             self.sio.emit(channel, message)
         else:
             print("not connected to server!")
+    
+    def init_rfid(self):
+        # I2C connection:
+        while not self.pn532:
+            print("PN352 init loop")
+            try:
+                i2c = busio.I2C(board.SCL, board.SDA)
+                sleep(1)
+                pn532 = PN532_I2C(i2c, debug=False)  # <= always breaks here
+                ic, ver, rev, support = pn532.firmware_version
+                print("Found PN532 with firmware version: {0}.{1}".format(ver, rev))
+                sleep(0.5)
+                pn532.SAM_configuration()  # Configure PN532 to communicate with cards
+                print("we live")
+                self.pn532 = pn532
+                return True
+            except Exception as err:
+                print(err)
+                print("failed to init rfid! re-trying after 3 secs")
+                sleep(3)
 
+    
+    
     def check_loop(self):
         while True:
-            card_uid = rfid_present()
+            card_uid = rfid_present(self.pn532)
             if card_uid:
                 print(f"Card found uid: {card_uid}")
 
-                card_read = rfid_read(card_uid)
+                card_read = rfid_read(card_uid, self.pn532)
                 if card_read.startswith("P"):
                     card_read = card_read[1:]
                 print(f"Data on card: {card_read}")
@@ -181,7 +188,7 @@ class RFID:
 
                 # wait here until card is removed
                 # if wrong card should it stuck?!
-                while rfid_present() and card_read:
+                while rfid_present(self.pn532) and card_read:
                     continue
 
                 self.data["data"] = str(self.cards[-1])
