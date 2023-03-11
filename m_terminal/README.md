@@ -14,6 +14,7 @@ which is the minimum version to run the app. Make sure to:
 - `python --version` is at least python 3.9
 - Change the hostname to an informative one
 - Give it a static IP
+- disable password manager from chromium
 
 Screen blanking needs to be disabled: \
 `sudo raspi-config` -> display options -> screen blanking
