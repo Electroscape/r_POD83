@@ -256,6 +256,11 @@
 {% block add_js %}
 
 {% endblock %}
+{% block float_chat %}
+    {% if not request.path in ["/", "/chat_control"] %}
+        {% include "floating_chat.html" %}
+    {% endif %}
+{% endblock %}
 </body>
 
 </html>
