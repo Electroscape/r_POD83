@@ -11,109 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/theme.min.css"
           integrity="sha512-pN35/N51n1IeABlNGOSb5ltVKGbvUE8exTMhiB/4ijuy+UOYEWawQZzEs2yUvvCWopRO3uiRueeGnd/mQD0eTQ=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <script>
-        $(function () {
-            let dialog, form,
-                name = $("#name"),
-                ip = $("#ipv4"),
-                allFields = $([]).add(name).add(ip),
-                tips = $(".validateTips");
 
-            function updateTips(t) {
-                tips
-                    .html(t)
-                    .addClass("ui-state-highlight");
-                setTimeout(function () {
-                    tips.removeClass("ui-state-highlight", 1500);
-                }, 500);
-            }
-
-            function checkLength(o, n, min, max) {
-                if (o.val().length > max || o.val().length < min) {
-                    o.addClass("ui-state-error");
-                    updateTips("Length of " + n + " must be between " +
-                        min + " and " + max + ".");
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
-            function checkRegexp(o, regexp, n) {
-                if (!(regexp.test(o.val()))) {
-                    o.addClass("ui-state-error");
-                    updateTips(n);
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
-            function submitToElancell() {
-                allFields.removeClass("ui-state-error");
-
-                if (!checkLength(name, "filename", 5, 35)) return false;
-                if (!checkRegexp(name, /^[a-z0-9]([0-9a-z_\.\s])+$/i, "error in the configuration<br>please re-check all the values")) {
-                    $("#ipv4").removeAttr("disabled");
-                    // should I reset the file name?
-                    //$("#name").val("results.csv");
-                    return false;
-                }
-
-                // after validation
-                let ipVal = ip.val();
-                if (ipVal === "{{ g_config.elancell_ip }}") {
-                    socket.emit('msg_to_backend', {
-                        cmd: "upload",
-                        message: "elancell",
-                        username: myRoomID
-                    })
-                    // upload to POD
-                    dialog.dialog("close");
-                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "success");
-                } else if (ipVal === "{{ g_config.rachel_ip }}") {
-                    socket.emit('msg_to_backend', {
-                        cmd: "upload",
-                        message: "rachel",
-                        username: myRoomID
-                    })
-                    // Upload to Rachel
-                    dialog.dialog("close");
-                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "warning");
-                } else {
-                    swal("Forbidden Connection", "The server failed to validate the certificate, please make sure of the configuration", "error");
-                }
-                return true;
-            }
-
-            dialog = $("#dialog-form").dialog({
-                autoOpen: false,
-                height: 600,
-                width: 550,
-                modal: true,
-                buttons: {
-                    Cancel: function () {
-                        dialog.dialog("close");
-                    },
-
-                    "Upload": submitToElancell,
-                },
-                close: function () {
-                    form[0].reset();
-                    allFields.removeClass("ui-state-error");
-                }
-            });
-
-            form = dialog.find("form").on("submit", function (event) {
-                event.preventDefault();
-                submitToElancell();
-            });
-
-            $("#BtnUpload").button().on("click", function () {
-                dialog.dialog("open");
-            });
-        });
-    </script>
     <style>
         h3 {
             font-size: unset;
@@ -223,6 +121,112 @@
         }
 
     </style>
+    <script>
+        $(function () {
+            let dialog, form,
+                name = $("#name"),
+                ip = $("#ipv4"),
+                allFields = $([]).add(name).add(ip),
+                tips = $(".validateTips");
+
+            function updateTips(t) {
+                tips
+                    .html(t)
+                    .addClass("ui-state-highlight");
+                setTimeout(function () {
+                    tips.removeClass("ui-state-highlight", 1500);
+                }, 500);
+            }
+
+            function checkLength(o, n, min, max) {
+                if (o.val().length > max || o.val().length < min) {
+                    o.addClass("ui-state-error");
+                    updateTips("Length of " + n + " must be between " +
+                        min + " and " + max + ".");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function checkRegexp(o, regexp, n) {
+                if (!(regexp.test(o.val()))) {
+                    o.addClass("ui-state-error");
+                    updateTips(n);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function submitToElancell() {
+                allFields.removeClass("ui-state-error");
+
+                if (!checkLength(name, "filename", 5, 35)) return false;
+                if (!checkRegexp(name, /^[a-z0-9]([0-9a-z_\.\s])+$/i, "error in the configuration<br>please re-check all the values")) {
+                    $("#ipv4").removeAttr("disabled");
+                    // should I reset the file name?
+                    //$("#name").val("results.csv");
+                    return false;
+                }
+
+                // after validation
+                let ipVal = ip.val();
+                if (ipVal === "{{ g_config.elancell_ip }}") {
+                    socket.emit('msg_to_backend', {
+                        cmd: "upload",
+                        message: "elancell",
+                        username: myRoomID
+                    })
+                    // upload to POD
+                    dialog.dialog("close");
+                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "success");
+                    end();
+                } else if (ipVal === "{{ g_config.rachel_ip }}") {
+                    socket.emit('msg_to_backend', {
+                        cmd: "upload",
+                        message: "rachel",
+                        username: myRoomID
+                    })
+                    // Upload to Rachel
+                    dialog.dialog("close");
+                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "warning");
+                    end();
+                } else {
+                    swal("Forbidden Connection",
+                        "The server failed to validate the certificate, please make sure of the configuration",
+                        "error");
+                }
+                return true;
+            }
+
+            dialog = $("#dialog-form").dialog({
+                autoOpen: false,
+                height: 600,
+                width: 550,
+                modal: true,
+                buttons: {
+                    Cancel: function () {
+                        dialog.dialog("close");
+                    },
+                    "Upload": submitToElancell,
+                },
+                close: function () {
+                    form[0].reset();
+                    allFields.removeClass("ui-state-error");
+                }
+            });
+
+            form = dialog.find("form").on("submit", function (event) {
+                event.preventDefault();
+                submitToElancell();
+            });
+
+            $("#BtnUpload").button().on("click", function () {
+                dialog.dialog("open");
+            });
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
             integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -274,9 +278,6 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static',filename='js/elancell_upload.js') }}">
-    </script>
-
     <script type="text/javascript">
         //input mask bundle ip address
         const ipv4_address = $('#ipv4');
@@ -284,6 +285,16 @@
             alias: "ip",
             greedy: false //The initial mask shown will be "" instead of "-____".
         });
+
+        function end() {
+            $('#btn').hide();
+            $('.loading-wrapper').show();
+            $("#loadId").text("compiled successfully ✔️");
+            $('.loading-fill').width('100%');
+            $('#BtnUpload').attr("disabled", "true");
+            $('#BtnUpload').text("SENT");
+            $('#BtnUpload').css("cursor", "unset")
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -341,10 +352,16 @@
                 });
             });
 
-
-            function end() {
-
-            }
+            $.ajax({
+                type: 'POST',
+                url: '{{ url_for("get_elancell") }}',
+                contentType: 'application/json;charset=UTF-8',
+                success: function (res) {
+                    if (res.startsWith("done")) {
+                        end();
+                    }
+                }
+            });
         });
     </script>
 {% endblock %}

@@ -53,19 +53,20 @@ login_users = {
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
-config = read_json(f"json/server_config.json")
 ip_conf = read_json(f"ip_config.json", from_static=False)
-app.jinja_env.globals['G_CONFIG'] = config
 
-all_cors = [f"http://{ip}:{port}" for ip in config["ip"].values() for port in config["port"].values()]
 ip_conf = [f"http://{ip}" for ip in ip_conf.values() if isinstance(ip, str)]
-all_cors.extend(ip_conf)
-all_cors.append('*')
+all_cors = ip_conf + ['*']
 sio = SocketIO(app, cors_allowed_origins=all_cors)
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    config = {
+        "title": "Server Terminal",
+        "terminal_name": "server",
+        "lang": "en"
+    }
     # ip_address = request.remote_addr
     # print("Requester IP: " + ip_address)
     return render_template("server_home.html", g_config=config, chat_msg=chat_history.get())
