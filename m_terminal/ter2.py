@@ -147,7 +147,12 @@ def on_message(data):
 
 @self_sio.on("msg_to_backend")
 def on_msg(data):
+    global elancell_upload
+
     print(f"from frontend: {data} -> forward to server")
+    if data.get("cmd") == "upload":
+        elancell_upload = f"done_{data.get('message')}"
+
     if connected:
         sio.emit("msg_to_server", data)
     else:

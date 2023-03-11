@@ -14,19 +14,14 @@
     <script>
         $(function () {
             let dialog, form,
-
-                // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
-                emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                 name = $("#name"),
-                email = $("#email"),
-                password = $("#password"),
                 ip = $("#ipv4"),
-                allFields = $([]).add(name).add(email).add(password),
+                allFields = $([]).add(name).add(ip),
                 tips = $(".validateTips");
 
             function updateTips(t) {
                 tips
-                    .text(t)
+                    .html(t)
                     .addClass("ui-state-highlight");
                 setTimeout(function () {
                     tips.removeClass("ui-state-highlight", 1500);
@@ -55,39 +50,40 @@
             }
 
             function submitToElancell() {
-                var valid = true;
                 allFields.removeClass("ui-state-error");
 
-                valid = valid && checkLength(name, "username", 3, 16);
-                valid = valid && checkLength(email, "email", 6, 80);
-                valid = valid && checkLength(password, "password", 5, 16);
-
-                let filenameCheck = checkRegexp(name, /^[a-z]([0-9a-z_\.\s])+$/i, "error in the configuration, please re-check all the values")
-                valid = valid && filenameCheck
-                valid = valid && checkRegexp(email, emailRegex, "eg. ui@jquery.com");
-                valid = valid && checkRegexp(password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9");
-
-                if (!filenameCheck) {
+                if (!checkLength(name, "filename", 5, 35)) return false;
+                if (!checkRegexp(name, /^[a-z0-9]([0-9a-z_\.\s])+$/i, "error in the configuration<br>please re-check all the values")) {
                     $("#ipv4").removeAttr("disabled");
                     // should I reset the file name?
                     //$("#name").val("results.csv");
+                    return false;
                 }
 
-                if (valid) {
-                    let ipVal = ip.val();
-                    if (ipVal === "134.231.83.19") {
-                        // upload to POD
-                        dialog.dialog("close");
-                        swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "success");
-                    } else if (ipVal === "134.231.54.23") {
-                        // Upload to Rachel
-                        dialog.dialog("close");
-                        swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "warning");
-                    } else {
-                        swal("Forbidden Connection", "The server failed to validate the certificate, please make sure of the configuration", "error");
-                    }
+                // after validation
+                let ipVal = ip.val();
+                if (ipVal === "{{ g_config.elancell_ip }}") {
+                    socket.emit('msg_to_backend', {
+                        cmd: "upload",
+                        message: "elancell",
+                        username: myRoomID
+                    })
+                    // upload to POD
+                    dialog.dialog("close");
+                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "success");
+                } else if (ipVal === "{{ g_config.rachel_ip }}") {
+                    socket.emit('msg_to_backend', {
+                        cmd: "upload",
+                        message: "rachel",
+                        username: myRoomID
+                    })
+                    // Upload to Rachel
+                    dialog.dialog("close");
+                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "warning");
+                } else {
+                    swal("Forbidden Connection", "The server failed to validate the certificate, please make sure of the configuration", "error");
                 }
-                return valid;
+                return true;
             }
 
             dialog = $("#dialog-form").dialog({
@@ -257,7 +253,7 @@
 
                 <h3>File Info</h3>
                 <label class="form-label" for="name">name</label>
-                <input type="text" name="name" id="name" value="results.csv"
+                <input type="text" name="name" id="name" value="P83_"
                        class="form-control text ui-widget-content ui-corner-all"/>
                 <!-- Allow form submission with keyboard without duplicating the dialog button -->
                 <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
@@ -345,6 +341,10 @@
                 });
             });
 
+
+            function end() {
+
+            }
         });
     </script>
 {% endblock %}

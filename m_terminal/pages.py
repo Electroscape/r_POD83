@@ -46,7 +46,9 @@ def elancell_upload():
         return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
 
     config = {
-        "title": "Upload Results"
+        "title": "Upload Results",
+        "elancell_ip": "134.231.83.19",
+        "rachel_ip": "134.231.54.23"
     }
     print("open Elancell page")
     return render_template("TR2/p_elancell_upload.html", g_config=config)
