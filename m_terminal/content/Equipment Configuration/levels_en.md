@@ -11,7 +11,7 @@ The order is dependent on time of the initial synthesis. Use the last synthesize
     <tbody>
         <tr>
             <td>Triangular</td>
-            <td>001</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Circular</td>
