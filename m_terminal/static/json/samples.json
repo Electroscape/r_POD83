@@ -28,19 +28,19 @@
     "passcode": "621",
     "elements": [
       {
-        "iconName": "triangle-outline",
-        "brandName": "Level 1"
-      },
-      {
-        "iconName": "hexagon-outline\" rotate=\"90deg",
-        "brandName": "level 3"
+        "iconName": "square\" style=\"color: navy;",
+        "brandName": "Level 1 (bottom)"
       },
       {
         "iconName": "checkbox-blank-circle-outline",
+        "brandName": "level 3"
+      },
+      {
+        "iconName": "hexagon-outline\" rotate=\"90deg",
         "brandName": "Level 2"
       },
       {
-        "iconName": "square\" style=\"color: navy;",
+        "iconName": "triangle-outline",
         "brandName": "Level 4"
       }
     ],

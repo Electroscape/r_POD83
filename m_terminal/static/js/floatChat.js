@@ -9,10 +9,9 @@ element.click(openElement);
 function openElement() {
     const messages = element.find('.messages');
     const textInput = element.find('.text-box');
-    element.find('>i').hide();
+    element.find('#f-chat-icon').hide();
     element.addClass('expand');
     element.find('.chat').addClass('enter');
-    const strLength = textInput.val().length * 2;
     textInput.keydown(onMetaAndEnter).prop("disabled", false).focus();
     element.off('click', openElement);
     element.find('.header button').click(closeElement);
@@ -22,7 +21,7 @@ function openElement() {
 
 function closeElement() {
     element.find('.chat').removeClass('enter').hide();
-    element.find('>i').show();
+    element.find('#f-chat-icon').show();
     element.removeClass('expand');
     element.find('.header button').off('click', closeElement);
     element.find('#sendMessage').off('click', sendNewMessage);
@@ -36,7 +35,7 @@ function closeElement() {
 
 function sendNewMessage() {
     const userInput = $('.text-box');
-    const newMessage = userInput.html().replace(/\<div\>|\<br.*?\>/ig, '\n').replace(/\<\/div\>/g, '').trim().replace(/\n/g, '<br>');
+    const newMessage = userInput.text();
 
     if (!newMessage) return;
 
@@ -79,5 +78,6 @@ function receiveNewMessage(src, msg) {
 function onMetaAndEnter(event) {
     if (event.keyCode === 13) {
         sendNewMessage();
+        return false;
     }
 }
