@@ -1,7 +1,7 @@
 [
   {
     "name": "sample 1",
-    "passcode": "001",
+    "passcode": "024",
     "img": "media/gas_puzzle/AN_1.png",
     "status": "locked",
     "icon": "fas fa-lock",

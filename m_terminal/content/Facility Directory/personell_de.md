@@ -185,7 +185,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
+                                                <img src="https://mdbootstrap.com/img/new/avatars/7.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>D. Mensah-Bonsu</h3>
@@ -201,7 +201,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2018/02/26/21/04/owl-3184032__340.jpg" alt=""/>
+                                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(9).webp" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>K.T. Walti</h3>
