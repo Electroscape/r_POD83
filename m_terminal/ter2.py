@@ -71,6 +71,11 @@ def get_elancell():
     return elancell_upload
 
 
+@app.route('/get_cleanroom', methods=['GET', 'POST'])
+def get_cleanroom():
+    return cleanroom
+
+
 @app.route('/microscope', methods=['GET', 'POST'])
 def microscope():
     config = {
@@ -111,6 +116,7 @@ def events_handler(data):
     else:
         global login_user
         global elancell_upload
+        global cleanroom
 
         msg = data.get("message")
 
@@ -123,6 +129,9 @@ def events_handler(data):
     elif data.get("cmd") == "elancell":
         elancell_upload = msg
         print(f"elancell msg: {msg}")
+    elif data.get("cmd") == "cleanroom":
+        cleanroom = msg
+        print(f"cleanroom msg: {msg}")
 
 
 @sio.on('samples')
@@ -176,6 +185,7 @@ print("Init global variables")
 login_user = ""  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores chat history max 100 msgs
 elancell_upload = "disable"
+cleanroom = "lock"
 
 app.register_blueprint(app_pages)
 

@@ -138,6 +138,12 @@ def handle_received_messages(json_msg):
         print("access to laser-lock requested")
         # access the airlock lab
         sio.emit("trigger", {"username": "arb", "cmd": "airlock", "message": "access"})
+    elif json_msg.get("cmd") == "cleanroom":
+        print(f"cleanroom status: {json_msg.get('message')}")
+        # access the cleanroom
+        sio.emit("trigger", {"username": "arb", "cmd": "cleanroom", "message": json_msg.get("message")})
+        # also update TR2
+        sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": json_msg.get("message")})
     else:
         # broadcast chat message
         sio.emit('response_to_terminals', json_msg)
@@ -166,7 +172,6 @@ def rfid_updates(msg):
     sio.emit("rfid_event", msg)
 
 
-
 @sio.on('rfid_extra')
 def rfid_extras(msg):
     # Display message on frontend chatbox
@@ -174,12 +179,12 @@ def rfid_extras(msg):
     # print in console for debugging
     print(f"extra from rfid: {str(msg)})")
     # emit extras
-    msg_splitted = str(msg).split("_")
-    if len(msg_splitted) == 2:
+    msg_split = str(msg).split("_")
+    if len(msg_split) == 2:
         sio.emit("to_clients", {
-            "username": msg_splitted[0],
+            "username": msg_split[0],
             "cmd": "auth",
-            "message": msg_splitted[1]
+            "message": msg_split[1]
         })
 
 
@@ -208,6 +213,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
+                sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": "lock"})
                 # set microscope off
     elif msg.get("username") == "mcrp":
         print(f"to microscope: {str(msg)})")

@@ -210,7 +210,7 @@
                                 <button id='keypad-enter'><i class='fa fa-sign-in'></i></button>
                             </div>
                         </div>
-                        <div class='access'><i class='fa fa-check'></i> Access Granted </div>
+                        <div class='access'><i class='fa fa-check'></i> Access Granted</div>
                         <div class='noaccess'>Access Denied <a class="keypad-tryagain"><i class='fa fa-refresh'></i></a>
                         </div>
                     </div>
@@ -237,7 +237,7 @@
 
         $(".row button").click(function () {
             const character = $(this).text();
-            if (key.length < 4) {
+            if (character && key.length < 8) {
                 key = key + character;
                 hidden = hidden + "*";
                 $("#keypad-display").attr("value", hidden);
@@ -263,8 +263,18 @@
                 if (key === passcode) {
                     $(".access").slideDown();
                     openDoor();
+                    socket.emit('msg_to_backend', {
+                        cmd: "cleanroom",
+                        message: "unlock",
+                        username: myRoomID
+                    })
                 } else {
                     $(".noaccess").slideDown();
+                    socket.emit('msg_to_backend', {
+                        cmd: "cleanroom",
+                        message: "lock",
+                        username: myRoomID
+                    })
                 }
             });
         })
@@ -276,5 +286,24 @@
             document.getElementsByClassName('left-door')[0].style.transform = "translateX(-100%)";
             document.getElementsByClassName('right-door')[0].style.transform = "translateX(100%)";
         }
+
+        function end() {
+            $("#keypad-display").attr("value", "****");
+            $("#keypad-display").attr("disabled", "disabled");
+            $(".keys").slideUp();
+            $(".access").slideDown();
+            openDoor();
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '{{ url_for("get_cleanroom") }}',
+            contentType: 'application/json;charset=UTF-8',
+            success: function (res) {
+                if (res === "unlock") {
+                    end();
+                }
+            }
+        });
     </script>
 {% endblock %}
