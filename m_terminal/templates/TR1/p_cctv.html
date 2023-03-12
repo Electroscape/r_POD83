@@ -263,8 +263,8 @@
     <script type="text/javascript">
         $('#cams-tab-1').click(function (e) {
             swal({
-                title: "An input!",
-                text: "Write something interesting:",
+                title: "Encrypted Stream",
+                text: "Please write the decryption key",
                 type: "input",
                 showCancelButton: true,
                 closeOnConfirm: false,
@@ -283,7 +283,7 @@
                         swal("Access Granted", "Correct PIN Code", "success");
                         $("#cams-tab-1").tab("show");
                     } else {
-                        swal("Access Denied", "Wrong PIN: " + inputValue, "error");
+                        swal("Access Denied", "Failed to decrypt the stream", "error");
                     }
                 }
             );
