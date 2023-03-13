@@ -127,7 +127,7 @@ def handle_received_messages(json_msg):
             trigger_msg = {
                 "username": "arb",
                 "cmd": "dispenser",
-                "message": f"{cmd[-1]}"
+                "message": "dishout"
             }
             sio.emit("trigger", trigger_msg)
             # should I add ~5 sec delay here?
