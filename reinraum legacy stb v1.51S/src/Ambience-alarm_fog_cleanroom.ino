@@ -225,8 +225,23 @@ void arm_room() {
     relay.digitalWrite(REL_RPI_VIDEO_PIN, REL_RPI_VIDEO_INIT);
     led_set_clrs(frleds, CRGB::Black, FR_LED_CNT);
     delay(1000);
+    wdt_reset();
+    led_set_clrs(zylleds, CRGB::Green, ZYL_LED_CNT);
+    delay(500);
+    led_set_clrs(zylleds, CRGB::Black, ZYL_LED_CNT);
+    delay(100);
+    led_set_clrs(zylleds, CRGB::Green, ZYL_LED_CNT);
+    delay(500);
+    led_set_clrs(zylleds, CRGB::Black, ZYL_LED_CNT);
+    delay(100);
+    led_set_clrs(zylleds, CRGB::Green, ZYL_LED_CNT);
+    delay(500);
+    led_set_clrs(zylleds, CRGB::Black, ZYL_LED_CNT);
+    delay(100);
+    led_set_clrs(zylleds, CRGB::Green, ZYL_LED_CNT);
+    delay(500);
     led_set_clrs(zylleds, CRGB::Red, ZYL_LED_CNT);
-    delay(1000);
+    wdt_reset();
 }
 
 
@@ -234,9 +249,9 @@ void stage_check() {
 
     switch (stage) {
         case 0: {
-            if (iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
-                delay(100);
-                if (iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
+            if (!iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
+                delay(10);
+                if (!iTrigger.digitalRead(REED_LABDOOR_CLOSED)) {
                     delay(3000);
                     relay.digitalWrite(REL_RPI_VIDEO_PIN, !REL_RPI_VIDEO_INIT);
                     delay(1000);
@@ -269,7 +284,7 @@ void stage_check() {
 
 
 void arm_check() {
-    if (iTrigger.digitalRead(RESET_BUTTON)) {
+    if (!iTrigger.digitalRead(RESET_BUTTON)) {
 
         dbg_println("reset pressed");
         Serial.println(resetTimer);
@@ -429,7 +444,8 @@ bool input_Init() {
     dbg_println("input_init...");
     iTrigger.begin(DETECTOR_I2C_ADD);
     for(int i = 0; i < sizeof(inputs); i++) {
-        iTrigger.pinMode(inputs[i], INPUT);
+        iTrigger.pinMode(inputs[i], INPUT_PULLUP);
+        iTrigger.digitalWrite(inputs[i], HIGH);
     }
     return true;
 }
