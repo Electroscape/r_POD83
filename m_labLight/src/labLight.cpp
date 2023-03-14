@@ -48,7 +48,6 @@ void enableWdt() {
 
 void handleInputs() {
 
-
     int result = MotherIO.getInputs();
     Serial.println(result);
     if (result & door) {
@@ -63,24 +62,41 @@ void handleInputs() {
     }
     lastState = result;
 
+    unsigned long startTime = millis();
+    Serial.println(result);
+
     switch (result) {
         case lightOff: 
+            Mother.motherRelay.digitalWrite(labEntry, closed);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
         break;
         case lightNormal: 
-            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, clrLight, 40);
-        break;
-        case lightNormalBright:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, clrLight, 60);
         break;
         case lightRed:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 40);
+            
         break;
-        case lightRedBright:
-            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
         case lightBlue:
-            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 20);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 55);
         break;
+        case lightRachelAnnouncement:
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
+            Mother.motherRelay.digitalWrite(labEntry, open);
+            // @todo unlock door
+        break;
+        case lightRachelEnd:
+            Mother.motherRelay.digitalWrite(labEntry, open);
+            while ((millis() - startTime) < (unsigned long) 120000) {
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 3000, 1);
+                delay(3000);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlack, 30, LED_CMDS::clrRed, 30, 3000, 1);
+                delay(3000);
+            }
+        break;
+        case lightDavidAnnouncement:
+            Mother.motherRelay.digitalWrite(labEntry, open);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 40);
         break;
         default: break;
     }
