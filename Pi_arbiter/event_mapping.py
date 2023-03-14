@@ -408,7 +408,7 @@ event_map = {
     },
     "cleanroom": {
         trigger_cmd: "cleanroom",
-        trigger_msg: "open",
+        trigger_msg: "unlock",
         pcf_out_add: 1,
         pcf_out: 1 << 0,
     },
