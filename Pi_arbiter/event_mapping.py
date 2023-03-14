@@ -49,9 +49,14 @@ laserlock_io_david = 32
 laserlock_io_rachel = 64
 laserlock_io_seperationEnd = 128
 
-
-lab_light_standby = 1 << 0
-lab_light_on = 1 << 1
+labLight_trigger = "labLight"
+lab_light_off = 1
+lab_light_white = 2
+lab_light_standby = 3
+lab_light_on = 4
+lab_rachel_end_announce = 5
+lab_rachel_end = 6
+lab_david_end_announce = 7
 
 # Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
 
@@ -374,7 +379,7 @@ event_map = {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
         pcf_out_add: lab_light_out_pcf,
-        pcf_out: 1 << 2
+        pcf_out: 1 << 4
     },
     "analyzer_run1": {
         trigger_cmd: "analyzer",
@@ -406,7 +411,32 @@ event_map = {
         trigger_msg: "open",
         pcf_out_add: 1,
         pcf_out: 1 << 0,
+    },
+    "lab_light_off": {
+        trigger_cmd: labLight_trigger,
+        trigger_msg: "off",
+        pcf_out_add: 1,
+        pcf_out: lab_light_off
+    },
+    "end_rachel_announce": {
+        trigger_cmd: labLight_trigger,
+        trigger_msg: "rachel",
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_rachel_end_announce,
+    },
+    "end_rachel": {
+        trigger_cmd: labLight_trigger,
+        trigger_msg: "rachelEnd",
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_rachel_end,
+    },
+    "end_david_announce": {
+        trigger_cmd: labLight_trigger,
+        trigger_msg: "davidEnd",
+        pcf_out_add: lab_light_out_pcf,
+        pcf_out: lab_david_end_announce,
     }
+
 }
 
 
