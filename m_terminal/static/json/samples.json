@@ -1,15 +1,14 @@
 [
   {
     "name": "sample 1",
-    "passcode": "024",
+    "passcode": "51",
     "img": "media/gas_puzzle/AN_1.png",
     "status": "locked",
-    "icon": "fas fa-lock",
-    "info": "toxic"
+    "icon": "fas fa-lock"
   },
   {
     "name": "sample 2",
-    "passcode": "016",
+    "passcode": "23",
     "img": "media/gas_puzzle/AN_2.png",
     "status": "locked",
     "icon": "fas fa-lock",
@@ -17,7 +16,7 @@
   },
   {
     "name": "sample 3",
-    "passcode": "019",
+    "passcode": "34",
     "img": "media/gas_puzzle/AN_3.png",
     "status": "locked",
     "icon": "fas fa-lock",
@@ -25,27 +24,9 @@
   },
   {
     "name": "sample 4",
-    "passcode": "621",
-    "elements": [
-      {
-        "iconName": "square\" style=\"color: navy;",
-        "brandName": "Level 1 (bottom)"
-      },
-      {
-        "iconName": "checkbox-blank-circle-outline",
-        "brandName": "level 3"
-      },
-      {
-        "iconName": "hexagon-outline\" rotate=\"90deg",
-        "brandName": "Level 2"
-      },
-      {
-        "iconName": "triangle-outline",
-        "brandName": "Level 4"
-      }
-    ],
+    "passcode": "55",
+    "img": "media/gas_puzzle/AN_4.png",
     "status": "locked",
-    "icon": "fas fa-lock",
-    "info": "toxic"
+    "icon": "fas fa-lock"
   }
 ]
