@@ -50,6 +50,8 @@ unsigned long timestamp = millis();
 int cardsPresent = 0;
 bool lightOn = false;
 
+int validBrainResult = 0;
+
 
 void enableWdt() {
     wdt_enable(WDTO_8S);
@@ -141,6 +143,11 @@ void timedTrigger() {
 void checkDualRfid(int passNo) {
      
     timestamp = millis() + rfidTimeout;
+    if (stage == seperationUnlocked && inputPCF.digitalRead(reedDoor)) {
+        cardsPresent = 0;
+        Serial.println("door is not closed");
+        return;
+    }
     cardsPresent |= passNo + 1;
 
     // not presented on both sides, hence we exit here
@@ -148,12 +155,7 @@ void checkDualRfid(int passNo) {
 
     cardsPresent = 0;
 
-    if (stage == seperationUnlocked && inputPCF.digitalRead(reedDoor)) {
-        Serial.println("door is not closed");
-        sendResult(false, 0);
-        sendResult(false, 1);
-        return;
-    }
+
     switch (stage) {
         case seperationUnlocked: 
             Mother.motherRelay.digitalWrite(door, doorClosed); 
@@ -161,8 +163,8 @@ void checkDualRfid(int passNo) {
             if (Mother.getPolledSlave() == 0) {
                 switch (passNo) {
                     // either this case?
-                    case 1: MotherIO.setOuput(david + isSeperation); break;
-                    case 0: MotherIO.setOuput(rachel + isSeperation); break;
+                    case 0: MotherIO.setOuput(david + isSeperation); break;
+                    case 1: MotherIO.setOuput(rachel + isSeperation); break;
                 }
             } else {
                 switch (passNo) {
@@ -529,9 +531,9 @@ void setup() {
 
 
 void loop() {
-    Mother.rs485PerformPoll();
+    validBrainResult = Mother.rs485PerformPoll();
     timedTrigger();
-    interpreter();
+    if (validBrainResult) {interpreter();}
     handleInputs();    
     stageUpdate(); 
     delay(5);
