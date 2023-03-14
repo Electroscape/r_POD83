@@ -415,7 +415,7 @@ event_map = {
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
         trigger_msg: "off",
-        pcf_out_add: 1,
+        pcf_out_add: lab_light_out_pcf,
         pcf_out: lab_light_off
     },
     "end_rachel_announce": {
