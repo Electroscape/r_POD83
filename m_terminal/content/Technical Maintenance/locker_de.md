@@ -6,6 +6,10 @@ date: 2013-08-27
 p {
  text-align: center;
 }
+
+img {
+    width: 100%;
+}
 </style>
 
 ![1.png](../../static/imgs/locker/1.png)
@@ -13,4 +17,3 @@ p {
 ![3.png](../../static/imgs/locker/3.png)
 ![4.png](../../static/imgs/locker/4.png)
 ![5.png](../../static/imgs/locker/5.png)
-![6.png](../../static/imgs/locker/6.png)
