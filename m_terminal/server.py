@@ -182,11 +182,15 @@ def rfid_extras(msg):
     # emit extras
     msg_split = str(msg).split("_")
     if len(msg_split) == 2:
+        global login_users
+        
         sio.emit("to_clients", {
             "username": msg_split[0],
             "cmd": "auth",
             "message": msg_split[1]
         })
+        # update backend
+        login_users[msg_split[0]] = msg_split[1]
 
 
 @sio.on('events')
