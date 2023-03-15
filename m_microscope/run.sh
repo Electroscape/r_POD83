@@ -1,3 +1,4 @@
+#!/bin/bash
 pkill python
 pkill flask
 pkill chromium
@@ -17,4 +18,4 @@ sleep 5 &
 
 # modify the IP address you want to display
 # comment or uncomment to run the browser on the webpage you choose
-DISPLAY=:0 /usr/bin/chromium-browser --noerrdialogs --disable-infobars --kiosk localhost:5555 &
+DISPLAY=:0 /usr/bin/chromium-browser --noerrdialogs --disable-infobars --kiosk 0.0.0.0:5555 &
