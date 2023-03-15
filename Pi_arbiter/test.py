@@ -1,16 +1,22 @@
 from communication.TESocketServer import TESocketServer
 from time import sleep
-
+from event_mapping import *
 
 nw_sock = TESocketServer(12345)
 
 
 def main():
-    while True:
-        sleep(10)
-        nw_sock.transmit("usb_boot")
-        exit()
+    event_value = event_map[ "laserlock_lockout_tr2"]
+    cb_dict = event_value.get(fe_cb, False)
+
+    if type(cb_dict) != list:
+        cb_dict = list(cb_dict)
+
+    print(type(cb_dict))
+    print(cb_dict)
 
 
 if __name__ == '__main__':
     main()
+
+

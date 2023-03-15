@@ -1,5 +1,6 @@
 import requests
 import subprocess
+from enum import Enum
 
 # http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
 # defaults?
@@ -10,6 +11,8 @@ import subprocess
 
 #
 laserlock_out_pcf = 0
+# also used for the cleanroom rigger
+airlock_out_pcf = 1
 lab_light_out_pcf = 2
 # inputs
 laserlock_in_pcf = 4
@@ -42,6 +45,10 @@ fe_cb_msg = "msg"
 event_script = "script"
 event_condition = "condition"
 event_delay = "delay"
+
+
+class AirlockOut(Enum):
+    rachel_announce, rachel_end, david_end = range(1, 4)
 
 
 laserlock_io_isSeperation = 16
@@ -215,8 +222,8 @@ event_map = {
     "usb_boot": {
         trigger_cmd: "usb",
         trigger_msg: "boot",
-        pcf_out_add: laserlock_out_pcf,
-        pcf_out: 1 << 0,
+        pcf_out_add: [laserlock_out_pcf],
+        pcf_out: [1 << 0],
         sound: {
             is_fx: False,
             sound_id: 2
@@ -225,8 +232,8 @@ event_map = {
     "laserlock_fail": {
         trigger_cmd: "airlock",
         trigger_msg: "access",
-        pcf_out_add: laserlock_out_pcf,
-        pcf_out: 1 << 1,
+        pcf_out_add: [laserlock_out_pcf],
+        pcf_out: [1 << 1],
         sound: {
             sound_id: 3
         }
@@ -253,8 +260,8 @@ event_map = {
         }
     },
     "laserlock_bootdecon": {
-        pcf_out_add: laserlock_out_pcf,
-        pcf_out: 1 << 2,
+        pcf_out_add: [laserlock_out_pcf],
+        pcf_out: [1 << 2],
         event_script: laserlock_arm_door,
         # event_delay: 0,
         sound: {
@@ -264,8 +271,8 @@ event_map = {
     "laserlock_welcome_david": {
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_david,
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_light_standby,
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_standby],
         sound: {
             sound_id: 15
         },
@@ -278,8 +285,8 @@ event_map = {
     "laserlock_welcome_rachel": {
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_rachel,
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_light_standby,
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_standby],
         sound: {
             sound_id: 16
         },
@@ -294,8 +301,8 @@ event_map = {
         trigger_msg: "david",
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_isSeperation + laserlock_io_david,
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_light_on,
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_on],
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -322,8 +329,8 @@ event_map = {
         trigger_msg: "rachel",
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_light_on,
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_on],
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -350,8 +357,8 @@ event_map = {
         trigger_msg: "empty",
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_seperationEnd,
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_light_standby,
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_standby],
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr1",
@@ -367,8 +374,8 @@ event_map = {
         trigger_msg: "empty",
         pcf_in_add: laserlock_in_pcf,
         pcf_in: laserlock_io_seperationEnd,
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_light_standby,
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_standby],
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -378,16 +385,16 @@ event_map = {
     "dispenser_dishout": {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: 1 << 4
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [1 << 4]
     },
     "analyzer_run1": {
         trigger_cmd: "analyzer",
         trigger_msg: "run1Right",
         pcf_in_add: analyzer_in_pcf,
         pcf_in: 1 << 2,
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: 1 << 2
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [1 << 2]
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
@@ -409,32 +416,32 @@ event_map = {
     "cleanroom": {
         trigger_cmd: "cleanroom",
         trigger_msg: "unlock",
-        pcf_out_add: 1,
-        pcf_out: 1 << 0,
+        pcf_out_add: [1],
+        pcf_out: [1 << 3],
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
         trigger_msg: "off",
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_light_off
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_off]
     },
     "end_rachel_announce": {
         trigger_cmd: labLight_trigger,
         trigger_msg: "rachel",
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_rachel_end_announce,
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
+        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce]
     },
     "end_rachel": {
         trigger_cmd: labLight_trigger,
         trigger_msg: "rachelEnd",
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_rachel_end,
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
+        pcf_out: [lab_rachel_end, AirlockOut.rachel_end]
     },
     "end_david_announce": {
         trigger_cmd: labLight_trigger,
         trigger_msg: "davidEnd",
-        pcf_out_add: lab_light_out_pcf,
-        pcf_out: lab_david_end_announce,
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
+        pcf_out: [lab_david_end_announce, AirlockOut.david_end]
     }
 
 }

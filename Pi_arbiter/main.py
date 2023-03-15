@@ -133,13 +133,18 @@ def handle_event(event_key, event_value=None):
 
     # IO pins
     try:
+        # @todo: type casting here?
         pcf_no = event_value[pcf_out_add]
-        value = event_value[pcf_out]
-        print(f"setting output: PCF={pcf_no} Value={value}")
-        IO.write_pcf(pcf_no, value)
+        values = event_value[pcf_out]
+        print(f"setting outputs: PCF={pcf_no} Value={values}")
+        for index in range(min(len(values), len(pcf_no))):
+            IO.write_pcf(pcf_no[index], values[index])
+        # @todo: this needs to be threaded
         print("sleeping... ")
         sleep(3)
-        IO.write_pcf(pcf_no, 0)
+        for index in range(len(pcf_no)):
+            IO.write_pcf(pcf_no[index], 0)
+
     except KeyError as err:
         print(err)
         pass
@@ -255,7 +260,7 @@ def connect():
 
 
 def main():
-    # handle_event("laserlock_bootdecon")
+    handle_event("usb_boot")
     while True:
         # blank_screen_pid.kill()
         # handle_event("airlock_intro")
