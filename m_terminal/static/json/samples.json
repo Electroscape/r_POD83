@@ -16,7 +16,7 @@
   },
   {
     "name": "sample 3",
-    "passcode": "34",
+    "passcode": "12",
     "img": "media/gas_puzzle/AN_3.png",
     "status": "locked",
     "icon": "fas fa-lock",
@@ -24,7 +24,7 @@
   },
   {
     "name": "sample 4",
-    "passcode": "55",
+    "passcode": "34",
     "img": "media/gas_puzzle/AN_4.png",
     "status": "locked",
     "icon": "fas fa-lock"
