@@ -20,7 +20,7 @@ IO = ArbiterIO()
 @TODO: 
     * 🔲 expection handling
     * ✅ cooldowns, need to consider what time library
-    * 🔲 handling of multiple IO reading the same 
+    * ✅ handling of multiple IO reading the same 
     * ✅ gpio callback from fe event
     * ✅ gpio output cooldowns
     * ✅ gpio input cooldowns
@@ -30,9 +30,11 @@ IO = ArbiterIO()
     * ✅ rachel + david
     * 🔲 cable broken needs to be a delta check and broadcast... or a specific fncs
     * 🔲 resettime as param
-    * 🔲 designated PCFS as input or output
-    * 🔲 make a fnc for checking if pin/binary value present in pcf value
-    * 🔲 make one event capable to trigger multiple outputs via PCF and sound
+    * ✅ designated PCFS as input or output
+    * ✅ make a fnc for checking if pin/binary value present in pcf value
+    * 🔲 \/ make one event capable to trigger multiple outputs via PCF and sound 
+    * 🔲 FE multiple CBs 
+    * 🔲 mutiple pcf_outs on events
 '''
 
 sio = socketio.Client()
