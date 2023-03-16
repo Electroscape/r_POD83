@@ -114,12 +114,16 @@ def handle_event(event_key, event_value=None):
             print(f"handle_event received invalid key: {event_key}")
             return
 
-    if not event_value.get(event_condition, lambda: True)():
-        # print(f"conditions not fullfilled {event_key}")
-        return
+    try:
+        if not event_value.get(event_condition, lambda: True)():
+            # print(f"conditions not fullfilled {event_key}")
+            return
 
-    # Start Video before Sound
-    event_value.get(event_script, lambda *args: 'Invalid')(event_key, nw_sock)
+        # Start Video before Sound
+        event_value.get(event_script, lambda *args: 'Invalid')(event_key, nw_sock)
+    except TypeError as err:
+        print(f"Error with event fnc/condition {err}")
+
     sleep(event_value.get(event_delay, 0))
 
     # Sound, may be moved to a fnc
