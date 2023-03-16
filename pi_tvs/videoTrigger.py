@@ -9,7 +9,8 @@ sock = SocketClient('raspi-4-pod-arbiter', 12345)
 video_dict = {
     "usb_boot": "welcome.mp4",
     "end_rachel_announce": "Rachel_Ending.mp4",
-    "end_david_announce": "Rachel_Elancell_Ending.mp4"
+    "end_david_announce": "Rachel_Elancell_Ending.mp4",
+    "analyzer_run1": "killswitch.mp4",
 }
 
 
