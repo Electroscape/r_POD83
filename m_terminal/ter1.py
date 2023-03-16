@@ -20,7 +20,7 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
-ip_conf = js_r("ip_config.json", from_static=False)
+ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
 
 # Configuration Constants
 server_ip = "http://" + ip_conf["server"]

@@ -3,10 +3,11 @@ import requests
 from flask import json
 
 
-def js_r(filename: str, auth="", from_static=True) -> dict:
+def js_r(filename: str, auth="", from_static=True, add_buttons=True) -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
 
+    :param add_buttons: only for html templates
     :param from_static: (bool) from static folder or not
     :param auth: authenticated user
     :param filename: json file name inside static folder
@@ -19,7 +20,7 @@ def js_r(filename: str, auth="", from_static=True) -> dict:
     try:
         with open(filename, "r") as f_in:
             json_data = json.load(f_in)
-            if not filename.startswith("ip_"):
+            if add_buttons:
                 json_data["btns"] = configure_btns(json_data.get("btns"), auth)
         return json_data
 
@@ -58,7 +59,8 @@ def listdir_no_hidden(path):
     return [f for f in os.listdir(path) if not f.startswith('.')]
 
 
-ip_conf = js_r("ip_config.json", from_static=False)
+ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
+levels_game = js_r("json/levels.json", add_buttons=False)
 server_ip = "http://" + ip_conf["server"]
 
 

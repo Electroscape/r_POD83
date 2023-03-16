@@ -9,7 +9,7 @@ function initiateGame(index, randomDraggableBrands) {
     const submitBtn = document.querySelector("#submit-btn-" + index);
 
     submitBtn.disabled = true;
-    shadow.hidden = true;
+    // shadow.hidden = true;
 
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         randomDraggableBrands[i]["id"] = randomDraggableBrands[i].iconName.substring(0, 3) + "-" + index + "-" + i;
@@ -22,8 +22,10 @@ function initiateGame(index, randomDraggableBrands) {
     // Create "draggable-items" and append to DOM
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         draggableItems.insertAdjacentHTML("beforeend", `
+      <span class="span-icon">
       <iconify-icon icon="mdi:${randomDraggableBrands[i].iconName}" class="draggable drag-g${index}" draggable="true"
                     id="${randomDraggableBrands[i].id}"></iconify-icon>
+      </span>
     `);
     }
 
@@ -101,6 +103,8 @@ function drop(event) {
     event.target.classList.add("dropped");
     draggableElement.classList.add("dragged");
     draggableElement.setAttribute("draggable", "false");
+    $(draggableElement).parent().css("border-style", "solid");
+
     let iconName = itemsList[index][draggableElementBrand.split("-").pop()]
     event.target.innerHTML = `<iconify-icon icon="mdi:${iconName.iconName}"></iconify-icon>`;
 
@@ -124,24 +128,17 @@ function drop(event) {
 }
 
 function submitBtnClick(index) {
-    $(".loader-wrapper").removeClass("d-none")
     if (itemsList[index].length === total[index] && correct[index] === total[index]) { // Game Over!!
         socket.emit('msg_to_backend', {
-            keypad_update: `${window.location.pathname} dragDropGame ${index} correct`
+            levels: `${window.location.pathname} dragDropGame ${index} correct`
         })
-        setTimeout(() => {
-            swal("Stable Combination", "Sample has been released", "success");
-            $(".loader-wrapper").addClass("d-none");
-        }, 5000)
+        // swal("Stable Combination", "Sample has been released", "success");
     } else if (itemsList[index].length === total[index]) {
         socket.emit('msg_to_backend', {
-            keypad_update: `${window.location.pathname} dragDropGame ${index} wrong`
+            levels: `${window.location.pathname} dragDropGame ${index} wrong`
         })
-        setTimeout(() => {
-            swal("Unstable Combination", "Please try again", "error");
-            $(".loader-wrapper").addClass("d-none");
-            $("#reset-btn-" + index).click()
-        }, 5000)
+        swal("Unstable Combination", "Please try again", "error");
+        $("#reset-btn-" + index).click()
     }
 }
 

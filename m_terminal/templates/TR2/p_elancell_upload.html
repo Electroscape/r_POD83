@@ -124,7 +124,12 @@
             background: #41FF00;
         }
 
+        #levels-game-container {
+            text-align: center;
+        }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis_game.css') }}" media="screen">
+    <script src="https://code.iconify.design/iconify-icon/1.0.5/iconify-icon.min.js"></script>
     <script>
         $(function () {
             let dialog, form,
@@ -167,7 +172,8 @@
                 allFields.removeClass("ui-state-error");
 
                 if (!checkLength(name, "filename", 5, 35)) return false;
-                if (!checkRegexp(name, /^[a-z0-9]([0-9a-z_\.\s])+$/i, "error in the configuration<br>please re-check all the values")) {
+                if (!checkRegexp(name, /^[a-z0-9]([0-9a-z_\.\s])+$/i,
+                    "error in the configuration<br>please re-check all the values")) {
                     $("#ipv4").removeAttr("disabled");
                     // should I reset the file name?
                     //$("#name").val("results.csv");
@@ -245,7 +251,7 @@
             <fieldset class="form-outline">
                 <h3>Network Configuration</h3>
                 <label class="form-label" for="ipv4">ip
-                    <input id="ipv4" type='text' name='text1' value="134.231.83.19"
+                    <input id="ipv4" type='text' name='text1' value="{{ g_config.elancell_ip }}"
                            class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 
@@ -280,6 +286,16 @@
             </div>
             <button id="BtnUpload" class="submit">Submit Results</button>
         </div>
+        <div id="levels-game-container">
+            <h2>Please Configure Sample Levels</h2>
+            <script src="{{ url_for('static',filename='js/g_analysis_brands.js') }}">
+            </script>
+            <script src="{{ url_for('static',filename='js/gas_analysis_game.js') }}">
+            </script>
+            {% with elements=samples|tojson, gameID=0 %}
+                {% include "dragDropGame.html" %}
+            {% endwith %}
+        </div>
     </div>
 
     <script type="text/javascript">
@@ -290,67 +306,96 @@
             greedy: false //The initial mask shown will be "" instead of "-____".
         });
 
+        const animate = (elancellStatus, width = 1) => {
+            const loadingFill = document.querySelector('.loading-fill');
+            let isEnabled = elancellStatus.includes("enable") || elancellStatus.includes("solved") || elancellStatus.includes("synthesized")
+            let isSolved = elancellStatus.includes("solved") || elancellStatus.includes("synthesized")
+            let isSynthesized = elancellStatus.includes("synthesized")
+
+            // init loading bar
+            loadingFill.style.width = width + '%';
+            $(".loading-bar")[0].style.borderColor = "";
+            $("#loadId").html("Compiling...");
+            $('#btn').hide();
+
+            function fill() {
+                if (width === 33) {
+                    if (!isEnabled) {
+                        clearInterval(interval);
+                        showError("Compilation failed!<br>No enough data to complete the process");
+                    } else if (!isSolved) {
+                        clearInterval(interval);
+                        $(".mail .container").slideUp();
+                        $("#levels-game-container").slideDown();
+                    }
+                } else if (width === 66) {
+                    if (!isSynthesized) {
+                        clearInterval(interval);
+                        showError(`
+                        <span style="color: red">Please Synthesize!</span><br>
+                        <p>Replace most stable component with kill switch<p>
+                        (The most stable component is level 4)
+                    `);
+                    }
+                } else if (width === 100) {
+                    clearInterval(interval);
+                    $("#loadId").html("compiled successfully ✔️");
+                    $('#BtnUpload').show();
+                    $('#BtnUpload').attr("disabled", false);
+                }
+                width++;
+                loadingFill.style.width = width + '%';
+            }
+
+            const interval = setInterval(fill, 50);
+        }
+
+        function showError(errorMsg) {
+            $("#loadId").html(errorMsg);
+            $(".loading-bar")[0].style.borderColor = "red";
+            setTimeout(() => {
+                $('#btn').text("Re-Compile");
+                $('#btn').show();
+            }, 1000);
+        }
+
         function end() {
             $('#btn').hide();
             $('.loading-wrapper').show();
             $("#loadId").text("compiled successfully ✔️");
             $('.loading-fill').width('100%');
-            $('#BtnUpload').attr("disabled", "true");
+            $('#BtnUpload').attr("disabled", true);
             $('#BtnUpload').text("SENT");
             $('#BtnUpload').css("cursor", "unset")
         }
 
+        socket.on("elancell_fe", function (msg) {
+            if (msg.data === "enable") {
+                console.log("fifth sample is released");
+            } else if (msg.data === "solved") {
+                $("#levels-game-container").slideUp();
+                $(".mail .container").slideDown();
+                $('.loading-wrapper').show();
+                animate(msg.data, 34);
+            } else if (msg.data === "synthesized") {
+                $('#btn').hide();
+                $('.loading-wrapper').show();
+                animate(msg.data, 67);
+            }
+        })
+
         document.addEventListener('DOMContentLoaded', () => {
+            $("#levels-game-container").hide();
+            $('#BtnUpload').attr("disabled", "true");
 
-            const btn = document.querySelector('#btn');
-            const uploadBtn = document.querySelector('#BtnUpload');
-            const loadingScreen = document.querySelector('.loading-wrapper');
-            let isBtn = true;
-            let isLoading = false;
-            uploadBtn.setAttribute("disabled", "true");
-
-            const toggleScreens = () => {
-                isBtn = !isBtn;
-                isLoading = !isLoading;
-                isBtn ? btn.style.display = 'block' : btn.style.display = 'none';
-                isLoading ? loadingScreen.style.display = 'block' : loadingScreen.style.display = 'none';
-            }
-
-            const animate = (elancellStatus) => {
-                const loadingFill = document.querySelector('.loading-fill');
-                let width = 1;
-                const interval = setInterval(fill, 50);
-                let isEnabled = elancellStatus === "enable"
-
-                function fill() {
-                    if (!isEnabled && width === 33) {
-                        $("#loadId")[0].innerHTML = "Compilation failed!<br>No enough data to complete the process"
-                        $(".loading-bar")[0].style.borderColor = "red";
-                        clearInterval(interval);
-                        setTimeout(function () {
-                            toggleScreens();
-                            loadingFill.style.width = '1%';
-                            $(".loading-bar")[0].style.borderColor = "";
-                            $("#loadId")[0].innerHTML = "Compiling...";
-                        }, 5000)
-                    } else if (isEnabled && width >= 100) {
-                        $("#loadId")[0].innerHTML = "compiled successfully ✔️"
-                        uploadBtn.removeAttribute('disabled');
-                        clearInterval(interval);
-                    } else {
-                        width++;
-                        loadingFill.style.width = width + '%';
-                    }
-                }
-            }
-
-            btn.addEventListener('click', () => {
+            $('#btn').on('click', () => {
                 $.ajax({
                     type: 'POST',
                     url: '{{ url_for("get_elancell") }}',
                     contentType: 'application/json;charset=UTF-8',
                     success: function (res) {
-                        toggleScreens();
+                        $('#btn').hide();
+                        $('.loading-wrapper').show();
                         animate(res);
                     }
                 });
@@ -363,6 +408,8 @@
                 success: function (res) {
                     if (res.startsWith("done")) {
                         end();
+                    } else {
+                        $("#BtnUpload").hide();
                     }
                 }
             });

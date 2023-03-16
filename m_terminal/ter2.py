@@ -18,7 +18,7 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
-ip_conf = js_r("ip_config.json", from_static=False)
+ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
 
 # Configuration Constants
 server_ip = "http://" + ip_conf["server"]
@@ -129,6 +129,7 @@ def events_handler(data):
     elif data.get("cmd") == "elancell":
         elancell_upload = msg
         print(f"elancell msg: {msg}")
+        self_sio.emit('elancell_fe', {'data': elancell_upload})
     elif data.get("cmd") == "cleanroom":
         cleanroom = msg
         print(f"cleanroom msg: {msg}")

@@ -135,6 +135,12 @@ def handle_received_messages(json_msg):
             # for the physical world to take place.
 
         sio.emit("samples", samples)
+    elif json_msg.get("levels") and "correct" in str(json_msg):
+        sio.emit("to_clients", {
+            "username": "tr2",
+            "cmd": "elancell",
+            "message": "solved"
+        })
     elif "/lab_control" in str(json_msg):
         print("access to laser-lock requested")
         # access the airlock lab
@@ -183,7 +189,7 @@ def rfid_extras(msg):
     msg_split = str(msg).split("_")
     if len(msg_split) == 2:
         global login_users
-        
+
         sio.emit("to_clients", {
             "username": msg_split[0],
             "cmd": "auth",

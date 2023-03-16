@@ -24,6 +24,7 @@
     background-color: #333;
     cursor: pointer;
 }
+
 .resetBtn {
     color: #fff;
     background-color: #111;
@@ -117,6 +118,12 @@
 
 .draggable.dragged:hover {
     opacity: 0.1;
+}
+
+span.span-icon {
+    background-color: snow;
+    border-style: dashed;
+    margin: 5px;
 }
 
 @media (max-width: 600px) {

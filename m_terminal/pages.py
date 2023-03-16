@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from fns import get_samples_status, listdir_no_hidden, is_unique_users
+from fns import get_samples_status, listdir_no_hidden, is_unique_users, levels_game
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
 
@@ -51,7 +51,7 @@ def elancell_upload():
         "rachel_ip": "134.231.54.23"
     }
     print("open Elancell page")
-    return render_template("TR2/p_elancell_upload.html", g_config=config)
+    return render_template("TR2/p_elancell_upload.html", g_config=config, samples=levels_game)
 
 
 @app_pages.route('/cleanroom', methods=['GET', 'POST'])
