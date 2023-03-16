@@ -88,10 +88,10 @@ void handleInputs() {
         case lightRachelEnd:
             Mother.motherRelay.digitalWrite(labEntry, open);
             while ((millis() - startTime) < (unsigned long) 120000) {
-                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 3000, 1);
-                delay(3000);
-                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlack, 30, LED_CMDS::clrRed, 30, 3000, 1);
-                delay(3000);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);
+                delay(600);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlack, 30, LED_CMDS::clrRed, 30, 600, 1);
+                delay(600);
             }
         break;
         case lightDavidAnnouncement:
