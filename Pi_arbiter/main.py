@@ -39,6 +39,7 @@ IO = ArbiterIO()
 
 sio = socketio.Client()
 cooldowns = CooldownHandler()
+nw_sock = None
 
 gpio_thread = None
 # used to prevent multiple boots
@@ -118,7 +119,7 @@ def handle_event(event_key, event_value=None):
         return
 
     # Start Video before Sound
-    event_value.get(event_script, lambda: 'Invalid')()
+    event_value.get(event_script, lambda *args: 'Invalid')(event_key, nw_sock)
     sleep(event_value.get(event_delay, 0))
 
     # Sound, may be moved to a fnc
@@ -260,7 +261,6 @@ def connect():
 
 
 def main():
-    handle_event("usb_boot")
     while True:
         # blank_screen_pid.kill()
         # handle_event("airlock_intro")
@@ -277,9 +277,9 @@ if __name__ == '__main__':
     settings = load_settings()
     connected = connect()
     # otherwise calling an already running atmo does not work
-    handle_event("reset_atmo")
     # used to trigger rpis via regular network for videos
     nw_sock = TESocketServer(12345)
+    handle_event("reset_atmo")
 
     print("\n\n=== Arbiter setup complete! ===\n\n")
 

@@ -59,6 +59,7 @@ laserlock_io_rachel = 64
 laserlock_io_seperationEnd = 128
 
 labLight_trigger = "labLight"
+ending_trigger = "uploaded"
 lab_light_off = 1
 lab_light_white = 2
 lab_light_standby = 3
@@ -91,6 +92,10 @@ def play_elancell_intro():
     print("playing elancell intro")
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
                       "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top', '--quiet'])
+
+
+def call_video(event_key, nw_sock):
+    nw_sock.transmit(event_key)
 
 
 def laserlock_arm_door():
@@ -393,6 +398,7 @@ event_map = {
     "analyzer_run1": {
         trigger_cmd: "analyzer",
         trigger_msg: "run1Right",
+        event_script: call_video,
         pcf_in_add: analyzer_in_pcf,
         pcf_in: 1 << 2,
         pcf_out_add: [lab_light_out_pcf],
@@ -428,22 +434,24 @@ event_map = {
         pcf_out: [lab_light_off]
     },
     "end_rachel_announce": {
-        trigger_cmd: labLight_trigger,
+        trigger_cmd: ending_trigger,
         trigger_msg: "rachel",
         pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
-        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce]
+        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce],
+        event_script: call_video
     },
     "end_rachel": {
-        trigger_cmd: labLight_trigger,
+        trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
         pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
         pcf_out: [lab_rachel_end, AirlockOut.rachel_end]
     },
     "end_david_announce": {
-        trigger_cmd: labLight_trigger,
+        trigger_cmd: ending_trigger,
         trigger_msg: "davidEnd",
         pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
-        pcf_out: [lab_david_end_announce, AirlockOut.david_end]
+        pcf_out: [lab_david_end_announce, AirlockOut.david_end],
+        event_script: call_video
     }
 
 }
