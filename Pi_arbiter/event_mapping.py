@@ -1,6 +1,6 @@
 import requests
 import subprocess
-from enum import Enum
+from enum import IntEnum
 
 # http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
 # defaults?
@@ -47,8 +47,10 @@ event_condition = "condition"
 event_delay = "delay"
 
 
-class AirlockOut(Enum):
-    rachel_announce, rachel_end, david_end = range(1, 4)
+class AirlockOut(IntEnum):
+    david_end = 1 << 7
+    rachel_announce = 1 << 6
+    rachel_end = 1 << 5
 
 
 laserlock_io_isSeperation = 16
@@ -417,7 +419,7 @@ event_map = {
         trigger_cmd: "cleanroom",
         trigger_msg: "unlock",
         pcf_out_add: [1],
-        pcf_out: [1 << 3],
+        pcf_out: [1 << 4],
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
