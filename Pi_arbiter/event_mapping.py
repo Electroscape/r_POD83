@@ -87,7 +87,7 @@ class States:
 states = States()
 
 
-def play_elancell_intro():
+def play_elancell_intro(*args):
     blank_screen_pid.kill()
     print("playing elancell intro")
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
@@ -98,11 +98,11 @@ def call_video(event_key, nw_sock):
     nw_sock.transmit(event_key)
 
 
-def laserlock_arm_door():
+def laserlock_arm_door(*args):
     states.laserlock_door_armed = True
 
 
-def laserlock_set_door_opened_state():
+def laserlock_set_door_opened_state(*args):
     states.laserlock_door_opened = True
 
 
@@ -110,12 +110,12 @@ def laserlock_door_open_condition():
     return states.laserlock_door_armed and not states.laserlock_door_opened
 
 
-def laserlock_fixed_condition():
+def laserlock_fixed_condition(*args):
     # print(states.laserlock_fixed)
     return not states.laserlock_fixed
 
 
-def laserlock_set_fixed():
+def laserlock_set_fixed(*args):
     states.laserlock_fixed = True
 
 
