@@ -29,38 +29,5 @@ microscope.
 
 To configure the analysis for a particular experiment please use the corresponding environment codes.
 
-<table  class="table table-hover table-info w-50 m-auto">
-  <thead>
-    <tr>
-      <th class="text-center" scope="col"> Shape</th>
-      <th class="text-center" scope="col"> Code</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Triangular</td>
-      <td>024</td>
-    </tr>
-    <tr>
-      <td>Circular</td>
-      <td>016</td>
-    </tr>
-    <tr>
-      <td>Square</td>
-      <td>011</td>
-    </tr>
-    <tr>
-      <td>Dot</td>
-      <td>000</td>
-    </tr>
-    <tr>
-      <td>Hexagonial</td>
-      <td>019</td>
-    </tr>
-    <tr>
-      <td>Pentagonial</td>
-      <td>005</td>
-    </tr>
-  </tbody>
-</table>
+![1.png](../../static/imgs/wiki/gas_table.png)
 
