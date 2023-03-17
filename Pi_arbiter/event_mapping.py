@@ -67,6 +67,7 @@ lab_light_on = 4
 lab_rachel_end_announce = 5
 lab_rachel_end = 6
 lab_david_end_announce = 7
+lab_dishout = 1 << 4
 
 # Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
 
@@ -393,25 +394,27 @@ event_map = {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
         pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [1 << 4]
+        pcf_out: [lab_dishout]
     },
     "analyzer_run1": {
         trigger_cmd: "analyzer",
+        # sythesis number correct
         trigger_msg: "run1Right",
         event_script: call_video,
         pcf_in_add: analyzer_in_pcf,
         pcf_in: 1 << 2,
         pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [1 << 2]
+        pcf_out: [lab_dishout]
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
+        # sythesis number correct
         trigger_msg: "run2Right",
         pcf_in_add: analyzer_in_pcf,
         pcf_in: 1 << 3,
         fe_cb: {
             fe_cb_cmd: "elancell",
-            fe_cb_msg: "enable",
+            fe_cb_msg: "synthesized",
             fe_cb_tgt: "tr2"
         }
     },
@@ -420,6 +423,8 @@ event_map = {
             is_fx: False,
             sound_id: -1
         },
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_light_off]
     },
     "cleanroom": {
         trigger_cmd: "cleanroom",
