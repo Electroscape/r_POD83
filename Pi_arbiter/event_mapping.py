@@ -101,6 +101,7 @@ def call_video(event_key, nw_sock):
 
 def laserlock_arm_door(*args):
     states.laserlock_door_armed = True
+    states.laserlock_door_opened = False
 
 
 def laserlock_set_door_opened_state(*args):
