@@ -109,7 +109,8 @@ def laserlock_set_door_opened_state(*args):
 
 
 def laserlock_door_open_condition():
-    return states.laserlock_door_armed and not states.laserlock_door_opened
+    print("labdoor open")
+    return states.laserlock_door_armed and states.laserlock_door_opened
 
 
 def laserlock_fixed_condition(*args):
@@ -259,12 +260,13 @@ event_map = {
         }
     },
     "laserlock_door_opened": {
-        pcf_in_add: laserlock_in_2_pcf,
-        pcf_in: 1 << 1,
+        # pcf_in_add: laserlock_in_2_pcf,
+        # pcf_in: 1 << 1,
         event_condition: laserlock_door_open_condition,
         event_script: laserlock_set_door_opened_state,
         sound: {
             sound_id: 3,
+            # yes its actually an atmo
             is_fx: False
         }
     },
@@ -404,8 +406,8 @@ event_map = {
         event_script: call_video,
         pcf_in_add: analyzer_in_pcf,
         pcf_in: 1 << 2,
-        pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [lab_dishout]
+        # pcf_out_add: [lab_light_out_pcf],
+        # pcf_out: [lab_dishout]
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
