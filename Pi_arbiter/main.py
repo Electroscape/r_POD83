@@ -157,6 +157,8 @@ def handle_event(event_key, event_value=None):
     # Frontend
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
+        # This way any event can be monitored on the server
+        sio.emit("events", {"username": "server", "message": event_key})
         return
     cb_tgt = cb_dict.get(fe_cb_tgt, False)
     cb_cmb = cb_dict.get(fe_cb_cmd, False)
