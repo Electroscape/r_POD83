@@ -88,13 +88,13 @@
     <div class="container align-content-center">
 
         <div class="main-video">
-            <video src="{{ url_for('static', filename='media/' + g_config.files[1]) }}" muted controls autoplay></video>
+            <video src="{{ url_for('static', filename='media/' + g_config.files[1]) }}" controls autoplay></video>
         </div>
 
         <div class="menu-wrapper">
             <div class="videos row">
                 {% for media in g_config.files %}
-                    <video class="item" src="{{ url_for('static', filename='media/' + media) }}" muted></video>
+                    <video class="item" src="{{ url_for('static', filename='media/' + media) }}"></video>
                 {% endfor %}
             </div>
             <div class="paddles">
