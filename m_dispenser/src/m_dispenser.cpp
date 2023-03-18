@@ -74,7 +74,7 @@ void stageActions() {
             delay(500);
             // Set all Servos to 0
             wdt_reset();
-            SERVO_CMDS::moveServo(Mother, Servo_Brain1, 0, 0);
+            /* SERVO_CMDS::moveServo(Mother, Servo_Brain1, 0, 0);
             delay(200);
             SERVO_CMDS::moveServo(Mother, Servo_Brain1, 1, 0);
             delay(200);
@@ -83,7 +83,7 @@ void stageActions() {
             SERVO_CMDS::moveServo(Mother, Servo_Brain1, 3, 0);
             delay(200);
             SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 0);
-            delay(200);   
+            delay(200);    */
             wdt_reset();
             stage = waitRequest;
         break;
@@ -291,8 +291,6 @@ void handleInputs() {
             case 7: stage = setupStage; DishCount = 0; break; //reset
         }        
     }
-    
-
 }
 
 void setup() {
