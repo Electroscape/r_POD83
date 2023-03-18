@@ -1,7 +1,7 @@
 #pragma once
 
 #define StageCount 8
-#define PasswordAmount 6
+#define PasswordAmount 11
 #define MaxPassLen 5
 #define closed 1
 #define open   0
@@ -59,11 +59,16 @@ int flagMapping[StageCount] {
 
 char passwords[PasswordAmount][MaxPassLen] = {
     "P1 ", // runmode1
+    "P4 ",
     "P2 ",
     "P3 ",
-    "P4 ",
     "ZERO", 
-    "P5 "
+    "P5 ",
+    "P5 ",
+    "P4 ",
+    "P2 ",
+    "P3 ",
+    "ZERO"
 };
 
 /* // defines what password/RFIDCode is used at what stage, if none is used its -1
