@@ -31,6 +31,8 @@
         .tab-content {
             display: none;
             height: 100%;
+            max-height: 100vh;
+            text-align: center;
         }
 
         #id-off-tab {
@@ -50,6 +52,11 @@
             text-align: center;
         }
 
+        .fit-width {
+            max-width: 100vh;
+            margin: auto;
+        }
+        
     </style>
 <script type="text/javascript">
     const socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -86,6 +93,7 @@
         } else {
             console.log("no content");
         }
+
     }
 
     socket.on('microscope_fe', function (data) {
@@ -120,21 +128,25 @@
     </div>
 
     {% for k, v in cards.items() %}
-        <div id="id-{{ k }}" class="tab-content">
+        <div id="id-{{ k }}" class="tab-content fit-width">
             <h3>{{ k }}</h3>
             <p>{{ v }}</p>
         </div>
-        <script type="text/javascript">
-            displayContent("{{ v }}", "{{ k }}");
-        </script>
     {% endfor %}
 
     <div id="id-off-tab" class="tab-content">
     </div>
 </div>
 <script type="text/javascript">
-    // It should not start off
+    $("#id-0").removeClass("fit-width");
+    displayContent("{{ cards['0'] }}", "0");
     openPage("0");
+    $("document").ready(()=>{
+        let cards = JSON.parse('{{ cards | tojson }}');
+        for (const [key, value] of Object.entries(cards)) {
+            displayContent(value, key);
+        }
+    })
 </script>
 </body>
 </html>

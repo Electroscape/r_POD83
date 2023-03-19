@@ -13,11 +13,11 @@ server_ip = "http://raspi-4-pod-t1:5500"  # <= change server ip here
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 cards = {
-    "1": "1.png",
-    "2": "2.png",
-    "3": "3.png",
-    "4": "4.png",
-    "5": "5.png",
+    "1": "Triangle.mp4",
+    "2": "Circle.mp4",
+    "3": "Hexagon.mp4",
+    "4": "Dot.mp4",
+    "5": "Killswitch.mp4",
     "0": "0.mp4"
 }
 
