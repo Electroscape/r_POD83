@@ -91,10 +91,8 @@ def check_for_updates():
     while True:
         self_sio.sleep(2)
         while not nfc_reader.connected:
-            print(f"in polling mode {prev_data}")
-            if prev_data == nfc_reader.get_data():
-                self_sio.sleep(1)
-            else:
+            # print(f"in polling mode {prev_data}")
+            if prev_data != nfc_reader.get_data():
                 prev_data = nfc_reader.get_data().copy()
                 print("updates to frontend from polling")
                 self_sio.emit("microscope_fe", prev_data)
