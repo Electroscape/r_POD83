@@ -85,12 +85,12 @@ def disconnect():
 
 
 def usb_boot():
+    nw_sock.transmit("usb_boot")
+    sleep(72)
     sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "boot"})
     handle_event("usb_boot")
     # maybe move this to the dict and handleevent
-    sleep(20)
     print("sending usb_boot video trigger")
-    nw_sock.transmit("usb_boot")
     global usb_booted
     usb_booted = True
 
