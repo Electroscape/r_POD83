@@ -186,6 +186,16 @@
         }
     });
 
+    function getFullName(shortname) {
+        let fullname = "ADMIN";
+        if (shortname.toUpperCase() === "DAVID") {
+            fullname = "DAVID COVERSTONE";
+        } else if (shortname.toUpperCase() === "RACHEL") {
+            fullname = "RACHEL TAYLOR";
+        }
+        return fullname;
+    }
+
     function loadControlPanel(jsonResponse, airlockStatus = "") {
         let CPanel = document.getElementById("ControlPanel")
         let PContainer = document.getElementById("posts-container")
@@ -211,7 +221,8 @@
                 } else if (airlockAuth === "success" && jsonResponseElement.id === "{{ airlock_id }}") {
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (jsonResponseElement.auth) {
-                    disableOption(jsonResponseElement, jsonResponse.auth_msg);
+                    let fullName =
+                    disableOption(jsonResponseElement, `NEEDS AUTHENTICATION OF ${getFullName(jsonResponseElement.auth)}`);
                 }
             }
 
