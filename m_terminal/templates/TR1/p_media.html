@@ -19,7 +19,7 @@
 
         .container .videos {
             padding: 10px;
-            justify-content: space-between;
+            justify-content: center;
             flex-wrap: nowrap;
             overflow-x: scroll;
         }
@@ -40,7 +40,7 @@
 
         .container .main-video {
             display: flex;
-            max-width: 75%;
+            max-width: 100%;
             margin: auto;
         }
 
@@ -94,14 +94,16 @@
         <div class="menu-wrapper">
             <div class="videos row">
                 {% for media in g_config.files %}
-                    <video class="item" src="{{ url_for('static', filename='media/' + media) }}"></video>
+                    {% if media.endswith(".mp4") %}
+                        <video class="item" src="{{ url_for('static', filename='media/' + media) }}"></video>
+                    {% endif %}
                 {% endfor %}
             </div>
             <div class="paddles">
                 <button class="left-paddle paddle hidden">
                     <
                 </button>
-                <button class="right-paddle paddle">
+                <button class="right-paddle paddle hidden">
                     >
                 </button>
             </div>
