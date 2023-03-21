@@ -2,6 +2,44 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis.css') }}" media="screen">
+    <style>
+        .modal-dialog {
+            max-width: fit-content;
+            background-color: transparent;
+            text-align: center;
+        }
+
+        .modal-body {
+            padding: 0;
+        }
+
+        .modal-content {
+            background-color: transparent;
+        }
+
+        .button-close {
+            float: right;
+            background-color: black;
+            border-radius: 50% 50% 0 0;
+            border: 0;
+        }
+
+        .hint-box {
+            text-align: center;
+            color: white;
+        }
+
+        .hint-box button {
+            border: 0;
+            background-color: transparent;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+            integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+            integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+            crossorigin="anonymous"></script>
 
     <script type="text/javascript">
         function unlockSeq(index) {
@@ -44,6 +82,40 @@
 {% endblock %}
 
 {% block content %}
+    <p class="hint-box">To configure the analysis for a particular experiment please use the corresponding environment
+        codes.
+        <!-- Button to launch a modal -->
+        <button data-toggle="modal"
+                data-target="#exampleModal">
+            <i class="fa-solid fa-circle-info" style="color: dodgerblue; font-size: 16pt;"></i>
+        </button>
+    </p>
+    <!-- Modal -->
+    <div class="modal fade"
+         id="exampleModal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div>
+                    <button class="button-close"
+                            data-dismiss="modal">
+                        <i class="fa-solid fa-circle-xmark" style="color: red; font-size: 20pt"></i>
+                    </button>
+                </div>
+
+                <!-- Add image inside the body of modal -->
+                <div class="modal-body">
+                    <img id="image" src='{{ url_for("static", filename="imgs/gas_table.png") }}'
+                         alt="Click on button"/>
+                </div>
+
+            </div>
+        </div>
+    </div>
     <div id="fakeBody">
         <div class="options">
             <link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
