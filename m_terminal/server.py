@@ -64,7 +64,7 @@ sio = SocketIO(app, cors_allowed_origins=all_cors)
 def index():
     config = {
         "title": "Server Terminal",
-        "terminal_name": "server",
+        "id": "server",
         "lang": "en"
     }
     # ip_address = request.remote_addr

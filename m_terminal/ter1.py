@@ -10,7 +10,7 @@ from flask_socketio import SocketIO
 
 from ring_list import RingList
 from fns import js_r
-from pages import app_pages
+from pages import app_pages, get_login_user
 import socketio
 
 app = Flask(__name__)
@@ -119,6 +119,9 @@ def chat_control():
 
 @app.route('/get_globals', methods=['GET', 'POST'])
 def get_globals():
+    global login_user
+
+    login_user = get_login_user(terminal_name)
     g_config = js_r(f"json/{terminal_name}_config_{g_lang}.json", auth=login_user)
     g_config["lang"] = g_lang
     return g_config
@@ -293,7 +296,7 @@ def keep_reconnecting():
 
 reconnection_task = self_sio.start_background_task(keep_reconnecting)
 print("Init global variables")
-login_user = ""  # either David, Rachel or empty string
+login_user = get_login_user(terminal_name)  # either David, Rachel or empty string
 chat_msgs = RingList(100)  # stores the whole conversation
 airlock_boot = "normal"
 airlock_auth = "normal"

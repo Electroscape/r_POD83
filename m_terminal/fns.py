@@ -77,3 +77,11 @@ def is_unique_users() -> bool:
         return True
     else:
         return False
+
+
+def get_login_users() -> dict:
+    try:
+        users = requests.get(f"{server_ip}/get_auth_users").json()
+    except Exception as e:
+        users = {}
+    return users

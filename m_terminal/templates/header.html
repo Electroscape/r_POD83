@@ -1,23 +1,64 @@
+<style>
+    .header-left {
+        min-width: 450px;
+    }
+
+    .header-right {
+        min-width: 450px;
+    }
+
+    .login-info {
+        max-width: 250px;
+    }
+
+    #lang-box {
+        max-width: 150px;
+    }
+
+
+</style>
+
 <header class="header-flex d-flex justify-content-between py-2">
-    <div id="btn-main-back" class="ml-auto" style="width: 195px; height: 55px">
-        {% if "+" in request.path %}
-            <a class="btn btn-outline-" href='/browser/'><i class="fas fa-chevron-left"></i> BACK</a>
-        {% elif request.path != "/" %}
-            <a class="btn btn-outline-" href='/'><i class="fas fa-chevron-left"></i> BACK</a>
-        {% endif %}
+    <div class="header-left">
+        <div id="btn-main-back" class="ml-auto" style="width: 195px; height: 55px">
+            {% if "+" in request.path %}
+                <a class="btn btn-outline-" href='/browser/'><i class="fas fa-chevron-left"></i> BACK</a>
+            {% elif request.path != "/" %}
+                <a class="btn btn-outline-" href='/'><i class="fas fa-chevron-left"></i> BACK</a>
+            {% endif %}
+        </div>
     </div>
     <div class="text-center">
         <h1 class="text-success typing-effect">{{ g_config.title }}</h1>
     </div>
-    <div id="lang-box" class="btn-group btn-group-toggle ml-auto">
-        <input type="radio" class="btn-check" onclick="switchLanguage('en')" name="LangSwitch" id="rb_en"
-               autocomplete="off"/>
-        <label class="btn btn-dark" for="rb_en">
-            <p class="lang-txt text-lg-center">EN</p></label>
+    <div class="row header-right">
+        <div class="login-info">
+            <p style="color: ghostwhite">login user:<br>none</p>
+        </div>
+        <div id="lang-box" class="btn-group btn-group-toggle">
+            <input type="radio" class="btn-check" onclick="switchLanguage('en')" name="LangSwitch" id="rb_en"
+                   autocomplete="off"/>
+            <label class="btn btn-dark" for="rb_en">
+                <p class="lang-txt text-lg-center">EN</p></label>
 
-        <input type="radio" class="btn-check" onclick="switchLanguage('de')" name="LangSwitch" id="rb_de"
-               autocomplete="off"/>
-        <label class="btn btn-dark" for="rb_de">
-            <p class="lang-txt text-lg-center">DE</p></label>
+            <input type="radio" class="btn-check" onclick="switchLanguage('de')" name="LangSwitch" id="rb_de"
+                   autocomplete="off"/>
+            <label class="btn btn-dark" for="rb_de">
+                <p class="lang-txt text-lg-center">DE</p></label>
+        </div>
     </div>
 </header>
+
+<script type="text/javascript">
+    {% if g_config.get("id") != "server" %}
+        $.ajax({
+            type: 'POST',
+            url: `{{ url_for("app_pages.get_login_user", ter_name=myRoomID) }}${myRoomID}`,
+            contentType: 'application/json;charset=UTF-8',
+            data: {ter_name: myRoomID},
+            success: function (res) {
+                updateLoginInfo(res);
+            }
+        });
+    {% endif %}
+</script>

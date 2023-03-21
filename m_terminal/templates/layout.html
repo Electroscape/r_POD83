@@ -39,7 +39,25 @@
 
     <title>{% block title %}TERMINAL {{ g_config.terminal }}{% endblock %}</title>
 
-    <script>
+    <script type="text/javascript">
+        function getFullName(shortname) {
+            let fullname = "ADMIN";
+            if (shortname.toUpperCase() === "DAVID") {
+                fullname = "DAVID COVERSTONE";
+            } else if (shortname.toUpperCase() === "RACHEL") {
+                fullname = "RACHEL TAYLOR";
+            }
+            return fullname;
+        }
+
+        function updateLoginInfo(usr) {
+            let username = getFullName(usr);
+            if (username === "ADMIN") {
+                username = "none"
+            }
+            $('.login-info').children("p").html(`login user:<br><strong>${username}</strong>`);
+        }
+
         toastr.options = {
             closeButton: true,
             debug: true,
@@ -74,7 +92,7 @@
         const myRoomID = myChatConfig.id;
         const myDispName = myChatConfig.title;
         const socket = io.connect('http://' + document.domain + ':' + location.port);
-        var g_lang = myChatConfig.lang
+        let g_lang = myChatConfig.lang;
     </script>
 
     {% block chat_js %}
@@ -92,11 +110,14 @@
             })
 
             socket.on('usr_auth', function (msg) {
+                let prev_usr = $(".login-info").find("strong").text();
                 if (msg.usr.toLowerCase() === "empty") {
-                    toastr.success(`user logout`);
+                    toastr.warning(`${prev_usr} logged out`);
                 } else {
-                    toastr.success(`user ${msg.usr} login`);
+                    toastr.success(`${getFullName(msg.usr)} logged in`);
                 }
+                updateLoginInfo(msg.usr.toLowerCase());
+
                 {% if request.path == "/lab_control" %}
                     clearInterval(countDownInterval);
                     $.post("{{ url_for('lab_control') }}", {
@@ -186,16 +207,6 @@
         }
     });
 
-    function getFullName(shortname) {
-        let fullname = "ADMIN";
-        if (shortname.toUpperCase() === "DAVID") {
-            fullname = "DAVID COVERSTONE";
-        } else if (shortname.toUpperCase() === "RACHEL") {
-            fullname = "RACHEL TAYLOR";
-        }
-        return fullname;
-    }
-
     function loadControlPanel(jsonResponse, airlockStatus = "") {
         let CPanel = document.getElementById("ControlPanel")
         let PContainer = document.getElementById("posts-container")
@@ -222,7 +233,7 @@
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (jsonResponseElement.auth) {
                     let fullName =
-                    disableOption(jsonResponseElement, `NEEDS AUTHENTICATION OF ${getFullName(jsonResponseElement.auth)}`);
+                        disableOption(jsonResponseElement, `NEEDS AUTHENTICATION OF ${getFullName(jsonResponseElement.auth)}`);
                 }
             }
 

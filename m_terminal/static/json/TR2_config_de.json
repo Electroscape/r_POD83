@@ -18,10 +18,10 @@
       "auth": "Rachel"
     },
     {
-      "title": "Mikroskop",
-      "details": "den Gasfluss kontrollieren",
-      "image": "static/imgs/home/microscope.png",
-      "link": "microscope",
+      "title": "Chat",
+      "details": "Chatten mit Terminal 2 oder Chatbot",
+      "image": "static/imgs/home/chat.png",
+      "link": "chat_control",
       "auth": false
     },
     {
@@ -37,13 +37,6 @@
       "image": "static/imgs/home/upload.png",
       "link": "elancell_upload",
       "auth": "David"
-    },
-    {
-      "title": "Chat",
-      "details": "Chatten mit Terminal 2 oder Chatbot",
-      "image": "static/imgs/home/chat.png",
-      "link": "chat_control",
-      "auth": false
     }
   ]
 }

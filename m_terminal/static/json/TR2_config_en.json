@@ -18,10 +18,10 @@
       "auth": "Rachel"
     },
     {
-      "title": "Microscope",
-      "details": "control the gas flow",
-      "image": "static/imgs/home/microscope.png",
-      "link": "microscope",
+      "title": "Chat",
+      "details": "Chat with Terminal 2 or Chatbot",
+      "image": "static/imgs/home/chat.png",
+      "link": "chat_control",
       "auth": false
     },
     {
@@ -37,13 +37,6 @@
       "image": "static/imgs/home/upload.png",
       "link": "elancell_upload",
       "auth": "David"
-    },
-    {
-      "title": "Chat",
-      "details": "Chat with Terminal 2 or Chatbot",
-      "image": "static/imgs/home/chat.png",
-      "link": "chat_control",
-      "auth": false
     }
   ]
 }

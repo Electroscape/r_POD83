@@ -1,7 +1,13 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from fns import get_samples_status, listdir_no_hidden, is_unique_users, levels_game
+from fns import get_samples_status, listdir_no_hidden, is_unique_users, levels_game, get_login_users
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
+
+
+@app_pages.route('/login-info/<ter_name>', methods=['GET', 'POST'])
+def get_login_user(ter_name):
+    auth_user = get_login_users().get(ter_name.lower(), "empty")
+    return auth_user
 
 
 @app_pages.route('/gas_control', methods=['GET', 'POST'])
