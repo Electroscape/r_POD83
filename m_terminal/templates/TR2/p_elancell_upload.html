@@ -244,7 +244,8 @@
 
 
 {% block content %}
-    <div id="dialog-form" title="Upload to Elancell">
+    <div id="dialog-form"
+         title="Upload to {% if "breach" in request.path %}R.{% else %}Elancell{% endif %}">
         <p class="validateTips">All form fields are required.</p>
 
         <form>
