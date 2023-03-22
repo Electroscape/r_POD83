@@ -28,7 +28,11 @@ terminal_name = "TR2"  # which config file to load
 
 @app.route('/', methods=['GET', 'POST'])
 def entry_point():  # begin of the code
-    return render_template("index.html", g_config=get_globals())
+    flags = {
+        "elancell": elancell_upload,
+        "cleanroom": cleanroom
+    }
+    return render_template("index.html", g_config=get_globals(), flags=flags)
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])

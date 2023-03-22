@@ -221,6 +221,7 @@
 
             let airlock = airlockStatus || "{% if airlock %}{{ airlock }}{% endif %}";
             let airlockAuth = "{% if airlock_auth %}{{ airlock_auth }}{% endif %}";
+            let flags = JSON.parse('{% if flags %}{{ flags | tojson }}{% else %}null{% endif %}');
             if (airlock === "error") {
                 let air_elem = jsonResponse.btns.find(x => x.id === '{{ airlock_id }}');
                 disableOption(air_elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
@@ -231,9 +232,18 @@
                     disableOption(jsonResponseElement, "Authentication failed");
                 } else if (airlockAuth === "success" && jsonResponseElement.id === "{{ airlock_id }}") {
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
+                } else if (flags && flags.cleanroom === "unlock" && jsonResponseElement.id === "cleanroom") {
+                    disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");
+                } else if (flags && flags.elancell.startsWith("done")) {
+                    if (jsonResponseElement.id === "elancell-upload") {
+                        disableOption(jsonResponseElement, "sent", "rgba(0, 255, 0, 0.6)");
+                    } else if (jsonResponseElement.id === "sample-release") {
+                        disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
+                    } else if (jsonResponseElement.id === "gas-analysis") {
+                        disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
+                    }
                 } else if (jsonResponseElement.auth) {
-                    let fullName =
-                        disableOption(jsonResponseElement, `NEEDS AUTHENTICATION OF ${getFullName(jsonResponseElement.auth)}`);
+                    disableOption(jsonResponseElement, `NEEDS AUTHENTICATION OF ${getFullName(jsonResponseElement.auth)}`);
                 }
             }
 
