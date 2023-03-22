@@ -1,7 +1,10 @@
+#!/bin/bash
 pkill python3
 pkill vlc
 
-# pkill fbi
+# cd to this script dir
+# fixes activate venv from crontab 
+cd "${0%/*}"
 
 
 export DISPLAY=:0.0
