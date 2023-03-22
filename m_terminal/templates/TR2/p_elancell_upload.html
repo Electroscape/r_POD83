@@ -251,8 +251,8 @@
             <fieldset class="form-outline">
                 <h3>Network Configuration</h3>
                 <label class="form-label" for="ipv4">ip
-                    <input id="ipv4" type='text' name='text1' placeholder="xxx.xxx.xxx.xxx"
-                           class="form-control text ui-widget-content ui-corner-all"/>
+                    <input id="ipv4" type='text' name='text1' value="{{ g_config.elancell_ip }}"
+                           class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 
                 <h3>File Info</h3>
@@ -403,6 +403,9 @@
                     }
                 }
             });
+            {% if "breach" in request.path %}
+                $('#ipv4').removeAttr("disabled");
+            {% endif %}
         });
     </script>
 {% endblock %}

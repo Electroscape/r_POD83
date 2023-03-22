@@ -7,7 +7,7 @@ sys.path.append(file_dir)
 from flask import request, Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 from ring_list import RingList
-from fns import js_r
+from fns import js_r, configure_btn
 from pages import app_pages, get_login_user
 import socketio
 
@@ -30,8 +30,10 @@ terminal_name = "TR2"  # which config file to load
 def entry_point():  # begin of the code
     flags = {
         "elancell": elancell_upload,
-        "cleanroom": cleanroom
+        "cleanroom": cleanroom,
+        "it_breach": it_breach
     }
+
     return render_template("index.html", g_config=get_globals(), flags=flags)
 
 
@@ -52,6 +54,17 @@ def get_globals():
     login_user = get_login_user(terminal_name)
     g_config = js_r(f"json/{terminal_name}_config_{g_lang}.json", auth=login_user)
     g_config["lang"] = g_lang
+
+    if it_breach == "breach":
+        breach_tile = {
+            "title": "Breach",
+            "details": "Surveillance footage",
+            "image": "static/imgs/home/web-coding.png",
+            "link": "elancell_breach",
+            "auth": False
+        }
+        g_config["btns"].append(configure_btn(breach_tile))
+
     return g_config
 
 
@@ -124,6 +137,7 @@ def events_handler(data):
         global login_user
         global elancell_upload
         global cleanroom
+        global it_breach
 
         msg = data.get("message")
 
@@ -140,6 +154,10 @@ def events_handler(data):
     elif data.get("cmd") == "cleanroom":
         cleanroom = msg
         print(f"cleanroom msg: {msg}")
+    elif data.get("cmd") == "breach":
+        it_breach = msg
+        print(f"IT breach msg: {msg}")
+        self_sio.emit('breach_fe', msg)
 
 
 @sio.on('samples')
@@ -199,6 +217,7 @@ login_user = get_login_user(terminal_name)  # either David, Rachel or empty stri
 chat_msgs = RingList(100)  # stores chat history max 100 msgs
 elancell_upload = "disable"
 cleanroom = "lock"
+it_breach = "secure"
 
 app.register_blueprint(app_pages)
 

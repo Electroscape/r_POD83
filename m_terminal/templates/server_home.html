@@ -88,6 +88,17 @@
             })
         }
 
+        function onClickSet() {
+            let msg = $("#loadingInput").val();
+
+            socket.emit("events", {
+                username: "server",
+                cmd: "loadingbar",
+                message: msg
+            })
+
+        }
+
     </script>
 {% endblock %}
 
@@ -144,6 +155,28 @@
             </div>
         </div>
         <div>
+            Cleanroom:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_broken" name="tr2_cleanroom" type="radio" value="lock" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_broken">lock</label>
+
+                <input id="t2_fixed" name="tr2_cleanroom" type="radio" value="unlock" onclick="onClickTerminal(name)"/>
+                <label for="t2_fixed">unlock</label>
+            </div>
+        </div>
+        <div>
+            IT breach:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_secure" name="tr2_breach" type="radio" value="secure" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_secure">secure</label>
+
+                <input id="t2_breach" name="tr2_breach" type="radio" value="breach" onclick="onClickTerminal(name)"/>
+                <label for="t2_breach">breach</label>
+            </div>
+        </div>
+        <div>
             Microscope:
             <div class="switch-toggle switch-candy">
                 <input id="t2_mOFF" name="mcrp_status" type="radio" value="off" checked="checked"
@@ -187,11 +220,20 @@
                 <input id="t2_solved" name="tr2_elancell" type="radio" value="solved" onclick="onClickTerminal(name)"/>
                 <label for="t2_solved">Solved</label>
 
-                <input id="t2_synth" name="tr2_elancell" type="radio" value="synthesized" onclick="onClickTerminal(name)"/>
+                <input id="t2_synth" name="tr2_elancell" type="radio" value="synthesized"
+                       onclick="onClickTerminal(name)"/>
                 <label for="t2_synth">Synthesized</label>
             </div>
         </div>
-
+        <div style="padding-inline: 5px;">
+            <label for="loadingInput">Loading bar: </label>
+            <div class="form-outline" style="width: 7rem; background-color: forestgreen; display: inline-block">
+                <i class="fas fa-percentage trailing"></i>
+                <input min="0" max="100" value="50" type="number" id="loadingInput"
+                       class="form-control form-icon-trailing"/>
+            </div>
+            <button onclick="onClickSet()">set</button>
+        </div>
         <div>
             reset:
             <div class="switch-toggle switch-candy">
@@ -236,17 +278,21 @@
         </button>
         <button class="btn btn-outline-light" name="airlock_intro" onclick="onClickTrigger(name)">Airlock1 Intro Video
         </button>
-        <button class="btn btn-outline-light" name="airlock_fumigation" onclick="onClickTrigger(name)">Airlock1 Fumigation
+        <button class="btn btn-outline-light" name="airlock_fumigation" onclick="onClickTrigger(name)">Airlock1
+            Fumigation
         </button>
-        <button class="btn btn-outline-light" name="airlock_sterilizationIntro" onclick="onClickTrigger(name)">Airlock1 SterilzationIntro
+        <button class="btn btn-outline-light" name="airlock_sterilizationIntro" onclick="onClickTrigger(name)">Airlock1
+            SterilzationIntro
         </button>
         <button class="btn btn-outline-light" name="airlock_UV" onclick="onClickTrigger(name)">Airlock1 UV
         </button>
-        <button class="btn btn-outline-light" name="airlock_BioScanIntro" onclick="onClickTrigger(name)">Airlock1 BioScanIntro
+        <button class="btn btn-outline-light" name="airlock_BioScanIntro" onclick="onClickTrigger(name)">Airlock1
+            BioScanIntro
         </button>
         <button class="btn btn-outline-light" name="airlock_BioScan" onclick="onClickTrigger(name)">Airlock1 BioScan
         </button>
-        <button class="btn btn-outline-light" name="airlock_BioScanDenied" onclick="onClickTrigger(name)">Airlock1 BioScanDenied
+        <button class="btn btn-outline-light" name="airlock_BioScanDenied" onclick="onClickTrigger(name)">Airlock1
+            BioScanDenied
         </button>
         <button class="btn btn-outline-light" name="airlock_wrong" onclick="onClickTrigger(name)">Airlock1 Wrong
         </button>
@@ -284,9 +330,11 @@
         </button>
         <button class="btn btn-outline-light" name="dispenser_dishout" onclick="onClickTrigger(name)">Dispenser DishOut
         </button>
-        <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Analyzer Run1 Wright (Killswitch Video)
+        <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Analyzer Run1
+            Wright (Killswitch Video)
         </button>
-        <button class="btn btn-outline-light" name="analyzer_run2Right" onclick="onClickTrigger(name)">Analyzer Ru2 Wright (upload enable)
+        <button class="btn btn-outline-light" name="analyzer_run2Right" onclick="onClickTrigger(name)">Analyzer Ru2
+            Wright (upload enable)
         </button>
         <button class="btn btn-outline-light" name="cleanroom_unlock" onclick="onClickTrigger(name)">cleanroom unlock
         </button>
@@ -296,13 +344,13 @@
     <h3>Lab endings</h3>
     <div>
         <button class="btn btn-outline-light" name="labLight_off" onclick="onClickTrigger(name)">lab light off
-            </button>
+        </button>
         <button class="btn btn-outline-light" name="uploaded_rachel" onclick="onClickTrigger(name)">Rachel ending
-            </button>
+        </button>
         <button class="btn btn-outline-light" name="uploaded_rachelEnd" onclick="onClickTrigger(name)">Rachel end FX
-            </button>
+        </button>
         <button class="btn btn-outline-light" name="uploaded_davidEnd" onclick="onClickTrigger(name)">Elancell ending
-            </button>
+        </button>
     </div>
 
 

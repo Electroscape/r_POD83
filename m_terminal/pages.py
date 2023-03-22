@@ -60,6 +60,20 @@ def elancell_upload():
     return render_template("TR2/p_elancell_upload.html", g_config=config, samples=levels_game)
 
 
+@app_pages.route('/elancell_breach', methods=['GET', 'POST'])
+def elancell_breach():
+    if not is_unique_users():
+        return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
+
+    config = {
+        "title": "IT Breach",
+        "elancell_ip": "134.231.83.19",
+        "rachel_ip": "134.231.54.23"
+    }
+    print("open Elancell breach page")
+    return render_template("TR2/p_elancell_upload.html", g_config=config, samples=levels_game)
+
+
 @app_pages.route('/cleanroom', methods=['GET', 'POST'])
 def cleanroom():
     if not is_unique_users():

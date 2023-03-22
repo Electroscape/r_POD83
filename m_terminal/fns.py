@@ -55,6 +55,27 @@ def configure_btns(data: list, auth=""):
     return data
 
 
+def configure_btn(d: dict):
+    with open("templates/ControlPanel.html", "r") as f_in:
+        html = f_in.read()
+
+    # create ids
+    d.update({"id": d.get("link").replace("_", "-")})
+
+    keys = {
+        "control.id": d.get("id"),
+        "control.image": d.get("image"),
+        "control.details": d.get("details"),
+        "control.title": d.get("title"),
+        "control.link": d.get("link")
+    }
+    for k, v in keys.items():
+        html = html.replace(k, v)
+    d.update({"html": html})
+
+    return d
+
+
 def listdir_no_hidden(path):
     return [f for f in os.listdir(path) if not f.startswith('.')]
 

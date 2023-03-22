@@ -5,7 +5,6 @@ body {
 
 .lang-txt {
     margin-top: revert;
-
 }
 
 #content {
@@ -13,6 +12,9 @@ body {
     position: relative;
 }
 
+#elancell-breach {
+    background-color: tomato;
+}
 
 #control-section {
     padding-inline: 50px;
@@ -22,6 +24,7 @@ body {
 #ControlPanel {
     margin-bottom: 50px;
 }
+
 .header-flex {
     display: flex;
     justify-content: center;

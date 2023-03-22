@@ -37,7 +37,7 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/home.css') }}" media="screen">
     <link rel="stylesheet" href="{{ url_for('static',filename='css/floatChat.css') }}" media="screen">
 
-    <title>{% block title %}TERMINAL {{ g_config.terminal }}{% endblock %}</title>
+    <title>{% block title %}TERMINAL{% endblock %}</title>
 
     <script type="text/javascript">
         function getFullName(shortname) {
@@ -135,6 +135,18 @@
                 {% else %}
                     loadControlPanel(msg.data)
                 {% endif %}
+            })
+
+            socket.on('breach_fe', function (msg) {
+                if (msg === "breach") {
+                    toastr.error(`IT security breach is detected`);
+                    swal("warning", "Your system is being hacked", "error").then(() => {
+                            document.location.href = "/";
+                        }
+                    );
+                } else {
+                    toastr.success(`Your system is secure`);
+                }
             })
 
             socket.on("airlock_fe", function (msg) {
