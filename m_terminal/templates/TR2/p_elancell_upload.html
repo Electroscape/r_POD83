@@ -251,7 +251,9 @@
             <fieldset class="form-outline">
                 <h3>Network Configuration</h3>
                 <label class="form-label" for="ipv4">ip
-                    <input id="ipv4" type='text' name='text1' value="{{ g_config.elancell_ip }}"
+                    <input id="ipv4" type='text' name='text1'
+                           {% if "breach" in request.path %}placeholder="xxx.xxx.xxx.xxx"
+                           {% else %}value="{{ g_config.elancell_ip }}"{% endif %}
                            class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 
