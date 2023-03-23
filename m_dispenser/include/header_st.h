@@ -99,7 +99,7 @@ int stageSum = ~( ~0 << StageCount );
 // for now its only an Access module mapped here
 int flagMapping[StageCount] {
     ledFlag,
-    ledFlag+rfidFlag,
+    ledFlag,
     ledFlag,
     ledFlag,
     ledFlag,
