@@ -150,6 +150,7 @@ event_map = {
         pcf_in_add: airlock_in_pcf,
         pcf_in: 2,
         event_script: play_elancell_intro,
+        event_delay: 5,
         # this is the sound to go along with teh video
         sound: {
             is_fx: True,
