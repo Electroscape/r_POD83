@@ -1,10 +1,10 @@
 #pragma once
 
-#define StageCount 14
+#define StageCount 15
 #define PasswordAmount 6
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
-#define headLineMaxSize 16
+#define headLineMaxSize 17
 
 #define open        0
 #define closed      1
@@ -63,18 +63,28 @@ int relayInitArray[relayAmount] = {
 
 #define outputCnt 4
 // technically we already got one but ... changing the code is no prio here
-#define inputCnt 1
+#define inputCnt 4
 
 enum IO {
     IO0,             // red, MSB
     IO1,             // blk
     IO2,             // green
     IO3,             // white
-    door_reed
+    door_reed,
+    IO4,
+    IO5,
+    IO6
 };
 
+int david_end = (1 << 7);
+int rachel_announce = (1 << 6); 
+int rachel_end = (1 << 5);
+
 int intputArray[inputCnt] = {
-    door_reed
+    door_reed,
+    IO4,
+    IO5,
+    IO6
 };
 
 int outputArray[outputCnt] = {
@@ -114,6 +124,8 @@ enum stages {
     fumigation = 1024,
     sterilization = 2048,
     BiometricScan = 4096,
+    david_end_Stage = 1 << 13,
+    rachel_end_stage = 1 << 14
 };
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
@@ -135,6 +147,8 @@ int flagMapping[StageCount] {
     0,
     0,
     0,
+    0,
+    0
 };
 
 char passwords[PasswordAmount][MaxPassLen] = {
@@ -163,5 +177,7 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Access denied",
     "Fumigation",
     "Sterilisation",
-    "Biometric Scan"
+    "Biometric Scan",
+    "Thank You",
+    "Self Destruction",
 };

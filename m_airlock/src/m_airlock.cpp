@@ -31,9 +31,10 @@ PCF8574 inputPCF;
 STB_MOTHER Mother;
 STB_MOTHER_IO MotherIO;
 
-int stage = setupStage;
+int stage = preStage;
+//int stage = idle; for debugging
 // since stages are single binary bits and we still need to d some indexing
-int stageIndex=0;
+int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 bool repeatDecontamination = false;
@@ -430,8 +431,8 @@ void stageActions() {
         case airlockRequest: break;
         case airlockOpening:
             MotherIO.setOuput(airlockOpeningEvent);
-            delay(100);
-            delay(2700); //Ouput Delay
+            delay(100);//Ouput Delay
+            delay(3400); 
             MotherIO.outputReset();
             wdt_disable();
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
@@ -457,16 +458,64 @@ void stageActions() {
             LED_CMDS::runningPWM(Mother, 1, LED_CMDS::clrYellow, 30, 2000, 4);
             wdt_disable();
             delay(runningLightDuration);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 15);
             wdt_enable(WDTO_8S);
-            stage = stage << 1;
+            stage = idle;
         break;
         case idle:
+            delay(200);
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 15);
         break;
         case airlockFailed: 
             MotherIO.setOuput(wrongCode);
             airlockDenied();
             stage = startStage;
+        break;
+
+        case david_end_Stage:
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrGreen, 50);
+            stage = idle;
+        break;
+
+        
+       /*  case rachel_announce_Stage:
+            wdt_disable();
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,500,1500,100,30,PWM::set1_2_3);
+            delay(10000);
+            wdt_enable(WDTO_8S);
+            stage = idle;
+        break;
+        */
+        
+        case rachel_end_stage:
+            wdt_disable();
+            delay(2000); // Video Proceed to airlock
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
+
+            
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,950,50,100,100,PWM::set1_2_3);
+            
+            delay(10000); // Delay Countdown
+
+
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
+            delay(1000);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,200,200,100,100,PWM::set1_2_3);
+            delay(6000);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,400,400,60,60,PWM::set1_2_3);
+            delay(6000);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,600,600,40,40,PWM::set1_2_3);
+            delay(6000);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,800,800,20,20,PWM::set1_2_3);
+            delay(6000);
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 1000);
+            delay(5000);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,100,10000,PWM::set1);
+            delay(10000);
+            wdt_enable(WDTO_8S);
+            LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrWhite, 100,PWM::set1);
+            stage = idle;
+
         break;
     }
 }
@@ -503,6 +552,33 @@ void stageUpdate() {
 }
 
 
+
+void handleInputs() {
+
+    if (stage != idle) { return; }
+    lastStage = idle;
+    int result = MotherIO.getInputs();
+        Serial.println(F("Wait for Input!"));
+        delay(2000);
+    if (result > 0){
+        result -= result & (1 << door_reed);
+        Serial.println(F("Input from Arbiter!"));
+        Serial.println(result);
+    }
+    switch (result) {
+        case 1 << 7: 
+            stage = david_end_Stage;
+        break;
+       /*  case 1 << 6: 
+            stage = rachel_announce_Stage;
+        break; */
+        case 1 << 5:
+            stage = rachel_end_stage;
+        break;
+        default: break;
+    }
+}
+
 void setup() {
 
     Mother.begin();
@@ -538,8 +614,10 @@ void setup() {
 
 void loop() {
     Mother.rs485PerformPoll();
+
     interpreter();
     stageUpdate();
+    handleInputs(); 
     wdt_reset();
 }
 
