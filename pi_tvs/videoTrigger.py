@@ -7,10 +7,10 @@ from time import sleep
 
 sock = SocketClient('raspi-4-pod-arbiter', 12345)
 video_dict = {
-    "usb_boot": "welcome.mp4",
-    "end_rachel_announce": "Rachel_Ending.mp4",
-    "end_david_announce": "Rachel_Elancell_Ending.mp4",
-    "analyzer_run1": "killswitch.mp4",
+    "usb_boot": "./play_welcome.sh",
+    "end_rachel_announce": "./play_rachel.sh",
+    "end_david_announce": "./play_elancell.sh",
+    "analyzer_run1": "./play_killswitch.sh",
 }
 
 
@@ -36,11 +36,7 @@ def main():
             video_name = video_dict[msg]
             background.kill()
             print(f"playing video {video_name}")
-            video_proc = Popen(['cvlc', video_name, "--no-embedded-video", "--fullscreen",
-                                '--no-video-title', '--video-on-top'])
-            if msg == list(video_dict.keys())[0]:
-                sleep(67)
-                background = start_backgroound()
+            video_proc = Popen(['sh', video_name])
         except KeyError:
             print(f"unknown key received {msg}")
 
