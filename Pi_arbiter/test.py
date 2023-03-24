@@ -20,3 +20,21 @@ if __name__ == '__main__':
     main()
 
 
+'''
+@sio.event
+def disconnect():
+    if not connected:
+        return False
+    global connected
+    connected = False
+    sio.disconnect()
+    connect()
+
+@sio.on('*')
+def catch_all(event, data):
+    print("\n")
+    print(event)
+    print(data)
+    print("\n")
+    pass
+'''

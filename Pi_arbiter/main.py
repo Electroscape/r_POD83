@@ -32,7 +32,7 @@ IO = ArbiterIO()
     * 🔲 resettime as param
     * ✅ designated PCFS as input or output
     * ✅ make a fnc for checking if pin/binary value present in pcf value
-    * 🔲 \/ make one event capable to trigger multiple outputs via PCF and sound 
+    * ✅ \/ make one event capable to trigger multiple outputs via PCF
     * 🔲 FE multiple CBs 
     * 🔲 mutiple pcf_outs on events
 '''
@@ -72,18 +72,6 @@ def connect():
     print("Connected to Server!")
 
 
-'''
-@sio.event
-def disconnect():
-    if not connected:
-        return False
-    global connected
-    connected = False
-    sio.disconnect()
-    connect()
-'''
-
-
 def usb_boot():
     nw_sock.transmit("usb_boot")
     sleep(72)
@@ -93,17 +81,6 @@ def usb_boot():
     print("sending usb_boot video trigger")
     global usb_booted
     usb_booted = True
-
-
-'''
-@sio.on('*')
-def catch_all(event, data):
-    print("\n")
-    print(event)
-    print(data)
-    print("\n")
-    pass
-'''
 
 
 def handle_event(event_key, event_value=None):
