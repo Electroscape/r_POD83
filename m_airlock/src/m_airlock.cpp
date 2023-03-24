@@ -395,7 +395,7 @@ void stageActions() {
             MotherIO.outputReset();
             delay(13000); //Dauer Sound
             MotherIO.setOuput(uvEvent);
-            delay(50);
+            delay(250);
             MotherIO.outputReset();
             uvSequence();
             wdt_enable(WDTO_8S);
@@ -477,21 +477,12 @@ void stageActions() {
             stage = idle;
         break;
 
-        
-       /*  case rachel_announce_Stage:
-            wdt_disable();
-            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,500,1500,100,30,PWM::set1_2_3);
-            delay(10000);
-            wdt_enable(WDTO_8S);
-            stage = idle;
-        break;
-        */
-        
         case rachel_end_stage:
             wdt_disable();
-            delay(2000); // Video Proceed to airlock
+            /* delay(41000); // Video Rachel
+            delay(34000); // Video Proceed to airlock start at second "remain calm" */
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
-
+            delay(200);
             
             LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,950,50,100,100,PWM::set1_2_3);
             
@@ -500,20 +491,52 @@ void stageActions() {
 
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(1000);
-            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,200,200,100,100,PWM::set1_2_3);
-            delay(6000);
-            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,400,400,60,60,PWM::set1_2_3);
-            delay(6000);
-            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,600,600,40,40,PWM::set1_2_3);
-            delay(6000);
-            LED_CMDS::blinking(Mother,1,LED_CMDS::clrRed,LED_CMDS::clrYellow,800,800,20,20,PWM::set1_2_3);
-            delay(6000);
+            for (int i=0; i<12; i++) {
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 100);
+                delay(200);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(50);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
+                delay(200);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(50);
+            }
+            for (int i=0; i<6; i++) {
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 60);
+                delay(400);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 60);
+                delay(400);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(100);
+            }
+            for (int i=0; i<4; i++) {
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
+                delay(650);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 30);
+                delay(650);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(100);
+            }
+            for (int i=0; i<3; i++) {
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
+                delay(900);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 30);
+                delay(900);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
+                delay(100);
+            }
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 1000);
-            delay(5000);
-            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,100,10000,PWM::set1);
-            delay(10000);
+            delay(6000);
+            LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,100,12000,PWM::set1);
+            delay(12000);
             wdt_enable(WDTO_8S);
-            LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrWhite, 100,PWM::set1);
+            LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
             stage = idle;
 
         break;
