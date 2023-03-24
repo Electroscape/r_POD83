@@ -72,18 +72,10 @@ def connect():
     print("Connected to Server!")
 
 
-def usb_boot():
-    nw_sock.transmit("usb_boot")
-    sleep(72)
-    sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "boot"})
-    handle_event("usb_boot")
-    # maybe move this to the dict and handleevent
-    print("sending usb_boot video trigger")
-    global usb_booted
-    usb_booted = True
-
-
 def handle_event(event_key, event_value=None):
+    '''
+    event first handles CB script then does the delay
+    '''
     if event_value is None:
         try:
             event_value = event_map[event_key]
@@ -258,7 +250,7 @@ def main():
         # continue
         # exit()
         if scan_for_usb():
-            usb_boot()
+            handle_event("usb_boot")
         handle_pcf_inputs()
 
 

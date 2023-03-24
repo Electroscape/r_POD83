@@ -84,6 +84,7 @@ class States:
         self.laserlock_door_armed = False
         self.laserlock_door_opened = False
         self.laserlock_fixed = False
+        self.usb_booted = False
 
 
 states = States()
@@ -94,6 +95,15 @@ def play_elancell_intro(*args):
     print("playing elancell intro")
     subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
                       "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top', '--quiet'])
+
+
+def usb_boot_condition():
+    usb_status = states.usb_booted
+    if not usb_status:
+        states.usb_booted = True
+        return True
+    else:
+        return False
 
 
 def call_video(event_key, nw_sock):
@@ -114,6 +124,7 @@ def laserlock_door_open_condition():
     return states.laserlock_door_armed and states.laserlock_door_opened
 
 
+# @todo: just include set_fixed into conidition
 def laserlock_fixed_condition(*args):
     # print(states.laserlock_fixed)
     return not states.laserlock_fixed
@@ -162,7 +173,7 @@ event_map = {
         trigger_cmd: "airlock",
         trigger_msg: "fumigation",
         pcf_in_add: airlock_in_pcf,
-        pcf_in: 7, 
+        pcf_in: 7,
         sound: {
             sound_id: 26
         }
@@ -171,7 +182,7 @@ event_map = {
         trigger_cmd: "airlock",
         trigger_msg: "sterilizationIntro",
         pcf_in_add: airlock_in_pcf,
-        pcf_in: 5, 
+        pcf_in: 5,
         sound: {
             sound_id: 23
         }
@@ -234,6 +245,13 @@ event_map = {
     "usb_boot": {
         trigger_cmd: "usb",
         trigger_msg: "boot",
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "boot"
+        },
+        event_delay: 72,
+        event_script: call_video,
         pcf_out_add: [laserlock_out_pcf],
         pcf_out: [1 << 0],
         sound: {
