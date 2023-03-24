@@ -32,7 +32,7 @@ STB_MOTHER Mother;
 STB_MOTHER_IO MotherIO;
 
 int stage = preStage;
-//int stage = idle; for debugging
+//int stage = idle; //for debugging
 // since stages are single binary bits and we still need to d some indexing
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
@@ -491,48 +491,65 @@ void stageActions() {
 
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(1000);
-            for (int i=0; i<12; i++) {
+            for (int i=0; i<4; i++) {
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 100);
                 delay(200);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(50);
+                delay(300);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 100);
-                delay(200);
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlue, 100);
+                delay(100);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(50);
+                delay(300);
             }
-            for (int i=0; i<6; i++) {
+            delay(500);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set2);
+            delay(1000);
+            for (int i=0; i<3; i++) {
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 60);
                 delay(400);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(100);
+                delay(300);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 60);
-                delay(400);
+                delay(200);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlue, 100);
+                delay(200);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(100);
+                delay(300);
             }
-            for (int i=0; i<4; i++) {
+            delay(500);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set2);
+            delay(1000);
+            for (int i=0; i<3; i++) {
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
                 delay(650);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(100);
+                delay(300);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 30);
-                delay(650);
+                delay(325);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlue, 100);
+                delay(325);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(100);
+                delay(300);
             }
+            delay(500);
+            LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set2);
+            delay(1000);
             for (int i=0; i<3; i++) {
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
                 delay(900);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(100);
+                delay(300);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrYellow, 30);
-                delay(900);
+                delay(450);
+                LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlue, 100);
+                delay(450);
                 LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 100);
-                delay(100);
+                delay(300);
             }
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 1000);
-            delay(6000);
+            delay(7000);
             LED_CMDS::fade2color(Mother,1,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,100,12000,PWM::set1);
             delay(12000);
             wdt_enable(WDTO_8S);
@@ -582,7 +599,7 @@ void handleInputs() {
     lastStage = idle;
     int result = MotherIO.getInputs();
         Serial.println(F("Wait for Input!"));
-        delay(2000);
+       // delay(2000);
     if (result > 0){
         result -= result & (1 << door_reed);
         Serial.println(F("Input from Arbiter!"));
