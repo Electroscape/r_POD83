@@ -45,6 +45,7 @@ fe_cb_msg = "msg"
 event_script = "script"
 event_condition = "condition"
 event_delay = "delay"
+event_next_qeued = "event_next"
 
 
 class AirlockOut(IntEnum):
@@ -447,13 +448,19 @@ event_map = {
         trigger_msg: "rachel",
         pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
         pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce],
-        event_script: call_video
+        event_script: call_video,
+        event_next_qeued: "end_rachel"
     },
     "end_rachel": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
         pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
-        pcf_out: [lab_rachel_end, AirlockOut.rachel_end]
+        pcf_out: [lab_rachel_end, AirlockOut.rachel_end],
+        event_delay: 92,
+        sound: {
+            is_fx: False,
+            sound_id: 6
+        },
     },
     "end_david_announce": {
         trigger_cmd: ending_trigger,

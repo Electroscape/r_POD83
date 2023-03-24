@@ -126,11 +126,17 @@ def handle_event(event_key, event_value=None):
         sleep(3)
         for index in range(len(pcf_no)):
             IO.write_pcf(pcf_no[index], 0)
-
     except KeyError as err:
         print(err)
         pass
 
+    handle_event_fe(event_value, event_key)
+    queued_event = event_value.get(event_next_qeued, False)
+    if queued_event:
+        handle_event(queued_event)
+
+
+def handle_event_fe(event_value, event_key):
     # Frontend
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
