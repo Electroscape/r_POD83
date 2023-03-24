@@ -486,8 +486,23 @@ event_map = {
         pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
         pcf_out: [lab_david_end_announce, AirlockOut.david_end],
         event_script: call_video
-    }
-
+    },
+    "usb_rachel_enable": {
+        fe_cb: {
+            fe_cb_tgt: "tr2",
+            fe_cb_cmd: "breach",
+            fe_cb_msg: "breach"
+        }
+    },
+    "usb_rachel_disable": {
+        fe_cb: {
+            fe_cb_tgt: "tr2",
+            fe_cb_cmd: "breach",
+            fe_cb_msg: "secure"
+        }
+    },
+    "usb_elancell_enable": {},
+    "usb_elancell_disable": {},
 }
 
 

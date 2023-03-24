@@ -13,6 +13,7 @@ from ArbiterIO import ArbiterIO, CooldownHandler
 from time import sleep, thread_time
 from subprocess import Popen
 from communication.TESocketServer import TESocketServer
+from pathlib import Path
 
 IO = ArbiterIO()
 
@@ -45,6 +46,10 @@ gpio_thread = None
 # used to prevent multiple boots
 usb_booted = False
 connected = False
+
+rachel_usb_path = Path("/media/2cp/rachel")
+elancell_usb_path = Path("/media/2cp/elancell")
+boot_usb_path = Path("/media/2cp/usb_boot")
 
 
 class Settings:
@@ -182,8 +187,14 @@ def handle_fe(data):
             pass
 
 
-def scan_for_usb():
-    return os.path.exists("/dev/sda") and not usb_booted
+def handle_usb_events():
+    # one needs to exclude the other, removing it shall also disable said usb func
+    if rachel_usb_path.exists():
+        handle_event()
+    if elancell_usb_path.exists():
+        handle_event()
+    if boot_usb_path.exists():
+        handle_event("usb_boot")
 
 
 def handle_pcf_input(input_pcf, value):
@@ -249,8 +260,7 @@ def main():
         # handle_event("laserlock_fail")
         # continue
         # exit()
-        if scan_for_usb():
-            handle_event("usb_boot")
+        handle_usb_events()
         handle_pcf_inputs()
 
 
