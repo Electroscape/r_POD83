@@ -113,6 +113,12 @@
                 let prev_usr = $(".login-info").find("strong").text();
                 if (msg.usr.toLowerCase() === "empty") {
                     toastr.warning(`${prev_usr} logged out`);
+                    swal("logged out", `${prev_usr} has been logged out`, "warning").then(
+                        () => {
+                            {% if not request.path in ["/"] %}
+                                document.location.href = "/"
+                            {% endif %}
+                        });
                 } else {
                     toastr.success(`${getFullName(msg.usr)} logged in`);
                 }
