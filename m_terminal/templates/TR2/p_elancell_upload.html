@@ -169,6 +169,12 @@
             }
 
             function submitToElancell() {
+                function ip2num(dot) {
+                    let d = dot.split('.');
+                    if (d.length !== 4) return -1;
+                    return ((((((+d[0]) * 256) + (+d[1])) * 256) + (+d[2])) * 256) + (+d[3]);
+                }
+
                 allFields.removeClass("ui-state-error");
 
                 if (!checkLength(name, "filename", 5, 35)) return false;
@@ -181,8 +187,9 @@
                 }
 
                 // after validation
-                let ipVal = ip.val();
-                if (ipVal === "{{ g_config.elancell_ip }}") {
+                let ipTxt = ip.val();
+                let ipVal = ip2num(ip.val());
+                if (ipVal === ip2num("{{ g_config.elancell_ip }}")) {
                     socket.emit('msg_to_backend', {
                         cmd: "upload",
                         message: "elancell",
@@ -190,9 +197,9 @@
                     })
                     // upload to POD
                     dialog.dialog("close");
-                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "success");
+                    swal("Sent", "Results were sent successfully to IP address: \n" + ipTxt, "success");
                     end();
-                } else if (ipVal === "{{ g_config.rachel_ip }}") {
+                } else if (ipVal === ip2num("{{ g_config.rachel_ip }}")) {
                     socket.emit('msg_to_backend', {
                         cmd: "upload",
                         message: "rachel",
@@ -200,7 +207,7 @@
                     })
                     // Upload to Rachel
                     dialog.dialog("close");
-                    swal("Sent", "Results were sent successfully to IP address: \n" + ipVal, "warning");
+                    swal("Sent", "Results were sent successfully to IP address: \n" + ipTxt, "warning");
                     end();
                 } else {
                     swal("Forbidden Connection",
@@ -253,7 +260,7 @@
                 <h3>Network Configuration</h3>
                 <label class="form-label" for="ipv4">ip
                     <input id="ipv4" type='text' name='text1'
-                           {% if "breach" in request.path %}placeholder="xxx.xxx.xxx.xxx"
+                           {% if "breach" in request.path %}placeholder="type ip here"
                            {% else %}value="{{ g_config.elancell_ip }}"{% endif %}
                            class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
