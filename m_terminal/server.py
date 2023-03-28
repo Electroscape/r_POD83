@@ -49,6 +49,7 @@ login_users = {
     "tr1": "empty",
     "tr2": "empty"
 }
+loading_percent = 0
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
@@ -78,7 +79,7 @@ def get_globals():
 
 
 @app.route('/get_samples', methods=['GET', 'POST'])
-def get_samples_status() -> dict:
+def get_samples() -> dict:
     return samples
 
 
@@ -109,6 +110,13 @@ def frontend_server_messages(json_msg):
     sio.emit('response_to_fe', json_msg)
 
 
+def all_samples_solved():
+    answer = True
+    for sample in samples:
+        answer = answer and sample.get("status") == "released"
+    return answer
+
+
 @sio.on('msg_to_server')
 def handle_received_messages(json_msg):
     print('server received message: ' + str(json_msg))
@@ -133,6 +141,8 @@ def handle_received_messages(json_msg):
             # should I add ~5 sec delay here?
             # after trigger msg and before sending the samples updates msg
             # for the physical world to take place.
+            if all_samples_solved():
+                sio.emit("samples", {"flag": "done"})
 
         sio.emit("samples", samples)
     elif json_msg.get("levels") and "correct" in str(json_msg):
@@ -205,9 +215,16 @@ def events_handler(msg):
     # Filter messages to server
     if msg.get("username") == "server":
         global samples
-        if msg.get("cmd") == "reset":
+        global loading_percent
+
+        if msg.get("cmd") == "loadingbar":
+            loading_percent = msg.get("message")
+            sio.emit("to_clients", {"username": "tr1", "cmd": "loadingbar", "message": loading_percent})
+            sio.emit("to_clients", {"username": "tr2", "cmd": "loadingbar", "message": loading_percent})
+        elif msg.get("cmd") == "reset":
             samples = read_json("json/samples.json")
             sio.emit("samples", samples)
+            sio.emit("samples", {"flag": "unsolved"})  # to reset the flag
             if msg.get("message") == "resetAll":
                 print("Server: Reset all")
                 # reset global variables
@@ -216,7 +233,6 @@ def events_handler(msg):
                     "tr2": "empty"
                 }
                 # emit default state messages to terminals
-                sio.emit("samples", samples)
                 sio.emit("to_clients", {"username": "tr1", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
@@ -225,6 +241,8 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": "lock"})
+                sio.emit("to_clients", {"username": "tr2", "cmd": "breach", "message": "secure"})
+
                 # set microscope off
     elif msg.get("username") == "mcrp":
         print(f"to microscope: {str(msg)})")

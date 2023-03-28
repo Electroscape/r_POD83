@@ -239,6 +239,7 @@
 
             let airlock = airlockStatus || "{% if airlock %}{{ airlock }}{% endif %}";
             let airlockAuth = "{% if airlock_auth %}{{ airlock_auth }}{% endif %}";
+            let samplesFlag = "{% if samples_flag %}{{ samples_flag }}{% endif %}";
             let flags = JSON.parse('{% if flags %}{{ flags | tojson }}{% else %}null{% endif %}');
             if (airlock === "error") {
                 let air_elem = jsonResponse.btns.find(x => x.id === '{{ airlock_id }}');
@@ -252,14 +253,12 @@
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (flags && flags.cleanroom === "unlock" && jsonResponseElement.id === "cleanroom") {
                     disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");
-                } else if (flags && flags.elancell.startsWith("done")) {
-                    if (jsonResponseElement.id === "elancell-upload") {
-                        disableOption(jsonResponseElement, "sent", "rgba(0, 255, 0, 0.6)");
-                    } else if (jsonResponseElement.id === "sample-release") {
-                        disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
-                    } else if (jsonResponseElement.id === "gas-analysis") {
-                        disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
-                    }
+                } else if (flags && flags.elancell.startsWith("done") && jsonResponseElement.id === "elancell-upload") {
+                    disableOption(jsonResponseElement, "sent", "rgba(0, 255, 0, 0.6)");
+                } else if (samplesFlag === "done" && (jsonResponseElement.id === "sample-release"
+                    || jsonResponseElement.id === "gas-analysis"
+                    || jsonResponseElement.id === "gas-control")) {
+                    disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
                 } else if (jsonResponseElement.auth) {
                     disableOption(jsonResponseElement, `NEEDS AUTHENTICATION OF ${getFullName(jsonResponseElement.auth)}`);
                 }

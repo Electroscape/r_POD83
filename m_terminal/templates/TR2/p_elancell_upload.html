@@ -308,9 +308,14 @@
 
         const animate = (elancellStatus, width = 1) => {
             const loadingFill = document.querySelector('.loading-fill');
-            let isEnabled = elancellStatus.includes("enable") || elancellStatus.includes("solved") || elancellStatus.includes("synthesized")
-            let isSolved = elancellStatus.includes("solved") || elancellStatus.includes("synthesized")
-            let isSynthesized = elancellStatus.includes("synthesized")
+            let isEnabled;
+            {% if "breach" in request.path %}
+                isEnabled = true;
+            {% else %}
+                isEnabled = elancellStatus.includes("enable") || elancellStatus.includes("solved") || elancellStatus.includes("synthesized");
+            {% endif %}
+            let isSolved = elancellStatus.includes("solved") || elancellStatus.includes("synthesized");
+            let isSynthesized = elancellStatus.includes("synthesized");
 
             // init loading bar
             loadingFill.style.width = width + '%';
@@ -322,7 +327,7 @@
                 if (width === 33) {
                     if (!isEnabled) {
                         clearInterval(interval);
-                        showError("Compilation failed!<br>No enough data to complete the process");
+                        showError("Compilation failed!<br>Please insert USB media");
                     } else if (!isSolved) {
                         clearInterval(interval);
                         $(".mail .container").slideUp();

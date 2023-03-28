@@ -34,7 +34,7 @@ def entry_point():  # begin of the code
         "it_breach": it_breach
     }
 
-    return render_template("index.html", g_config=get_globals(), flags=flags)
+    return render_template("index.html", g_config=get_globals(), flags=flags, samples_flag=samples_flag)
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
@@ -56,14 +56,10 @@ def get_globals():
     g_config["lang"] = g_lang
 
     if it_breach == "breach":
-        breach_tile = {
-            "title": "Data Upload to R.",
-            "details": "Surveillance footage",
-            "image": "static/imgs/home/web-coding.png",
-            "link": "elancell_breach",
-            "auth": False
-        }
-        g_config["btns"].append(configure_btn(breach_tile))
+        tmp = g_config["btns"].pop()
+        tmp.update({"title": "Data upload to R."})
+        tmp.update({"link": "elancell_breach"})
+        g_config["btns"].append(configure_btn(tmp))
 
     return g_config
 
@@ -162,7 +158,11 @@ def events_handler(data):
 
 @sio.on('samples')
 def samples_handler(samples):
-    self_sio.emit("samples_updates", samples)
+    if isinstance(samples, list):
+        self_sio.emit("samples_updates", samples)
+    elif isinstance(samples, dict):
+        global samples_flag
+        samples_flag = samples.get("flag")
 
 
 @sio.on('response_to_terminals')
@@ -218,6 +218,7 @@ chat_msgs = RingList(100)  # stores chat history max 100 msgs
 elancell_upload = "disable"
 cleanroom = "lock"
 it_breach = "secure"
+samples_flag = "unsolved"
 
 app.register_blueprint(app_pages)
 

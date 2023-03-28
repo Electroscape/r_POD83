@@ -32,7 +32,7 @@
       "auth": "David"
     },
     {
-      "title": "Data Upload to Elancell",
+      "title": "Data Upload",
       "details": "Surveillance footage",
       "image": "static/imgs/home/upload.png",
       "link": "elancell_upload",

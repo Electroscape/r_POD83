@@ -96,7 +96,7 @@ def entry_point():  # begin of the code
     conf = get_globals()
     airlock_id = "lab-control"
     return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id,
-                           airlock_auth=airlock_auth)
+                           airlock_auth=airlock_auth, samples_flag=samples_flag)
 
 
 @app.route('/boot', methods=['GET', 'POST'])
@@ -244,7 +244,11 @@ def events_handler(data):
 
 @sio.on('samples')
 def samples_handler(samples):
-    self_sio.emit("samples_updates", samples)
+    if isinstance(samples, list):
+        self_sio.emit("samples_updates", samples)
+    elif isinstance(samples, dict):
+        global samples_flag
+        samples_flag = samples.get("flag")
 
 
 @sio.on('response_to_terminals')
@@ -301,6 +305,7 @@ chat_msgs = RingList(100)  # stores the whole conversation
 airlock_boot = "normal"
 airlock_auth = "normal"
 usb_boot = "shutdown"
+samples_flag = "unsolved"
 
 app.register_blueprint(app_pages)
 flatpages = FlatPages(app)

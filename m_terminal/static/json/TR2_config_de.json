@@ -32,7 +32,7 @@
       "auth": "David"
     },
     {
-      "title": "Hochladen der Daten auf elancell",
+      "title": "Hochladen der Daten",
       "details": "Überwachungsfilmmaterial",
       "image": "static/imgs/home/upload.png",
       "link": "elancell_upload",
