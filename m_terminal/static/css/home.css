@@ -25,6 +25,10 @@ body {
     margin-bottom: 50px;
 }
 
+strong {
+    font-weight: 400;
+}
+
 .header-flex {
     display: flex;
     justify-content: center;

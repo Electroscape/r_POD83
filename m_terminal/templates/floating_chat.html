@@ -13,7 +13,8 @@
         <ul id="floatMsgContainer" class="messages">
         </ul>
         <div class="footer">
-            <div class="text-box" contenteditable="true" disabled="true"></div>
+            <div class="text-box" contenteditable="true" onclick="(function(e){e.focus()})(this)"
+                 data-text="Enter your message here"></div>
             <button id="sendMessage">send</button>
         </div>
     </div>

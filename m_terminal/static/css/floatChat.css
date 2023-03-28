@@ -135,6 +135,7 @@
     -moz-animation: show-chat-odd 0.15s 1 ease-in;
     -webkit-animation: show-chat-odd 0.15s 1 ease-in;
     margin-right: 45px;
+    font-size: unset;
 }
 
 .floating-chat .chat .messages li.other:before {
@@ -157,18 +158,22 @@
 .floating-chat .chat .footer {
     flex-shrink: 0;
     display: flex;
-    padding-top: 10px;
     max-height: 90px;
     background: transparent;
+    border: 1px solid red;
 }
 
 .floating-chat .chat .footer .text-box {
-    background: rgba(25, 147, 147, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     min-height: 100%;
     width: 100%;
     margin-right: 5px;
     overflow-y: auto;
     padding: 2px 5px;
+}
+
+[contentEditable=true]:empty:not(:focus):before {
+    content: attr(data-text)
 }
 
 .floating-chat .chat .footer .text-box::-webkit-scrollbar {

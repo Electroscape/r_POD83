@@ -2,6 +2,7 @@ const element = $('.floating-chat');
 
 setTimeout(function () {
     element.addClass('enter');
+    openElement();
 }, 1000);
 
 element.click(openElement);
