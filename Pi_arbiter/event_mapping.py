@@ -99,15 +99,6 @@ def play_elancell_intro(*args):
                       "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top', '--quiet'])
 
 
-def usb_boot_condition():
-    usb_status = states.usb_booted
-    if not usb_status:
-        states.usb_booted = True
-        return True
-    else:
-        return False
-
-
 def call_video(event_key, nw_sock):
     nw_sock.transmit(event_key)
 
@@ -134,6 +125,46 @@ def laserlock_fixed_condition(*args):
 
 def laserlock_set_fixed(*args):
     states.laserlock_fixed = True
+
+
+# @TODO much of this is very much of teh same, build a function
+class USBScripts:
+    @staticmethod
+    def rachel_enabled_condition(*args):
+        if not states.upload_Rachel:
+            states.upload_Rachel = True
+            return True
+        return False
+
+    @staticmethod
+    def rachel_disabled_condition():
+        if states.upload_Rachel:
+            states.upload_Rachel = False
+            return True
+        return False
+
+    @staticmethod
+    def elancell_enabled_condition(*args):
+        if not states.upload_elancell:
+            states.upload_elancell = True
+            return True
+        return False
+
+    @staticmethod
+    def elancell_disabled_condition(*args):
+        if states.upload_elancell:
+            states.upload_elancell = False
+            return True
+        return False
+
+    @staticmethod
+    def boot_condition(*args):
+        usb_status = states.usb_booted
+        if not usb_status:
+            states.usb_booted = True
+            return True
+        else:
+            return False
 
 
 event_map = {
@@ -252,6 +283,7 @@ event_map = {
             fe_cb_cmd: "usbBoot",
             fe_cb_msg: "boot"
         },
+        event_condition: USBScripts.boot_condition,
         event_delay: 72,
         event_script: call_video,
         pcf_out_add: [laserlock_out_pcf],
@@ -495,7 +527,7 @@ event_map = {
             fe_cb_cmd: "breach",
             fe_cb_msg: "breach"
         },
-        event_condition: lambda: not states.upload_elancell
+        event_condition: USBScripts.rachel_enabled_condition
     },
     "usb_rachel_disable": {
         fe_cb: {
@@ -503,23 +535,23 @@ event_map = {
             fe_cb_cmd: "breach",
             fe_cb_msg: "secure"
         },
-        event_condition: lambda: states.upload_elancell
+        event_condition: USBScripts.rachel_disabled_condition
     },
     "usb_elancell_enable": {
         fe_cb: {
             fe_cb_tgt: "tr2",
-            fe_cb_cmd: "breach",
-            fe_cb_msg: "secure"
+            fe_cb_cmd: "elancell",
+            fe_cb_msg: "enable"
         },
-        event_condition: lambda: not states.upload_Rachel
+        event_condition: USBScripts.elancell_enabled_condition
     },
     "usb_elancell_disable": {
         fe_cb: {
             fe_cb_tgt: "tr2",
-            fe_cb_cmd: "breach",
-            fe_cb_msg: "secure"
+            fe_cb_cmd: "elancell",
+            fe_cb_msg: "disable"
         },
-        event_condition: lambda: states.upload_Rachel
+        event_condition: USBScripts.elancell_disabled_condition
     },
 }
 
