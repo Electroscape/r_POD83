@@ -89,7 +89,7 @@ def cleanroom():
 
 @app_pages.route('/media_control', methods=['GET', 'POST'])
 def media_control():
-    media_files = listdir_no_hidden('static/media')
+    media_files = [video_file for video_file in listdir_no_hidden('static/media') if video_file.endswith(".mp4")]
 
     config = {
         "title": "Media Gallery",

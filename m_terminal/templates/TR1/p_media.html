@@ -2,12 +2,12 @@
 
 {% block head %}
     <style>
-        body {
-            padding-top: 5px;
-        }
-
-        #control-section {
-            padding-top: 0;
+        #no-media {
+            margin-top: 150px;
+            color: red;
+            text-align: center;
+            border: 1px dashed;
+            padding: 50px;
         }
 
         .container {
@@ -86,28 +86,29 @@
 
 {% block content %}
     <div class="container align-content-center">
+        {% if g_config.files %}
+            <div class="main-video">
+                <video src="{{ url_for('static', filename='media/' + g_config.files[0]) }}" controls autoplay></video>
+            </div>
 
-        <div class="main-video">
-            <video src="{{ url_for('static', filename='media/' + g_config.files[1]) }}" controls autoplay></video>
-        </div>
-
-        <div class="menu-wrapper">
-            <div class="videos row">
-                {% for media in g_config.files %}
-                    {% if media.endswith(".mp4") %}
+            <div class="menu-wrapper">
+                <div class="videos row">
+                    {% for media in g_config.files %}
                         <video class="item" src="{{ url_for('static', filename='media/' + media) }}"></video>
-                    {% endif %}
-                {% endfor %}
+                    {% endfor %}
+                </div>
+                <div class="paddles">
+                    <button class="left-paddle paddle hidden">
+                        <
+                    </button>
+                    <button class="right-paddle paddle hidden">
+                        >
+                    </button>
+                </div>
             </div>
-            <div class="paddles">
-                <button class="left-paddle paddle hidden">
-                    <
-                </button>
-                <button class="right-paddle paddle hidden">
-                    >
-                </button>
-            </div>
-        </div>
+        {% else %}
+            <h1 id="no-media">No media files found in the folder!</h1>
+        {% endif %}
 
     </div>
 {% endblock %}
