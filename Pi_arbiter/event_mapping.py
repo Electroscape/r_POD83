@@ -85,6 +85,8 @@ class States:
         self.laserlock_door_opened = False
         self.laserlock_fixed = False
         self.usb_booted = False
+        self.upload_elancell = False
+        self.upload_Rachel = False
 
 
 states = States()
@@ -492,17 +494,33 @@ event_map = {
             fe_cb_tgt: "tr2",
             fe_cb_cmd: "breach",
             fe_cb_msg: "breach"
-        }
+        },
+        event_condition: lambda: not states.upload_elancell
     },
     "usb_rachel_disable": {
         fe_cb: {
             fe_cb_tgt: "tr2",
             fe_cb_cmd: "breach",
             fe_cb_msg: "secure"
-        }
+        },
+        event_condition: lambda: states.upload_elancell
     },
-    "usb_elancell_enable": {},
-    "usb_elancell_disable": {},
+    "usb_elancell_enable": {
+        fe_cb: {
+            fe_cb_tgt: "tr2",
+            fe_cb_cmd: "breach",
+            fe_cb_msg: "secure"
+        },
+        event_condition: lambda: not states.upload_Rachel
+    },
+    "usb_elancell_disable": {
+        fe_cb: {
+            fe_cb_tgt: "tr2",
+            fe_cb_cmd: "breach",
+            fe_cb_msg: "secure"
+        },
+        event_condition: lambda: states.upload_Rachel
+    },
 }
 
 
