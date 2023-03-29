@@ -151,7 +151,12 @@
                         }
                     );
                 } else {
-                    toastr.success(`Your system is secure`);
+                    {% if request.path == "/" %}
+                        swal("System Restored", "Malware USB has been removed", "warning").then(() => {
+                                document.location.href = "/";
+                            }
+                        );
+                    {% endif %}
                 }
             })
 

@@ -242,6 +242,21 @@
             $("#BtnUpload").button().on("click", function () {
                 dialog.dialog("open");
             });
+
+            $("#dialog-message").dialog({
+                autoOpen: false,
+                modal: true,
+                height: 300,
+                width: 500,
+                open: function () {
+                    $(this).siblings('.ui-dialog-titlebar').remove();
+                },
+                buttons: {
+                    homepage: function () {
+                        document.location.href = "/";
+                    }
+                }
+            });
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
@@ -274,7 +289,14 @@
             </fieldset>
         </form>
     </div>
-
+    <div id="dialog-message" title="Insert Media" style="text-align: center; background-color: dodgerblue;">
+        <img class="mt-2" width="100px" height="100px" alt="USB flash drive"
+             src="{{ url_for("static", filename="imgs/flash-drive.png") }}">
+        <p class="my-2">
+            <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i>
+            No media detected <br><strong>Please Insert media to continue</strong>.
+        </p>
+    </div>
     <div class="mail">
         <div class="container">
             <button id="btn" class="btn btn-info">COMPILE DATA</button>
@@ -324,11 +346,14 @@
             $('#btn').hide();
 
             function fill() {
-                if (width === 33) {
+                if (width === 10) {
                     if (!isEnabled) {
                         clearInterval(interval);
                         showError("Compilation failed!<br>Please insert USB media");
-                    } else if (!isSolved) {
+                        $("#dialog-message").dialog("open");
+                    }
+                } else if (width === 33) {
+                    if (!isSolved) {
                         clearInterval(interval);
                         $(".mail .container").slideUp();
                         $("#levels-game-container").slideDown();
@@ -375,8 +400,12 @@
         }
 
         socket.on("elancell_fe", function (msg) {
-            if (msg.data === "enable") {
+            if (msg.data === "disable") {
+                $("#dialog-message").dialog("open");
+            } else if (msg.data === "enable") {
                 console.log("fifth sample is released");
+                $("#dialog-message").dialog("close");
+                animate(msg.data, 11);
             } else if (msg.data === "solved") {
                 $("#levels-game-container").slideUp();
                 $(".mail .container").slideDown();

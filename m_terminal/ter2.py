@@ -146,6 +146,12 @@ def events_handler(data):
     elif data.get("cmd") == "elancell":
         elancell_upload = msg
         print(f"elancell msg: {msg}")
+        if msg == "disable":
+            # means usb is removed
+            if it_breach != "secure":
+                # sends if there was already a breach
+                it_breach = "secure"
+                self_sio.emit('breach_fe', it_breach)
         self_sio.emit('elancell_fe', {'data': elancell_upload})
     elif data.get("cmd") == "cleanroom":
         cleanroom = msg
