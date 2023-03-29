@@ -246,7 +246,7 @@ bool passwordInterpreter(char* password) {
 */
 void handleResult() {
     Mother.STB_.rcvdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
-    if (passwordInterpreter(Mother.STB_.rcvdPtr) && (Mother.STB_.rcvdPtr != NULL)) {
+    if ((Mother.STB_.rcvdPtr != NULL) && passwordInterpreter(Mother.STB_.rcvdPtr)) {
         // excluding the cases where both cards need to be present
         // here may be the ussie... keep the sendresult stuff in one place
         if ((stage & (seperationUnlocked + seperationLocked)) == 0) {
