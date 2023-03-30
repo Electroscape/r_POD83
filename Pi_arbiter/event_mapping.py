@@ -131,7 +131,7 @@ def laserlock_set_fixed(*args):
 class USBScripts:
     @staticmethod
     def rachel_enabled_condition(*args):
-        if not states.upload_Rachel:
+        if not states.upload_Rachel and not states.upload_elancell:
             states.upload_Rachel = True
             return True
         return False
@@ -145,7 +145,7 @@ class USBScripts:
 
     @staticmethod
     def elancell_enabled_condition(*args):
-        if not states.upload_elancell:
+        if not states.upload_elancell and not states.upload_Rachel:
             states.upload_elancell = True
             return True
         return False
