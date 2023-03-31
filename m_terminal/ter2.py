@@ -7,7 +7,7 @@ sys.path.append(file_dir)
 from flask import request, Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 from ring_list import RingList
-from fns import js_r, configure_btn
+from fns import js_r, configure_btn, get_progressbar_status
 from pages import app_pages, get_login_user
 import socketio
 
@@ -34,7 +34,8 @@ def entry_point():  # begin of the code
         "it_breach": it_breach
     }
 
-    return render_template("index.html", g_config=get_globals(), flags=flags, samples_flag=samples_flag)
+    return render_template("index.html", g_config=get_globals(), flags=flags, samples_flag=samples_flag,
+                           progress=get_progressbar_status())
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
@@ -160,6 +161,9 @@ def events_handler(data):
         it_breach = msg
         print(f"IT breach msg: {msg}")
         self_sio.emit('breach_fe', msg)
+    elif data.get("cmd") == "loadingbar":
+        print(f"set loading bar: {msg}")
+        self_sio.emit('loadingbar_fe', msg)
 
 
 @sio.on('samples')

@@ -11,7 +11,7 @@ from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
 
 from ring_list import RingList
-from fns import js_r
+from fns import js_r, get_progressbar_status
 from pages import app_pages, get_login_user
 import socketio
 
@@ -98,7 +98,7 @@ def entry_point():  # begin of the code
     conf = get_globals()
     airlock_id = "lab-control"
     return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id,
-                           airlock_auth=airlock_auth, samples_flag=samples_flag)
+                           airlock_auth=airlock_auth, samples_flag=samples_flag, progress=get_progressbar_status())
 
 
 @app.route('/boot', methods=['GET', 'POST'])
@@ -252,6 +252,9 @@ def events_handler(data):
         airlock_boot = msg
         print(f"airlock msg: {msg}")
         self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
+    elif data.get("cmd") == "loadingbar":
+        print(f"set loading bar: {msg}")
+        self_sio.emit('loadingbar_fe', msg)
 
 
 @sio.on('samples')

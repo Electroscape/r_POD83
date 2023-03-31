@@ -90,6 +90,11 @@ def get_samples_status():
     return samples
 
 
+def get_progressbar_status():
+    percentage = requests.get(f"{server_ip}/get_progress").json()
+    return percentage.get("percent", 100)
+
+
 def is_unique_users() -> bool:
     login_users = requests.get(f"{server_ip}/get_auth_users").json()
     users = login_users.values()

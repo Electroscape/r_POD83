@@ -78,6 +78,11 @@ def get_globals():
     return read_json("json/server_config.json")
 
 
+@app.route("/get_progress", methods=["GET", "POST"])
+def get_progress():
+    return {"percent": loading_percent}
+
+
 @app.route('/get_samples', methods=['GET', 'POST'])
 def get_samples() -> dict:
     return samples
@@ -252,8 +257,29 @@ def events_handler(msg):
         if msg.get("cmd") == "auth":
             login_users[msg.get("username")] = msg.get("message")
 
+        if msg.get("cmd") == "usbBoot":
+            loading_percent = 100
+
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)
+
+
+def loadingbar_timer():
+    global loading_percent
+
+    while True:
+        # only starts after booting
+        if loading_percent > 0:
+            sio.emit("to_clients", {"username": "tr1", "cmd": "loadingbar", "message": loading_percent})
+            sio.emit("to_clients", {"username": "tr2", "cmd": "loadingbar", "message": loading_percent})
+            frontend_server_messages({"username": "tr1/tr2", "cmd": "loadingbar", "message": loading_percent})
+            # 90 min / 20 loading bars = 4.5 min = 270 seconds
+            # remove 1 progress bar every 270 seconds
+            sio.sleep(int(60 * 4.5))
+            loading_percent -= 5
+
+
+progressbar_task = sio.start_background_task(loadingbar_timer)
 
 
 @app.route('/favicon.ico')
