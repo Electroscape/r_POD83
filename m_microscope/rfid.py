@@ -2,10 +2,12 @@ import board
 import busio
 from time import sleep
 import socketio
+import RPi.GPIO as GPIO
 
 from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A, BusyError
 from adafruit_pn532.i2c import PN532_I2C
 
+GPIO.cleanup()
 
 classic_read_block = 1
 ntag_read_block = 4
@@ -48,7 +50,6 @@ def rfid_read(uid, pn532) -> str:
     read_data = "x"
     if not pn532:
         return read_data
-
 
     auth = authenticate(uid, pn532)
 
