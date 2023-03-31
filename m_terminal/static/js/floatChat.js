@@ -13,7 +13,7 @@ function openElement() {
     element.find('#f-chat-icon').hide();
     element.addClass('expand');
     element.find('.chat').addClass('enter');
-    textInput.keydown(onMetaAndEnter).prop("disabled", false).focus();
+    textInput.keydown(onMetaAndEnter).focus();
     element.off('click', openElement);
     element.find('.header button').click(closeElement);
     element.find('#sendMessage').click(sendNewMessage);
@@ -26,7 +26,7 @@ function closeElement() {
     element.removeClass('expand');
     element.find('.header button').off('click', closeElement);
     element.find('#sendMessage').off('click', sendNewMessage);
-    element.find('.text-box').off('keydown', onMetaAndEnter).prop("disabled", true).blur();
+    element.find('.text-box').off('keydown', onMetaAndEnter).blur();
     setTimeout(function () {
         element.find('.chat').removeClass('enter').show()
         element.click(openElement);

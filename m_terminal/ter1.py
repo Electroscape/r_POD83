@@ -1,6 +1,8 @@
 import os
 import sys
 
+import requests
+
 file_dir = os.path.dirname(__file__)
 sys.path.append(file_dir)
 
@@ -182,8 +184,18 @@ def get_posts():
 @app.route('/foscam_control', methods=['GET', 'POST'])
 def foscam_control():
     config = {
-        "title": "CCTV Cameras"
+        "title": "CCTV Cameras",
+        "pincode": "1010"
     }
+
+    if request.method == 'POST':
+        url = request.form.get("data")
+        try:
+            requests.get(url)
+        except TypeError:
+            print("cgi ptz command")
+        return "success"
+
     print("open CCTV page")
     return render_template("TR1/p_cctv.html", g_config=config, cams=ip_conf["cams"])
 

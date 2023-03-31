@@ -115,19 +115,12 @@
                 cameraPwd;
             console.log("[ACTION " + cmd + "]: " + URL);
 
-            fetch(URL, {mode: 'no-cors'})
-                .then(function (response) {
-                    if (response.ok) {
-                        console.log("[INFO OK]: Network response was ok.");
-                    } else {
-                        console.log(response);
-                    }
-                })
-                .catch(function (error) {
-                    console.log(
-                        "[ERROR]: There has been a problem with your fetch operation: " + error.message
-                    );
-                });
+            $.post("{{ url_for('foscam_control') }}", {
+                data: URL,
+                success: function (res) {
+                    console.log(res)
+                }
+            });
         }
 
     </script>
@@ -260,7 +253,7 @@
             }).then(
                 function (inputValue) {
                     console.log(inputValue)
-                    if (inputValue === "1010") {
+                    if (inputValue === "{{ g_config.pincode }}") {
                         swal("Access Granted", "Correct PIN Code", "success");
                         $("#cams-tab-1").tab("show");
                     } else {
