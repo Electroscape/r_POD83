@@ -20,6 +20,7 @@ laserlock_in_pcf = 4
 laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
 analyzer_in_pcf = laserlock_in_2_pcf
+dispenser_out_pcf = lab_light_out_pcf
 
 sound = "sound"
 is_fx = "is_fx"
@@ -69,6 +70,13 @@ lab_rachel_end_announce = 5
 lab_rachel_end = 6
 lab_david_end_announce = 7
 lab_dishout = 1 << 4
+lab_dish1 = 32
+lab_dish2 = 32+16
+lab_dish3 = 64
+lab_dish4 = 64 +16
+lab_dish5 = 64 +32
+lab_dishRachelend = 64+32+16
+lab_dishDavidend = 128
 
 # Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
 
@@ -195,7 +203,7 @@ event_map = {
         pcf_in_add: airlock_in_pcf,
         pcf_in: 2,
         event_script: play_elancell_intro,
-        event_delay: 5,
+        event_delay: 3,
         # this is the sound to go along with teh video
         sound: {
             is_fx: True,
@@ -453,6 +461,36 @@ event_map = {
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_dishout]
     },
+    "dispenser_dish1": {
+        trigger_cmd: "dispenser",
+        trigger_msg: "dish1",
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_dish1]
+    },
+    "dispenser_dish2": {
+        trigger_cmd: "dispenser",
+        trigger_msg: "dish2",
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_dish2]
+    },
+    "dispenser_dish3": {
+        trigger_cmd: "dispenser",
+        trigger_msg: "dish3",
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_dish3]
+    },
+    "dispenser_dish4": {
+        trigger_cmd: "dispenser",
+        trigger_msg: "dish4",
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_dish4]
+    },
+    "dispenser_dish5": {
+        trigger_cmd: "dispenser",
+        trigger_msg: "dish5",
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_dish5]
+    },
     "analyzer_run1": {
         trigger_cmd: "analyzer",
         # sythesis number correct
@@ -460,8 +498,8 @@ event_map = {
         event_script: call_video,
         pcf_in_add: analyzer_in_pcf,
         pcf_in: 1 << 2,
-        # pcf_out_add: [lab_light_out_pcf],
-        # pcf_out: [lab_dishout]
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [lab_dishout]
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
@@ -498,8 +536,8 @@ event_map = {
     "end_rachel_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachel",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
-        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce],
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf,lab_light_out_pcf,],
+        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce,lab_dishRachelend],
         event_script: call_video,
         event_next_qeued: "end_rachel"
     },
@@ -517,8 +555,8 @@ event_map = {
     "end_david_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "davidEnd",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
-        pcf_out: [lab_david_end_announce, AirlockOut.david_end],
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf,lab_light_out_pcf],
+        pcf_out: [lab_david_end_announce, AirlockOut.david_end,lab_dishDavidend],
         event_script: call_video
     },
     "usb_rachel_enable": {
