@@ -14,7 +14,7 @@ sleep 5 &
 
 # comment or uncomment to run microscope
 FLASK_APP=microscope:app flask run --host 0.0.0.0 --port 5555  --no-debugger --no-reload  &
-sleep 5 &
+sleep 15 &
 
 # modify the IP address you want to display
 # comment or uncomment to run the browser on the webpage you choose
