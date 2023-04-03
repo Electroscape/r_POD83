@@ -47,8 +47,6 @@ gpio_thread = None
 usb_booted = False
 connected = False
 
-rachel_usb_path = Path("/media/2cp/rachel")
-elancell_usb_path = Path("/media/2cp/elancell")
 boot_usb_path = Path("/media/2cp/usb_boot")
 
 
@@ -189,6 +187,7 @@ def handle_fe(data):
 
 def handle_usb_events():
     # one needs to exclude the other, removing it shall also disable said usb func
+    '''
     if rachel_usb_path.exists():
         handle_event("usb_rachel_enable")
     else:
@@ -197,6 +196,7 @@ def handle_usb_events():
         handle_event("usb_elancell_enable")
     else:
         handle_event("usb_elancell_disable")
+    '''
     if boot_usb_path.exists():
         handle_event("usb_boot")
 
