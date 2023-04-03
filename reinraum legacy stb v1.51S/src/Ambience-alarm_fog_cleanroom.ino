@@ -70,8 +70,8 @@ CRGB frleds[FR_LED_CNT];
     #define REL_FAN_OUT_BIG_PIN     6        // big, yellow fan -> fog out
     #define REL_FR_LIGHTS_PIN       7        // three red lights on the wall -> blinks when procedure starts
 
-    // INIT
-    const byte relayPinArray[] = {
+    #define relayCnt 8
+    const byte relayPinArray[relayCnt] = {
         REL_FR_LIGHTS_PIN,
         REL_FAN_OUT_BIG_PIN,
         REL_FANS_SMALL_PIN,
@@ -109,7 +109,8 @@ CRGB frleds[FR_LED_CNT];
     #define REED_LABDOOR_CLOSED         0                   // alarm light at the entrance/exit
     #define RESET_BUTTON                1
     #define CLEANROOM_KEYPAD_OPEN       4                   // trigger for starting the procedure
-    const int inputs[] = {REED_LABDOOR_CLOSED, RESET_BUTTON, CLEANROOM_KEYPAD_OPEN};
+    #define inputCnt 3
+    const int inputs[inputCnt] = {REED_LABDOOR_CLOSED, RESET_BUTTON, CLEANROOM_KEYPAD_OPEN};
 
     // door needs 25s
     #define    ARMTIME              25000
@@ -161,7 +162,7 @@ PCF8574 iTrigger;
 //==========================================================================================================*/
 
 void led_set_clrs(struct CRGB * stripe, CRGB clr, int led_cnt) {
-    for(size_t i = 0; i < led_cnt; i++) {
+    for(size_t i = 0; i < (size_t) led_cnt; i++) {
         stripe[i] = clr;
     }
     FastLED.show();
@@ -324,7 +325,7 @@ void open_cleanroom() {
     int instancesIntervall = 500;
     int instanceDuration = 300;
     int tickrate = instanceDuration / (ZYL_LED_CNT + beamWidth);
-    int beamPos = 0;
+    // int beamPos = 0;
 
     wdt_reset();
 
@@ -353,7 +354,7 @@ void open_cleanroom() {
 // pulls all relays to initstate used when room arming sequence is aborted
 void reset_relays_init() {
     roomArmed = false;
-    for (int i=0; i<sizeof(relayPinArray); i++) {
+    for (int i=0; i<relayCnt; i++) {
         relay.digitalWrite(relayPinArray[i], relayInitArray[i]);
         Serial.print("     ");
         Serial.print("Relay ["); Serial.print(relayPinArray[i]); Serial.print("] set to "); Serial.println(relayInitArray[i]);
@@ -370,23 +371,21 @@ bool decontamination() {
     led_set_clrs(frleds, CRGB::Red, FR_LED_CNT);
     relay.digitalWrite(REL_FR_LIGHTS_PIN, REL_LIGHTS_ON); Serial.println("Light: off");
     wdt_reset();
-    delay(5000);
-    wdt_reset();
-    delay(5000);
+    delay(2000);
     wdt_reset();
     relay.digitalWrite(REL_FANS_SMALL_PIN, !REL_FANS_SMALL_INIT); Serial.println("Fan small: on");
-    delay(3500);
+    delay(3000);
 
     // Fog and blinking lights
     // used to run for z < 30, but due to the video in S being used being 85s
     // increased to 34
-    for (int z=0; z<34; z++) {
+    for (int z=0; z<10; z++) {
 
         Serial.print("z: "); Serial.println(z);
         if (z==0) {relay.digitalWrite(REL_FOG_PIN, !REL_FOG_INIT); Serial.println("Fog: on");}
         else if (z==5) {relay.digitalWrite(REL_FOG_PIN, REL_FOG_INIT); Serial.println("Fog: off");}
         else if (z==6) {relay.digitalWrite(REL_FAN_OUT_BIG_PIN, !REL_FAN_OUT_BIG_INIT); Serial.println("Fan OUT big: on");}
-        else{}//Serial.print("ez: "); Serial.println(z);}
+        else {}//Serial.print("ez: "); Serial.println(z);}
 
 
         for(int j = 0; j < FR_LED_CNT; j++) {
@@ -415,7 +414,7 @@ bool decontamination() {
     Serial.println("LED: green");
     relay.digitalWrite(REL_FANS_SMALL_PIN, REL_FANS_SMALL_INIT); Serial.println("Fan small: off");
     wdt_reset();
-    delay(3000);
+    delay(1000);
     relay.digitalWrite(REL_ROOM_LIGHT_PIN, REL_LIGHTS_ON);
     relay.digitalWrite(REL_FR_LIGHTS_PIN, REL_LIGHTS_ON); Serial.println("Light: on");
 
@@ -443,8 +442,8 @@ bool decontamination() {
 bool input_Init() {
     dbg_println("input_init...");
     iTrigger.begin(DETECTOR_I2C_ADD);
-    for(int i = 0; i < sizeof(inputs); i++) {
-        iTrigger.pinMode(inputs[i], INPUT_PULLUP);
+    for(int i = 0; i < inputCnt; i++) {
+        iTrigger.pinMode(inputs[i], INPUT);
         iTrigger.digitalWrite(inputs[i], HIGH);
     }
     return true;
@@ -463,7 +462,7 @@ bool Relay_Init() {
     }
     delay(50);
 
-    for (int i=0; i<sizeof(relayPinArray); i++) {
+    for (int i=0; i<relayCnt; i++) {
         relay.digitalWrite(relayPinArray[i], relayInitArray[i]);
         Serial.print("     ");
         Serial.print("Relay ["); Serial.print(relayPinArray[i]); Serial.print("] set to "); Serial.println(relayInitArray[i]);
