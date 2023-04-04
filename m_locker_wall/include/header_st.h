@@ -63,10 +63,10 @@ int flagMapping[StageCount]{
 int devicesOn = 0;
 
 char passwords[PasswordAmount][MaxPassLen] = {
-    "0001",
-    "0002",
-    "0003",
-    "0004",
+    "0983",
+    "3105",
+    "5638",
+    "2018",
     "1111",     // service code
     "0000",     // reset code, does this also work within th service mode?
 };

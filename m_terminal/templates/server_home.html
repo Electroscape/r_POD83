@@ -1,0 +1,387 @@
+{% extends "layout.html" %}
+{% block title %}
+    Server Homepage
+{% endblock %}
+
+{% block chat_js %}
+    <script type="text/javascript">
+        function sendMessage(event) {
+            event.preventDefault();
+            let user_name = $("#dm_sender").val();
+            let user_input = $("#input_msg").val();
+            if (user_input) {
+                socket.emit('msg_to_server', {
+                    user_name: user_name,
+                    message: user_input
+                })
+            }
+            $("#input_msg").val('').focus();
+            return false;
+        }
+
+        socket.on('connect', function () {
+            socket.emit('msg_to_server', {
+                update: "User '{{ g_config.title }}' is now connected"
+            })
+        })
+
+        socket.on('response_to_fe', function (msg) {
+            displayMessage(msg)
+        })
+
+        function displayMessage(msg) {
+            if (msg.cmd) {
+                $('#msg_holder').prepend(`<div class="text-success"> ${JSON.stringify(msg).replaceAll('"', "")}</div>`)
+            } else if (typeof msg.user_name !== 'undefined') {
+                $('#msg_holder').prepend(`<div><b style="color: #000"> ${msg.user_name}: </b>
+                                        <p style="display: inline; color: white">${msg.message}</p></div>`)
+            } else {
+                $('#msg_holder').prepend(`<div class="text-warning"> ${JSON.stringify(msg).replaceAll('"', "")}</div>`)
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block head %}
+    <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatroom.css') }}">
+    <style>
+        .switch-candy input:checked + label {
+            background-color: rgb(var(--mdb-success-rgb));
+        }
+
+        .switch-toggle {
+            display: inline-block;
+            margin-inline-end: 35px;
+        }
+
+        .outer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .header-right {
+            visibility: hidden;
+        }
+    </style>
+    <script type="text/javascript">
+        function onClickTerminal(src) {
+            let msg = document.querySelector(`input[name="${src}"]:checked`).value;
+            let src_cmd = src.split("_")
+            socket.emit("events", {
+                username: src_cmd[0],
+                cmd: src_cmd[1],
+                message: msg
+            })
+        }
+
+        function onClickTrigger(cmd_msg) {
+            let [cmd, msg] = cmd_msg.split("_");
+            // send to backend on "triggers" channel
+            socket.emit("triggers", {
+                username: "arb",
+                cmd: cmd,
+                message: msg
+            })
+        }
+
+        function onClickSet() {
+            let msg = $("#loadingInput").val();
+
+            socket.emit("events", {
+                username: "server",
+                cmd: "loadingbar",
+                message: msg
+            })
+
+        }
+
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="outer">
+        <div>
+            USB Boot:
+            <div class="switch-toggle switch-candy">
+                <input id="t1_shutdown" name="tr1_usbBoot" type="radio" value="disconnect" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t1_shutdown">Shutdown</label>
+
+                <input id="t1_boot" name="tr1_usbBoot" type="radio" value="boot" onclick="onClickTerminal(name)"/>
+                <label for="t1_boot">Boot up</label>
+            </div>
+        </div>
+        <div>
+            Terminal 1:
+            <div class="switch-toggle switch-3 switch-candy">
+                <input id="t1_david" name="tr1_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                <label for="t1_david">David</label>
+
+                <input id="t1_empty" name="tr1_auth" type="radio" value="empty" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t1_empty">Empty</label>
+
+                <input id="t1_rachel" name="tr1_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                <label for="t1_rachel">Rachel</label>
+            </div>
+        </div>
+        <div>
+            Terminal 2:
+            <div class="switch-toggle switch-3 switch-candy">
+                <input id="t2_david" name="tr2_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                <label for="t2_david">David</label>
+
+                <input id="t2_empty" name="tr2_auth" type="radio" value="empty" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_empty">Empty</label>
+
+                <input id="t2_rachel" name="tr2_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                <label for="t2_rachel">Rachel</label>
+            </div>
+        </div>
+        <div>
+            Airlock:
+            <div class="switch-toggle switch-candy">
+                <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t1_broken">Broken</label>
+
+                <input id="t1_fixed" name="tr1_airlock" type="radio" value="fixed" onclick="onClickTerminal(name)"/>
+                <label for="t1_fixed">Fixed</label>
+            </div>
+        </div>
+        <div>
+            Cleanroom:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_broken" name="tr2_cleanroom" type="radio" value="lock" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_broken">lock</label>
+
+                <input id="t2_fixed" name="tr2_cleanroom" type="radio" value="unlock" onclick="onClickTerminal(name)"/>
+                <label for="t2_fixed">unlock</label>
+            </div>
+        </div>
+        <div>
+            IT breach:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_secure" name="tr2_breach" type="radio" value="secure" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_secure">secure</label>
+
+                <input id="t2_breach" name="tr2_breach" type="radio" value="breach" onclick="onClickTerminal(name)"/>
+                <label for="t2_breach">breach <span style="color: red">(red usb)</span></label>
+            </div>
+        </div>
+        <div>
+            Microscope:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_mOFF" name="mcrp_status" type="radio" value="off" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_mOFF">OFF</label>
+
+                <input id="t2_mON" name="mcrp_status" type="radio" value="on" onclick="onClickTerminal(name)"/>
+                <label for="t2_mON">ON</label>
+            </div>
+            <div class="switch-toggle switch-5 switch-candy">
+                <input id="t2_sample1" name="mcrp_sample" type="radio" value="1" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_sample1">S-1</label>
+
+                <input id="t2_sample2" name="mcrp_sample" type="radio" value="2" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample2">S-2</label>
+
+                <input id="t2_sample3" name="mcrp_sample" type="radio" value="3" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample3">S-3</label>
+
+                <input id="t2_sample4" name="mcrp_sample" type="radio" value="4" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample4">S-4</label>
+
+                <input id="t2_sample5" name="mcrp_sample" type="radio" value="5" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample5">S-5</label>
+
+                <input id="t2_sample0" name="mcrp_sample" type="radio" value="0" onclick="onClickTerminal(name)"/>
+                <label for="t2_sample0">remove</label>
+            </div>
+        </div>
+        <div>
+            Elancell upload:
+            <div class="switch-toggle switch-candy">
+                <input id="t2_disable" name="tr2_elancell" type="radio" value="disable" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_disable">Disable <span style="color: greenyellow">(no usb)</span></label>
+
+                <input id="t2_enable" name="tr2_elancell" type="radio" value="enable" onclick="onClickTerminal(name)"/>
+                <label for="t2_enable">Enable <span style="color: dodgerblue">(blue usb)</span></label>
+
+                <input id="t2_solved" name="tr2_elancell" type="radio" value="solved" onclick="onClickTerminal(name)"/>
+                <label for="t2_solved">Solved</label>
+
+                <input id="t2_synth" name="tr2_elancell" type="radio" value="synthesized"
+                       onclick="onClickTerminal(name)"/>
+                <label for="t2_synth">Synthesized</label>
+
+                <input id="t2_done" name="tr2_elancell" type="radio" value="doneOverride" onclick="onClickTerminal(name)"/>
+                <label for="t2_done">Done</label>
+            </div>
+        </div>
+        <div style="padding-inline: 5px;">
+            <label for="loadingInput">Loading bar: </label>
+            <div class="form-outline" style="width: 7rem; background-color: forestgreen; display: inline-block">
+                <i class="fas fa-percentage trailing"></i>
+                <input min="0" max="100" step="5" value="50" type="number" id="loadingInput"
+                       class="form-control form-icon-trailing"/>
+            </div>
+            <button onclick="onClickSet()">set</button>
+        </div>
+        <div>
+            reset:
+            <div class="switch-toggle switch-candy">
+                <input id="ser_reset" name="server_reset" type="radio" value="reset" checked="checked"
+                       onclick="onClickTerminal(name)"/>
+                <label for="ser_reset">samples</label>
+
+                <input id="ser_resetAll" name="server_reset" type="radio" value="resetAll"
+                       onclick="onClickTerminal(name)"/>
+                <label for="ser_resetAll">all</label>
+            </div>
+        </div>
+    </div>
+    <label for="msg_holder">Chat Messages</label>
+    <div class="message_holder" id="msg_holder">
+    </div>
+
+    <form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
+        <label for="dm_sender">Sender: </label>
+        <select class="form-select w-auto d-inline" id="dm_sender">
+            <option value="SYS" selected>System</option>
+            <option value="TR1">Terminal 1</option>
+            <option value="TR2">Terminal 2</option>
+            <option value="SN1">RFID T1</option>
+            <option value="SN2">RFID T2</option>
+        </select>
+        <label class="w-50">
+            <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
+        </label>
+        <input type="submit" value="Send">
+    </form>
+    <br>
+
+    <h2>Manual Triggers</h2>
+    <br>
+    <!--
+    <button class="btn btn-outline-light" name="cmd_message" onclick="onClickTrigger(name)">Example 2</button>
+    -->
+    <h3>Airlock events</h3>
+    <div>
+        <button class="btn btn-outline-light" name="airlock_begin" onclick="onClickTrigger(name)">Airlock1 begin
+        </button>
+        <button class="btn btn-outline-light" name="airlock_intro" onclick="onClickTrigger(name)">Airlock1 Intro Video
+        </button>
+        <button class="btn btn-outline-light" name="airlock_fumigation" onclick="onClickTrigger(name)">Airlock1
+            Fumigation
+        </button>
+        <button class="btn btn-outline-light" name="airlock_sterilizationIntro" onclick="onClickTrigger(name)">Airlock1
+            SterilzationIntro
+        </button>
+        <button class="btn btn-outline-light" name="airlock_UV" onclick="onClickTrigger(name)">Airlock1 UV
+        </button>
+        <button class="btn btn-outline-light" name="airlock_BioScanIntro" onclick="onClickTrigger(name)">Airlock1
+            BioScanIntro
+        </button>
+        <button class="btn btn-outline-light" name="airlock_BioScan" onclick="onClickTrigger(name)">Airlock1 BioScan
+        </button>
+        <button class="btn btn-outline-light" name="airlock_BioScanDenied" onclick="onClickTrigger(name)">Airlock1
+            BioScanDenied
+        </button>
+        <button class="btn btn-outline-light" name="airlock_wrong" onclick="onClickTrigger(name)">Airlock1 Wrong
+        </button>
+        <button class="btn btn-outline-light" name="airlock_opening" onclick="onClickTrigger(name)">Airlock1 Opening
+        </button>
+    </div>
+    <br>
+
+    <h3>Terminals</h3>
+    <div>
+        <button class="btn btn-outline-light" name="ter1_rachel" onclick="onClickTrigger(name)">Ter1 Rachel
+        </button>
+        <button class="btn btn-outline-light" name="ter1_david" onclick="onClickTrigger(name)">Ter1 David
+        </button>
+        <button class="btn btn-outline-light" name="ter2_rachel" onclick="onClickTrigger(name)">Ter2 Rachel
+        </button>
+        <button class="btn btn-outline-light" name="ter2_david" onclick="onClickTrigger(name)">Ter2 david
+        </button>
+        <button class="btn btn-outline-light" name="ter1_empty" onclick="onClickTrigger(name)">Ter1 empty
+        </button>
+        <button class="btn btn-outline-light" name="ter2_empty" onclick="onClickTrigger(name)">Ter2 empty
+        </button>
+        <button class="btn btn-outline-light" name="usb_boot" onclick="onClickTrigger(name)">USB Boot
+        </button>
+        <button class="btn btn-outline-light" name="airlock_access" onclick="onClickTrigger(name)">Laserlock fail
+        </button>
+    </div>
+    <br>
+
+    <h3>Lab</h3>
+    <div>
+        <button class="btn btn-outline-light" name="dispenser_0 wrong" onclick="onClickTrigger(name)">Dispense Wrong
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_0 correct" onclick="onClickTrigger(name)">Dispense Correct
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_dishout" onclick="onClickTrigger(name)">Dispenser DishOut
+        </button>
+        <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Analyzer Run1
+            Wright (Killswitch Video)
+        </button>
+        <button class="btn btn-outline-light" name="analyzer_run2Right" onclick="onClickTrigger(name)">Analyzer Ru2
+            Wright (upload enable)
+        </button>
+        <button class="btn btn-outline-light" name="cleanroom_unlock" onclick="onClickTrigger(name)">cleanroom unlock
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_dish1" onclick="onClickTrigger(name)">Dispenser Dish1
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_dish2" onclick="onClickTrigger(name)">Dispenser Dish2
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_dish3" onclick="onClickTrigger(name)">Dispenser Dish3
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_dish4" onclick="onClickTrigger(name)">Dispenser Dish4
+        </button>
+        <button class="btn btn-outline-light" name="dispenser_dish5" onclick="onClickTrigger(name)">Dispenser Dish5
+        </button>
+    </div>
+    <br>
+
+    <h3>Lab endings</h3>
+    <div>
+        <button class="btn btn-outline-light" name="labLight_off" onclick="onClickTrigger(name)">lab light off
+        </button>
+        <button class="btn btn-outline-light" name="uploaded_rachel" onclick="onClickTrigger(name)">Rachel ending
+        </button>
+        <button class="btn btn-outline-light" name="uploaded_rachelEnd" onclick="onClickTrigger(name)">Rachel end FX
+        </button>
+        <button class="btn btn-outline-light" name="uploaded_davidEnd" onclick="onClickTrigger(name)">Elancell ending
+        </button>
+        <button class="btn btn-outline-light" name="uploaded_SelfDestruction onclick="onClickTrigger(name)">SelfDestruction
+        </button>
+    </div>
+
+
+{% endblock %}
+
+{% block add_js %}
+    <script type="text/javascript">
+        let msg;
+        {% for cMsg in chat_msg %}
+            {% if cMsg is mapping %}
+                msg = JSON.parse('{{ cMsg | tojson }}');
+            {% else %}
+                msg = "{{ cMsg }}";
+            {% endif %}
+            displayMessage(msg);
+        {% endfor %}
+
+    </script>
+{% endblock %}

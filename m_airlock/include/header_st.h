@@ -1,31 +1,40 @@
 #pragma once
 
-#define StageCount 10
+#define StageCount 15
 #define PasswordAmount 6
 #define MaxPassLen 10
 // may aswell move this into the Oled lib?
-#define headLineMaxSize 16
+#define headLineMaxSize 17
 
-#define open   0
-#define closed 1
+#define open        0
+#define closed      1
+#define gateUp      0
+#define gateDown    1
 
 unsigned long introDuration = 5000;
 // duration of the operation of the gate
-unsigned long airlockDuration = 5000;
+unsigned long gateDuration = 30000;
+unsigned long runningLightDuration = 10000;
+// provide blinking and warning before the game moves on startup
+unsigned long gateWarningDelay = 4500;
 
 enum relays {
     beamerIntro,
     beamerDecon,
-    gate,
+    gate_pwr,
+    gate_direction,
     alarm,
     uvLight,
+    // entry door
     door,
     relayAmount
 };
 
 enum relayInits {
-    beamer_init = closed,
-    gate_init = closed,
+    beamer_init = open,
+    beamerDecon_init = closed,
+    gate_pwr_init = closed,
+    gate_direction_init = gateUp,
     alarm_init = closed,
     uvLight_init = closed,
     doorInit = open
@@ -34,7 +43,8 @@ enum relayInits {
 int relayPinArray[relayAmount] = {
     beamerIntro,
     beamerDecon,
-    gate,
+    gate_pwr,
+    gate_direction,
     alarm,
     uvLight,
     door
@@ -42,53 +52,108 @@ int relayPinArray[relayAmount] = {
 
 int relayInitArray[relayAmount] = {
     beamer_init,
-    beamer_init,
-    gate_init,
+    beamerDecon_init,
+    gate_pwr_init,
+    gate_direction_init,
     alarm_init,
     uvLight_init,
     doorInit
 };
 
 
-enum stages{
+#define outputCnt 4
+// technically we already got one but ... changing the code is no prio here
+#define inputCnt 4
+
+enum IO {
+    IO0,             // red, MSB
+    IO1,             // blk
+    IO2,             // green
+    IO3,             // white
+    door_reed,
+    IO4,
+    IO5,
+    IO6
+};
+
+int david_end = (1 << 7);
+int rachel_announce = (1 << 6); 
+int rachel_end = (1 << 5);
+
+int intputArray[inputCnt] = {
+    door_reed,
+    IO4,
+    IO5,
+    IO6
+};
+
+int outputArray[outputCnt] = {
+    IO0,             // red, MSB
+    IO1,             // blk
+    IO2,             // green
+    IO3,             // white
+};
+
+enum IOEvents{
+    doorClosed = 1,
+    welcomeVideo,
+    wrongCode,
+    uvEvent,
+    sterilisationEvent,
+    airlockOpeningEvent,
+    fumigationEvent, // ab hier neu!!
+    BioScanIntro,
+    BioScanEvent,
+    BioScanDenied,
+};
+
+enum stages {
     setupStage = 1,
     preStage = 2,
     // ready to scan the RFID card, red light
     startStage = 4,
     intro = 8,
     decontamination = 16,
-    cleanAirlock = 32,
     // entering the password after presenting hte RFID
-    airlockRequest = 64, 
-    airlockOpening = 128,
-    airlockOpen = 256,
-    idle = 512
+    airlockRequest = 32, 
+    airlockOpening = 64,
+    // brief stage to use the running lights and keep the alarm on
+    airlockOpen = 128,
+    idle = 256, 
+    airlockFailed = 512,
+    fumigation = 1024,
+    sterilization = 2048,
+    BiometricScan = 4096,
+    david_end_Stage = 1 << 13,
+    rachel_end_stage = 1 << 14
 };
-
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
 
 
 // could have multiple brains listed here making up a matrix
 // for now its only an Access module mapped here
-int flagMapping[StageCount]{
+int flagMapping[StageCount] {
     0,
     0,
     rfidFlag,
     0,
     0,
-    0,
     keypadFlag,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
     0,
     0,
     0
 };
-// save what already is turned on on the brain so we do not need to send it again
-int devicesOn = 0;
 
 char passwords[PasswordAmount][MaxPassLen] = {
     "GF",
-    "0002",
+    "1984",
 };
 
 // defines what password/RFIDCode is used at what stage, if none is used its -1
@@ -105,9 +170,14 @@ char stageTexts[StageCount][headLineMaxSize] = {
     "Present Card",
     "Thank you",
     "Decontamination",
-    "Access denied",
     "Enter Code",
     "Wait to enter",
     "Caution",
-    ""
+    "",
+    "Access denied",
+    "Fumigation",
+    "Sterilisation",
+    "Biometric Scan",
+    "Thank You",
+    "Self Destruction",
 };

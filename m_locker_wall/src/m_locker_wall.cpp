@@ -1,5 +1,5 @@
 /**
- * @file m_access_mother_skeleton.cpp
+ * @file m_access_mother.cpp
  * @author Martin Pek (martin.pek@web.de)
  * @brief 
  * @version 0.1
@@ -8,11 +8,7 @@
  * @copyright Copyright (c) 2022
  * 
  *  TODO: 
- *  - check passwords and passwordsmap usages 
- *  - consider a generic code/combination evaluation
- *  - map actions to passwords, change stage in these actions
  *  - consider non blocking 
- *  - consider stage to stageIndex conversion?
  */
 
 
@@ -21,9 +17,7 @@
 #include <stb_oledCmds.h>
 #include <stb_mother_ledCmds.h>
 
-
 #include "header_st.h"
-
 
 
 STB_MOTHER Mother;
@@ -53,35 +47,36 @@ void setStageIndex() {
     delay(16000);
 }
 
+void ledUpdate() {
+    for (int no=0; no<lockerCnt; no++) {
+        if (lockerStatuses[no]) {
+            LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, no);
+        }
+    }
+}
+
 void ledBlink() {
     wdt_reset();
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrBlack);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack);
     delay(200);
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 50);
     // TODO: make a fncs that passes a clr array
-    for (int no=0; no<lockerCnt; no++) {
-        // insert oled setting multiple pixels here
-    }
+    ledUpdate();
 };
 
 
-/**
- * @brief  TODO: implement
- * 
-*/
 void gameReset() {
     for (int no=0; no<lockerCnt; no++) {
         lockerStatuses[no] = false;
         Mother.motherRelay.digitalWrite(no, closed);
     }
-    stage = gameLive;
-    LED_CMDS::setToClr(Mother, 1, LED_CMDS::clrRed, 50);
+    LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 50);
 }
 
 
@@ -98,11 +93,15 @@ void passwordActions(int passNo) {
                     gameReset();
                     Mother.motherRelay.digitalWrite(service, open);
                 break;
-                case resetIndex: gameReset(); break;
+                case resetIndex: 
+                    gameReset();
+                    stage = gameLive;
+                break;
                 default: 
                     lockerStatuses[passNo] = true;
+                    delay(2);
                     Mother.motherRelay.digitalWrite(passNo, open);
-                    LED_CMDS::setPixelToClr(Mother, passNo, LED_CMDS::clrGreen, 50, 1);
+                    ledUpdate();
                 break;
             }
         break;
@@ -123,7 +122,9 @@ bool passwordInterpreter(char* password) {
     Mother.STB_.defaultOled.clear();
     for (int passNo=0; passNo < PasswordAmount; passNo++) {
         if (passwordMap[passNo] & stage) {
-            if (strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {
+            if ( strlen(passwords[passNo]) == strlen(password) &&
+                strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) 
+            {
                 passwordActions(passNo);
                 delay(500);
                 return true;
@@ -159,21 +160,13 @@ bool checkForKeypad() {
     if (cmdNo != KeypadCmds::evaluate) { return true; }
 
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
-    /*
-    Serial.println("password is: ");
-    Serial.println(cmdPtr);
-    delay(500);
-    */
-
-    // TODO: error handling here in case the rest of the msg is lost?
     if (!(cmdPtr != NULL)) {
-        // send NACK? this isnt in the control flow yet or simply eof?
         return false;
     }
 
     // prepare return msg with correct or incorrect
     char msg[10] = "";
-    char noString[3];
+    char noString[3] = "";
     strcpy(msg, keypadCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     bool doBlink = false;
@@ -212,14 +205,14 @@ void stageUpdate() {
     setStageIndex();
         
     // check || stageIndex >= int(sizeof(stages))
-    if (stageIndex < 0) {
+    if (stageIndex < 0 || stageIndex > 1 << StageCount) {
         Serial.println(F("Stages out of index!"));
         delay(5000);
         wdt_reset();
     }
     Mother.setFlags(0, flagMapping[stageIndex]);
 
-    char msg[32];
+    char msg[32] = "";
     strcpy(msg, oledHeaderCmd.c_str());
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
@@ -230,17 +223,18 @@ void stageUpdate() {
 
 void setup() {
 
-    Mother.begin();
     // starts serial and default oled
+    Mother.begin();
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
 
-    Serial.println("WDT endabled");
+    Serial.println(F("WDT endabled"));
     wdt_enable(WDTO_8S);
 
-    // technicall 2 but no need to poll the 2nd 
+    // technicall 2 but no need to poll the 2nd as it only receives the colour
     Mother.rs485SetSlaveCount(1);
-
     gameReset();
+    delay(5000);
+    wdt_reset();
 }
 
 

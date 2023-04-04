@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <style>
+        #content {
+            color: white;
+        }
+
+        #lang-box {
+            visibility: hidden;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {{ post.html|safe }}
+
+    <footer class="footer" style="color: #111111; float: left">
+    {{ post.title }} | {{ post.date }}
+    </footer>
+{% endblock %}

@@ -1,0 +1,6 @@
+**/.vscode/
+**.idea
+**.DS_*
+m_terminal/static/media/SampleVideo_1280x720_1mb.mp4
+**/__pycache__/
+*.mp4
