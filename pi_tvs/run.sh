@@ -7,7 +7,7 @@ pkill python
 cd "${0%/*}"
 
 source venv/bin/activate
-python3 usb_upload.py
+python3 usb_upload.py &
 
 # sudo fbi -T 1 -noverbose -a black_screen.jpg
 export DISPLAY=:0.0

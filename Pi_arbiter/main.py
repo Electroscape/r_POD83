@@ -187,17 +187,7 @@ def handle_fe(data):
 
 def handle_usb_events():
     # one needs to exclude the other, removing it shall also disable said usb func
-    '''
-    if rachel_usb_path.exists():
-        handle_event("usb_rachel_enable")
-    else:
-        handle_event("usb_rachel_disable")
-    if elancell_usb_path.exists():
-        handle_event("usb_elancell_enable")
-    else:
-        handle_event("usb_elancell_disable")
-    '''
-    if boot_usb_path.exists():
+    if not states.usb_booted and boot_usb_path.exists():
         handle_event("usb_boot")
 
 
