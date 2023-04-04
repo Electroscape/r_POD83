@@ -1,3 +1,4 @@
 **/.vscode/
-
-m_airlock/platformio.ini
+**.idea
+**.DS_*
+m_terminal/static/media/SampleVideo_1280x720_1mb.mp4
