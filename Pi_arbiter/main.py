@@ -10,6 +10,10 @@ import os
 import logging
 from gpio_fncs import *
 # standard Python would be python-socketIo
+from time import sleep, thread_time
+from subprocess import Popen
+from communication.TESocketServer import TESocketServer
+from pathlib import Path
 
 # GPIO.add_event_detect(data.gpio, GPIO.RISING, callback=callback, bouncetime=20)
 #
@@ -18,7 +22,7 @@ from gpio_fncs import *
 @TODO: 
     * 🔲 expection handling
     * ✅ cooldowns, need to consider what time library
-    * 🔲 handling of multiple IO reading the same pulldown sensor via level shifter 
+    * ✅ handling of multiple IO reading the same 
     * ✅ gpio callback from fe event
     * ✅ gpio output cooldowns
     * ✅ gpio input cooldowns
@@ -28,12 +32,17 @@ from gpio_fncs import *
     * ✅ rachel + david
     * 🔲 cable broken needs to be a delta check and broadcast... or a specific fncs
     * 🔲 resettime as param
-    * init for GPIO_in_high
+    * ✅ designated PCFS as input or output
+    * ✅ make a fnc for checking if pin/binary value present in pcf value
+    * ✅ \/ make one event capable to trigger multiple outputs via PCF
+    * 🔲 FE multiple CBs 
+    * 🔲 mutiple pcf_outs on events
 '''
 
 # standard Python
 sio = socketio.Client()
-gpio_input_cooldowns = set()
+cooldowns = CooldownHandler()
+nw_sock = None
 
 # asyncio
 # sio = socketio.AsyncClient()
@@ -42,11 +51,7 @@ gpio_thread = None
 usb_booted = False
 connected = False
 
-'''
-class event:
-    def __init__(self, name, gpio_trigger, gpio_out, sock):
-        self.name = name
-'''
+boot_usb_path = Path("/media/2cp/elancell")
 
 
 class Settings:
@@ -74,47 +79,30 @@ def connect():
     print("Connected to Server!")
 
 
-'''
-@sio.event
-def disconnect():
-    if not connected:
-        return False
-    global connected
-    connected = False
-    sio.disconnect()
-    connect()
-
-'''
-
-
-def usb_boot():
-    sio.emit("events", {"username": "tr1", "cmd": "usbBoot", "message": "boot"})
-    handle_event("usb_boot")
-    global usb_booted
-    usb_booted = True
-
-
-'''
-@sio.on('*')
-def catch_all(event, data):
-    print("\n")
-    print(event)
-    print(data)
-    print("\n")
-    pass
-'''
-
-
 def handle_event(event_key, event_value=None):
-    if event_key is None:
-        return
+    '''
+    event first handles CB script then does the delay
+    '''
     if event_value is None:
         try:
             event_value = event_map[event_key]
         except KeyError:
             print(f"handle_event received invalid key: {event_key}")
 
+    try:
+        if not event_value.get(event_condition, lambda: True)():
+            # print(f"conditions not fullfilled {event_key}")
+            return
+
+        # Start Video before Sound
+        event_value.get(event_script, lambda *args: 'Invalid')(event_key, nw_sock)
+    except TypeError as err:
+        print(f"Error with event fnc/condition {err}")
     print(f"handling event {event_key}")
+    sleep(event_value.get(event_delay, 0))
+
+    # Sound, may be moved to a fnc
+    print(event_value)
     try:
         event_entry = event_value[sound]
         print(f"activating sound: {event_entry}")
@@ -123,24 +111,40 @@ def handle_event(event_key, event_value=None):
         pass
 
     try:
-        pin = event_value[gpio_out]
-        print(f"setting output: {pin}")
-        GPIO.output(pin, GPIO.LOW)
+        # @todo: type casting here?
+        pcf_no = event_value[pcf_out_add]
+        values = event_value[pcf_out]
+        print(f"setting outputs: PCF={pcf_no} Value={values}")
+        for index in range(min(len(values), len(pcf_no))):
+            IO.write_pcf(pcf_no[index], values[index])
+        # @todo: this needs to be threaded
+        print("sleeping... ")
         sleep(3)
-        GPIO.output(pin, GPIO.HIGH)
-        # reset_timer([pin])
-    except KeyError:
+        for index in range(len(pcf_no)):
+            IO.write_pcf(pcf_no[index], 0)
+    except KeyError as err:
+        print(err)
         pass
 
+    handle_event_fe(event_value, event_key)
+    queued_event = event_value.get(event_next_qeued, False)
+    if queued_event:
+        handle_event(queued_event)
+
+
+def handle_event_fe(event_value, event_key):
+    # Frontend
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
+        # This way any event can be monitored on the server
+        sio.emit("events", {"username": "server", "message": event_key})
         return
     cb_tgt = cb_dict.get(fe_cb_tgt, False)
     cb_cmb = cb_dict.get(fe_cb_cmd, False)
     if not cb_cmb or not cb_tgt:
         return
     cb_msg = cb_dict.get(fe_cb_msg, "")
-    print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}" )
+    print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}\n\n")
     sio.emit("events", {"username": cb_tgt, "cmd": cb_cmb, "message": cb_msg})
 
 
@@ -181,8 +185,10 @@ def handle_fe(data):
             pass
 
 
-# this needs to move to gpio_fncs
-def setup_gpios():
+def handle_usb_events():
+    # one needs to exclude the other, removing it shall also disable said usb func
+    if not states.usb_booted and boot_usb_path.exists():
+        handle_event("usb_boot")
 
     for event_value in event_map.values():
         try:
@@ -208,25 +214,32 @@ def setup_gpios():
             exit()
 
 
-def scan_for_usb():
-    return os.path.exists("/dev/sda") and not usb_booted
+    rejected = True
+
+    for event_key, event_dict in event_map.items():
 
 
-# @Todo: needs to be fixed, thread.time doesnt work on rpi?
-def is_gpio_on_cooldown(pin):
-    # print(gpio_input_cooldowns)
-    for cooldown in gpio_input_cooldowns:
-        if pin == cooldown[0]:
-            return True
-            if cooldown[1] < time.thread_time():
-                print()
-                # gpio_input_cooldowns.remove(cooldown)
+            # checks if all pins to form the value of that event are present on the inputs
+            # this way its possible mix and match multiple inputs as single pin inputs and binary
+            if input_pcf in binary_pcfs:
+                if event_pcf_value == value:
+                    # @TODO: consider simply using the eventkeys
+                    if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
+                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 3))
+                        handle_event(event_key)
+                        rejected = False
             else:
-                print("GPIO is on cooldown")
-                return True
-    return False
+                if event_pcf_value & value == event_pcf_value:
+                    # @TODO: consider simply using the eventkeys
+                    if not cooldowns.is_input_on_cooldown(input_pcf, event_pcf_value):
+                        temporary_cooldowns.add((input_pcf, event_pcf_value, thread_time() + 3))
+                        handle_event(event_key)
+                        rejected = False
 
 
+    if rejected and input_pcf == 4:
+        print(f"\n\nInvalid PCF input\n PCFNo {input_pcf} value {value}\n\n")
+    cooldowns.cooldowns.update(temporary_cooldowns)
 
 def handle_gpio_events():
     event_pins_cd = []
@@ -267,21 +280,15 @@ def connect():
 
 def main():
     while True:
-        if scan_for_usb():
-            usb_boot()
-            # handle_event("laserlock_cable_fixed")
-            # sleep(8)
-        handle_gpio_events()
-        # handle_event("laserlock_bootdecon") # Schwarz
-        # handle_event("laserlock_fail") # Grün
+        # blank_screen_pid.kill()
+        # handle_event("airlock_intro")
+        # handle_event("laserlock_bootdecon")
+        # handle_event("laserlock_fail")
+        # continue
         # exit()
-        '''
-        GPIO.output(4, GPIO.LOW)
-        sleep(4)
-        GPIO.output(5, GPIO.LOW)
-        sleep(4)
-        GPIO.output(6, GPIO.LOW)
-        sleep(4)
+        IO.fix_cleanroom()
+        handle_usb_events()
+        handle_pcf_inputs()
 
         GPIO.output(6, GPIO.HIGH)
         sleep(4)
@@ -307,7 +314,11 @@ if __name__ == '__main__':
     setup_gpios()
     connected = connect()
     # otherwise calling an already running atmo does not work
+    # used to trigger rpis via regular network for videos
+    nw_sock = TESocketServer(12345)
     handle_event("reset_atmo")
+
+    print("\n\n=== Arbiter setup complete! ===\n\n")
 
     try:
         main()
