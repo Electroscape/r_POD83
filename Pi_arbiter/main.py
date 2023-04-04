@@ -47,7 +47,7 @@ gpio_thread = None
 usb_booted = False
 connected = False
 
-boot_usb_path = Path("/media/2cp/usb_boot")
+boot_usb_path = Path("/media/2cp/elancell")
 
 
 class Settings:
@@ -95,11 +95,10 @@ def handle_event(event_key, event_value=None):
         event_value.get(event_script, lambda *args: 'Invalid')(event_key, nw_sock)
     except TypeError as err:
         print(f"Error with event fnc/condition {err}")
-
+    print(f"handling event {event_key}")
     sleep(event_value.get(event_delay, 0))
 
     # Sound, may be moved to a fnc
-    print(f"handling event {event_key}")
     print(event_value)
     try:
         event_entry = event_value[sound]
@@ -254,6 +253,7 @@ def main():
         # handle_event("laserlock_fail")
         # continue
         # exit()
+        IO.fix_cleanroom()
         handle_usb_events()
         handle_pcf_inputs()
 
