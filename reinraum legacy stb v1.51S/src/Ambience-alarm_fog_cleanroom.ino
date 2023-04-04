@@ -107,13 +107,12 @@ CRGB frleds[FR_LED_CNT];
 
     // INPUT
     #define REED_LABDOOR_CLOSED         0                   // alarm light at the entrance/exit
-    #define RESET_BUTTON                1
-    #define CLEANROOM_KEYPAD_OPEN       4                   // trigger for starting the procedure
-    #define inputCnt 3
-    const int inputs[inputCnt] = {REED_LABDOOR_CLOSED, RESET_BUTTON, CLEANROOM_KEYPAD_OPEN};
+    #define RESET_BUTTON                4
+    #define inputCnt 2
+    const int inputs[inputCnt] = {REED_LABDOOR_CLOSED, RESET_BUTTON};
 
     // door needs 25s
-    #define    ARMTIME              25000
+    #define    ARMTIME              23000
     // opening of the Pneumatic door
     #define    DOOR_OPENTIME        18 // seconds
 
@@ -262,18 +261,9 @@ void stage_check() {
                 }
             }
         } break;
-
         case 1: {
-            if (!iTrigger.digitalRead(CLEANROOM_KEYPAD_OPEN)) {
-                keypadCheckTime += TICKTIME;
-                if (keypadCheckTime >= KEYPADCHECKFOR) {
-                    open_cleanroom();
-                    keypadCheckTime = 0;
-                    stage++;
-                }
-            } else {
-                keypadCheckTime = 0;
-            }
+            open_cleanroom();
+            stage++;
         } break;
         case 2: {
             roomArmed = false;
@@ -379,7 +369,7 @@ bool decontamination() {
     // Fog and blinking lights
     // used to run for z < 30, but due to the video in S being used being 85s
     // increased to 34
-    for (int z=0; z<10; z++) {
+    for (int z=0; z<14; z++) {
 
         Serial.print("z: "); Serial.println(z);
         if (z==0) {relay.digitalWrite(REL_FOG_PIN, !REL_FOG_INIT); Serial.println("Fog: on");}
