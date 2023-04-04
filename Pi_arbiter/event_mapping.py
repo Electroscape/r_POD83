@@ -69,6 +69,7 @@ lab_light_on = 4
 lab_rachel_end_announce = 5
 lab_rachel_end = 6
 lab_david_end_announce = 7
+
 lab_dishout = 1 << 4
 lab_dish1 = 32
 lab_dish2 = 32+16
@@ -536,8 +537,8 @@ event_map = {
     "end_rachel_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachel",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf,lab_light_out_pcf,],
-        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce,lab_dishRachelend],
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dishRachelend],
         event_script: call_video,
         event_next_qeued: "end_rachel"
     },
@@ -555,9 +556,20 @@ event_map = {
     "end_david_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "davidEnd",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf,lab_light_out_pcf],
-        pcf_out: [lab_david_end_announce, AirlockOut.david_end,lab_dishDavidend],
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [lab_david_end_announce, AirlockOut.david_end, lab_dishDavidend],
         event_script: call_video
+    },
+    "end_self_destuction": {
+        trigger_cmd: ending_trigger,
+        trigger_msg: "SelfDestruction",
+        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [lab_rachel_end, AirlockOut.rachel_end, lab_dishRachelend],
+        sound: {
+            is_fx: False,
+            sound_id: 6
+        },
+        
     },
     "usb_rachel_enable": {
         fe_cb: {
