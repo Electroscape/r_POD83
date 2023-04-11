@@ -49,13 +49,6 @@ void enableWdt() {
 void handleInputs() {
 
     int result = MotherIO.getInputs();
-    Serial.println(result);
-    if (result & door) {
-        result -= door;
-        MotherIO.outputReset();
-    } else {
-        MotherIO.setOuput(inverted_door);
-    }
 
     if (lastState == result) {
         return;
@@ -97,6 +90,11 @@ void handleInputs() {
         case lightDavidAnnouncement:
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 40);
+        break;
+        case IO::deconTrigger:
+            Mother.motherRelay.digitalWrite(decon, open);
+            delay(1000);
+            Mother.motherRelay.digitalWrite(decon, closed);
         break;
         default: break;
     }
