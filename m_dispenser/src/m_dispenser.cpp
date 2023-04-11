@@ -62,30 +62,7 @@ void stageActions() {
             // Set Color
             LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20); 
             delay(500);
-            /* LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 0);
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 1);
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 2);
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 100, PWM::set1, 3);
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrYellow, 100, PWM::set1, 4); */
-            delay(500);
-            // Set all Servos to 0
             wdt_reset();
-            /* SERVO_CMDS::moveServo(Mother, Servo_Brain1, 0, 0);
-            delay(200);
-            SERVO_CMDS::moveServo(Mother, Servo_Brain1, 1, 0);
-            delay(200);
-            SERVO_CMDS::moveServo(Mother, Servo_Brain1, 2, 0);
-            delay(200);
-            SERVO_CMDS::moveServo(Mother, Servo_Brain1, 3, 0);
-            delay(200);
-            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 0);
-            delay(200);    */
-            wdt_reset();
-            delay(5000);
             stage = waitRequest;
         break;
         
@@ -97,13 +74,17 @@ void stageActions() {
             delay(500);
             Mother.motherRelay.digitalWrite(Pump5, closed);  //Stop Pump
             delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
+            delay(800);
             SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
             delay(500); 
             SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
+            delay(500); 
+            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
+            delay(500); 
+            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
             wdt_disable();
-            delay(12000); // long time for Belt
+            delay(13000); // long time for Belt
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;
@@ -115,14 +96,18 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
             delay(500);
             Mother.motherRelay.digitalWrite(Pump4, closed);  //Start Belt normalDirection
-            delay(500); 
+            delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
+            delay(800); 
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
             wdt_disable();
-            delay(10000);
+            delay(11000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;
@@ -136,13 +121,17 @@ void stageActions() {
             delay(500);
             Mother.motherRelay.digitalWrite(Pump3, closed);  //Start Belt normalDirection
             delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
+            delay(800);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
             wdt_disable();
-            delay(10000);
+            delay(11000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;  
@@ -154,14 +143,19 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
             delay(500);
             Mother.motherRelay.digitalWrite(Pump2, closed);  //Start Belt normalDirection
+            delay(500);            
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
+            delay(800);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
             wdt_disable();
-            delay(10000);
+            delay(11000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;   
@@ -177,13 +171,18 @@ void stageActions() {
             delay(500);
             Mother.motherRelay.digitalWrite(Pump1, closed);  //Start Belt normalDirection
             delay(500);
+            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
+            delay(800);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
             delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
+            delay(500);
             wdt_disable();
-            delay(11000);
+            delay(12000);
             wdt_enable(WDTO_8S);
             Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection
             delay(200);   
@@ -228,15 +227,13 @@ void stageActions() {
             LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
             //LED_CMDS::blinking(Mother, LED_Brain , LED_CMDS::clrBlack, LED_CMDS::clrRed, 100, 400, 100, 100,PWM::set1);
             delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
-            delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
+            /* SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
             delay(300);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
             delay(300);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
             delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0); */
             wdt_disable();
             delay(10000);
             wdt_enable(WDTO_8S);
@@ -244,8 +241,26 @@ void stageActions() {
             wdt_disable();
             delay(5000);
             wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt    
+            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt   
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack); 
+            Mother.motherRelay.digitalWrite(Pump1, open); 
+            Mother.motherRelay.digitalWrite(Pump2, open);  
+            Mother.motherRelay.digitalWrite(Pump3, open);  
+            Mother.motherRelay.digitalWrite(Pump4, open); 
+            Mother.motherRelay.digitalWrite(Pump5, open); 
             wdt_reset();
+            stage = waitRequest;
+        break;
+        case DavidEnd:
+            wdt_reset();
+            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrGreen); 
+            Mother.motherRelay.digitalWrite(Pump1, open); 
+            Mother.motherRelay.digitalWrite(Pump2, open);  
+            Mother.motherRelay.digitalWrite(Pump3, open);  
+            Mother.motherRelay.digitalWrite(Pump4, open); 
+            Mother.motherRelay.digitalWrite(Pump5, open); 
+            wdt_reset();
+            stage = waitRequest;
         break;
 
     }
@@ -292,7 +307,65 @@ void handleInputs() {
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
     }
-    if (result == dispenserAction){
+    switch (result){
+        case (1 << 0): //dispenserAction
+        wdt_reset();
+        DishCount = DishCount + 1;
+        switch (DishCount) {
+            case 1: stage = Dish1; break;
+            case 2: stage = Dish2; break;
+            case 3: stage = Dish3; break;
+            case 4: stage = Dish4; break;
+            case 5: stage = Dish5; break;
+            case 6: stage = WorldsEnd; break;
+            case 7: stage = setupStage; DishCount = 0; break; //reset
+        }  
+        break;
+        case (2): //Dish1
+            wdt_reset();
+            stage = Dish1;
+            DishCount = 1;
+        break;
+        case (3): //Dish2
+            wdt_reset();
+            stage = Dish2;
+            DishCount = 2;
+        break;
+        case (4): //Dish3
+            wdt_reset();
+            stage = Dish3;
+            DishCount = 3;
+        break;
+        
+        case (5): //Dish4
+            wdt_reset();
+            stage = Dish4;
+            DishCount = 4;
+        break;
+        
+        case (6): //Dish5
+            wdt_reset();
+            stage = Dish5;
+            DishCount = 5;
+        break;
+
+        case(7): // Rachel End
+            wdt_reset();
+            stage = WorldsEnd;
+            DishCount = 6;
+        break;
+
+        case(8): // Elancell End
+            wdt_reset();
+            stage= DavidEnd;
+            DishCount = 6;
+        break;
+
+
+
+
+    }
+    /* if (result == dispenserAction){
         wdt_reset();
         DishCount = DishCount + 1;
         switch (DishCount) {
@@ -305,7 +378,7 @@ void handleInputs() {
             case 7: stage = setupStage; DishCount = 0; break; //reset
         }        
 
-    }
+    } */
 }
 
 void setup() {
