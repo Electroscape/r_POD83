@@ -35,45 +35,57 @@ enum brains {
 };
 
 
-// --- Inputs
-enum IO {
-    room1Light,             // red
-    failedBootTrigger,      // black  
-    bootupTrigger,          // Green
-    reedDoor,               // white    
-    isSeperation_pin,
-    david_pin,
-    rachel_pin,
-    seperationEnd_pin
+// 3 IO therefore 1+2+4 = 7 values 
+// 4 IO = 15 Values
+enum IOpins {
+    IO_1,
+    IO_2,
+    IO_3,
+    IO_4,
+    IO_5,
+    IO_6,
+    IO_7,                       
+    reedDoor, 
 };
 
-int isSeperation = 1 << isSeperation_pin;
-int david = 1 << david_pin;
-int rachel = 1 << rachel_pin;
-int seperationEnd = 1 << seperationEnd_pin; 
-
-#define outputCnt 4
-#define inputCnt 4
-
-uint8_t inputTypes[inputCnt] = {
-    INPUT_PULLUP,
-    INPUT_PULLUP,
-    INPUT_PULLUP,
-    INPUT_PULLUP
+// 15 values 4 IOs
+enum inputValues {  
+    roomBoot = 1,            
+    elancellEnd,            
+    rachelEnd,            
+    rachelEndFX,            
+    cleanupLight,            
+    failedBootTrigger,        
+    bootupTrigger,          
 };
+
+// 7 Values 3 IOs
+enum outputValues {
+    david = 1,
+    rachel,
+    seperationEnd,
+    davidSeperated,     // status for T1
+    rachelSeperated     // status for T1
+};
+
+
+
+#define outputCnt 3
+#define inputCnt 5
+
 
 int intputArray[inputCnt] = {
-    room1Light,             // red
-    failedBootTrigger,      // black  
-    bootupTrigger,          // Green
-    reedDoor,               // white    
+    IO_1,
+    IO_2,
+    IO_3,
+    IO_4,
+    reedDoor
 };
 
 int outputArray[outputCnt] = {
-    isSeperation_pin,
-    david_pin,
-    rachel_pin,
-    seperationEnd_pin
+    IO_5,
+    IO_6,
+    IO_7,                       
 };
 
 

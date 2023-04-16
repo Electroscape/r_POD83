@@ -9,16 +9,10 @@
  * @copyright Copyright (c) 2022
  * 
  *  TODO: 
- * - double post of clean airlock & decontamination
- * - enumerating brain types
- * 🔲 add feedback to close the door when tryint to lock
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
- * ✅ add numbering of brains to header to make changes easiers
  * in between stage or text for unlocking with rfid
  *  Q:
- * 🔲 Timeout needs to send wrongres
  * 🔲 booting text on startup
- * 🔲 consider using laststage for the switch cases?
  * 
  */
 
@@ -163,13 +157,13 @@ void checkDualRfid(int passNo) {
             if (Mother.getPolledSlave() == 0) {
                 switch (passNo) {
                     // either this case?
-                    case 0: MotherIO.setOuput(david + isSeperation); break;
-                    case 1: MotherIO.setOuput(rachel + isSeperation); break;
+                    case 0: MotherIO.setOuput(davidSeperated); break;
+                    case 1: MotherIO.setOuput(rachelSeperated); break;
                 }
             } else {
                 switch (passNo) {
-                    case 0: MotherIO.setOuput(rachel + isSeperation); break;
-                    case 1: MotherIO.setOuput(david + isSeperation); break;
+                    case 0: MotherIO.setOuput(rachelSeperated); break;
+                    case 1: MotherIO.setOuput(davidSeperated); break;
                 }
             }
             stage = seperationLocked; 
@@ -452,30 +446,8 @@ void inputInit() {
 }
 
 
-/**
- * @brief  handles inputs passed from the RPi and trigger stages
- * @todo make this shorter and easier to read and understand
-*/
-int inputDetector() {
-
-    int ticks;
-    for (int pin=0; pin<inputCnt; pin++) {
-        ticks = 0;
-        while(!inputPCF.digitalRead(pin)) {
-            if (ticks > 5) {
-                return pin;
-            }
-            ticks++;
-        }
-    }
-
-    return -1;
-}
-
-
 void handleInputs() {
-
-    if (stage != idle) { return; }
+    if ( (stage & (idle | seperationUnlocked | seperationLocked)) == 0) { return; }
     lastStage = idle;
     int result = MotherIO.getInputs();
     result -= result & (1 << reedDoor);
@@ -486,14 +458,13 @@ void handleInputs() {
         case 1 << bootupTrigger: 
             stage = successfulBoot;
         break;
-        case 1 << room1Light:
+        case 1 << roomBoot:
             if (lightOn) { return; }
             lightOn = true;
             stage = lightStart;
         break;
         default: break;
     }
-
 }
 
 
