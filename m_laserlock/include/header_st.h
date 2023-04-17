@@ -41,11 +41,11 @@ enum IOpins {
     IO_1,
     IO_2,
     IO_3,
-    IO_4,
+    reedDoor, 
     IO_5,
     IO_6,
     IO_7,                       
-    reedDoor, 
+    IO_8,                                            
 };
 
 // 15 values 4 IOs
@@ -65,20 +65,20 @@ enum outputValues {
     rachel,
     seperationEnd,
     davidSeperated,     // status for T1
-    rachelSeperated     // status for T1
+    rachelSeperated,     // status for T1
+    timeout,            // when card was not presented in time
 };
 
 
 
-#define outputCnt 3
-#define inputCnt 5
+#define outputCnt 4
+#define inputCnt 4
 
 
 int intputArray[inputCnt] = {
     IO_1,
     IO_2,
     IO_3,
-    IO_4,
     reedDoor
 };
 
@@ -86,6 +86,7 @@ int outputArray[outputCnt] = {
     IO_5,
     IO_6,
     IO_7,                       
+    IO_8,                       
 };
 
 

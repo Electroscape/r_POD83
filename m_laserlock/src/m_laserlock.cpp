@@ -157,13 +157,13 @@ void checkDualRfid(int passNo) {
             if (Mother.getPolledSlave() == 0) {
                 switch (passNo) {
                     // either this case?
-                    case 0: MotherIO.setOuput(davidSeperated); break;
-                    case 1: MotherIO.setOuput(rachelSeperated); break;
+                    case 0: MotherIO.setOuput(davidSeperated, true); break;
+                    case 1: MotherIO.setOuput(rachelSeperated, true); break;
                 }
             } else {
                 switch (passNo) {
-                    case 0: MotherIO.setOuput(rachelSeperated); break;
-                    case 1: MotherIO.setOuput(davidSeperated); break;
+                    case 0: MotherIO.setOuput(rachelSeperated, true); break;
+                    case 1: MotherIO.setOuput(davidSeperated, true); break;
                 }
             }
             stage = seperationLocked; 
@@ -171,7 +171,7 @@ void checkDualRfid(int passNo) {
         case seperationLocked:
             Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
             delay(100);
-            MotherIO.setOuput(seperationEnd);
+            MotherIO.setOuput(seperationEnd, true);
             stage = seperationUnlocked;
         break;
     }
@@ -198,9 +198,9 @@ void handleCorrectPassword(int passNo) {
             // delay(500);
             stage = unlocked; 
             if (passNo == 0) {
-                MotherIO.setOuput(david);
+                MotherIO.setOuput(david, true);
             } else {
-                MotherIO.setOuput(rachel);
+                MotherIO.setOuput(rachel, true);
             }
             // start polling the 2nd Access since there is no need before
             Mother.rs485SetSlaveCount(2);
@@ -447,9 +447,12 @@ void inputInit() {
 
 
 void handleInputs() {
+    
     if ( (stage & (idle | seperationUnlocked | seperationLocked)) == 0) { return; }
 
-    switch (MotherIO.getInputs()) {
+    int result = MotherIO.getInputs();
+    result -= result & (1 << reedDoor);
+    switch (result) {
         case failedBootTrigger: 
             stage = failedBoot;
         break;
