@@ -448,21 +448,38 @@ void inputInit() {
 
 void handleInputs() {
     if ( (stage & (idle | seperationUnlocked | seperationLocked)) == 0) { return; }
-    lastStage = idle;
-    int result = MotherIO.getInputs();
-    result -= result & (1 << reedDoor);
-    switch (result) {
-        case 1 << failedBootTrigger: 
+
+    switch (MotherIO.getInputs()) {
+        case failedBootTrigger: 
             stage = failedBoot;
         break;
-        case 1 << bootupTrigger: 
+        case bootupTrigger: 
             stage = successfulBoot;
         break;
-        case 1 << roomBoot:
+        case roomBoot:
             if (lightOn) { return; }
             lightOn = true;
             stage = lightStart;
         break;
+        case elancellEnd:
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrGreen, 60);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 60);
+            delay(3000);
+        break;
+        case rachelEnd:
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+            delay(3000);
+        break;
+        case rachelEndFX:
+        break;
+        case cleanupLight:
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 75);
+            delay(3000);
+        break;
+        
+
         default: break;
     }
 }
