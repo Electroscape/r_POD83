@@ -83,6 +83,10 @@ void stageActions() {
             SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
             delay(500); 
             SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
+            delay(500); 
+            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
+            delay(500); 
+            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
             wdt_disable();
             delay(13000); // long time for Belt
             wdt_enable(WDTO_8S);
@@ -99,6 +103,10 @@ void stageActions() {
             delay(500);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
             delay(800); 
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
+            delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
@@ -130,6 +138,10 @@ void stageActions() {
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
             wdt_disable();
             delay(11000);
             wdt_enable(WDTO_8S);
@@ -146,6 +158,10 @@ void stageActions() {
             delay(500);            
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
             delay(800);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
+            delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
@@ -173,6 +189,10 @@ void stageActions() {
             delay(500);
             LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
             delay(800);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
+            delay(500);
+            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
+            delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
             delay(500);
             SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
