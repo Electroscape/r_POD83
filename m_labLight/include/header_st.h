@@ -26,7 +26,7 @@ int relayInitArray[relayAmount] = {
 };
 
 enum brains {
-    ledCeilBrain = 4
+    ledCeilBrain = 3
 };
 
 
