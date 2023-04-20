@@ -45,6 +45,16 @@ int relayInitArray[relayAmount] = {
 };
 
 
+enum IOpins {
+    IO_1,
+    IO_2
+};
+
+enum outputValues {
+    service_enable = 1,
+    service_disable
+};
+
 enum stages{
     gameLive = 1,
     serviceMode = 2

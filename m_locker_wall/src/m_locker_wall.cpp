@@ -14,11 +14,13 @@
 
 #include <stb_mother.h>
 #include <stb_keypadCmds.h>
+#include <stb_mother_IO.h>
 #include <stb_oledCmds.h>
 #include <stb_mother_ledCmds.h>
 
 #include "header_st.h"
 
+STB_MOTHER_IO MotherIO;
 
 STB_MOTHER Mother;
 int stage = gameLive;
@@ -92,6 +94,7 @@ void passwordActions(int passNo) {
                     stage = serviceMode; 
                     gameReset();
                     Mother.motherRelay.digitalWrite(service, open);
+                    MotherIO.setOuput(service_enable);
                 break;
                 case resetIndex: 
                     gameReset();
@@ -109,9 +112,11 @@ void passwordActions(int passNo) {
             stage = gameLive;
             switch (passNo) {
                 case service: 
+                    MotherIO.setOuput(service_disable);
                     Mother.motherRelay.digitalWrite(service, closed); 
+                    gameReset();
                 break;
-                default: gameReset();
+                
             }
         break;
     }
