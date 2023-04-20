@@ -695,6 +695,9 @@ inverted_events = {
 }
 
 
+
+
+
 def activate_sound(event_entry):
     print(event_entry)
     payload = dict(ip="192.168.178.172")
