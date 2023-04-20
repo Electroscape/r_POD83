@@ -56,7 +56,8 @@ enum inputValues {
     rachelEndFX,            
     cleanupLight,            
     failedBootTrigger,        
-    bootupTrigger,          
+    bootupTrigger,        
+    lightOff  
 };
 
 // 7 Values 3 IOs
