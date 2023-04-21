@@ -3,7 +3,7 @@
 {% block head %}
     <script type="text/javascript">
         let stopBootLoop = false;
-        let countdownTimeSeconds = 20;
+        let countdownTimeSeconds = 30;
     </script>
     <style>
         /* countdown */
@@ -34,26 +34,6 @@
             outline: none;
             border: none;
             font-family: monospace;
-        }
-
-        button {
-            background: none;
-            border: solid 1px red;
-            padding: 1rem;
-            color: red;
-            text-shadow: maroon 0 0 8px;
-            font-family: monospace;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-
-        button:focus {
-            outline: none;
-        }
-
-        button:active {
-            background: red;
-            color: maroon;
         }
 
         #bootContainer {
@@ -365,7 +345,9 @@
             $.post("{{ url_for('lab_control') }}", {
                 auth: "failed"
             });
-            swal("Timeout!", "Authentication failed. Please try again!", "warning").then(function () {
+            swal("Timeout!",
+                "Authentication failed. Please use the correct ID card to authenticate!",
+                "warning").then(function () {
                 /*code to execute after alert*/
                 document.location.href = "/";
             });
