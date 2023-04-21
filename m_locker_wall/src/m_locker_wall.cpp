@@ -94,7 +94,7 @@ void passwordActions(int passNo) {
                     stage = serviceMode; 
                     gameReset();
                     Mother.motherRelay.digitalWrite(service, open);
-                    MotherIO.setOuput(service_enable);
+                    MotherIO.setOuput(service_enable, true);
                 break;
                 case resetIndex: 
                     gameReset();
@@ -112,7 +112,7 @@ void passwordActions(int passNo) {
             stage = gameLive;
             switch (passNo) {
                 case service: 
-                    MotherIO.setOuput(service_disable);
+                    MotherIO.setOuput(service_disable, true);
                     Mother.motherRelay.digitalWrite(service, closed); 
                     gameReset();
                 break;
@@ -231,6 +231,7 @@ void setup() {
     // starts serial and default oled
     Mother.begin();
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
+    MotherIO.ioInit(intputArray, inputCnt, outputArray, outputCnt);
 
     Serial.println(F("WDT endabled"));
     wdt_enable(WDTO_8S);
@@ -246,6 +247,9 @@ void setup() {
 void loop() {
     Mother.rs485PerformPoll();
     interpreter();
+    if (MotherIO.getInputs() == service_disable_in) {
+        stage = gameLive;
+    }
     stageUpdate();
     wdt_reset();
 }
