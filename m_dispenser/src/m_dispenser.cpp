@@ -53,6 +53,21 @@ void setStageIndex() {
     delay(16000);
 }
 
+void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No){
+    // Secured Dishout more  Servo Movements to get sure
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
+    delay(500);
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
+    delay(500);
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
+    delay(500);
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
+    delay(500);
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
+    delay(500);
+
+}
+
 
 void stageActions() {
     wdt_reset();
@@ -60,7 +75,9 @@ void stageActions() {
         case setupStage: 
             wdt_reset();
             // Set Color
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20); 
+            #ifndef Hamburg
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20);
+            #endif 
             delay(500);
             wdt_reset();
             stage = waitRequest;
@@ -68,217 +85,188 @@ void stageActions() {
         
         case waitRequest:break;
 
-        case Dish1: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
+        case Dish1: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
             wdt_reset();
-            Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
-            delay(500);
-            Mother.motherRelay.digitalWrite(Pump5, closed);  //Stop Pump
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
-            delay(800);
-            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
-            delay(500); 
-            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
-            delay(500); 
-            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
-            delay(500); 
-            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
-            delay(500); 
-            SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 180); // Second Servo Brain!
-            delay(500); 
-            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0);
-            wdt_disable();
-            delay(13000); // long time for Belt
-            wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            
+            #ifndef Hamburg
+                Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
+                delay(500);
+                Mother.motherRelay.digitalWrite(Pump5, closed);  //Stop Pump
+                delay(500);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
+                delay(800);
+            #endif
+            func_move_servo(Mother, Servo_Brain2,0);
+            wdt_disable();           
+            #ifndef Hamburg
+                delay(13000); // long time for Belt
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
+            wdt_enable(WDTO_8S);    
             stage = waitRequest;
             wdt_reset();
         break;
 
-        case Dish2: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
+        case Dish2: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
             wdt_reset();
-            Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
-            delay(500);
-            Mother.motherRelay.digitalWrite(Pump4, closed);  //Start Belt normalDirection
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
-            delay(800); 
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
-            wdt_disable();
-            delay(11000);
+            
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
+                delay(500);
+                Mother.motherRelay.digitalWrite(Pump4, closed);  //Start Belt normalDirection
+                delay(500);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
+                delay(800); 
+            #endif
+            func_move_servo(Mother, Servo_Brain1,3);
+            wdt_disable();          
+            #ifndef Hamburg
+                delay(11000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
             wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;
             wdt_reset();
         break;
 
-        case Dish3: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
-            wdt_reset();
-            delay(500); 
-            Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
-            delay(500);
-            Mother.motherRelay.digitalWrite(Pump3, closed);  //Start Belt normalDirection
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
-            delay(800);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
-            wdt_disable();
-            delay(11000);
+        case Dish3:// Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
+            wdt_reset();            
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
+                delay(500);
+                Mother.motherRelay.digitalWrite(Pump3, closed);  //Start Belt normalDirection
+                delay(500);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
+                delay(800);
+            #endif
+            func_move_servo(Mother, Servo_Brain1,2);
+            wdt_disable();       
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                delay(11000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
             wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;  
             wdt_reset();
         break;
 
-        case Dish4: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
-            wdt_reset();
-            Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
-            delay(500);
-            Mother.motherRelay.digitalWrite(Pump2, closed);  //Start Belt normalDirection
-            delay(500);            
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
-            delay(800);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
-            delay(500);
+        case Dish4: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
+            wdt_reset(); 
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
+                delay(500);
+                Mother.motherRelay.digitalWrite(Pump2, closed);  //Start Belt normalDirection
+                delay(500);            
+                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
+                delay(800);
+            #endif
+            func_move_servo(Mother, Servo_Brain1,1);
             wdt_disable();
-            delay(11000);
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                delay(11000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
             wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             stage = waitRequest;   
             wdt_reset();
         break;
 
-        case Dish5: // Start Belt normalDirection -> Empty Dish1 -> Stop Light1 -> Stop Pump1 -> Stop Belt normalDirection
+        case Dish5: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
             wdt_reset();
-            Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
-            Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
-            delay(100);
-            Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
-            delay(500);
-            Mother.motherRelay.digitalWrite(Pump1, closed);  //Start Belt normalDirection
-            delay(500);
-            LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
-            delay(800);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 180);
-            delay(500);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,0, 0);
-            delay(500);
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
+                Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
+                delay(100);
+                Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
+                delay(500);
+                Mother.motherRelay.digitalWrite(Pump1, closed);  //Start Belt normalDirection
+                delay(500);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
+                delay(800);
+            #endif
+            func_move_servo(Mother, Servo_Brain1,0);
             wdt_disable();
-            delay(12000);
-            wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection
-            delay(200);   
-            Mother.motherRelay.digitalWrite(Belt1, closed);  //Change Belt Direction
+            
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                delay(12000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection
+                delay(200);   
+                Mother.motherRelay.digitalWrite(Belt1, closed);  //Change Belt Direction
             Mother.motherRelay.digitalWrite(Belt2, closed);  //change Belt Direction
+            #endif
+            wdt_enable(WDTO_8S);
             stage = waitRequest;
             wdt_reset();
         break;
 
         case WorldsEnd: 
             wdt_reset();
-            Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
-            Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
-            delay(100);
-            Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-            delay(300);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-            delay(100);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-            delay(300);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-            delay(100);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-            delay(300);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-            delay(100);
-            wdt_reset();
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-            delay(300);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-            delay(100);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-            delay(300);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-            delay(100);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-            delay(300);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-            delay(100);
-            wdt_reset();
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-            //LED_CMDS::blinking(Mother, LED_Brain , LED_CMDS::clrBlack, LED_CMDS::clrRed, 100, 400, 100, 100,PWM::set1);
-            delay(300);
-            /* SERVO_CMDS::moveServo(Mother,Servo_Brain1,1, 0);
-            delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,2, 0);
-            delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain1,3, 0);
-            delay(300);
-            SERVO_CMDS::moveServo(Mother,Servo_Brain2,0, 0); */
-            wdt_disable();
-            delay(10000);
-            wdt_enable(WDTO_8S);
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed);
-            wdt_disable();
-            delay(5000);
-            wdt_enable(WDTO_8S);
-            Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt   
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack); 
-            Mother.motherRelay.digitalWrite(Pump1, open); 
-            Mother.motherRelay.digitalWrite(Pump2, open);  
-            Mother.motherRelay.digitalWrite(Pump3, open);  
-            Mother.motherRelay.digitalWrite(Pump4, open); 
-            Mother.motherRelay.digitalWrite(Pump5, open); 
-            wdt_reset();
+            
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
+                Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
+                delay(100);
+                Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                delay(300);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                delay(300);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                delay(300);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+                delay(100);
+                wdt_reset();
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                delay(300);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                delay(300);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+                delay(100);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                delay(300);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+                delay(100);
+                wdt_reset();
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                //LED_CMDS::blinking(Mother, LED_Brain , LED_CMDS::clrBlack, LED_CMDS::clrRed, 100, 400, 100, 100,PWM::set1);
+                delay(300);
+                wdt_disable();
+                delay(10000);
+                wdt_enable(WDTO_8S);
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed);
+                wdt_disable();
+                delay(5000);
+                wdt_enable(WDTO_8S);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt   
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack); 
+                Mother.motherRelay.digitalWrite(Pump1, open); 
+                Mother.motherRelay.digitalWrite(Pump2, open);  
+                Mother.motherRelay.digitalWrite(Pump3, open);  
+                Mother.motherRelay.digitalWrite(Pump4, open); 
+                Mother.motherRelay.digitalWrite(Pump5, open); 
+                wdt_reset();
+            #endif
+
             stage = waitRequest;
         break;
         case DavidEnd:
             wdt_reset();
-            LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrGreen); 
-            Mother.motherRelay.digitalWrite(Pump1, open); 
-            Mother.motherRelay.digitalWrite(Pump2, open);  
-            Mother.motherRelay.digitalWrite(Pump3, open);  
-            Mother.motherRelay.digitalWrite(Pump4, open); 
-            Mother.motherRelay.digitalWrite(Pump5, open); 
+            
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrGreen); 
+                Mother.motherRelay.digitalWrite(Pump1, open); 
+                Mother.motherRelay.digitalWrite(Pump2, open);  
+                Mother.motherRelay.digitalWrite(Pump3, open);  
+                Mother.motherRelay.digitalWrite(Pump4, open); 
+                Mother.motherRelay.digitalWrite(Pump5, open); 
+            #endif
+
             wdt_reset();
             stage = waitRequest;
         break;
@@ -423,9 +411,10 @@ void setup() {
 
 void loop() {
 
-    //Mother.rs485PerformPoll(); // change to input from Arbiter Pi
+    Mother.rs485PerformPoll(); // change to input from Arbiter Pi
     handleInputs();    
     stageUpdate();
+
     wdt_reset();
 }
 

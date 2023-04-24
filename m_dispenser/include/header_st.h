@@ -5,6 +5,7 @@
 #define MaxPassLen 5
 #define closed 1
 #define open   0
+#define Hamburg 1
 
 
 enum brains {
@@ -114,3 +115,4 @@ int flagMapping[StageCount] {
     ledFlag,
     ledFlag
 };
+
