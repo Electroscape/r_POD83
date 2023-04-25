@@ -242,6 +242,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "airlock", "message": "broken"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
