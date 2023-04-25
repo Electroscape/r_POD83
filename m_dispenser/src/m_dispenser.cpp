@@ -23,8 +23,6 @@
 
 #include "header_st.h"
 
-// using the reset PCF for this
-PCF8574 inputPCF;
 STB_MOTHER Mother;
 STB_MOTHER_IO MotherIO;
 
@@ -72,22 +70,19 @@ void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No) {
 
 void stageActions() {
     wdt_reset();
+
     switch (stage) {
         case setupStage: 
-            wdt_reset();
             // Set Color
             #ifndef Hamburg
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20);
             #endif 
             delay(500);
-            wdt_reset();
-            stage = waitRequest;
         break;
         
         case waitRequest:break;
 
         case Dish1: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            wdt_reset();
             
             #ifndef Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
@@ -104,13 +99,9 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             #endif
             wdt_enable(WDTO_8S);    
-            stage = waitRequest;
-            wdt_reset();
         break;
 
         case Dish2: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            wdt_reset();
-            
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
@@ -126,12 +117,9 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             #endif
             wdt_enable(WDTO_8S);
-            stage = waitRequest;
-            wdt_reset();
         break;
 
-        case Dish3:// Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            wdt_reset();            
+        case Dish3:// Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection           
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
@@ -147,12 +135,9 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             #endif
             wdt_enable(WDTO_8S);
-            stage = waitRequest;  
-            wdt_reset();
         break;
 
         case Dish4: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            wdt_reset(); 
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
@@ -167,13 +152,10 @@ void stageActions() {
                 delay(11000);
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             #endif
-            wdt_enable(WDTO_8S);
-            stage = waitRequest;   
-            wdt_reset();
+            wdt_enable(WDTO_8S); 
         break;
 
         case Dish5: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            wdt_reset();
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
                 Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
@@ -196,13 +178,9 @@ void stageActions() {
             Mother.motherRelay.digitalWrite(Belt2, closed);  //change Belt Direction
             #endif
             wdt_enable(WDTO_8S);
-            stage = waitRequest;
-            wdt_reset();
         break;
 
         case WorldsEnd: 
-            wdt_reset();
-            
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
                 Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
@@ -251,14 +229,10 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(Pump3, open);  
                 Mother.motherRelay.digitalWrite(Pump4, open); 
                 Mother.motherRelay.digitalWrite(Pump5, open); 
-                wdt_reset();
             #endif
-
-            stage = waitRequest;
         break;
+
         case DavidEnd:
-            wdt_reset();
-            
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrGreen); 
                 Mother.motherRelay.digitalWrite(Pump1, open); 
@@ -266,13 +240,12 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(Pump3, open);  
                 Mother.motherRelay.digitalWrite(Pump4, open); 
                 Mother.motherRelay.digitalWrite(Pump5, open); 
-            #endif
-
-            wdt_reset();
-            stage = waitRequest;
+            #endif      
         break;
 
     }
+    stage = waitRequest;
+    wdt_reset();
 }
 
 
@@ -299,16 +272,8 @@ void stageUpdate() {
     stageActions();
 }
 
-void inputInit() {
-    for (int pin=0; pin<inputCnt; pin++) {
-        inputPCF.begin(RESET_I2C_ADD);
-        inputPCF.pinMode((uint8_t) pin, INPUT);
-        inputPCF.digitalWrite((uint8_t) pin, HIGH);
-    }
-}
-
 void handleInputs() {
-
+    // @CW you may want to just use enums to fill the cases here then you dont need to comment each random number ;-)
     if (stage != waitRequest) { return; }
     lastStage = waitRequest;
     int result = MotherIO.getInputs();
@@ -397,7 +362,6 @@ void setup() {
     Mother.rs485SetSlaveCount(3);
     
     setStageIndex();
-    //inputInit();
     wdt_reset();
 }
 
