@@ -27,12 +27,14 @@
 PCF8574 inputPCF;
 STB_MOTHER Mother;
 STB_MOTHER_IO MotherIO;
+
 int stage = setupStage;
 // since stages are single binary bits and we still need to d some indexing
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 int DishCount = 0; // Counter for Dishes
+
 
 /**
  * @brief Set the Stage Index object
@@ -53,7 +55,7 @@ void setStageIndex() {
     delay(16000);
 }
 
-void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No){
+void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No) {
     // Secured Dishout more  Servo Movements to get sure
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
     delay(500);
@@ -65,7 +67,6 @@ void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No){
     delay(500);
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
     delay(500);
-
 }
 
 
@@ -311,11 +312,11 @@ void handleInputs() {
     if (stage != waitRequest) { return; }
     lastStage = waitRequest;
     int result = MotherIO.getInputs();
-    if (result > 0){
+    if (result > 0) {
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
     }
-    switch (result){
+    switch (result) {
         case (1 << 0): //dispenserAction
         wdt_reset();
         DishCount = DishCount + 1;
@@ -344,36 +345,28 @@ void handleInputs() {
             stage = Dish3;
             DishCount = 3;
         break;
-        
         case (5): //Dish4
             wdt_reset();
             stage = Dish4;
             DishCount = 4;
         break;
-        
         case (6): //Dish5
             wdt_reset();
             stage = Dish5;
             DishCount = 5;
         break;
-
         case(7): // Rachel End
             wdt_reset();
             stage = WorldsEnd;
             DishCount = 6;
         break;
-
         case(8): // Elancell End
             wdt_reset();
             stage= DavidEnd;
             DishCount = 6;
         break;
-
-
-
-
     }
-    /* if (result == dispenserAction){
+    /* if (result == dispenserAction) {
         wdt_reset();
         DishCount = DishCount + 1;
         switch (DishCount) {
