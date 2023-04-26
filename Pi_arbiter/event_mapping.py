@@ -19,7 +19,9 @@ laserlock_in_pcf = 4
 # used for the cable riddle of the laserlock, 1 pin
 laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
+# PCF pin 5 and 6 on arbiter
 analyzer_in_pcf = laserlock_in_2_pcf
+# last 4 pins used on the dispenser
 dispenser_out_pcf = lab_light_out_pcf
 
 sound = "sound"
