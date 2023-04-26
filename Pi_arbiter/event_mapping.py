@@ -3,59 +3,20 @@ import subprocess
 from enum import IntEnum
 
 
-
-'''
-double post of teh same atmo is not possible
-
-we could connect the cables to both the RPi and Mother
-
-sio event?
-
-and then how to handle cooldowns?
-
-RPi 3.3V -> 5V Pulldown on arduino
-
-4 5 6 13 GPIO out
-### airlock
- * rel 1 beamerIntro
- * PCF? x Steril 
- * rel 2 beamerDecon
- * PCF? x gateOperation
-
-### laserlock
- * usb-boot -> arbiter -> PCF 0 & sound
- ### Possible to use the same GND here and save on the signal
- * failed boot -> arbiter -> PCF 1 & sound 
- * boot & decon -> arbiter > 
- - rel TX 1-2 -> arbiter -> login & logout
- 
- ### terminal 
-  * boot cmd -> pcf arduino -> 
-  
-  
-  # @sio.on('usbBoot','boot')
-  
-  # receive an event would be 
-    @sio.on('channel_name')
-    def authenticate_usr(msg):
- 
-'''
-
-# http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
-# defaults?
-
 # these are the pcf addresses, first 3 are Arbiter -> Brain as outputs
 # last 3 are Brain -> Arbiter inputs
-# [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
+# [0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]
 
-#
+# 3 wires to laserlock
 laserlock_out_pcf = 0
 # also used for the cleanroom rigger
+# 3 wires
 airlock_out_pcf = 1
+# max binary value is 7 hence 3 wires will do
 lab_light_out_pcf = 2
-# inputs
+# 4 inputs starting at the 5th pcf pin
 laserlock_in_pcf = 4
-# If we need more inputs this is the prime candidate to consolidate with the above
+# used for the cable riddle of the laserlock, 1 pin
 laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
 analyzer_in_pcf = laserlock_in_2_pcf

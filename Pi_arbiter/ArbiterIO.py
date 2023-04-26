@@ -12,7 +12,7 @@ class ArbiterIO:
     @staticmethod
     def __pcf_init():
         pcf_list = []
-        for index, pcf_add in enumerate([0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]):
+        for index, pcf_add in enumerate([0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]):
             print(pcf_add)
             pcf_list.append(PCF8574(1, pcf_add))
             for pin in range(0, 8):
