@@ -71,6 +71,8 @@ lab_light_on = 4
 lab_rachel_end_announce = 5
 lab_rachel_end = 6
 lab_david_end_announce = 7
+cleanroomDecon = 11
+cleanroomDoor = 12
 
 lab_dishout = 1 << 4
 lab_dish1 = 32
@@ -527,8 +529,14 @@ event_map = {
     "cleanroom": {
         trigger_cmd: "cleanroom",
         trigger_msg: "unlock",
-        pcf_out_add: [1],
-        pcf_out: [1 << 4],
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [cleanroomDecon],
+    },
+    "cleanroomDoor": {
+        trigger_cmd: "cleanroom",
+        trigger_msg: "door",
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [cleanroomDoor],
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,

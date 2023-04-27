@@ -1,35 +1,47 @@
 #pragma once
 
-#define relayAmount 2
+#define HHVersion   1
+
+
+#define relayAmount 4
+
 #define open        0
 #define closed      1
 
 enum relays {
     labEntry,
     labExit,
+    cleanRoomDoor, 
+    cleanRoomDecon,
 };
 
 enum relayInits {
     labEntry_init = closed,
     labExit_init = closed,
+    cleanRoomDoor_init = closed,
+    cleanRoomDecon_init = closed,
 };
 
 int relayPinArray[relayAmount] = {
     labEntry,
     labExit,
+    cleanRoomDoor,
+    cleanRoomDecon
 };
 
 int relayInitArray[relayAmount] = {
     labEntry_init,
     labExit_init,
+    cleanRoomDoor_init,
+    cleanRoomDecon_init
 };
 
 enum brains {
-    ledCeilBrain = 4
+    ledCeilBrain = 3
 };
 
 
-// --- Inputs
+// --- Inputs IGNORE THE NAMING SHEME, this is already transmitted as binary
 enum IOPins {
     lightOff_pin,             // red
     lightNormal_pin,      // black  
@@ -51,8 +63,10 @@ enum IO {
     lightRachelEnd,
     lightDavidAnnouncement,
     lightDavidEnd,
-    door = 1 << door_pin,
-    inverted_door = 1 << inverted_door_pin
+    labDoorLock,
+    labDoorUnlock,
+    deconTrigger,
+    cleanRoomDoorTrigger, // 12
 };
 
 #define outputCnt 1

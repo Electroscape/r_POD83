@@ -50,12 +50,6 @@ void handleInputs() {
 
     int result = MotherIO.getInputs();
     Serial.println(result);
-    if (result & door) {
-        result -= door;
-        MotherIO.outputReset();
-    } else {
-        MotherIO.setOuput(inverted_door);
-    }
 
     if (lastState == result) {
         return;
@@ -98,6 +92,17 @@ void handleInputs() {
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 40);
         break;
+#ifdef HHVersion
+        case deconTrigger:
+            Mother.motherRelay.digitalWrite(cleanRoomDecon, open);
+            delay(500);
+            Mother.motherRelay.digitalWrite(cleanRoomDecon, closed);
+        case cleanRoomDoorTrigger:
+            Mother.motherRelay.digitalWrite(cleanRoomDoor, open);
+            delay(500);
+            Mother.motherRelay.digitalWrite(cleanRoomDoor, closed);
+        break;
+#endif
         default: break;
     }
 
