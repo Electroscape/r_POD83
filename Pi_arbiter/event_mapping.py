@@ -7,21 +7,22 @@ from enum import IntEnum
 # last 3 are Brain -> Arbiter inputs
 # [0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]
 
-# 3 wires to laserlock
+# 3 wires to laserlock from 0x38
 laserlock_out_pcf = 0
 # also used for the cleanroom rigger
-# 3 wires
+# 3 wires from 0x39
 airlock_out_pcf = 1
-# max binary value is 7 hence 3 wires will do
+# max binary value is 7 hence 3 wires will do from 0x3A
 lab_light_out_pcf = 2
-# 4 inputs starting at the 5th pcf pin
+# 4 inputs starting at the 5th pcf pin  from 0x3C
 laserlock_in_pcf = 4
-# used for the cable riddle of the laserlock, 1 pin
+# used for the cable riddle of the laserlock, 1 pin from from 0x3B
 laserlock_in_2_pcf = 3
+#  from 0x3D
 airlock_in_pcf = 5
-# PCF pin 5 and 6 on arbiter
+# PCF pin 5 and 6 on arbiter from 0x3B
 analyzer_in_pcf = laserlock_in_2_pcf
-# last 4 pins used on the dispenser
+# last 4 pins used on the dispenser from 0x3A
 dispenser_out_pcf = lab_light_out_pcf
 
 sound = "sound"
