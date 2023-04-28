@@ -236,6 +236,8 @@ def events_handler(data):
         global login_user
         global usb_boot
         global airlock_boot
+        global airlock_auth
+        
         msg = data.get("message")
 
     # Commands
@@ -252,6 +254,9 @@ def events_handler(data):
         airlock_boot = msg
         print(f"airlock msg: {msg}")
         self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
+    elif data.get("cmd") == "airlock_auth":
+        airlock_auth = msg
+        print(f"airlock auth msg: {msg}")
     elif data.get("cmd") == "loadingbar":
         print(f"set loading bar: {msg}")
         self_sio.emit('loadingbar_fe', msg)

@@ -144,7 +144,7 @@
             </div>
         </div>
         <div>
-            Airlock:
+            Laserlock:
             <div class="switch-toggle switch-candy">
                 <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
                        onclick="onClickTerminal(name)"/>
@@ -178,14 +178,6 @@
         </div>
         <div>
             Microscope:
-            <div class="switch-toggle switch-candy">
-                <input id="t2_mOFF" name="mcrp_status" type="radio" value="off" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_mOFF">OFF</label>
-
-                <input id="t2_mON" name="mcrp_status" type="radio" value="on" onclick="onClickTerminal(name)"/>
-                <label for="t2_mON">ON</label>
-            </div>
             <div class="switch-toggle switch-5 switch-candy">
                 <input id="t2_sample1" name="mcrp_sample" type="radio" value="1" checked="checked"
                        onclick="onClickTerminal(name)"/>
@@ -306,28 +298,16 @@
 
     <h3>Terminals</h3>
     <div>
-        <button class="btn btn-outline-light" name="ter1_rachel" onclick="onClickTrigger(name)">Ter1 Rachel
-        </button>
-        <button class="btn btn-outline-light" name="ter1_david" onclick="onClickTrigger(name)">Ter1 David
-        </button>
-        <button class="btn btn-outline-light" name="ter2_rachel" onclick="onClickTrigger(name)">Ter2 Rachel
-        </button>
-        <button class="btn btn-outline-light" name="ter2_david" onclick="onClickTrigger(name)">Ter2 david
-        </button>
-        <button class="btn btn-outline-light" name="ter1_empty" onclick="onClickTrigger(name)">Ter1 empty
-        </button>
-        <button class="btn btn-outline-light" name="ter2_empty" onclick="onClickTrigger(name)">Ter2 empty
-        </button>
         <button class="btn btn-outline-light" name="usb_boot" onclick="onClickTrigger(name)">USB Boot
         </button>
-        <button class="btn btn-outline-light" name="airlock_access" onclick="onClickTrigger(name)">Laserlock fail
+        <button class="btn btn-outline-light" name="airlock_access" onclick="onClickTrigger(name)">Laserlock Trigger
         </button>
     </div>
     <br>
 
     <h3>Lab</h3>
     <div>
-        <button class="btn btn-outline-light" name="dispenser_0 wrong" onclick="onClickTrigger(name)">Dispense Wrong
+        <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Synthesizer run1, Last sample & Killswitch Video
         </button>
         <button class="btn btn-outline-light" name="dispenser_0 correct" onclick="onClickTrigger(name)">Dispense Correct
         </button>
@@ -360,15 +340,20 @@
 
     <h3>Lab endings</h3>
     <div>
-        <button class="btn btn-outline-light" name="labLight_off" onclick="onClickTrigger(name)">lab light off
-        </button>
         <button class="btn btn-outline-light" name="uploaded_rachel" onclick="onClickTrigger(name)">Rachel ending
         </button>
         <button class="btn btn-outline-light" name="uploaded_rachelEnd" onclick="onClickTrigger(name)">Rachel end FX
         </button>
-        <button class="btn btn-outline-light" name="uploaded_davidEnd" onclick="onClickTrigger(name)">Elancell ending
+        <button class="btn btn-outline-light" name="uploaded_elancell" onclick="onClickTrigger(name)">Elancell ending
         </button>
-        <button class="btn btn-outline-light" name="uploaded_SelfDestruction onclick="onClickTrigger(name)">SelfDestruction
+        <button class="btn btn-outline-light" name="uploaded_SelfDestruction" onclick="onClickTrigger(name)">SelfDestruction
+        </button>
+    </div>
+    <br>
+
+    <h3>Door and Light Control</h3>
+    <div>
+        <button class="btn btn-outline-light" name="labLight_off" onclick="onClickTrigger(name)">Lab light off & locked door
         </button>
     </div>
 
