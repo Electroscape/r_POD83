@@ -47,7 +47,7 @@ gpio_thread = None
 usb_booted = False
 connected = False
 
-boot_usb_path = Path("/media/2cp/elancell")
+boot_usb_path = Path("/media/2cp/usb_boot")
 
 
 class Settings:
