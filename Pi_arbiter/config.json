@@ -1,0 +1,5 @@
+{
+      "terminal_server_add": "http://192.168.87.180:5500/",
+      "event_mapping": "",
+      "sound_server_add": "http://POD-ITX/AudioInterface.php"
+}

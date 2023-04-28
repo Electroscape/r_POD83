@@ -12,12 +12,13 @@ class ArbiterIO:
     @staticmethod
     def __pcf_init():
         pcf_list = []
-        for index, pcf_add in enumerate([0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]):
+        for index, pcf_add in enumerate([0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D,]):
             print(pcf_add)
             pcf_list.append(PCF8574(1, pcf_add))
             for pin in range(0, 8):
                 pcf_list[index].port[pin] = True
         return pcf_list
+
 
     def pcf_has_input(self, pcf):
         for pin_index in range(0, 8):

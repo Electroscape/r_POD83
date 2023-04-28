@@ -2,27 +2,24 @@ import requests
 import subprocess
 from enum import IntEnum
 
+# http://www.compciv.org/guides/python/fundamentals/dictionaries-overview/
+# defaults?
 
 # these are the pcf addresses, first 3 are Arbiter -> Brain as outputs
 # last 3 are Brain -> Arbiter inputs
-# [0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]
+# [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
 
-# 3 wires to laserlock from 0x38
+#
 laserlock_out_pcf = 0
 # also used for the cleanroom rigger
-# 3 wires from 0x39
 airlock_out_pcf = 1
-# max binary value is 7 hence 3 wires will do from 0x3A
 lab_light_out_pcf = 2
-# 4 inputs starting at the 5th pcf pin  from 0x3C
+# inputs
 laserlock_in_pcf = 4
-# used for the cable riddle of the laserlock, 1 pin from from 0x3B
+# If we need more inputs this is the prime candidate to consolidate with the above
 laserlock_in_2_pcf = 3
-#  from 0x3D
 airlock_in_pcf = 5
-# PCF pin 5 and 6 on arbiter from 0x3B
 analyzer_in_pcf = laserlock_in_2_pcf
-# last 4 pins used on the dispenser from 0x3A
 dispenser_out_pcf = lab_light_out_pcf
 
 sound = "sound"
@@ -40,6 +37,7 @@ trigger_cmd = "trigger_cmd"
 # may not always be required
 trigger_msg = "trigger_msg"
 # event triggering FE
+
 fe_cb = "fe_cb"
 fe_cb_tgt = "tgt"
 fe_cb_cmd = "cmd"
@@ -71,8 +69,6 @@ lab_light_on = 4
 lab_rachel_end_announce = 5
 lab_rachel_end = 6
 lab_david_end_announce = 7
-cleanroomDecon = 11
-cleanroomDoor = 12
 
 lab_dishout = 1 << 4
 lab_dish1 = 32
@@ -529,14 +525,8 @@ event_map = {
     "cleanroom": {
         trigger_cmd: "cleanroom",
         trigger_msg: "unlock",
-        pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [cleanroomDecon],
-    },
-    "cleanroomDoor": {
-        trigger_cmd: "cleanroom",
-        trigger_msg: "door",
-        pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [cleanroomDoor],
+        pcf_out_add: [1],
+        pcf_out: [1 << 4],
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
@@ -633,9 +623,10 @@ def activate_sound(event_entry):
         ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
         print(f"send sound payload: {payload}")
         print(ret)
-    except OSError as OSE:
-        print(f"failed to request sound due to {OSE}")
-        exit()
+    except Exception as OSE:
+        # print(f"failed to request sound due to {OSE}")
+        pass
+
 
 
 
