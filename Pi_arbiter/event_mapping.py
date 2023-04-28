@@ -61,7 +61,7 @@ laserlock_io_rachel = 64
 laserlock_io_seperationEnd = 128
 
 labLight_trigger = "labLight"
-ending_trigger = "uploaded"
+ending_trigger = "upload"
 lab_light_off = 1
 lab_light_white = 2
 lab_light_standby = 3
@@ -555,7 +555,7 @@ event_map = {
     },
     "end_david_announce": {
         trigger_cmd: ending_trigger,
-        trigger_msg: "davidEnd",
+        trigger_msg: "elancell",
         pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
         pcf_out: [lab_david_end_announce, AirlockOut.david_end, lab_dishDavidend],
         event_script: call_video
