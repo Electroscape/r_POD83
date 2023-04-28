@@ -525,8 +525,8 @@ event_map = {
     "cleanroom": {
         trigger_cmd: "cleanroom",
         trigger_msg: "unlock",
-        pcf_out_add: [1],
-        pcf_out: [1 << 4],
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [11],
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
