@@ -81,7 +81,8 @@ def cleanroom():
 
     config = {
         "title": "Cleanroom Access",
-        "passcode": "4321"
+        "passcode": "4321",
+        "version": "launch_button"
     }
     print("open cleanroom access page")
     return render_template("TR2/p_cleanroom.html", g_config=config)
