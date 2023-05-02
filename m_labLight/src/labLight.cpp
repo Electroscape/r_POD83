@@ -95,12 +95,8 @@ void handleInputs() {
 #ifdef HHVersion
         case deconTrigger:
             Mother.motherRelay.digitalWrite(cleanRoomDecon, open);
-            delay(500);
+            delay(5000);
             Mother.motherRelay.digitalWrite(cleanRoomDecon, closed);
-        case cleanRoomDoorTrigger:
-            Mother.motherRelay.digitalWrite(cleanRoomDoor, open);
-            delay(500);
-            Mother.motherRelay.digitalWrite(cleanRoomDoor, closed);
         break;
 #endif
         default: break;
