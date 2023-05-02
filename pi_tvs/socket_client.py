@@ -48,13 +48,9 @@ class SocketClient:
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.settimeout(self.timeout)
             self.s = s
-            while True:
-
-                print('socket client looking for connection')
-                if not self.__connect():
-                    sleep(1)
-                    continue
-
+            print('socket client looking for connection')
+            if self.__connect():
+                sleep(1)
                 while self.__received():
                     pass
 
