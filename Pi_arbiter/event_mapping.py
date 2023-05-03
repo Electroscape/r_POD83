@@ -500,7 +500,7 @@ event_map = {
         pcf_in_add: analyzer_in_pcf,
         pcf_in: 1 << 2,
         pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [lab_dishout]
+        pcf_out: [lab_dish5]
     },
     "analyzer_run2": {
         trigger_cmd: "analyzer",
