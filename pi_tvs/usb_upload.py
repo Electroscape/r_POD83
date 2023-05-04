@@ -20,7 +20,7 @@ def main():
             upload_rachel = True
             sio.emit("events", {"username": "tr2", "cmd": "breach", "message": "breach"})
             print("usb_rachel_enable")
-        elif upload_rachel:
+        if upload_rachel and not rachel_usb_path.exists():
             upload_rachel = False
             print("usb_rachel_disable")
             sio.emit("events", {"username": "tr2", "cmd": "breach", "message": "secure"})
@@ -28,7 +28,7 @@ def main():
             upload_elancell = True
             print("usb_elancell_enable")
             sio.emit("events", {"username": "tr2", "cmd": "elancell", "message": "enable"})
-        elif upload_elancell:
+        if upload_elancell and not elancell_usb_path.exists():
             upload_elancell = False
             print("usb_elancell_disable")
             sio.emit("events", {"username": "tr2", "cmd": "elancell", "message": "disable"})
@@ -37,7 +37,7 @@ def main():
 def connect():
     while True:
         try:
-            sio.connect("http://192.168.178.179:5500")
+            sio.connect("http://192.168.87.180:5500")
             return True
         except socketio.exceptions.ConnectionError as exc:
             print(f'Caught exception socket.error : {exc}')
