@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
-sio = socketio.Client(reconnection=False)
+sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
