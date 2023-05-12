@@ -483,6 +483,7 @@ void handleInputs() {
         break;
         case lightOff: 
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
         break;
         default: break;
     }
