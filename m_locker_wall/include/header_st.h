@@ -93,7 +93,7 @@ char passwords[PasswordAmount][MaxPassLen] = {
     "3105",
     "5638",
     "2018",
-    "1111",     // service code
+    "20162023",     // service code
     "0000",     // reset code, does this also work within th service mode?
 };
 
