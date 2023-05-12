@@ -452,6 +452,11 @@ void handleInputs() {
 
     int result = MotherIO.getInputs();
     result -= result & (1 << reedDoor);
+    if (result == 0) { return; }
+    // Serial.println("result");
+    // Serial.println(result);
+    // delay(5000);
+    wdt_reset();
     switch (result) {
         case failedBootTrigger: 
             stage = failedBoot;
@@ -474,8 +479,6 @@ void handleInputs() {
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
             delay(3000);
         break;
-        case rachelEndFX:
-        break;
         case cleanupLight:
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 75);
@@ -483,6 +486,7 @@ void handleInputs() {
         break;
         case lightOff: 
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
         break;
         default: break;
     }
