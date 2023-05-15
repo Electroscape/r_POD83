@@ -4,11 +4,17 @@ import socketio
 
 from rfid import RFID
 
+import logging
+
+logging.basicConfig(filename='microscope.log', level=logging.DEBUG,
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
-sio = socketio.Client()
+sio = socketio.Client(reconnection=False)
 server_ip = "http://raspi-4-pod-t1:5500"  # <= change server ip here
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
@@ -53,9 +59,7 @@ def connect():
 
 @sio.event
 def disconnect():
-    global connected
     print("microscope is disconnected from server")
-    connected = False
 
 
 @sio.on("rfid_event")
@@ -100,17 +104,10 @@ def check_for_updates():
 
 
 def keep_reconnecting():
-    global connected
-
-    while True:
-        if not connected:
-            try:
-                # connecting to sio
-                sio.connect(server_ip)
-                connected = True
-            except Exception:
-                self_sio.sleep(2)
-                print(f"re-try connect to server: {server_ip}")
+    try:
+        sio.connect(server_ip)
+    except Exception:
+        print(f"re-try connect to server: {server_ip}")
 
 
 # polling updates if server is offline
@@ -120,4 +117,4 @@ connected = False
 self_sio.start_background_task(keep_reconnecting)
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5555)
+    self_sio.run(app, debug=True, host='0.0.0.0', port=5555)
