@@ -10,6 +10,10 @@ from ring_list import RingList
 from fns import js_r, configure_btn, get_progressbar_status
 from pages import app_pages, get_login_user
 import socketio
+import logging
+
+logging.basicConfig(filename='ter2.log', level=logging.DEBUG,
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
@@ -189,42 +193,31 @@ def on_msg(data):
     if data.get("cmd") == "upload":
         elancell_upload = f"done_{data.get('message')}"
 
-    if connected:
+    if sio.connected:
         sio.emit("msg_to_server", data)
     else:
         print(f"server is offline! lost data: {data}")
 
 
-print("connecting to server")
-connected = False
-
-
 @sio.event
 def disconnect():
-    global connected
     print("Disconnected from server")
-    connected = False
 
 
 def keep_reconnecting():
-    global connected
+    try:
+        # connecting to sio
+        sio.connect(server_ip)
+    except Exception as e:
+        print(f"re-try connect to server: {server_ip}")
 
-    while True:
-        if not connected:
-            try:
-                # connecting to sio
-                sio.connect(server_ip)
-                connected = True
-            except Exception as e:
-                self_sio.sleep(2)
-                print(f"re-try connect to server: {server_ip}")
-
+chat_msgs = RingList(100)  # stores chat history max 100 msgs, declare before starting sockets
 
 self_sio.start_background_task(keep_reconnecting)
 
 print("Init global variables")
 login_user = get_login_user(terminal_name)  # either David, Rachel or empty string
-chat_msgs = RingList(100)  # stores chat history max 100 msgs
+
 elancell_upload = "disable"
 cleanroom = "lock"
 it_breach = "secure"
@@ -233,4 +226,4 @@ samples_flag = "unsolved"
 app.register_blueprint(app_pages)
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5552)
+    sio.run(app, debug=True, host='0.0.0.0', port=5552)

@@ -9,16 +9,10 @@
  * @copyright Copyright (c) 2022
  * 
  *  TODO: 
- * - double post of clean airlock & decontamination
- * - enumerating brain types
- * 🔲 add feedback to close the door when tryint to lock
  *  6. Wrong code entered on access module -> "Access denied" currently not implemented
- * ✅ add numbering of brains to header to make changes easiers
  * in between stage or text for unlocking with rfid
  *  Q:
- * 🔲 Timeout needs to send wrongres
  * 🔲 booting text on startup
- * 🔲 consider using laststage for the switch cases?
  * 
  */
 
@@ -163,13 +157,13 @@ void checkDualRfid(int passNo) {
             if (Mother.getPolledSlave() == 0) {
                 switch (passNo) {
                     // either this case?
-                    case 0: MotherIO.setOuput(david + isSeperation); break;
-                    case 1: MotherIO.setOuput(rachel + isSeperation); break;
+                    case 0: MotherIO.setOuput(davidSeperated, true); break;
+                    case 1: MotherIO.setOuput(rachelSeperated, true); break;
                 }
             } else {
                 switch (passNo) {
-                    case 0: MotherIO.setOuput(rachel + isSeperation); break;
-                    case 1: MotherIO.setOuput(david + isSeperation); break;
+                    case 0: MotherIO.setOuput(rachelSeperated, true); break;
+                    case 1: MotherIO.setOuput(davidSeperated, true); break;
                 }
             }
             stage = seperationLocked; 
@@ -177,7 +171,7 @@ void checkDualRfid(int passNo) {
         case seperationLocked:
             Mother.motherRelay.digitalWrite(door, doorOpen); // first thing we do since we dont wanna
             delay(100);
-            MotherIO.setOuput(seperationEnd);
+            MotherIO.setOuput(seperationEnd, true);
             stage = seperationUnlocked;
         break;
     }
@@ -204,9 +198,9 @@ void handleCorrectPassword(int passNo) {
             // delay(500);
             stage = unlocked; 
             if (passNo == 0) {
-                MotherIO.setOuput(david);
+                MotherIO.setOuput(david, true);
             } else {
-                MotherIO.setOuput(rachel);
+                MotherIO.setOuput(rachel, true);
             }
             // start polling the 2nd Access since there is no need before
             Mother.rs485SetSlaveCount(2);
@@ -340,6 +334,7 @@ void stageActions() {
             stage = idle;
         break;
         case successfulBoot:
+            Mother.motherRelay.digitalWrite(outerDoor, open);
             LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
             wdt_disable();
             delay(10000);
@@ -452,48 +447,50 @@ void inputInit() {
 }
 
 
-/**
- * @brief  handles inputs passed from the RPi and trigger stages
- * @todo make this shorter and easier to read and understand
-*/
-int inputDetector() {
-
-    int ticks;
-    for (int pin=0; pin<inputCnt; pin++) {
-        ticks = 0;
-        while(!inputPCF.digitalRead(pin)) {
-            if (ticks > 5) {
-                return pin;
-            }
-            ticks++;
-        }
-    }
-
-    return -1;
-}
-
-
 void handleInputs() {
+    
+    if ( (stage & (idle | seperationUnlocked | seperationLocked)) == 0) { return; }
 
-    if (stage != idle) { return; }
-    lastStage = idle;
     int result = MotherIO.getInputs();
     result -= result & (1 << reedDoor);
+    if (result == 0) { return; }
+    // Serial.println("result");
+    // Serial.println(result);
+    // delay(5000);
+    wdt_reset();
     switch (result) {
-        case 1 << failedBootTrigger: 
+        case failedBootTrigger: 
             stage = failedBoot;
         break;
-        case 1 << bootupTrigger: 
+        case bootupTrigger: 
             stage = successfulBoot;
         break;
-        case 1 << room1Light:
+        case roomBoot:
             if (lightOn) { return; }
             lightOn = true;
             stage = lightStart;
         break;
+        case elancellEnd:
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrGreen, 60);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 60);
+            delay(3000);
+        break;
+        case rachelEnd:
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+            delay(3000);
+        break;
+        case cleanupLight:
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 75);
+            delay(3000);
+        break;
+        case lightOff: 
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+        break;
         default: break;
     }
-
 }
 
 

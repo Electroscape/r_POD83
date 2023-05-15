@@ -162,8 +162,17 @@
 
             socket.on("airlock_fe", function (msg) {
                 console.log(`airlock ${msg}`)
-                toastr.warning(`airlock laser is ${msg.status}`);
                 loadControlPanel(msg.data, msg.status);
+                toastr.warning(`airlock laser is ${msg.status}
+                                <button type="button" class="btn btn-outline-dark float-end">open airlock</button>`,
+                    "Laser Lock",
+                    {
+                        timeOut: false,
+                        onclick: function () {
+                            document.location.href = "/lab_control";
+                        }
+                    }
+                );
             })
 
             socket.on("boot_fe", function (msg) {
@@ -191,7 +200,20 @@
 
                     if (msg.user_name !== myRoomID) {
                         {% if request.path != "/chat_control" %}
-                            toastr.info('You have received an new message');
+                            toastr.clear();
+                            toastr.info(msg.message.slice(0, 35) +
+                                '... <button type="button" class="btn btn-outline-dark float-end">open</button>',
+                                "New message:",
+                                {
+                                    timeOut: false,
+                                    onclick: function () {
+                                        if ($('.floating-chat').length) {
+                                            openElement();
+                                        } else {
+                                            document.location.href = "/chat_control";
+                                        }
+                                    }
+                                });
                         {% endif %}
 
                         // update floating container
@@ -255,6 +277,8 @@
                 if (airlockAuth === "failed" && jsonResponseElement.id !== "{{ airlock_id }}") {
                     disableOption(jsonResponseElement, "Authentication failed");
                 } else if (airlockAuth === "success" && jsonResponseElement.id === "{{ airlock_id }}") {
+                    disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
+                } else if (airlockAuth === "success" && jsonResponseElement.id === "media-control") {
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (flags && flags.cleanroom === "unlock" && jsonResponseElement.id === "cleanroom") {
                     disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");

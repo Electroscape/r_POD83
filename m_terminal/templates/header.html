@@ -1,13 +1,25 @@
 <style>
     .header-left {
-        min-width: 450px;
+        flex-shrink: 1;
+        min-width: 16vw;
+    }
+
+    .header-center {
+        flex-grow: 2;
     }
 
     .header-right {
-        min-width: 450px;
+        flex-shrink: 1;
+        min-width: 16vw;
+    }
+
+    .wrap-typing-effect {
+        margin: auto;
     }
 
     .login-info {
+        display: inline-block;
+        margin-right: 15px;
         max-width: 250px;
     }
 
@@ -28,10 +40,12 @@
             {% endif %}
         </div>
     </div>
-    <div class="text-center">
-        <h1 class="text-success typing-effect">{{ g_config.title }}</h1>
+    <div class="header-center">
+        <div class="wrap-typing-effect text-center">
+            <h1 class="text-success typing-effect">{{ g_config.title }}</h1>
+        </div>
     </div>
-    <div class="row header-right">
+    <div class="header-right">
         <div class="login-info">
             <p style="color: ghostwhite">user: <br><strong>none</strong></p>
         </div>

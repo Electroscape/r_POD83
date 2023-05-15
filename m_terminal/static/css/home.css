@@ -60,10 +60,12 @@ strong {
 
 @keyframes typewriter {
     from {
+        margin: auto;
         width: 0;
     }
     to {
-        width: 710px;
+        margin: auto;
+        width: 100%;
     }
 }
 

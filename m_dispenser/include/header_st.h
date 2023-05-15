@@ -1,10 +1,11 @@
 #pragma once
 
-#define StageCount 8
+#define StageCount 9
 #define PasswordAmount 1 //only for debugg
 #define MaxPassLen 5
 #define closed 1
 #define open   0
+#define Hamburg 1
 
 
 enum brains {
@@ -15,18 +16,24 @@ enum brains {
 
 // --- Inputs
 enum IO {
-    dispenserAction_pin
+    dispenserAction_pin,
+    dispenserIO2,
+    dispenserIO3,
+    dispenserIO4
 };
-#define inputCnt 1
+#define inputCnt 4
 #define outputCnt 0
 
 /* uint8_t inputTypes[inputCnt] = {
     INPUT_PULLUP
 }; */
-int dispenserAction = 1 << dispenserAction_pin;
+int dispenserAction = (1 << dispenserAction_pin);
 
 int intputArray[inputCnt] = {
-    dispenserAction_pin
+    dispenserAction_pin,
+    dispenserIO2,
+    dispenserIO3,
+    dispenserIO4
 };
 
 int outputArray[outputCnt] = {
@@ -89,6 +96,7 @@ enum stages {
     Dish4 = 32,
     Dish5 = 64,
     WorldsEnd =128,
+    DavidEnd = 256,
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -107,3 +115,4 @@ int flagMapping[StageCount] {
     ledFlag,
     ledFlag
 };
+

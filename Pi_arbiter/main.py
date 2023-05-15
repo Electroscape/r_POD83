@@ -8,15 +8,14 @@ import socketio
 from event_mapping import *
 import os
 import logging
-from gpio_fncs import *
+from ArbiterIO import ArbiterIO, CooldownHandler
 # standard Python would be python-socketIo
 from time import sleep, thread_time
 from subprocess import Popen
 from communication.TESocketServer import TESocketServer
 from pathlib import Path
 
-# GPIO.add_event_detect(data.gpio, GPIO.RISING, callback=callback, bouncetime=20)
-#
+IO = ArbiterIO()
 
 '''
 @TODO: 
@@ -39,19 +38,16 @@ from pathlib import Path
     * 🔲 mutiple pcf_outs on events
 '''
 
-# standard Python
 sio = socketio.Client()
 cooldowns = CooldownHandler()
 nw_sock = None
 
-# asyncio
-# sio = socketio.AsyncClient()
 gpio_thread = None
 # used to prevent multiple boots
 usb_booted = False
 connected = False
 
-boot_usb_path = Path("/media/2cp/elancell")
+boot_usb_path = Path("/media/2cp/usb_boot")
 
 
 class Settings:
@@ -88,6 +84,7 @@ def handle_event(event_key, event_value=None):
             event_value = event_map[event_key]
         except KeyError:
             print(f"handle_event received invalid key: {event_key}")
+            return
 
     try:
         if not event_value.get(event_condition, lambda: True)():
@@ -110,6 +107,7 @@ def handle_event(event_key, event_value=None):
     except KeyError:
         pass
 
+    # IO pins
     try:
         # @todo: type casting here?
         pcf_no = event_value[pcf_out_add]
@@ -148,8 +146,6 @@ def handle_event_fe(event_value, event_key):
     sio.emit("events", {"username": cb_tgt, "cmd": cb_cmb, "message": cb_msg})
 
 
-
-
 @sio.on("trigger")
 def handle_fe(data):
     print(data)
@@ -172,13 +168,16 @@ def handle_fe(data):
             if msg and msg != data.get("message"):
                 # print(f"wrong msg {msg}")
                 continue
+
             # @todo: removed once differentiation is possible
             if key == "laserlock_fail" or key == "laserlock_bootdecon":
-                pin = event_map["laserlock_cable_fixed"][gpio_in]
-                if False and GPIO.input(pin) == GPIO.LOW:
+                pcf_value = event_map["laserlock_cable_fixed"][pcf_in]
+                pcf_add = event_map["laserlock_cable_fixed"][pcf_in_add]
+                if IO.read_pcf(pcf_add) & pcf_value == pcf_value:
                     handle_event("laserlock_bootdecon")
                 else:
                     handle_event("laserlock_fail")
+                return
 
             handle_event(key)
         except KeyError:
@@ -190,34 +189,20 @@ def handle_usb_events():
     if not states.usb_booted and boot_usb_path.exists():
         handle_event("usb_boot")
 
-    for event_value in event_map.values():
-        try:
-            pin = event_value[gpio_out]
-            GPIO.setup(pin, GPIO.OUT, initial=GPIO.HIGH)
-            GPIO.output(pin, GPIO.HIGH)
-        except KeyError:
-            pass
-        except Exception as exp:
-            print(f"issue setting up GPIO {pin} "
-                  f"resulting in {exp} ")
-            exit()
 
-        try:
-            pin = event_value[gpio_in]
-            GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            # @TODO: callback stuff here?
-        except KeyError:
-            pass
-        except Exception as exp:
-            print(f"issue setting up GPIO {pin} "
-                  f"resulting in {exp} ")
-            exit()
+def handle_pcf_input(input_pcf, value):
 
+    # local version so we can have one PCF input potentially trigger multiple events
+    temporary_cooldowns = set()
 
     rejected = True
 
     for event_key, event_dict in event_map.items():
 
+        try:
+            if event_dict.get(pcf_in_add) != input_pcf:
+                continue
+            event_pcf_value = event_dict.get(pcf_in, -1)
 
             # checks if all pins to form the value of that event are present on the inputs
             # this way its possible mix and match multiple inputs as single pin inputs and binary
@@ -236,36 +221,41 @@ def handle_usb_events():
                         handle_event(event_key)
                         rejected = False
 
+        except KeyError:
+            continue
 
-    if rejected and input_pcf == 4:
+    if rejected and input_pcf == laserlock_in_pcf:
         print(f"\n\nInvalid PCF input\n PCFNo {input_pcf} value {value}\n\n")
     cooldowns.cooldowns.update(temporary_cooldowns)
 
-def handle_gpio_events():
-    event_pins_cd = []
-    for event_key in event_map.keys():
-        event_value = event_map[event_key]
-        is_low_trigger = True
-        try:
-            input_pin = event_value[gpio_in]
-            # print(f"chacking input: {input_pin}")
-        except KeyError:
-            try:
-                input_pin = event_value[gpio_in_high]
-                is_low_trigger = False
-            except KeyError:
-                continue
 
-        is_low_state = GPIO.input(input_pin) == GPIO.LOW
-        if is_low_state and is_low_trigger:
-            # print(f"valid trigger at pin {input_pin}")
-            if not is_gpio_on_cooldown(input_pin):
-                # or not (is_low_trigger and is_low_state):
-                handle_event(event_key)
-                event_pins_cd.append(input_pin)
-    for input_pin in event_pins_cd:
-        # time.thread_time() doesnt work on rpi
-        gpio_input_cooldowns.add((input_pin, 0 + 5))
+def handle_pcf_inputs(active_inputs):
+    for active in active_inputs:
+        handle_pcf_input(*active)
+
+
+# only applies to non binary pin based values
+def handle_inverted_events(active_inputs):
+    for event_key, event_value in inverted_events.items():
+        # print(f"\n chcecking {event_key}:")
+        if inverted_triggered(event_value, active_inputs):
+            # print(f"attempting event {event_key}")
+            handle_event(event_key, event_value)
+        # else:
+            # print(f"{event_key} not triggered")
+
+
+def inverted_triggered(event_value, active_inputs):
+    pcf_addr = event_value.get(pcf_in_add, -1)
+    pcf_value = event_value.get(pcf_in, -1)
+    for pcf_input in active_inputs:
+        # print(pcf_input)
+        if pcf_input[0] == pcf_addr:
+            # print(f"{pcf_value} compared {pcf_input[1]}")
+            # print(pcf_value & pcf_input[1])
+            if pcf_value & pcf_input[1] > 0:
+                return False
+    return True
 
 
 def connect():
@@ -286,32 +276,14 @@ def main():
         # handle_event("laserlock_fail")
         # continue
         # exit()
-        IO.fix_cleanroom()
         handle_usb_events()
-        handle_pcf_inputs()
-
-        GPIO.output(6, GPIO.HIGH)
-        sleep(4)
-        
-        '''
-
-
-        # exit()
-        '''
-
-        sleep(3)
-        handle_event("laserlock_fail")
-        GPIO.output(5, GPIO.HIGH)
-        sleep(25)
-        handle_event("laserlock_bootdecon")
-        sleep(25)
-        '''
-
+        active_inputs = IO.get_inputs()
+        handle_pcf_inputs(active_inputs=active_inputs)
+        handle_inverted_events(active_inputs)
 
 
 if __name__ == '__main__':
     settings = load_settings()
-    setup_gpios()
     connected = connect()
     # otherwise calling an already running atmo does not work
     # used to trigger rpis via regular network for videos
@@ -325,5 +297,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     finally:
-        GPIO.cleanup()
         sio.disconnect()

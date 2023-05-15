@@ -3,6 +3,8 @@ from time import time, sleep
 from event_mapping import *
 from threading import Thread
 
+# GPIO.add_event_detect(data.gpio, GPIO.RISING, callback=callback, bouncetime=20)
+
 # make this a function?
 try:
     import RPi.GPIO as GPIO

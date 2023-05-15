@@ -6,39 +6,36 @@
 
 enum relays {
     labEntry,
-    labExit,
+    decon
 };
 
 enum relayInits {
     labEntry_init = closed,
     labExit_init = closed,
+    decon_init = closed
 };
 
 int relayPinArray[relayAmount] = {
     labEntry,
-    labExit,
+    decon
 };
 
 int relayInitArray[relayAmount] = {
     labEntry_init,
-    labExit_init,
+    decon_init
 };
 
 enum brains {
-    ledCeilBrain = 4
+    ledCeilBrain = 3
 };
 
 
 // --- Inputs
 enum IOPins {
-    lightOff_pin,             // red
-    lightNormal_pin,      // black  
-    lightNormalBright_pin,      // black  
-    lightRed_pin,          // Green
-    lightRedBright_pin,          // Green
-    lightBlue_pin,          // Green
-    door_pin,          // Green
-    inverted_door_pin,
+    IO1,
+    IO2,
+    IO3,
+    IO4
 };
 
 
@@ -50,28 +47,23 @@ enum IO {
     lightRachelAnnouncement,
     lightRachelEnd,
     lightDavidAnnouncement,
-    lightDavidEnd,
-    door = 1 << door_pin,
-    inverted_door = 1 << inverted_door_pin
+    labDoorLock,
+    labDoorUnlock,
+    deconTrigger,
 };
 
-#define outputCnt 1
-#define inputCnt 7
+#define outputCnt 0
+#define inputCnt 4
 
 static constexpr int clrLight[3] = {255,200,120};
 
 
 int intputArray[inputCnt] = {
-    lightOff_pin,             // red
-    lightNormal_pin,      // black  
-    lightNormalBright_pin,      // black  
-    lightRed_pin,          // Green
-    lightRedBright_pin,          // Green  
-    lightBlue_pin,          // Green
-    door_pin,
+    IO1,
+    IO2,
+    IO3,
+    IO4
 };
 
-int outputArray[outputCnt] = {
-    inverted_door_pin
-};
+int outputArray[outputCnt] = {};
 
