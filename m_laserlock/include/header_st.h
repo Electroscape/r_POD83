@@ -53,11 +53,10 @@ enum inputValues {
     roomBoot = 1,            
     elancellEnd,            
     rachelEnd,            
-    rachelEndFX,            
+    lightOff,            
     cleanupLight,            
     failedBootTrigger,        
     bootupTrigger,        
-    lightOff  
 };
 
 // 7 Values 3 IOs
