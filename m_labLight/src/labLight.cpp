@@ -93,7 +93,7 @@ void handleInputs() {
         break;
         case IO::deconTrigger:
             Mother.motherRelay.digitalWrite(decon, open);
-            delay(1000);
+            delay(5000);
             Mother.motherRelay.digitalWrite(decon, closed);
         break;
         default: break;
