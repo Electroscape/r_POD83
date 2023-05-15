@@ -8,7 +8,6 @@ which is the minimum version to run the app. Make sure to:
 
 - Change the hostname to an informative one
 - Give it a static IP
-- disable pop up message on media insertion by going to `file manger -> prefrences -> Volume Management -> uncheck "show available removeable media"` 
 
 # setting up crontab
 there will be audio problems with hdmi bec RPi4s
