@@ -3,6 +3,8 @@
 
 ## still WIP
 * servicemode triggered from lockerwall
+* adding selfcheck before start
+* automatic endings -> check before new version
 
 # V 0.2 
 
@@ -12,5 +14,7 @@
 * removed workaround of labDoorOpenEvent and made it functional
 * changes to terminal python-socketio across the system, reconnection loops and ping timings, flask startups -> SIO start
 * adjustments for HH: cleanroom duration and outer door for laserlock
+* new setup desription for microscope, removed socketio connection to server
+* added logging throughout python system
 
 # V 0.1 initial version
