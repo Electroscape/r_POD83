@@ -48,7 +48,7 @@ def chat_control():
         "title": "Chat Room",
         "chat_msg": chat_msgs.get()
     }
-    print("open chat page")
+    logging.info("open chat page")
     return render_template("p_chat.html", g_config=config)
 
 
@@ -78,7 +78,7 @@ def switch_language():
 
         if req_lang or req_lang != g_lang:
             g_lang = req_lang.strip()
-            print(f"Switch language to {g_lang}")
+            logging.info(f"Switch language to {g_lang}")
             return get_globals()
 
 
@@ -103,7 +103,7 @@ def microscope():
         "title": "Microscope",
         "src": "http://" + ip_conf["mcrp"]
     }
-    print("open microscope page")
+    logging.info("open microscope page")
     return render_template("TR2/p_microscope.html", g_config=config)
 
 
@@ -115,24 +115,24 @@ def favicon():
 
 @sio.event
 def connect():
-    print("Connected to Server!")
+    logging.info("Connected to Server!")
 
 
 @self_sio.event
 def connect():
-    print("Self is connected!")
+    logging.info("Self is connected!")
 
 
 @sio.event
 def connect_error():
-    print("The connection to server failed!")
+    logging.debug("The connection to server failed!")
 
 
 @sio.on('to_clients')
 def events_handler(data):
     # filter the message to get the user here!
     if data.get("username") != terminal_name.lower():
-        print(f"irrelevant msg: {data}")
+        logging.info(f"irrelevant msg: {data}")
         return 0
     else:
         global login_user
@@ -145,12 +145,12 @@ def events_handler(data):
     # Commands
     if data.get("cmd") == "auth":
         login_user = msg
-        print(f"login msg: {msg}")
-        print(f'{terminal_name} authenticated user is: {login_user}')
+        logging.info(f"login msg: {msg}")
+        logging.info(f'{terminal_name} authenticated user is: {login_user}')
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
     elif data.get("cmd") == "elancell":
         elancell_upload = msg
-        print(f"elancell msg: {msg}")
+        logging.info(f"elancell msg: {msg}")
         if msg == "disable":
             # means usb is removed
             if it_breach != "secure":
@@ -160,13 +160,13 @@ def events_handler(data):
         self_sio.emit('elancell_fe', {'data': elancell_upload})
     elif data.get("cmd") == "cleanroom":
         cleanroom = msg
-        print(f"cleanroom msg: {msg}")
+        logging.info(f"cleanroom msg: {msg}")
     elif data.get("cmd") == "breach":
         it_breach = msg
-        print(f"IT breach msg: {msg}")
+        logging.info(f"IT breach msg: {msg}")
         self_sio.emit('breach_fe', msg)
     elif data.get("cmd") == "loadingbar":
-        print(f"set loading bar: {msg}")
+        logging.info(f"set loading bar: {msg}")
         self_sio.emit('loadingbar_fe', msg)
 
 
@@ -189,33 +189,31 @@ def on_message(data):
 def on_msg(data):
     global elancell_upload
 
-    print(f"from frontend: {data} -> forward to server")
+    logging.info(f"from frontend: {data} -> forward to server")
     if data.get("cmd") == "upload":
         elancell_upload = f"done_{data.get('message')}"
 
     if sio.connected:
         sio.emit("msg_to_server", data)
     else:
-        print(f"server is offline! lost data: {data}")
+        logging.debug(f"server is offline! lost data: {data}")
 
 
 @sio.event
 def disconnect():
-    print("Disconnected from server")
+    logging.debug("Disconnected from server")
 
 
-def keep_reconnecting():
+while not sio.connected:
     try:
         # connecting to sio
         sio.connect(server_ip)
     except Exception as e:
-        print(f"re-try connect to server: {server_ip}")
+        logging.debug(f"re-try connect to server: {server_ip}")
 
 chat_msgs = RingList(100)  # stores chat history max 100 msgs, declare before starting sockets
 
-self_sio.start_background_task(keep_reconnecting)
-
-print("Init global variables")
+logging.info("Init global variables")
 login_user = get_login_user(terminal_name)  # either David, Rachel or empty string
 
 elancell_upload = "disable"
