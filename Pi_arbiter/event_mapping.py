@@ -57,9 +57,9 @@ class AirlockOut(IntEnum):
 
 class LaserlockOut(IntEnum):
     usb_boot = 1
-    elancellEnd = 2
-    rachelEnd = 3
-    rachelEndFX = 4
+    david_end = 2
+    rachel_announce = 3
+    rachel_end = 4
     cleanupLight = 5
     failedBootTrigger = 6
     bootupTrigger = 7
@@ -91,8 +91,9 @@ lab_dish2 = 32 + 16
 lab_dish3 = 64
 lab_dish4 = 64 + 16
 lab_dish5 = 64 + 32
-lab_dishRachelend = 64 + 32 + 16
-lab_dishDavidend = 128
+lab_dish_rachel_end_announce = 64 + 32 + 16
+lab_dish_david_end = 128
+lab_dish_rachel_end = 128 + 16
 
 # Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
 
@@ -584,16 +585,16 @@ event_map = {
     "end_rachel_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachel",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dishRachelend],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.rachel_announce, lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dish_rachel_end_announce],
         event_script: call_video,
         event_next_qeued: "end_rachel"
     },
     "end_rachel": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
-        pcf_out: [lab_rachel_end, AirlockOut.rachel_end],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_light_out_pcf],
         event_delay: 92,
         sound: {
             is_fx: False,
@@ -603,15 +604,15 @@ event_map = {
     "end_david_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "elancell",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [lab_david_end_announce, AirlockOut.david_end, lab_dishDavidend],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.david_end, lab_david_end_announce, AirlockOut.david_end, lab_david_end_announce],
         event_script: call_video
     },
     "end_self_destuction": {
         trigger_cmd: ending_trigger,
         trigger_msg: "SelfDestruction",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [lab_rachel_end, AirlockOut.rachel_end, lab_dishRachelend],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_rachel_end],
         sound: {
             is_fx: False,
             sound_id: 6
