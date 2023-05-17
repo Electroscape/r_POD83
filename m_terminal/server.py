@@ -267,7 +267,7 @@ def events_handler(msg):
             login_users[msg.get("username")] = msg.get("message")
 
         if msg.get("cmd") == "usbBoot":
-            loading_percent = 100
+            loading_percent = 90
             # reset airlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
 

@@ -44,14 +44,19 @@ def main():
                 sio.emit("events", {"username": "tr2", "cmd": "elancell", "message": "disable"})
         except PermissionError as err:
             logging.debug(err)
+        except socketio.exceptions as err:
+            logging.error(err)
 
 
 
 if __name__ == '__main__':
-    try:
-        sio.connect("http://192.168.178.179:5500")
-    except socketio.exceptions.ConnectionError as exc:
-        logging.debug(f'Caught exception socket.error : {exc}')
+    while not sio.connected:
+        try:
+            sio.connect("http://192.168.178.179:5500")
+        except socketio.exceptions.ConnectionError as exc:
+            logging.debug(f'Caught exception socket.error : {exc}')
+        except Exception as exp:
+            logging.error(exp)
 
     try:
         main()
