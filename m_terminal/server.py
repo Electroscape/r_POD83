@@ -174,6 +174,10 @@ def handle_received_messages(json_msg):
         sio.emit("trigger", {"username": "arb", "cmd": "cleanroom", "message": json_msg.get("message")})
         # also update TR2
         sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": json_msg.get("message")})
+    elif json_msg.get("cmd") == "upload":
+        msg = json_msg.get("message")
+        if msg in ["elancell", "rachel"]:
+            sio.emit("trigger", {"username": "arb", "cmd": "upload", "message": msg})
     else:
         # broadcast chat message
         sio.emit('response_to_terminals', json_msg)
