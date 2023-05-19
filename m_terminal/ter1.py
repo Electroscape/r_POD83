@@ -15,8 +15,11 @@ from fns import js_r, get_progressbar_status
 from pages import app_pages, get_login_user
 import socketio
 import logging
+from datetime import datetime as dt
 
-logging.basicConfig(filename='ter1.log', level=logging.DEBUG,
+now = dt.now()
+log_name = now.strftime("T1 %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 

@@ -8,6 +8,7 @@ from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 import json
 import logging
+from datetime import datetime as dt
 
 # Next two lines are for the issue: https://github.com/miguelgrinberg/python-engineio/issues/142
 from engineio.payload import Payload
@@ -19,9 +20,11 @@ from ring_list import RingList
 chat_history = RingList(100)
 chat_history.append('Welcome to the server window')
 
-
-logging.basicConfig(filename='server.log', level=logging.DEBUG,
+now = dt.now()
+log_name = now.strftime("server %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
 
 
 def read_json(filename: str, from_static=True) -> dict:
@@ -304,5 +307,5 @@ def favicon():
 
 
 if __name__ == "__main__":
-    sio.run(app, debug=True, host='0.0.0.0', port=5500)
+    sio.run(app, debug=True, host='0.0.0.0', port=5500, engineio_logger=True)
     # app.run(debug=True, host='0.0.0.0', port=5500)
