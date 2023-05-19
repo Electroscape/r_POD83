@@ -128,20 +128,6 @@ def play_elancell_intro(*args):
 def call_video(event_key, nw_sock):
     nw_sock.transmit(event_key)
 
-
-class GeneralConditions:
-    @staticmethod
-    def service_enable(*args):
-        states.service = True
-
-    @staticmethod
-    def service_disable(*args):
-        if states.service:
-            states.service = False
-            return True
-        return False
-
-
 class LaserLock:
     @staticmethod
     def arm_door(*args):
@@ -652,22 +638,19 @@ event_map = {
         event_condition: USBScripts.elancell_disabled_condition
     },
     "service_mode_enable": {
-        fe_cb: {
-            fe_cb_tgt: "Arb",
-            fe_cb_cmd: "Service enable",
-        },
+
+        trigger_cmd: "service",
+        trigger_msg: "on",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
         pcf_out: [LaserlockOut.cleanupLight, lab_light_white],
-        event_condition: GeneralConditions.service_enable
+        # event_condition: GeneralConditions.service_enable
     },
     "service_mode_disable": {
-        fe_cb: {
-            fe_cb_tgt: "Arb",
-            fe_cb_cmd: "Service disable",
-        },
+        trigger_cmd: "service",
+        trigger_msg: "off",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
         pcf_out: [LaserlockOut.lightOff, lab_light_off],
-        event_condition: GeneralConditions.service_disable
+        # event_condition: GeneralConditions.service_disable
     }
 }
 

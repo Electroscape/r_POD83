@@ -123,15 +123,19 @@ def handle_event(event_key, event_value=None):
     except KeyError as err:
         print(err)
         pass
-
-    handle_event_fe(event_value, event_key)
+    try:
+        handle_event_fe(event_value, event_key)
+    except socketio.exceptions as exp:
+        logging.debug(f"error with sending message to FE: exp")
     queued_event = event_value.get(event_next_qeued, False)
     if queued_event:
         handle_event(queued_event)
 
 
 def handle_event_fe(event_value, event_key):
-    # Frontend
+    # Otherwise we crash
+    if not sio.connected:
+        return
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
         # This way any event can be monitored on the server
@@ -144,6 +148,13 @@ def handle_event_fe(event_value, event_key):
     cb_msg = cb_dict.get(fe_cb_msg, "")
     print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}\n\n")
     sio.emit("events", {"username": cb_tgt, "cmd": cb_cmb, "message": cb_msg})
+    
+
+'''
+@sio.on('*')
+def catch_all(event, sid, *args):
+    print(f'catch_all(event={event}, sid={sid}, args={args})')
+'''
 
 
 @sio.on("trigger")
