@@ -58,12 +58,11 @@ class AirlockOut(IntEnum):
 class LaserlockOut(IntEnum):
     usb_boot = 1
     david_end = 2
-    rachel_announce = 3
-    rachel_end = 4
+    rachel_end = 3
+    light_off = 4
     cleanupLight = 5
     failedBootTrigger = 6
     bootupTrigger = 7
-    lightOff = 8
 
 
 class LaserlockIn(IntEnum):
@@ -553,8 +552,8 @@ event_map = {
             is_fx: False,
             sound_id: -1
         },
-        pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [lab_light_off]
+        pcf_out_add: [lab_light_out_pcf, laserlock_out_pcf],
+        pcf_out: [lab_light_off, LaserlockOut.light_off]
     },
     "cleanroom": {
         trigger_cmd: "cleanroom",
@@ -572,7 +571,7 @@ event_map = {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachel",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.rachel_announce, lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dish_rachel_end_announce],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dish_rachel_end_announce],
         event_script: call_video,
         event_next_qeued: "end_rachel"
     },
@@ -580,7 +579,7 @@ event_map = {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.light_off, lab_rachel_end, AirlockOut.rachel_end, lab_light_out_pcf],
         event_delay: 92,
         sound: {
             is_fx: False,
@@ -649,7 +648,7 @@ event_map = {
         trigger_cmd: "service",
         trigger_msg: "off",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.lightOff, lab_light_off],
+        pcf_out: [LaserlockOut.light_off, lab_light_off],
         # event_condition: GeneralConditions.service_disable
     }
 }
