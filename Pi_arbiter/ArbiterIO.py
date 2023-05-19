@@ -3,6 +3,11 @@ try:
 except ImportError:
     from PCF_dummy import PCF8574
 from time import thread_time, sleep
+from arbiter_config import arbiter_address_config
+
+# @TODO: make input vs output pcf list/defenition, just a variable now
+
+# @TODO: make input vs output pcf list/defenition, just a variable now
 
 
 class ArbiterIO:
@@ -12,13 +17,18 @@ class ArbiterIO:
     @staticmethod
     def __pcf_init():
         pcf_list = []
-        for index, pcf_add in enumerate([0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D,]):
+        for index, pcf_add in enumerate(arbiter_address_config):
             print(pcf_add)
             pcf_list.append(PCF8574(1, pcf_add))
             for pin in range(0, 8):
                 pcf_list[index].port[pin] = True
         return pcf_list
 
+    # currently only the inputs
+    def __pcf_pullup(self):
+        for pcf in self.pcfs[3:]:
+            for pin in range(0, 8):
+                pcf.port[pin] = True
 
     def pcf_has_input(self, pcf):
         for pin_index in range(0, 8):
@@ -60,6 +70,7 @@ class ArbiterIO:
                 return False
 
     def get_inputs(self):
+        self.__pcf_pullup()
         inputs = []
         for input_pcf in range(3, 6):
             pin_value = self.read_pcf(input_pcf)

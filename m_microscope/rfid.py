@@ -6,11 +6,15 @@ import RPi.GPIO as GPIO
 
 from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A, BusyError
 from adafruit_pn532.i2c import PN532_I2C
+import logging
 
 GPIO.cleanup()
 
 classic_read_block = 1
 ntag_read_block = 4
+
+logging.basicConfig(filename='rfid.log', level=logging.DEBUG,
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 
 def rfid_present(pn532) -> bytearray:
@@ -81,37 +85,17 @@ class RFID:
             cards = [0]
         self.name = config.get("name", "rfid")
         self.cards = cards
-        self.ip = server_ip
+        # self.ip = server_ip
         self.sio = socketio.Client()
-        self.setup_sio()
+        # self.setup_sio()
 
         self.data = {
             "data": str(cards[-1]),
             "status": config.get("init", "on")
         }
-        self.connected = False
         self.pn532 = None
         self.rfid_task = self.sio.start_background_task(self.init_rfid)
-        self.reconnect_task = self.sio.start_background_task(self.keep_reconnecting)
         self.rfid_task = self.sio.start_background_task(self.check_loop)
-
-
-    def setup_sio(self):
-
-        @self.sio.on('connect')
-        def on_connect():
-            self.connected = True
-            print(f"{self.name} is connected to server")
-
-        @self.sio.on('disconnect')
-        def on_disconnect():
-            self.connected = False
-            print(f"{self.name} is disconnected!")
-
-        @self.sio.on('set_status')
-        def on_set_status(status):
-            print(f"change status to: {status}")
-            self.data["status"] = status
 
     def set_rfid_status(self, status):
         print(f"change status to: {status}")
@@ -121,29 +105,17 @@ class RFID:
         print(f"override data to: {msg}")
         self.data["data"] = msg
 
-    def keep_reconnecting(self):
-        while True:
-            # attempt to reconnect, otherwise sleep for 2 seconds
-            if not self.connected:
-                try:
-                    self.sio.connect(self.ip)
-                    self.connected = True
-                    print(f"{self.name} is connected to sio")
-                except Exception as e:
-                    print("trying to reconnect")
-                    sleep(2)
-            else:
-                sleep(2)
-
     def get_data(self):
         return self.data
 
+    '''
     def emit(self, channel, message):
-        if self.connected:
-            self.sio.emit(channel, message)
-        else:
-            print("not connected to server!")
-    
+    if self.connected:
+        self.sio.emit(channel, message)
+    else:
+        print("not connected to server!")
+    '''
+
     def init_rfid(self):
         # I2C connection:
         while not self.pn532:
@@ -164,8 +136,6 @@ class RFID:
                 print("failed to init rfid! re-trying after 3 secs")
                 sleep(3)
 
-    
-    
     def check_loop(self):
         while True:
             card_uid = rfid_present(self.pn532)
@@ -179,13 +149,13 @@ class RFID:
                 if card_read in self.cards:
                     self.data["data"] = card_read
                     print(f"chosen card: {card_read}")
-                    self.emit(f'{self.name}_update', self.data)
+                    # self.emit(f'{self.name}_update', self.data)
                 elif card_read in ["off", "on"]:
                     self.data["status"] = card_read
                     print(f"update status to: {card_read}")
                 else:
                     print(f'Wrong data: {card_read}')
-                    self.emit(f'{self.name}_extra', card_read)
+                    # self.emit(f'{self.name}_extra', card_read)
 
                 # wait here until card is removed
                 # if wrong card should it stuck?!
@@ -193,6 +163,6 @@ class RFID:
                     continue
 
                 self.data["data"] = str(self.cards[-1])
-                self.emit(f'{self.name}_update', self.data)
+                # self.emit(f'{self.name}_update', self.data)
                 print("card removed")
                 #print(f"sio.emit('{self.name}_update', '{self.data}')")

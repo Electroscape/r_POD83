@@ -55,10 +55,24 @@ class AirlockOut(IntEnum):
     rachel_end = 1 << 5
 
 
-laserlock_io_isSeperation = 16
-laserlock_io_david = 32
-laserlock_io_rachel = 64
-laserlock_io_seperationEnd = 128
+class LaserlockOut(IntEnum):
+    usb_boot = 1
+    david_end = 2
+    rachel_end = 3
+    light_off = 4
+    cleanupLight = 5
+    failedBootTrigger = 6
+    bootupTrigger = 7
+
+
+class LaserlockIn(IntEnum):
+    david = 1
+    rachel = 2
+    seperationEnd = 3
+    davidSeperated = 4     # status for T1
+    rachelSeperated = 5    # status for T1
+    timeout = 6
+
 
 labLight_trigger = "labLight"
 ending_trigger = "upload"
@@ -72,15 +86,15 @@ lab_david_end_announce = 7
 
 lab_dishout = 1 << 4
 lab_dish1 = 32
-lab_dish2 = 32+16
+lab_dish2 = 32 + 16
 lab_dish3 = 64
-lab_dish4 = 64 +16
-lab_dish5 = 64 +32
-lab_dishRachelend = 64+32+16
-lab_dishDavidend = 128
+lab_dish4 = 64 + 16
+lab_dish5 = 64 + 32
+lab_dish_rachel_end_announce = 64 + 32 + 16
+lab_dish_david_end = 128
+lab_dish_rachel_end = 128 + 16
 
 # Begin, Video, Fumigation, SterilizationIntro, Sterilization, BioScanIntro, BioScan, BioScanDenied, Wrong, Opening
-
 
 binary_pcfs = [airlock_in_pcf, laserlock_in_pcf]
 
@@ -94,8 +108,10 @@ class States:
         self.laserlock_door_opened = False
         self.laserlock_fixed = False
         self.usb_booted = False
+        self.truth_played = False
         self.upload_elancell = False
         self.upload_Rachel = False
+        self.service = False
 
 
 states = States()
@@ -111,32 +127,42 @@ def play_elancell_intro(*args):
 def call_video(event_key, nw_sock):
     nw_sock.transmit(event_key)
 
+class LaserLock:
+    @staticmethod
+    def arm_door(*args):
+        states.laserlock_door_armed = True
+        states.laserlock_door_opened = False
 
-def laserlock_arm_door(*args):
-    states.laserlock_door_armed = True
-    states.laserlock_door_opened = False
+    @staticmethod
+    def door_open_condition():
+        if states.laserlock_door_armed and not states.laserlock_door_opened:
+            states.laserlock_door_opened = True
+            return True
+        return False
+
+    @staticmethod
+    # @todo: just include set_fixed into condition
+    def fixed_condition(*args):
+        if not states.laserlock_fixed:
+            states.laserlock_fixed = True
+            return True
+        return False
+
+    @staticmethod
+    def broken_conditions(*args):
+        if states.laserlock_fixed:
+            states.laserlock_fixed = False
+            return True
+        return False
+
+    @staticmethod
+    def play_truth_condition(*args):
+        if not states.truth_played:
+            states.truth_played = True
+            return True
+        return False
 
 
-def laserlock_set_door_opened_state(*args):
-    states.laserlock_door_opened = True
-
-
-def laserlock_door_open_condition():
-    print("labdoor open")
-    return states.laserlock_door_armed and states.laserlock_door_opened
-
-
-# @todo: just include set_fixed into conidition
-def laserlock_fixed_condition(*args):
-    # print(states.laserlock_fixed)
-    return not states.laserlock_fixed
-
-
-def laserlock_set_fixed(*args):
-    states.laserlock_fixed = True
-
-
-# @TODO much of this is very much of teh same, build a function
 class USBScripts:
     @staticmethod
     def rachel_enabled_condition(*args):
@@ -177,6 +203,18 @@ class USBScripts:
 
 
 event_map = {
+    # @todo: maybe add a callback here to the FE?
+    # @todo: shall we automatically end the any service mode here?
+    "self_check": {
+        trigger_cmd: "self",
+        trigger_msg: "check",
+        pcf_out_add: [laserlock_out_pcf],
+        pcf_out: [LaserlockOut.failedBootTrigger],
+        sound: {
+            sound_id: 3
+        },
+        event_script: call_video,
+    },
     "airlock_begin": {
         trigger_cmd: "airlock",
         trigger_msg: "begin",
@@ -204,7 +242,7 @@ event_map = {
         pcf_in_add: airlock_in_pcf,
         pcf_in: 2,
         event_script: play_elancell_intro,
-        event_delay: 3,
+        event_delay: 10,
         # this is the sound to go along with teh video
         sound: {
             is_fx: True,
@@ -296,7 +334,7 @@ event_map = {
         event_delay: 72,
         event_script: call_video,
         pcf_out_add: [laserlock_out_pcf],
-        pcf_out: [1 << 0],
+        pcf_out: [LaserlockOut.usb_boot],
         sound: {
             is_fx: False,
             sound_id: 2
@@ -306,7 +344,7 @@ event_map = {
         trigger_cmd: "airlock",
         trigger_msg: "access",
         pcf_out_add: [laserlock_out_pcf],
-        pcf_out: [1 << 1],
+        pcf_out: [LaserlockOut.failedBootTrigger],
         sound: {
             sound_id: 3
         }
@@ -314,29 +352,17 @@ event_map = {
     "laserlock_cable_fixed": {
         pcf_in_add: laserlock_in_2_pcf,
         pcf_in: 1 << 0,
-        event_condition: laserlock_fixed_condition,
-        event_script: laserlock_set_fixed,
+        event_condition: LaserLock.fixed_condition,
         fe_cb: {
             fe_cb_cmd: "airlock",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "fixed"
         }
     },
-    "laserlock_door_opened": {
-        # pcf_in_add: laserlock_in_2_pcf,
-        # pcf_in: 1 << 1,
-        event_condition: laserlock_door_open_condition,
-        event_script: laserlock_set_door_opened_state,
-        sound: {
-            sound_id: 3,
-            # yes its actually an atmo
-            is_fx: False
-        }
-    },
     "laserlock_bootdecon": {
         pcf_out_add: [laserlock_out_pcf],
-        pcf_out: [1 << 2],
-        event_script: laserlock_arm_door,
+        pcf_out: [LaserlockOut.bootupTrigger],
+        event_script: LaserLock.arm_door,
         # event_delay: 0,
         sound: {
             sound_id: 4,
@@ -344,7 +370,7 @@ event_map = {
     },
     "laserlock_welcome_david": {
         pcf_in_add: laserlock_in_pcf,
-        pcf_in: laserlock_io_david,
+        pcf_in: LaserlockIn.david,
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_light_standby],
         sound: {
@@ -358,7 +384,7 @@ event_map = {
     },
     "laserlock_welcome_rachel": {
         pcf_in_add: laserlock_in_pcf,
-        pcf_in: laserlock_io_rachel,
+        pcf_in: LaserlockIn.rachel,
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_light_standby],
         sound: {
@@ -374,7 +400,7 @@ event_map = {
         trigger_cmd: "ter1",
         trigger_msg: "david",
         pcf_in_add: laserlock_in_pcf,
-        pcf_in: laserlock_io_isSeperation + laserlock_io_david,
+        pcf_in: LaserlockIn.davidSeperated,
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_light_on],
         fe_cb: {
@@ -391,18 +417,25 @@ event_map = {
         trigger_cmd: "ter2",
         trigger_msg: "rachel",
         pcf_in_add: laserlock_in_pcf,
-        pcf_in:  laserlock_io_isSeperation + laserlock_io_david,
+        pcf_in: LaserlockIn.davidSeperated,
+        event_next_qeued: "play_truth",
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
             fe_cb_msg: "rachel"
         }
     },
+    "play_truth": {
+        trigger_cmd: "play",
+        trigger_msg: "truth",
+        event_condition: LaserLock.play_truth_condition,
+        event_script: call_video,
+    },
     "laserlock_auth_tr1_rachel": {
         trigger_cmd: "ter1",
         trigger_msg: "rachel",
         pcf_in_add: laserlock_in_pcf,
-        pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
+        pcf_in: LaserlockIn.rachelSeperated,
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_light_on],
         fe_cb: {
@@ -419,7 +452,7 @@ event_map = {
         trigger_cmd: "ter2",
         trigger_msg: "david",
         pcf_in_add: laserlock_in_pcf,
-        pcf_in: laserlock_io_isSeperation + laserlock_io_rachel,
+        pcf_in: LaserlockIn.rachelSeperated,
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -430,7 +463,7 @@ event_map = {
         trigger_cmd: "ter1",
         trigger_msg: "empty",
         pcf_in_add: laserlock_in_pcf,
-        pcf_in: laserlock_io_seperationEnd,
+        pcf_in: LaserlockIn.seperationEnd,
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_light_standby],
         fe_cb: {
@@ -447,7 +480,7 @@ event_map = {
         trigger_cmd: "ter2",
         trigger_msg: "empty",
         pcf_in_add: laserlock_in_pcf,
-        pcf_in: laserlock_io_seperationEnd,
+        pcf_in: LaserlockIn.seperationEnd,
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_light_standby],
         fe_cb: {
@@ -519,14 +552,14 @@ event_map = {
             is_fx: False,
             sound_id: -1
         },
-        pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [lab_light_off]
+        pcf_out_add: [lab_light_out_pcf, laserlock_out_pcf],
+        pcf_out: [lab_light_off, LaserlockOut.light_off]
     },
     "cleanroom": {
         trigger_cmd: "cleanroom",
         trigger_msg: "unlock",
         pcf_out_add: [lab_light_out_pcf],
-        pcf_out: [11],
+        pcf_out: [10],
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
@@ -537,16 +570,16 @@ event_map = {
     "end_rachel_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachel",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dishRachelend],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dish_rachel_end_announce],
         event_script: call_video,
         event_next_qeued: "end_rachel"
     },
     "end_rachel": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf],
-        pcf_out: [lab_rachel_end, AirlockOut.rachel_end],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.light_off, lab_rachel_end, AirlockOut.rachel_end, lab_light_out_pcf],
         event_delay: 92,
         sound: {
             is_fx: False,
@@ -556,20 +589,20 @@ event_map = {
     "end_david_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "elancell",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [lab_david_end_announce, AirlockOut.david_end, lab_dishDavidend],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.david_end, lab_david_end_announce, AirlockOut.david_end, lab_david_end_announce],
         event_script: call_video
     },
     "end_self_destuction": {
         trigger_cmd: ending_trigger,
         trigger_msg: "SelfDestruction",
-        pcf_out_add: [lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [lab_rachel_end, AirlockOut.rachel_end, lab_dishRachelend],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_rachel_end],
         sound: {
             is_fx: False,
             sound_id: 6
         },
-        
+
     },
     "usb_rachel_enable": {
         fe_cb: {
@@ -603,6 +636,45 @@ event_map = {
         },
         event_condition: USBScripts.elancell_disabled_condition
     },
+    "service_mode_enable": {
+
+        trigger_cmd: "service",
+        trigger_msg: "on",
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.cleanupLight, lab_light_white],
+        # event_condition: GeneralConditions.service_enable
+    },
+    "service_mode_disable": {
+        trigger_cmd: "service",
+        trigger_msg: "off",
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.light_off, lab_light_off],
+        # event_condition: GeneralConditions.service_disable
+    }
+}
+
+# Only can be applied to non binary pinbased inputs
+inverted_events = {
+    "laserlock_cable_broken": {
+        pcf_in_add: laserlock_in_2_pcf,
+        pcf_in: 1 << 0,
+        event_condition: LaserLock.broken_conditions,
+        fe_cb: {
+            fe_cb_cmd: "airlock",
+            fe_cb_tgt: "tr1",
+            fe_cb_msg: "broken"
+        }
+    },
+    "laserlock_door_opened": {
+        pcf_in_add: laserlock_in_2_pcf,
+        pcf_in: 1 << 1,
+        event_condition: LaserLock.door_open_condition,
+        sound: {
+            sound_id: 3,
+            # yes its actually an atmo
+            is_fx: False
+        }
+    },
 }
 
 
@@ -623,9 +695,9 @@ def activate_sound(event_entry):
         ret = requests.post("http://POD-ITX/AudioInterface.php", payload)
         print(f"send sound payload: {payload}")
         print(ret)
-    except Exception as OSE:
-        # print(f"failed to request sound due to {OSE}")
-        pass
+    except OSError as OSE:
+        print(f"failed to request sound due to {OSE}")
+        return
 
 
 

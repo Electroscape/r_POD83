@@ -44,6 +44,32 @@ int relayInitArray[relayAmount] = {
     service_init
 };
 
+#define inputCnt 1
+#define outputCnt 2
+
+enum IOpins {
+    IO_1,
+    IO_2,
+    IO_3,
+};
+
+enum inputValues {
+    service_disable_in = 1
+};
+
+int intputArray[inputCnt] = {
+    IO_1,
+};
+
+enum outputValues {
+    service_enable = 1,
+    service_disable,
+};
+
+int outputArray[outputCnt] = {
+    IO_2,
+    IO_3,
+};
 
 enum stages{
     gameLive = 1,
@@ -67,7 +93,7 @@ char passwords[PasswordAmount][MaxPassLen] = {
     "3105",
     "5638",
     "2018",
-    "1111",     // service code
+    "20162023",     // service code
     "0000",     // reset code, does this also work within th service mode?
 };
 

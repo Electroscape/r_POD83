@@ -311,28 +311,8 @@
     <div>
         <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Synthesizer run1, Last sample & Killswitch Video
         </button>
-        <!--
-        <button class="btn btn-outline-light" name="dispenser_0 correct" onclick="onClickTrigger(name)">Dispense Correct
+        <button class="btn btn-outline-light" name="cleanroom_unlock" onclick="onClickTrigger(name)">cleanroom unlock
         </button>
-        -->
-        <button class="btn btn-outline-light" name="dispenser_dishout" onclick="onClickTrigger(name)">Dispenser DishOut
-        </button>
-        <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Analyzer Run1
-            Wright (Killswitch Video)
-        </button>
-        <!--
-        duplicate to the one above the textfield
-        <button class="btn btn-outline-light" name="analyzer_run2Right" onclick="onClickTrigger(name)">Analyzer Ru2
-            Wright (upload enable)
-        </button>
-        -->
-        <br>
-        <button class="btn btn-outline-light" name="cleanroom_unlock" onclick="onClickTrigger(name)">cleanroom decon
-        </button>
-        <!--
-        <button class="btn btn-outline-light" name="cleanroom_door" onclick="onClickTrigger(name)">cleanroom door
-        </button>
-        -->
         <br>
         <button class="btn btn-outline-light" name="dispenser_dish1" onclick="onClickTrigger(name)">Dispenser Dish1
         </button>
@@ -360,11 +340,14 @@
     </div>
     <br>
 
-    <h3>Door and Light Control</h3>
+    <h3>Service</h3>
     <div>
-        <button class="btn btn-outline-light" name="labLight_off" onclick="onClickTrigger(name)">Lab light off & locked door
+        <button class="btn btn-outline-light" name="service_on" onclick="onClickTrigger(name)">Service Enable
+        </button>
+        <button class="btn btn-outline-light" name="service_off" onclick="onClickTrigger(name)">Service Disable
         </button>
     </div>
+    <br>
 
 
 {% endblock %}

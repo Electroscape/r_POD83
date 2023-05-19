@@ -14,11 +14,20 @@ from ring_list import RingList
 from fns import js_r, get_progressbar_status
 from pages import app_pages, get_login_user
 import socketio
+import logging
+from datetime import datetime as dt
+
+now = dt.now()
+log_name = now.strftime("T1 %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.DEBUG,
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
+# reconnection=False
 sio = socketio.Client()
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
@@ -40,7 +49,7 @@ def browser():
         "lang": g_lang
     }
 
-    print("open wiki page")
+    # print("open wiki page")
     html_path = f'{terminal_name}/p_browser.html'
     return render_template(html_path, g_config=config, g_lang=g_lang, folders=get_posts())
 
@@ -58,8 +67,7 @@ def get_post(post_path):
         "title": name[:-3],
         "lang": g_lang
     }
-
-    print(f"post path: {path}")
+    logging.info(f"post path: {path}")
     post = flatpages.get_or_404(path)
     html_path = f'{terminal_name}/post.html'
     return render_template(html_path, g_config=config, post=post)
@@ -73,11 +81,11 @@ def lab_control():
     if request.method == "POST":
         if request.form.get("status"):
             airlock_boot = request.form.get("status")
-            print(f"airlock boot: {airlock_boot}")
+            logging.info(f"airlock boot: {airlock_boot}")
             return airlock_boot
         elif request.form.get("auth"):
             airlock_auth = request.form.get("auth")
-            print(f"airlock auth: {airlock_auth}")
+            logging.info(f"airlock auth: {airlock_auth}")
             return airlock_auth
 
     config = {
@@ -85,7 +93,7 @@ def lab_control():
         "boot": airlock_boot,
         "auth": airlock_auth
     }
-    print("open lab page")
+    logging.info("open lab page")
     html_path = f'{terminal_name}/p_lab.html'
     return render_template(html_path, g_config=config)
 
@@ -115,7 +123,7 @@ def chat_control():
         "title": "Chat Room",
         "chat_msg": chat_msgs.get()
     }
-    print("open chat page")
+    logging.info("open chat page")
     return render_template("p_chat.html", g_config=config)
 
 
@@ -139,10 +147,10 @@ def switch_language():
 
         if req_lang or req_lang != g_lang:
             g_lang = req_lang.strip()
-            print(f"Switch language to {g_lang}")
+            logging.info(f"Switch language to {g_lang}")
             # Switch blog language
             if "browser" in url:
-                print("switch lang in wiki")
+                logging.info("switch lang in wiki")
                 return get_posts()
 
             return get_globals()
@@ -193,10 +201,10 @@ def foscam_control():
         try:
             requests.get(url)
         except TypeError:
-            print("cgi ptz command")
+            logging.info("cgi ptz command")
         return "success"
 
-    print("open CCTV page")
+    logging.info("open CCTV page")
     return render_template("TR1/p_cctv.html", g_config=config, cams=ip_conf["cams"])
 
 
@@ -213,24 +221,24 @@ def favicon():
 
 @sio.event
 def connect():
-    print("Connected to Server!")
+    logging.info("Connected to Server!")
 
 
 @self_sio.event
 def connect():
-    print("Self is connected!")
+    logging.info("Self is connected!")
 
 
 @sio.event
-def connect_error():
-    print("The connection to server failed!")
+def connect_error(message=None):
+    logging.debug(f"The connection to server failed! \n{message}")
 
 
 @sio.on('to_clients')
 def events_handler(data):
     # filter the message to get the user here!
     if data.get("username") != terminal_name.lower():
-        print(f"irrelevant msg: {data}")
+        logging.info(f"irrelevant msg: {data}")
         return 0
     else:
         global login_user
@@ -243,22 +251,22 @@ def events_handler(data):
     # Commands
     if data.get("cmd") == "auth":
         login_user = msg
-        print(f"login msg: {msg}")
-        print(f'{terminal_name} authenticated user is: {login_user}')
+        logging.info(f"login msg: {msg}")
+        logging.info(f'{terminal_name} authenticated user is: {login_user}')
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
     elif data.get("cmd") == "usbBoot":
         usb_boot = msg
-        print(f"boot msg: {msg}")
+        logging.info(f"boot msg: {msg}")
         self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
     elif data.get("cmd") == "airlock":
         airlock_boot = msg
-        print(f"airlock msg: {msg}")
+        logging.info(f"airlock msg: {msg}")
         self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
     elif data.get("cmd") == "airlock_auth":
         airlock_auth = msg
-        print(f"airlock auth msg: {msg}")
+        logging.info(f"airlock auth msg: {msg}")
     elif data.get("cmd") == "loadingbar":
-        print(f"set loading bar: {msg}")
+        logging.info(f"set loading bar: {msg}")
         self_sio.emit('loadingbar_fe', msg)
 
 
@@ -279,49 +287,38 @@ def on_message(data):
 
 @self_sio.on("msg_to_backend")
 def on_msg(data):
-    print(f"from frontend: {data} -> forward to server")
-    if connected:
+    logging.info(f"from frontend: {data} -> forward to server")
+    if sio.connected:
         sio.emit("msg_to_server", data)
     else:
-        print(f"server is offline! lost data: {data}")
+        logging.debug(f"server is offline! lost data: {data}")
 
 
-print("connecting to server")
-connected = False
 
 
 @self_sio.event
 def disconnect():
-    print("self is disconnected!")
+    logging.debug("self is disconnected!")
     # it disconnects when navigate pages
     # raise "SelfDisconnected"
 
 
 @sio.event
 def disconnect():
-    global connected
-    print("Disconnected from server")
-    connected = False
+    logging.debug("Disconnected from server")
 
 
-def keep_reconnecting():
-    global connected
 
-    while True:
-        if not connected:
-            try:
-                # connecting to sio
-                sio.connect(server_ip)
-                connected = True
-            except Exception as e:
-                self_sio.sleep(2)
-                print(f"re-try connect to server: {server_ip}")
+try:
+    # connecting to sio
+    sio.connect(server_ip)
+except Exception as e:
+    logging.debug(f"re-try connect to server: {server_ip}")
 
+# reconnection_task = self_sio.start_background_task(keep_reconnecting)
+chat_msgs = RingList(100)   # stores chat history max 100 msgs, declare before starting sockets
 
-reconnection_task = self_sio.start_background_task(keep_reconnecting)
-print("Init global variables")
 login_user = get_login_user(terminal_name)  # either David, Rachel or empty string
-chat_msgs = RingList(100)  # stores the whole conversation
 airlock_boot = "normal"
 airlock_auth = "normal"
 usb_boot = "shutdown"
@@ -332,4 +329,4 @@ flatpages = FlatPages(app)
 app.config.from_object(__name__)
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5551)
+    sio.run(app, debug=True, host='0.0.0.0', port=5551)

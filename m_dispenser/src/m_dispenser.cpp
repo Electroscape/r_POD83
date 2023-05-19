@@ -59,14 +59,12 @@ void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No) {
     delay(500);
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
     delay(500);
-    /*
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
     delay(500);
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
     delay(500);
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
     delay(500);
-    */
 }
 
 

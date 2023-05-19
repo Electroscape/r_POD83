@@ -49,7 +49,6 @@ void enableWdt() {
 void handleInputs() {
 
     int result = MotherIO.getInputs();
-    Serial.println(result);
 
     if (lastState == result) {
         return;
@@ -92,13 +91,11 @@ void handleInputs() {
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 40);
         break;
-#ifdef HHVersion
-        case deconTrigger:
-            Mother.motherRelay.digitalWrite(cleanRoomDecon, open);
+        case IO::deconTrigger:
+            Mother.motherRelay.digitalWrite(decon, open);
             delay(5000);
-            Mother.motherRelay.digitalWrite(cleanRoomDecon, closed);
+            Mother.motherRelay.digitalWrite(decon, closed);
         break;
-#endif
         default: break;
     }
 

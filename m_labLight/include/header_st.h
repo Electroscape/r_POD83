@@ -10,30 +10,23 @@
 
 enum relays {
     labEntry,
-    labExit,
-    cleanRoomDoor, 
-    cleanRoomDecon,
+    decon
 };
 
 enum relayInits {
     labEntry_init = closed,
     labExit_init = closed,
-    cleanRoomDoor_init = closed,
-    cleanRoomDecon_init = closed,
+    decon_init = closed
 };
 
 int relayPinArray[relayAmount] = {
     labEntry,
-    labExit,
-    cleanRoomDoor,
-    cleanRoomDecon
+    decon
 };
 
 int relayInitArray[relayAmount] = {
     labEntry_init,
-    labExit_init,
-    cleanRoomDoor_init,
-    cleanRoomDecon_init
+    decon_init
 };
 
 enum brains {
@@ -43,14 +36,10 @@ enum brains {
 
 // --- Inputs IGNORE THE NAMING SHEME, this is already transmitted as binary
 enum IOPins {
-    lightOff_pin,             // red
-    lightNormal_pin,      // black  
-    lightNormalBright_pin,      // black  
-    lightRed_pin,          // Green
-    lightRedBright_pin,          // Green
-    lightBlue_pin,          // Green
-    door_pin,          // Green
-    inverted_door_pin,
+    IO1,
+    IO2,
+    IO3,
+    IO4
 };
 
 
@@ -62,30 +51,23 @@ enum IO {
     lightRachelAnnouncement,
     lightRachelEnd,
     lightDavidAnnouncement,
-    lightDavidEnd,
     labDoorLock,
     labDoorUnlock,
     deconTrigger,
-    cleanRoomDoorTrigger, // 12
 };
 
-#define outputCnt 1
-#define inputCnt 7
+#define outputCnt 0
+#define inputCnt 4
 
 static constexpr int clrLight[3] = {255,200,120};
 
 
 int intputArray[inputCnt] = {
-    lightOff_pin,             // red
-    lightNormal_pin,      // black  
-    lightNormalBright_pin,      // black  
-    lightRed_pin,          // Green
-    lightRedBright_pin,          // Green  
-    lightBlue_pin,          // Green
-    door_pin,
+    IO1,
+    IO2,
+    IO3,
+    IO4
 };
 
-int outputArray[outputCnt] = {
-    inverted_door_pin
-};
+int outputArray[outputCnt] = {};
 

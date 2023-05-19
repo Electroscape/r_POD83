@@ -123,15 +123,19 @@ def handle_event(event_key, event_value=None):
     except KeyError as err:
         print(err)
         pass
-
-    handle_event_fe(event_value, event_key)
+    try:
+        handle_event_fe(event_value, event_key)
+    except socketio.exceptions as exp:
+        logging.debug(f"error with sending message to FE: exp")
     queued_event = event_value.get(event_next_qeued, False)
     if queued_event:
         handle_event(queued_event)
 
 
 def handle_event_fe(event_value, event_key):
-    # Frontend
+    # Otherwise we crash
+    if not sio.connected:
+        return
     cb_dict = event_value.get(fe_cb, False)
     if not cb_dict:
         # This way any event can be monitored on the server
@@ -144,6 +148,13 @@ def handle_event_fe(event_value, event_key):
     cb_msg = cb_dict.get(fe_cb_msg, "")
     print(f"sio emitting: {cb_tgt} {cb_cmb} {cb_msg}\n\n")
     sio.emit("events", {"username": cb_tgt, "cmd": cb_cmb, "message": cb_msg})
+    
+
+'''
+@sio.on('*')
+def catch_all(event, sid, *args):
+    print(f'catch_all(event={event}, sid={sid}, args={args})')
+'''
 
 
 @sio.on("trigger")
@@ -224,15 +235,38 @@ def handle_pcf_input(input_pcf, value):
         except KeyError:
             continue
 
-    if rejected and input_pcf == 4:
+    if rejected and input_pcf == laserlock_in_pcf:
         print(f"\n\nInvalid PCF input\n PCFNo {input_pcf} value {value}\n\n")
     cooldowns.cooldowns.update(temporary_cooldowns)
 
 
-def handle_pcf_inputs():
-    active_inputs = IO.get_inputs()
+def handle_pcf_inputs(active_inputs):
     for active in active_inputs:
         handle_pcf_input(*active)
+
+
+# only applies to non binary pin based values
+def handle_inverted_events(active_inputs):
+    for event_key, event_value in inverted_events.items():
+        # print(f"\n chcecking {event_key}:")
+        if inverted_triggered(event_value, active_inputs):
+            # print(f"attempting event {event_key}")
+            handle_event(event_key, event_value)
+        # else:
+            # print(f"{event_key} not triggered")
+
+
+def inverted_triggered(event_value, active_inputs):
+    pcf_addr = event_value.get(pcf_in_add, -1)
+    pcf_value = event_value.get(pcf_in, -1)
+    for pcf_input in active_inputs:
+        # print(pcf_input)
+        if pcf_input[0] == pcf_addr:
+            # print(f"{pcf_value} compared {pcf_input[1]}")
+            # print(pcf_value & pcf_input[1])
+            if pcf_value & pcf_input[1] > 0:
+                return False
+    return True
 
 
 def connect():
@@ -253,10 +287,10 @@ def main():
         # handle_event("laserlock_fail")
         # continue
         # exit()
-        # IO.fix_cleanroom()
-        
         handle_usb_events()
-        handle_pcf_inputs()
+        active_inputs = IO.get_inputs()
+        handle_pcf_inputs(active_inputs=active_inputs)
+        handle_inverted_events(active_inputs)
 
 
 if __name__ == '__main__':

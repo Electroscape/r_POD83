@@ -4,6 +4,12 @@ import socketio
 
 from rfid import RFID
 
+import logging
+
+logging.basicConfig(filename='microscope.log', level=logging.INFO,
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
@@ -53,14 +59,13 @@ def connect():
 
 @sio.event
 def disconnect():
-    global connected
-    print("microscope is disconnected from server")
-    connected = False
+    logging.info("microscope is disconnected from server")
 
 
 @sio.on("rfid_event")
 def rfid_updates(data):
-    print(f"rfid message: {data}")
+    logging.debug(f"RFID EVENT: {data}")
+    logging.info(f"rfid message: {data}")
     if data.get("cmd") == "status":
         data["status"] = data["message"]
         nfc_reader.set_rfid_status(data["message"])
@@ -73,12 +78,12 @@ def rfid_updates(data):
 
 @self_sio.event
 def connect():
-    print("Self is connected!")
+    logging.info("Self is connected!")
 
 
 @self_sio.on("msg_to_backend")
 def on_msg(data):
-    print(f"from frontend: {data} -> forward to server")
+    logging.info(f"from frontend: {data} -> forward to server")
     # sio.emit("msg_to_server", data)
 
 
@@ -89,35 +94,30 @@ nfc_reader = RFID(server_ip=server_ip, cards=valid_cards)
 def check_for_updates():
     prev_data = nfc_reader.get_data().copy()
     while True:
-        self_sio.sleep(2)
-        while not nfc_reader.connected:
-            # print(f"in polling mode {prev_data}")
-            if prev_data != nfc_reader.get_data():
-                prev_data = nfc_reader.get_data().copy()
-                print("updates to frontend from polling")
-                self_sio.emit("microscope_fe", prev_data)
-                print(f"sent: {prev_data}")
+        # self_sio.sleep(2)
+        # while not nfc_reader.connected:
+        # print(f"in polling mode {prev_data}")
+
+        if prev_data != nfc_reader.get_data():
+            prev_data = nfc_reader.get_data().copy()
+            logging.info("updates to frontend from polling")
+            self_sio.emit("microscope_fe", prev_data)
+            logging.debug(f"emitting update {prev_data}")
+            logging.info(f"sent: {prev_data}")
 
 
-def keep_reconnecting():
-    global connected
-
-    while True:
-        if not connected:
-            try:
-                # connecting to sio
-                sio.connect(server_ip)
-                connected = True
-            except Exception:
-                self_sio.sleep(2)
-                print(f"re-try connect to server: {server_ip}")
+'''
+while not sio.connected:
+    try:
+        sio.connect(server_ip)
+    except Exception as exp:
+        logging.debug(f"re-try connect to server: {server_ip}")
+        logging.debug(exp)
+'''
 
 
 # polling updates if server is offline
 self_sio.start_background_task(check_for_updates)
 
-connected = False
-self_sio.start_background_task(keep_reconnecting)
-
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5555)
+    self_sio.run(app, debug=True, host='0.0.0.0', port=5555)

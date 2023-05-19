@@ -7,6 +7,8 @@ sys.path.append(file_dir)
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 import json
+import logging
+from datetime import datetime as dt
 
 # Next two lines are for the issue: https://github.com/miguelgrinberg/python-engineio/issues/142
 from engineio.payload import Payload
@@ -17,6 +19,12 @@ from ring_list import RingList
 
 chat_history = RingList(100)
 chat_history.append('Welcome to the server window')
+
+now = dt.now()
+log_name = now.strftime("server %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.DEBUG,
+                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
 
 
 def read_json(filename: str, from_static=True) -> dict:
@@ -58,7 +66,10 @@ ip_conf = read_json(f"ip_config.json", from_static=False)
 
 ip_conf = [f"http://{ip}" for ip in ip_conf.values() if isinstance(ip, str)]
 all_cors = ip_conf + ['*']
-sio = SocketIO(app, cors_allowed_origins=all_cors)
+
+#  engineio_logger=True, for really detailed logs
+sio = SocketIO(app, cors_allowed_origins=all_cors,
+               ping_timeout=120, ping_interval=20)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -69,7 +80,7 @@ def index():
         "lang": "en"
     }
     # ip_address = request.remote_addr
-    # print("Requester IP: " + ip_address)
+    # logging.info("Requester IP: " + ip_address)
     return render_template("server_home.html", g_config=config, chat_msg=chat_history.get())
 
 
@@ -95,7 +106,7 @@ def get_auth_users() -> dict:
 
 @sio.on("connect")
 def on_connect():
-    print("New socket connected")
+    logging.info("New socket connected")
 
 
 @sio.on("disconnect")
@@ -103,7 +114,7 @@ def vid_on_disconnect():
     sid = "request.sid"
     display_name = "display name here"
 
-    print("Member left: {}<{}>".format(display_name, sid))
+    logging.debug("Member left: {}<{}>".format(display_name, sid))
 
     sio.emit('response_to_fe', {
         "update": f"user {sid} left"
@@ -124,7 +135,7 @@ def all_samples_solved():
 
 @sio.on('msg_to_server')
 def handle_received_messages(json_msg):
-    print('server received message: ' + str(json_msg))
+    logging.info('server received message: ' + str(json_msg))
     if json_msg.get("keypad_update"):
         global samples
         # "gas_control keypad 0 wrong"
@@ -157,15 +168,19 @@ def handle_received_messages(json_msg):
             "message": "solved"
         })
     elif "/lab_control" in str(json_msg):
-        print("access to laser-lock requested")
+        logging.info("access to laser-lock requested")
         # access the airlock lab
         sio.emit("trigger", {"username": "arb", "cmd": "airlock", "message": "access"})
     elif json_msg.get("cmd") == "cleanroom":
-        print(f"cleanroom status: {json_msg.get('message')}")
+        logging.info(f"cleanroom status: {json_msg.get('message')}")
         # access the cleanroom
         sio.emit("trigger", {"username": "arb", "cmd": "cleanroom", "message": json_msg.get("message")})
         # also update TR2
         sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": json_msg.get("message")})
+    elif json_msg.get("cmd") == "upload":
+        msg = json_msg.get("message")
+        if msg in ["elancell", "rachel"]:
+            sio.emit("trigger", {"username": "arb", "cmd": "upload", "message": msg})
     else:
         # broadcast chat message
         sio.emit('response_to_terminals', json_msg)
@@ -178,7 +193,7 @@ def override_triggers(msg):
     # Display message on frontend chatbox
     frontend_server_messages(msg)
     # print in console for debugging
-    print(f"msg to arb pi: sio.on('trigger', {str(msg)})")
+    logging.info(f"msg to arb pi: sio.on('trigger', {str(msg)})")
     # emit message on "trigger" channel for the arb RPi
     # Therefore listener on the arb Pi is @sio.on("trigger")
     sio.emit("trigger", msg)
@@ -189,7 +204,7 @@ def rfid_updates(msg):
     # Display message on frontend chatbox
     frontend_server_messages(msg)
     # print in console for debugging
-    print(f"from microscope: {str(msg)})")
+    logging.info(f"from microscope: {str(msg)})")
     # emit to microscope flask
     sio.emit("rfid_event", msg)
 
@@ -199,7 +214,7 @@ def rfid_extras(msg):
     # Display message on frontend chatbox
     frontend_server_messages(msg)
     # print in console for debugging
-    print(f"extra from rfid: {str(msg)})")
+    logging.info(f"extra from rfid: {str(msg)})")
     # emit extras
     msg_split = str(msg).split("_")
     if len(msg_split) == 2:
@@ -231,7 +246,7 @@ def events_handler(msg):
             sio.emit("samples", samples)
             sio.emit("samples", {"flag": "unsolved"})  # to reset the flag
             if msg.get("message") == "resetAll":
-                print("Server: Reset all")
+                logging.info("Server: Reset all")
                 # reset global variables
                 login_users = {
                     "tr1": "empty",
@@ -251,7 +266,7 @@ def events_handler(msg):
 
                 # set microscope off
     elif msg.get("username") == "mcrp":
-        print(f"to microscope: {str(msg)})")
+        logging.info(f"to microscope: {str(msg)}")
         sio.emit("rfid_event", msg)
     else:
         # Filters commands
@@ -259,7 +274,7 @@ def events_handler(msg):
             login_users[msg.get("username")] = msg.get("message")
 
         if msg.get("cmd") == "usbBoot":
-            loading_percent = 100
+            loading_percent = 90
             # reset airlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
 
@@ -292,5 +307,5 @@ def favicon():
 
 
 if __name__ == "__main__":
-    sio.run(app, debug=False, host='0.0.0.0', port=5500)
+    sio.run(app, debug=True, host='0.0.0.0', port=5500, engineio_logger=True)
     # app.run(debug=True, host='0.0.0.0', port=5500)
