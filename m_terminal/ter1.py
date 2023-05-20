@@ -22,7 +22,6 @@ log_name = now.strftime("T1 %m_%d_%Y  %H_%M_%S.log")
 logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
@@ -245,7 +244,7 @@ def events_handler(data):
         global usb_boot
         global airlock_boot
         global airlock_auth
-        
+
         msg = data.get("message")
 
     # Commands
@@ -294,8 +293,6 @@ def on_msg(data):
         logging.debug(f"server is offline! lost data: {data}")
 
 
-
-
 @self_sio.event
 def disconnect():
     logging.debug("self is disconnected!")
@@ -308,15 +305,15 @@ def disconnect():
     logging.debug("Disconnected from server")
 
 
+while not sio.connected:
+    try:
+        # connecting to sio
+        sio.connect(server_ip)
+    except Exception as e:
+        logging.debug(f"re-try connect to server: {server_ip}")
+        sio.sleep(2)
 
-try:
-    # connecting to sio
-    sio.connect(server_ip)
-except Exception as e:
-    logging.debug(f"re-try connect to server: {server_ip}")
-
-# reconnection_task = self_sio.start_background_task(keep_reconnecting)
-chat_msgs = RingList(100)   # stores chat history max 100 msgs, declare before starting sockets
+chat_msgs = RingList(100)  # stores chat history max 100 msgs, declare before starting sockets
 
 login_user = get_login_user(terminal_name)  # either David, Rachel or empty string
 airlock_boot = "normal"
@@ -329,4 +326,5 @@ flatpages = FlatPages(app)
 app.config.from_object(__name__)
 
 if __name__ == "__main__":
-    sio.run(app, debug=True, host='0.0.0.0', port=5551)
+    # sio is socketio.Client(), it has no run method
+    app.run(debug=True, host='0.0.0.0', port=5551)
