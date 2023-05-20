@@ -34,10 +34,6 @@ img {
    -webkit-animation-timing-function: linear;
 }
 
-#content:hover {
-   -webkit-animation-play-state: paused;
-}
-
 @-webkit-keyframes move {
    0% {
       transform:translateY(0);
