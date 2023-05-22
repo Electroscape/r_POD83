@@ -15,6 +15,26 @@ https://stackoverflow.com/questions/42497130/audio-doesnt-play-with-crontab-on-r
 
 get username via `id [user_name]`
 
+# setup venv
+
+```
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+## fixing python-socketio install
+
+pretty common occurence
+```
+source venv/bin/activate
+
+pip uninstall socketio
+pip uninstall python-socketio 
+pip install python-socketio 
+```
+
+
 <code>
 XDG_RUNTIME_DIR=/run/user/1000
 @reboot sleep 15 && cd pod && ./run.sh

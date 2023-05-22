@@ -16,6 +16,7 @@ from communication.TESocketServer import TESocketServer
 from pathlib import Path
 
 IO = ArbiterIO()
+usb_live = False
 
 '''
 @TODO: 
@@ -196,9 +197,13 @@ def handle_fe(data):
 
 
 def handle_usb_events():
+    global usb_live
     # one needs to exclude the other, removing it shall also disable said usb func
-    if not states.usb_booted and boot_usb_path.exists():
-        handle_event("usb_boot")
+    if boot_usb_path.exists():
+        if usb_live:
+            handle_event("usb_boot")
+    else:
+        usb_live = True
 
 
 def handle_pcf_input(input_pcf, value):

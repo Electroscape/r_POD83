@@ -50,9 +50,10 @@ class SocketClient:
             self.s = s
             print('socket client looking for connection')
             if self.__connect():
-                sleep(1)
                 while self.__received():
                     pass
+            else:
+                sleep(1)
 
     def read_buffer(self):
         ret = self.buffer
