@@ -334,10 +334,10 @@ void stageActions() {
             stage = idle;
         break;
         case successfulBoot:
-            Mother.motherRelay.digitalWrite(outerDoor, open);
             LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
             wdt_disable();
             delay(10000);
+            Mother.motherRelay.digitalWrite(outerDoor, open);
             enableWdt();
             stage = decon;
         break;
