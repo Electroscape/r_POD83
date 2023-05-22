@@ -4,10 +4,12 @@
 ## still WIP
 * servicemode triggered from lockerwall
 * adding selfcheck before start
-* automatic endings -> check before new version
 
 # V 0.2 
 
+* STB parts updated: Laserlock, Lablight
+* automatic endings
+* added safety to usb_boot now can be removed post startup without triggering
 * Laserlock -> binary instead of pinbased, permanently active eventscanning along with changes to arbiter evenmapping
 * added light options to Laserlock and lablight -> Service mode added endings are still WIP 
 * added inverting of events along with laserlock cable update in both ways
