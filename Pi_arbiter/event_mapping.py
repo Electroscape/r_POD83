@@ -7,7 +7,11 @@ from enum import IntEnum
 
 # these are the pcf addresses, first 3 are Arbiter -> Brain as outputs
 # last 3 are Brain -> Arbiter inputs
+
+# for rev 0.1
 # [0x38, 0x39, 0x3A, 0x3C, 0x3D, 0x3E]
+# for rev 0.2 and onwards
+# [0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D]
 
 #
 laserlock_out_pcf = 0
@@ -126,6 +130,7 @@ def play_elancell_intro(*args):
 
 def call_video(event_key, nw_sock):
     nw_sock.transmit(event_key)
+
 
 class LaserLock:
     @staticmethod
