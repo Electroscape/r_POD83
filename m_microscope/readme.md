@@ -12,7 +12,7 @@ use a GUI RPI image
     device.connstring = "pn532_i2c:/dev/i2c-1"
     ```
 3. run `i2cdetect -y 1` to assure i2c sensor is detected corretly. Default address is 0x24
-4. disable hardware acceleration in chromium
+4. So important: **disable hardware acceleration in chromium**
 
 ## Possible installation problems
 

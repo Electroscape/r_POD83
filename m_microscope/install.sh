@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo apt update -y
 sudo apt install i2c-tools libnfc6 libnfc-bin libnfc-examples chromium-browser -y
 sudo apt-get install python3-dev python3-rpi.gpio picap -y
