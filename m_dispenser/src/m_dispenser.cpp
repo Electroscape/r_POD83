@@ -300,6 +300,12 @@ void handleInputs() {
     if (stage != waitRequest) { return; }
     lastStage = waitRequest;    // not sure this is needed
     int result = MotherIO.getInputs();
+
+    if (lastState == result) {
+        return;
+    }
+    lastState = result;
+
     if (result > 0) {
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
