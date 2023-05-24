@@ -475,11 +475,6 @@ void handleInputs() {
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 60);
             delay(3000);
         break;
-        case rachelEnd:
-            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
-            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
-            delay(3000);
-        break;
         case cleanupLight:
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 75);
@@ -489,6 +484,98 @@ void handleInputs() {
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
         break;
+        case rachelAnnouncement:
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);    
+        break;
+        
+        case rachelEnd:
+            wdt_disable();
+            #ifdef Hamburg
+                LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 60);
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+                /* delay(41000); // Video Rachel
+                delay(34000); // Video Proceed to airlock start at second "remain calm" */
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 50);
+                delay(200);
+                
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrYellow,950,50,100,100,PWM::set1);
+                
+                delay(10000); // Delay Countdown
+
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 50);
+                delay(1000);
+                for (int i=0; i<4; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 100);
+                    delay(200);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 100);
+                    delay(100);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(100);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                delay(500);
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set1);
+                delay(1000);
+                for (int i=0; i<3; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+                    delay(400);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 60);
+                    delay(200);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(200);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                delay(500);
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set1);
+                delay(1000);
+                for (int i=0; i<3; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
+                    delay(650);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 30);
+                    delay(325);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(325);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                delay(500);
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set1);
+                delay(1000);
+                for (int i=0; i<3; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
+                    delay(900);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 30);
+                    delay(450);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(450);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 1000);
+                delay(7000);
+                LED_CMDS::fade2color(Mother, ledLaserBrain,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,100,12000,PWM::set1);
+                delay(12000);
+                LED_CMDS::setStripToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
+           
+           #else
+                LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+                delay(3000);
+            #endif              
+            wdt_enable(WDTO_8S);
+        break;
+
         default: break;
     }
 }
