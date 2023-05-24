@@ -31,6 +31,7 @@ int stage = setupStage;
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
+int lastState = -1;     // to detemine if the signalfrom arbiter switched and shall be evaluated
 int DishCount = 0; // Counter for Dishes
 
 unsigned long beltEndTime = millis();
@@ -284,6 +285,12 @@ void handleInputs() {
     if (stage != waitRequest) { return; }
     lastStage = waitRequest;
     int result = MotherIO.getInputs();
+
+    if (lastState == result) {
+        return;
+    }
+    lastState = result;
+
     if (result > 0) {
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
