@@ -565,8 +565,10 @@ void handleInputs() {
                 LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 1000);
                 delay(7000);
                 LED_CMDS::fade2color(Mother, ledLaserBrain,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,100,12000,PWM::set1);
+                LED_CMDS::fade2color(Mother, ledCeilBrain,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,100,12000,PWM::set1);
                 delay(12000);
                 LED_CMDS::setStripToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
+                LED_CMDS::setStripToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
            
            #else
                 LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
