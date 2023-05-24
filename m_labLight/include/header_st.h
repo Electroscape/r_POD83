@@ -3,6 +3,7 @@
 #define relayAmount 2
 #define open        0
 #define closed      1
+#define Hamburg     1
 
 enum relays {
     labEntry,

@@ -80,13 +80,88 @@ void handleInputs() {
         break;
         case lightRachelEnd:
             Mother.motherRelay.digitalWrite(labEntry, open);
-            while ((millis() - startTime) < (unsigned long) 2000) {
-                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);
-                delay(600);
-                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlack, 30, LED_CMDS::clrRed, 30, 600, 1);
-                delay(600);
-            }
-            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+            wdt_disable();
+            #ifdef Hamburg
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+                /* delay(41000); // Video Rachel
+                delay(34000); // Video Proceed to airlock start at second "remain calm" */
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 50);
+                delay(200);
+                
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrYellow,950,50,100,100,PWM::set1);
+                
+                delay(10000); // Delay Countdown
+
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 50);
+                delay(1000);
+                for (int i=0; i<4; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 100);
+                    delay(200);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 100);
+                    delay(100);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(100);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                delay(500);
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set1);
+                delay(1000);
+                for (int i=0; i<3; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
+                    delay(400);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 60);
+                    delay(200);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(200);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                delay(500);
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set1);
+                delay(1000);
+                for (int i=0; i<3; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
+                    delay(650);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 30);
+                    delay(325);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(325);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                delay(500);
+                LED_CMDS::blinking(Mother, ledCeilBrain,LED_CMDS::clrBlack,LED_CMDS::clrRed,10,10,100,10,PWM::set1);
+                delay(1000);
+                for (int i=0; i<3; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
+                    delay(900);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrYellow, 30);
+                    delay(450);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+                    delay(450);
+                    LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
+                    delay(300);
+                }
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 1000);           
+           #else
+                while ((millis() - startTime) < (unsigned long) 2000) {
+                    LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);
+                    delay(600);
+                    LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlack, 30, LED_CMDS::clrRed, 30, 600, 1);
+                    delay(600);
+                }
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);            
+            #endif              
+            wdt_enable(WDTO_8S);
         break;
         case lightDavidAnnouncement:
             Mother.motherRelay.digitalWrite(labEntry, open);
