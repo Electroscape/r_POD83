@@ -577,7 +577,7 @@ event_map = {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachel",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dish_rachel_end_announce],
+        pcf_out: [LaserlockOut.rachel_end_announce, lab_rachel_end_announce, AirlockOut.rachel_announce, lab_dish_rachel_end_announce],
         event_script: call_video,
         event_next_qeued: "end_rachel"
     },
@@ -585,7 +585,7 @@ event_map = {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.light_off, lab_rachel_end, AirlockOut.rachel_end, lab_dish_rachel_end],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_dish_rachel_end],
         event_delay: 92,
         sound: {
             is_fx: False,
