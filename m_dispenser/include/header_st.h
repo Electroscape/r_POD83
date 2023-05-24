@@ -5,7 +5,7 @@
 #define MaxPassLen 5
 #define closed 1
 #define open   0
-#define Hamburg 1
+// #define Hamburg 1
 
 
 enum brains {
@@ -102,17 +102,4 @@ enum stages {
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
 
-
-// could have multiple brains listed here making up a matrix
-// for now its only an Access module mapped here
-int flagMapping[StageCount] {
-    ledFlag,
-    ledFlag,
-    ledFlag,
-    ledFlag,
-    ledFlag,
-    ledFlag,
-    ledFlag,
-    ledFlag
-};
 
