@@ -33,9 +33,6 @@ int stageIndex = 0;
 int lastStage = -1;
 int DishCount = 0; // Counter for Dishes
 
-unsigned long beltEndTime = millis();
-bool beltActive = false;
-
 
 /**
  * @brief Set the Stage Index object
@@ -62,32 +59,19 @@ void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No) {
     delay(500);
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
     delay(500);
-}
-
-
-void setBeltTimer() {
-    #ifndef Hamburg
-        Serial.println(" ==== setting belt timer ===");
-        beltEndTime = millis() + (unsigned long) 13000;
-        beltActive = true;
-    #endif
-}
-
-
-void stopBelt() {
-
-    Serial.println(" ==== ending belt ===");
-    Mother.motherRelay.digitalWrite(BeltOn, closed);  //Start Belt 
-    delay(50);   
-    Mother.motherRelay.digitalWrite(Belt1, closed);  // Change Belt Direction
-    Mother.motherRelay.digitalWrite(Belt2, closed);  // change Belt Direction
-    beltActive = false;
+    /*
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
+    delay(500);
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
+    delay(500);
+    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
+    delay(500);
+    */
 }
 
 
 void stageActions() {
     wdt_reset();
-    unsigned long startTime = millis();
 
     switch (stage) {
         case setupStage: 
@@ -110,10 +94,12 @@ void stageActions() {
                 LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
                 delay(800);
             #endif
-
             func_move_servo(Mother, Servo_Brain2,0);
             wdt_disable();           
-            setBeltTimer();
+            #ifndef Hamburg
+                delay(13000); // long time for Belt
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
             wdt_enable(WDTO_8S);    
         break;
 
@@ -128,7 +114,10 @@ void stageActions() {
             #endif
             func_move_servo(Mother, Servo_Brain1,3);
             wdt_disable();          
-            setBeltTimer();
+            #ifndef Hamburg
+                delay(11000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
             wdt_enable(WDTO_8S);
         break;
 
@@ -143,7 +132,10 @@ void stageActions() {
             #endif
             func_move_servo(Mother, Servo_Brain1,2);
             wdt_disable();       
-            setBeltTimer();
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                delay(11000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
             wdt_enable(WDTO_8S);
         break;
 
@@ -158,7 +150,10 @@ void stageActions() {
             #endif
             func_move_servo(Mother, Servo_Brain1,1);
             wdt_disable();
-            setBeltTimer();
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                delay(11000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+            #endif
             wdt_enable(WDTO_8S); 
         break;
 
@@ -176,7 +171,14 @@ void stageActions() {
             #endif
             func_move_servo(Mother, Servo_Brain1,0);
             wdt_disable();
-            setBeltTimer();
+            
+            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                delay(12000);
+                Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection
+                delay(200);   
+                Mother.motherRelay.digitalWrite(Belt1, closed);  //Change Belt Direction
+            Mother.motherRelay.digitalWrite(Belt2, closed);  //change Belt Direction
+            #endif
             wdt_enable(WDTO_8S);
         break;
 
@@ -246,11 +248,6 @@ void stageActions() {
     }
     stage = waitRequest;
     wdt_reset();
-
-    // to make sure the same signal is not picked up twice
-    while (millis() - startTime < 3500) {
-        wdt_reset();
-    }
 }
 
 
@@ -278,8 +275,6 @@ void stageUpdate() {
 }
 
 void handleInputs() {
-    wdt_reset();
-
     // @CW you may want to just use enums to fill the cases here then you dont need to comment each random number ;-)
     if (stage != waitRequest) { return; }
     lastStage = waitRequest;
@@ -290,7 +285,7 @@ void handleInputs() {
     }
     switch (result) {
         case (1 << 0): //dispenserAction
-
+        wdt_reset();
         DishCount = DishCount + 1;
         switch (DishCount) {
             case 1: stage = Dish1; break;
@@ -303,30 +298,37 @@ void handleInputs() {
         }  
         break;
         case (2): //Dish1
+            wdt_reset();
             stage = Dish1;
             DishCount = 1;
         break;
         case (3): //Dish2
+            wdt_reset();
             stage = Dish2;
             DishCount = 2;
         break;
         case (4): //Dish3
+            wdt_reset();
             stage = Dish3;
             DishCount = 3;
         break;
         case (5): //Dish4
+            wdt_reset();
             stage = Dish4;
             DishCount = 4;
         break;
         case (6): //Dish5
+            wdt_reset();
             stage = Dish5;
             DishCount = 5;
         break;
         case(7): // Rachel End
+            wdt_reset();
             stage = WorldsEnd;
             DishCount = 6;
         break;
         case(8): // Elancell End
+            wdt_reset();
             stage= DavidEnd;
             DishCount = 6;
         break;
@@ -345,14 +347,6 @@ void handleInputs() {
         }        
 
     } */
-}
-
-void handleBelt() {
-    #ifndef Hamburg 
-        if (beltActive && millis() > beltEndTime) {
-            stopBelt();
-        } 
-    #endif
 }
 
 void setup() {
@@ -376,10 +370,9 @@ void setup() {
 
 void loop() {
 
-    // Mother.rs485PerformPoll(); // change to input from Arbiter Pi
+    Mother.rs485PerformPoll(); // change to input from Arbiter Pi
     handleInputs();    
     stageUpdate();
-    handleBelt();
 
     wdt_reset();
 }
