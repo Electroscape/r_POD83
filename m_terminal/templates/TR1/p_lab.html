@@ -3,7 +3,8 @@
 {% block head %}
     <script type="text/javascript">
         let stopBootLoop = false;
-        let countdownTimeSeconds = 30;
+        let countdownTimeSeconds = 12;
+        let bootingTimeSeconds = 14;
     </script>
     <style>
         /* countdown */
@@ -209,9 +210,11 @@
             await sleep(1000);
 
             if (fixed === "fixed") {
+                // successful booting loop with the "active laser" timeout
                 setTimeout(() => {
                     stopBootLoop = true;
-                }, 6000)
+                }, bootingTimeSeconds * 1000);
+
                 $('#prtscr').empty();
                 $('#caution-container').removeClass("d-none");
                 $('#bootContainer').height("60vh");
@@ -270,7 +273,7 @@
             delayedGreeting();
         });
 
-        $("#bootup").click()
+        $("#bootup").click();
     </script>
     <script type="text/javascript">
         // grab the .countdown
