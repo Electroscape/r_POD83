@@ -287,7 +287,7 @@ def connect():
 def main():
     while True:
         # blank_screen_pid.kill()
-        handle_event("usb_boot")
+        # handle_event("airlock_intro")
         # handle_event("laserlock_bootdecon")
         # handle_event("laserlock_fail")
         # continue

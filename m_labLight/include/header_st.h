@@ -1,10 +1,6 @@
 #pragma once
 
-#define HHVersion   1
-
-
-#define relayAmount 4
-
+#define relayAmount 2
 #define open        0
 #define closed      1
 
@@ -34,7 +30,7 @@ enum brains {
 };
 
 
-// --- Inputs IGNORE THE NAMING SHEME, this is already transmitted as binary
+// --- Inputs IGNORE THE NAMING SCHEME, this is already transmitted as binary
 enum IOPins {
     IO1,
     IO2,
