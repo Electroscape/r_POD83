@@ -570,10 +570,6 @@ void handleInputs() {
                 delay(12000);
                 LED_CMDS::setStripToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
                 LED_CMDS::setStripToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
-                delay(12000); //bright for 2 minute than fading to Service Light Configuration
-                LED_CMDS::fade2color(Mother, ledLaserBrain,LED_CMDS::clrWhite,100,LED_CMDS::clrBlack,100,12000,PWM::set1);
-                LED_CMDS::fade2color(Mother, ledCeilBrain,LED_CMDS::clrWhite,100,LED_CMDS::clrWhite,75,12000,PWM::set1);
-
            
            #else
                 LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
