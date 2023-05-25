@@ -207,6 +207,25 @@
                                 <td>
                                 </td>
                             </tr>
+                            {% if g_config.version.zoom %}
+                                <tr>
+                                    <td>
+                                        <button onmousedown="ptzCmd('zoomOut', {{ loop.index0 }})"
+                                                onmouseup="ptzCmd('zoomStop', {{ loop.index0 }})">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        ZOOM
+                                    </td>
+                                    <td>
+                                        <button onmousedown="ptzCmd('zoomIn', {{ loop.index0 }})"
+                                                onmouseup="ptzCmd('zoomStop', {{ loop.index0 }})">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endif %}
                         </table>
                     </div>
                 </div>

@@ -192,7 +192,10 @@ def get_posts():
 def foscam_control():
     config = {
         "title": "CCTV Cameras",
-        "pincode": "1010"
+        "pincode": "1010",
+        "version": {
+            "zoom": True
+        }
     }
 
     if request.method == 'POST':

@@ -77,7 +77,10 @@ def index():
     config = {
         "title": "Server Terminal",
         "id": "server",
-        "lang": "en"
+        "lang": "en",
+        "version": {
+            "airlock_events": True
+        }
     }
     # ip_address = request.remote_addr
     # logging.info("Requester IP: " + ip_address)
