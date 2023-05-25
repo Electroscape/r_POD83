@@ -337,7 +337,7 @@ void stageActions() {
             LED_CMDS::fade2color(Mother, ledLaserBrain, LED_CMDS::clrRed, 0, LED_CMDS::clrRed, 80, 10000, PWM::set1);
             wdt_disable();
             delay(10000);
-            Mother.motherRelay.digitalWrite(outerDoor, open);
+            
             enableWdt();
             stage = decon;
         break;
@@ -352,6 +352,7 @@ void stageActions() {
                 delay(900); // loop should be a total of 8100ms -> 9 loops
                 wdt_reset();
             }
+            Mother.motherRelay.digitalWrite(outerDoor, open);
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             delay(100);      // 8130
             // LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100, 0);
