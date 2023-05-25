@@ -277,6 +277,7 @@
                     <input id="ipv4" type='text' name='text1'
                            {% if "breach" in request.path %}placeholder="type ip here"
                            {% else %}value="{{ g_config.elancell_ip }}"{% endif %}
+                           autocomplete="false"
                            class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 

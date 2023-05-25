@@ -216,7 +216,8 @@
                        onclick="onClickTerminal(name)"/>
                 <label for="t2_synth">Synthesized</label>
 
-                <input id="t2_done" name="tr2_elancell" type="radio" value="doneOverride" onclick="onClickTerminal(name)"/>
+                <input id="t2_done" name="tr2_elancell" type="radio" value="doneOverride"
+                       onclick="onClickTerminal(name)"/>
                 <label for="t2_done">Done</label>
             </div>
         </div>
@@ -267,35 +268,38 @@
     <!--
     <button class="btn btn-outline-light" name="cmd_message" onclick="onClickTrigger(name)">Example 2</button>
     -->
-    <h3>Airlock events</h3>
-    <div>
-        <button class="btn btn-outline-light" name="airlock_begin" onclick="onClickTrigger(name)">Airlock1 begin
-        </button>
-        <button class="btn btn-outline-light" name="airlock_intro" onclick="onClickTrigger(name)">Airlock1 Intro Video
-        </button>
-        <button class="btn btn-outline-light" name="airlock_fumigation" onclick="onClickTrigger(name)">Airlock1
-            Fumigation
-        </button>
-        <button class="btn btn-outline-light" name="airlock_sterilizationIntro" onclick="onClickTrigger(name)">Airlock1
-            SterilzationIntro
-        </button>
-        <button class="btn btn-outline-light" name="airlock_UV" onclick="onClickTrigger(name)">Airlock1 UV
-        </button>
-        <button class="btn btn-outline-light" name="airlock_BioScanIntro" onclick="onClickTrigger(name)">Airlock1
-            BioScanIntro
-        </button>
-        <button class="btn btn-outline-light" name="airlock_BioScan" onclick="onClickTrigger(name)">Airlock1 BioScan
-        </button>
-        <button class="btn btn-outline-light" name="airlock_BioScanDenied" onclick="onClickTrigger(name)">Airlock1
-            BioScanDenied
-        </button>
-        <button class="btn btn-outline-light" name="airlock_wrong" onclick="onClickTrigger(name)">Airlock1 Wrong
-        </button>
-        <button class="btn btn-outline-light" name="airlock_opening" onclick="onClickTrigger(name)">Airlock1 Opening
-        </button>
-    </div>
-    <br>
-
+    {% if g_config.version.airlock_events %}
+        <h3>Airlock events</h3>
+        <div>
+            <button class="btn btn-outline-light" name="airlock_begin" onclick="onClickTrigger(name)">Airlock1 begin
+            </button>
+            <button class="btn btn-outline-light" name="airlock_intro" onclick="onClickTrigger(name)">Airlock1 Intro
+                Video
+            </button>
+            <button class="btn btn-outline-light" name="airlock_fumigation" onclick="onClickTrigger(name)">Airlock1
+                Fumigation
+            </button>
+            <button class="btn btn-outline-light" name="airlock_sterilizationIntro" onclick="onClickTrigger(name)">
+                Airlock1
+                SterilzationIntro
+            </button>
+            <button class="btn btn-outline-light" name="airlock_UV" onclick="onClickTrigger(name)">Airlock1 UV
+            </button>
+            <button class="btn btn-outline-light" name="airlock_BioScanIntro" onclick="onClickTrigger(name)">Airlock1
+                BioScanIntro
+            </button>
+            <button class="btn btn-outline-light" name="airlock_BioScan" onclick="onClickTrigger(name)">Airlock1 BioScan
+            </button>
+            <button class="btn btn-outline-light" name="airlock_BioScanDenied" onclick="onClickTrigger(name)">Airlock1
+                BioScanDenied
+            </button>
+            <button class="btn btn-outline-light" name="airlock_wrong" onclick="onClickTrigger(name)">Airlock1 Wrong
+            </button>
+            <button class="btn btn-outline-light" name="airlock_opening" onclick="onClickTrigger(name)">Airlock1 Opening
+            </button>
+        </div>
+        <br>
+    {% endif %}
     <h3>Terminals</h3>
     <div>
         <button class="btn btn-outline-light" name="usb_boot" onclick="onClickTrigger(name)">USB Boot
@@ -307,7 +311,8 @@
 
     <h3>Lab</h3>
     <div>
-        <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Synthesizer run1, Last sample & Killswitch Video
+        <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Synthesizer run1,
+            Last sample & Killswitch Video
         </button>
         <button class="btn btn-outline-light" name="cleanroom_unlock" onclick="onClickTrigger(name)">cleanroom unlock
         </button>
@@ -333,7 +338,8 @@
         </button>
         <button class="btn btn-outline-light" name="upload_elancell" onclick="onClickTrigger(name)">Elancell ending
         </button>
-        <button class="btn btn-outline-light" name="upload_SelfDestruction" onclick="onClickTrigger(name)">SelfDestruction
+        <button class="btn btn-outline-light" name="upload_SelfDestruction" onclick="onClickTrigger(name)">
+            SelfDestruction
         </button>
     </div>
     <br>

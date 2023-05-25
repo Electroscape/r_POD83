@@ -31,7 +31,7 @@ enum brains {
 };
 
 
-// --- Inputs
+// --- Inputs IGNORE THE NAMING SCHEME, this is already transmitted as binary
 enum IOPins {
     IO1,
     IO2,

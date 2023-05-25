@@ -183,7 +183,7 @@ tr:hover {background-color: coral;}
   <tr>
     <td class="tg-baqh">432</td>
     <td class="tg-0lax">Laser lock failing</td>
-    <td class="tg-0lax">Ersetzen Sie die roten Ethernet-Kabel in der Steuereinheit unter Terminal 1</td>
+    <td class="tg-0lax">Ersetzen Sie die roten Ethernet-Kabel in der Steuereinheit neben dem Terminal 1</td>
   </tr>
   <tr>
     <td class="tg-baqh">500</td>

@@ -185,36 +185,45 @@
 
                 <!-- lock wrapper   start -->
                 <div class="lock-wrapper">
-                    <!--lock keypad start-->
-                    <div class='keypad'>
-                        <input type='text' id='keypad-display' class='display' placeholder='Enter Code' maxlength='4'>
-                        <div class='keys'>
-                            <div class='row'>
-                                <button>1</button>
-                                <button>2</button>
-                                <button>3</button>
+                    {% if g_config.get("version") == "launch_button" %}
+                        <div>
+                            <button class="btn-danger btn-lg btn-rounded p-5" onclick="launchBtnPress()">
+                                Decontaminate
+                            </button>
+                        </div>
+                    {% else %}
+                        <!--lock keypad start-->
+                        <div class='keypad'>
+                            <input type='text' id='keypad-display' class='display' placeholder='Enter Code'
+                                   maxlength='4'>
+                            <div class='keys'>
+                                <div class='row'>
+                                    <button>1</button>
+                                    <button>2</button>
+                                    <button>3</button>
+                                </div>
+                                <div class='row k-row'>
+                                    <button>4</button>
+                                    <button>5</button>
+                                    <button>6</button>
+                                </div>
+                                <div class='row'>
+                                    <button>7</button>
+                                    <button>8</button>
+                                    <button>9</button>
+                                </div>
+                                <div class='row'>
+                                    <button id='keypad-clear'><i class='fa fa-trash'></i></button>
+                                    <button>0</button>
+                                    <button id='keypad-enter'><i class='fa fa-sign-in'></i></button>
+                                </div>
                             </div>
-                            <div class='row k-row'>
-                                <button>4</button>
-                                <button>5</button>
-                                <button>6</button>
-                            </div>
-                            <div class='row'>
-                                <button>7</button>
-                                <button>8</button>
-                                <button>9</button>
-                            </div>
-                            <div class='row'>
-                                <button id='keypad-clear'><i class='fa fa-trash'></i></button>
-                                <button>0</button>
-                                <button id='keypad-enter'><i class='fa fa-sign-in'></i></button>
+                            <div class='access'><i class='fa fa-check'></i> Access Granted</div>
+                            <div class='noaccess'>Access Denied <a class="keypad-tryagain"><i class='fa fa-refresh'></i></a>
                             </div>
                         </div>
-                        <div class='access'><i class='fa fa-check'></i> Access Granted</div>
-                        <div class='noaccess'>Access Denied <a class="keypad-tryagain"><i class='fa fa-refresh'></i></a>
-                        </div>
-                    </div>
-                    <!--lock keypad end-->
+                        <!--lock keypad end-->
+                    {% endif %}
                 </div>
                 <!-- lock wrapper end -->
             </div>
@@ -222,8 +231,15 @@
         </div>
         <!--sliding door end-->
         <div class="row" id="main-content">
-            <div class="col-xs-12"><h1> Access granted <br/> Cleanroom is unlocked </h1>
-            </div>
+            {% if g_config.get("version") == "launch_button" %}
+                <div class="col-xs-12"><h1> Cleanroom ready <br/> Please use the keypad to unlock the door
+                </h1>
+                </div>
+            {% else %}
+                <div class="col-xs-12"><h1> Access granted <br/> Cleanroom is unlocked </h1>
+                </div>
+            {% endif %}
+
         </div>
     </div>
 
@@ -285,6 +301,15 @@
             document.getElementsByClassName('door')[1].style.transitionDelay = "0.6s";
             document.getElementsByClassName('left-door')[0].style.transform = "translateX(-100%)";
             document.getElementsByClassName('right-door')[0].style.transform = "translateX(100%)";
+        }
+
+        function launchBtnPress() {
+            openDoor();
+            socket.emit('msg_to_backend', {
+                cmd: "cleanroom",
+                message: "unlock",
+                username: myRoomID
+            });
         }
 
         function end() {

@@ -212,6 +212,7 @@ while not sio.connected:
         sio.connect(server_ip)
     except Exception as e:
         logging.debug(f"re-try connect to server: {server_ip}")
+        sio.sleep(2)
 
 chat_msgs = RingList(100)  # stores chat history max 100 msgs, declare before starting sockets
 
@@ -226,4 +227,6 @@ samples_flag = "unsolved"
 app.register_blueprint(app_pages)
 
 if __name__ == "__main__":
-    sio.run(app, debug=True, host='0.0.0.0', port=5552)
+    # sio is socketio.Client(), it has no run method
+    # self_sio is flask_socketio_server
+    app.run(debug=True, host='0.0.0.0', port=5552)

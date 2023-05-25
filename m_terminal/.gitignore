@@ -6,3 +6,4 @@ venv
 **.mp4
 ip_config.json
 run.sh
+*.log

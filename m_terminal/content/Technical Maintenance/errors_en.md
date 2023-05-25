@@ -183,7 +183,7 @@ tr:hover {background-color: coral;}
   <tr>
     <td class="tg-baqh">432</td>
     <td class="tg-0lax">Laser lock failing</td>
-    <td class="tg-0lax">Replace the red ethernet cables in the control unit below terminal 1</td>
+    <td class="tg-0lax">Replace the red ethernet cables in the control unit next to terminal 1</td>
   </tr>
   <tr>
     <td class="tg-baqh">500</td>
