@@ -246,8 +246,6 @@ void stageActions() {
         break;
 
     }
-    wdt_reset();
-    delay(3500);
     stage = waitRequest;
     wdt_reset();
 }
