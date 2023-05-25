@@ -9,6 +9,7 @@
 #define relayAmount 2
 #define open        0
 #define closed      1
+#define Hamburg     1
 
 #define doorOpen    0
 #define doorClosed  1
@@ -56,7 +57,8 @@ enum inputValues {
     lightOff,            
     cleanupLight,            
     failedBootTrigger,        
-    bootupTrigger,        
+    bootupTrigger,    
+    rachelAnnouncement,    
 };
 
 // 7 Values 3 IOs
