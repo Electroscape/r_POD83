@@ -23,6 +23,12 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+# removing media inserted dialog from desktop
+
+open the file explorer gui 
+* edit -> preferences
+* volume management -> show available options
+
 ## fixing python-socketio install
 
 pretty common occurence

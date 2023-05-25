@@ -9,3 +9,10 @@
 
 `@reboot sleep 30 && /home/2cp/Pi_arbiter/run.sh >> out.txt  2>&1`
 
+# removing media inserted dialog from desktop
+
+open the file explorer gui 
+* edit -> preferences
+* volume management -> show available options
+
+
