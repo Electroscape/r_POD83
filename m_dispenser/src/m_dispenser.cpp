@@ -31,6 +31,7 @@ int stage = setupStage;
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
+int lastInput = -1;
 int DishCount = 0; // Counter for Dishes
 
 
@@ -56,9 +57,9 @@ void setStageIndex() {
 void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No) {
     // Secured Dishout more  Servo Movements to get sure
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
-    delay(500);
+    delay(500);     // cannot set this to 600
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
-    delay(500);
+    delay(500);     // cannot set this to 600
     /*
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
     delay(500);
@@ -247,7 +248,7 @@ void stageActions() {
 
     }
     wdt_reset();
-    delay(3500);
+    // delay(3500);
     stage = waitRequest;
     wdt_reset();
 }
@@ -260,6 +261,7 @@ void stageActions() {
 */
 void stageUpdate() {
     if (lastStage == stage) { return; }
+
     Serial.print("Stage is:");
     Serial.println(stage);
     setStageIndex();
@@ -277,14 +279,21 @@ void stageUpdate() {
 }
 
 void handleInputs() {
+
     // @CW you may want to just use enums to fill the cases here then you dont need to comment each random number ;-)
     if (stage != waitRequest) { return; }
-    lastStage = waitRequest;
+    lastStage = waitRequest;    // not sure this is needed
     int result = MotherIO.getInputs();
     if (result > 0) {
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
     }
+
+    if (lastInput == result) {
+        return;
+    }
+    lastInput = result;
+
     switch (result) {
         case (1 << 0): //dispenserAction
         wdt_reset();
@@ -372,7 +381,7 @@ void setup() {
 
 void loop() {
 
-    Mother.rs485PerformPoll(); // change to input from Arbiter Pi
+    // Mother.rs485PerformPoll();   // no slave has inputs to read from
     handleInputs();    
     stageUpdate();
 
