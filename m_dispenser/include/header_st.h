@@ -5,6 +5,10 @@
 #define MaxPassLen 5
 #define closed 1
 #define open   0
+
+#define PumpOn      1
+#define PumpOff     0
+
 // #define Hamburg 1
 
 
@@ -54,11 +58,11 @@ enum relays {
 };
 
 enum relayInits {
-    Relay1_init = open,
-    Relay2_init = open,
-    Relay3_init = open,
-    Relay4_init = open, 
-    Relay5_init = open, 
+    Pump1_init = PumpOn,
+    Pump2_init = PumpOn,
+    Pump3_init = PumpOn,
+    Pump4_init = PumpOn, 
+    Pump5_init = PumpOn, 
     Relay6_init = closed,  
     Relay7_init = closed,  
     Relay8_init = closed, 
@@ -76,11 +80,11 @@ int relayPinArray[relayAmount] = {
 };
 
 int relayInitArray[relayAmount] = {
-    Relay1_init,
-    Relay2_init,
-    Relay3_init,
-    Relay4_init, 
-    Relay5_init,
+    Pump1_init,
+    Pump2_init,
+    Pump3_init,
+    Pump4_init, 
+    Pump5_init,
     Relay6_init,
     Relay7_init,
     Relay8_init, 

@@ -54,7 +54,7 @@ void setStageIndex() {
     delay(16000);
 }
 
-void func_move_servo(STB_MOTHER Mother,int Brain, int PWM_No) {
+void func_move_servo(STB_MOTHER Mother, int Brain, int PWM_No) {
     // Secured Dishout more  Servo Movements to get sure
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
     delay(500);     // cannot set this to 600
@@ -90,7 +90,7 @@ void stageActions() {
             #ifndef Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump5, closed);  //Stop Pump
+                Mother.motherRelay.digitalWrite(Pump5, PumpOff);
                 delay(500);
                 LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
                 delay(800);
@@ -101,6 +101,7 @@ void stageActions() {
                 delay(13000); // long time for Belt
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             #endif
+            Mother.motherRelay.digitalWrite(Pump5, PumpOn); 
             wdt_enable(WDTO_8S);    
         break;
 
@@ -108,7 +109,7 @@ void stageActions() {
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump4, closed);  //Start Belt normalDirection
+                Mother.motherRelay.digitalWrite(Pump4, PumpOff);  //Start Belt normalDirection
                 delay(500);
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
                 delay(800); 
@@ -120,13 +121,14 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
             #endif
             wdt_enable(WDTO_8S);
+            Mother.motherRelay.digitalWrite(Pump4, PumpOn);  
         break;
 
         case Dish3:// Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection           
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump3, closed);  //Start Belt normalDirection
+                Mother.motherRelay.digitalWrite(Pump3, PumpOff); 
                 delay(500);
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
                 delay(800);
@@ -136,15 +138,17 @@ void stageActions() {
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 delay(11000);
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+                Mother.motherRelay.digitalWrite(Pump3, PumpOn); 
             #endif
             wdt_enable(WDTO_8S);
+            
         break;
 
         case Dish4: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump2, closed);  //Start Belt normalDirection
+                Mother.motherRelay.digitalWrite(Pump2, PumpOff);
                 delay(500);            
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
                 delay(800);
@@ -154,6 +158,7 @@ void stageActions() {
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
                 delay(11000);
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection   
+                Mother.motherRelay.digitalWrite(Pump2, PumpOn);
             #endif
             wdt_enable(WDTO_8S); 
         break;
@@ -165,7 +170,7 @@ void stageActions() {
                 delay(100);
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump1, closed);  //Start Belt normalDirection
+                Mother.motherRelay.digitalWrite(Pump1, PumpOff); 
                 delay(500);
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
                 delay(800);
@@ -178,7 +183,8 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt normalDirection
                 delay(200);   
                 Mother.motherRelay.digitalWrite(Belt1, closed);  //Change Belt Direction
-            Mother.motherRelay.digitalWrite(Belt2, closed);  //change Belt Direction
+                Mother.motherRelay.digitalWrite(Belt2, closed);  //change Belt Direction
+                Mother.motherRelay.digitalWrite(Pump1, PumpOn); 
             #endif
             wdt_enable(WDTO_8S);
         break;
