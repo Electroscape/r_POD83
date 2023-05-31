@@ -55,19 +55,11 @@ void setStageIndex() {
 }
 
 void func_move_servo(STB_MOTHER Mother, int Brain, int PWM_No) {
-    // Secured Dishout more  Servo Movements to get sure
-    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
-    delay(500);     // cannot set this to 600
+    // on startup the servo is on position 0
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
-    delay(500);     // cannot set this to 600
-    /*
+    delay(500);
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
     delay(500);
-    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
-    delay(500);
-    SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
-    delay(500);
-    */
 }
 
 
@@ -76,11 +68,13 @@ void stageActions() {
 
     switch (stage) {
         case setupStage: 
+            DishCount = 0;
             // Set Color
             #ifndef Hamburg
+                #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20);
+                #endif
             #endif 
-            delay(500);
         break;
         
         case waitRequest:break;
@@ -92,7 +86,9 @@ void stageActions() {
                 delay(500);
                 Mother.motherRelay.digitalWrite(Pump5, PumpOff);
                 delay(500);
+                #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
+                #endif
                 delay(800);
             #endif
             func_move_servo(Mother, Servo_Brain2,0);
@@ -111,7 +107,9 @@ void stageActions() {
                 delay(500);
                 Mother.motherRelay.digitalWrite(Pump4, PumpOff);  //Start Belt normalDirection
                 delay(500);
+                #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
+                #endif
                 delay(800); 
             #endif
             func_move_servo(Mother, Servo_Brain1,3);
@@ -130,7 +128,9 @@ void stageActions() {
                 delay(500);
                 Mother.motherRelay.digitalWrite(Pump3, PumpOff); 
                 delay(500);
+                #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
+                #endif
                 delay(800);
             #endif
             func_move_servo(Mother, Servo_Brain1,2);
@@ -149,8 +149,10 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
                 delay(500);
                 Mother.motherRelay.digitalWrite(Pump2, PumpOff);
-                delay(500);            
+                delay(500);  
+                #ifndef IgnoreLeds          
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
+                #endif
                 delay(800);
             #endif
             func_move_servo(Mother, Servo_Brain1,1);
@@ -172,7 +174,9 @@ void stageActions() {
                 delay(500);
                 Mother.motherRelay.digitalWrite(Pump1, PumpOff); 
                 delay(500);
+                #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
+                #endif
                 delay(800);
             #endif
             func_move_servo(Mother, Servo_Brain1,0);
@@ -195,6 +199,7 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
                 delay(100);
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
+                #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
                 delay(300);
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
@@ -228,11 +233,14 @@ void stageActions() {
                 delay(10000);
                 wdt_enable(WDTO_8S);
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed);
+                #endif
                 wdt_disable();
                 delay(5000);
                 wdt_enable(WDTO_8S);
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt   
+                #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack); 
+                #endif
                 Mother.motherRelay.digitalWrite(Pump1, open); 
                 Mother.motherRelay.digitalWrite(Pump2, open);  
                 Mother.motherRelay.digitalWrite(Pump3, open);  
@@ -243,7 +251,9 @@ void stageActions() {
 
         case DavidEnd:
             #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+                #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrGreen); 
+                #endif
                 Mother.motherRelay.digitalWrite(Pump1, open); 
                 Mother.motherRelay.digitalWrite(Pump2, open);  
                 Mother.motherRelay.digitalWrite(Pump3, open);  
@@ -310,8 +320,7 @@ void handleInputs() {
             case 3: stage = Dish3; break;
             case 4: stage = Dish4; break;
             case 5: stage = Dish5; break;
-            case 6: stage = WorldsEnd; break;
-            case 7: stage = setupStage; DishCount = 0; break; //reset
+            case 7: stage = setupStage; break; //reset
         }  
         break;
         case (2): //Dish1
@@ -346,7 +355,7 @@ void handleInputs() {
         break;
         case(8): // Elancell End
             wdt_reset();
-            stage= DavidEnd;
+            stage = DavidEnd;
             DishCount = 6;
         break;
     }
@@ -371,7 +380,7 @@ void setup() {
     // starts serial and default oled
     Mother.begin();
     
-    //delay(20000); // EnoughTime for Arbiter and Terminal to start up
+    // delay(20000); // EnoughTime for Arbiter and Terminal to start up
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
     MotherIO.ioInit(intputArray, sizeof(intputArray), outputArray, sizeof(outputArray));
 

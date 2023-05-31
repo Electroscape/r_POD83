@@ -10,6 +10,8 @@
 #define PumpOff     0
 
 // #define Hamburg 1
+// purely for testing and debugging
+#define IgnoreLeds 1
 
 
 enum brains {
