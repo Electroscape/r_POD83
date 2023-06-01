@@ -31,7 +31,6 @@ int stage = setupStage;
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
-int lastState = -1;
 int lastInput = -1;
 int DishCount = 0; // Counter for Dishes
 
@@ -305,10 +304,10 @@ void handleInputs() {
     lastStage = waitRequest;    // not sure this is needed
     int result = MotherIO.getInputs();
 
-    if (lastState == result) {
+    if (lastInput == result) {
         return;
     }
-    lastState = result;
+    lastInput = result;
 
     if (result > 0) {
         Serial.println(F("Input from Arbiter!"));
