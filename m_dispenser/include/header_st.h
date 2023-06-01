@@ -27,6 +27,7 @@ enum IO {
     dispenserIO3,
     dispenserIO4
 };
+
 #define inputCnt 4
 #define outputCnt 0
 
@@ -44,6 +45,17 @@ int intputArray[inputCnt] = {
 
 int outputArray[outputCnt] = {
 };
+
+enum IOValues {
+    dishout=1,
+    dish1,
+    dish2,
+    dish3,
+    dish4,
+    dish5,
+    rachelEnd,
+    elancellEnd
+};   
 
 
 // -- relays

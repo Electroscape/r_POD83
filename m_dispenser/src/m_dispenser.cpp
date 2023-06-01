@@ -31,8 +31,12 @@ int stage = setupStage;
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
+int lastState = -1;
 int lastInput = -1;
 int DishCount = 0; // Counter for Dishes
+
+unsigned long beltEndTime = millis();
+bool beltActive = false;
 
 
 /**
@@ -317,7 +321,7 @@ void handleInputs() {
     lastInput = result;
 
     switch (result) {
-        case (1 << 0): //dispenserAction
+        case (IOValues::dishout):
         wdt_reset();
         DishCount = DishCount + 1;
         switch (DishCount) {
@@ -329,57 +333,61 @@ void handleInputs() {
             case 7: stage = setupStage; break; //reset
         }  
         break;
-        case (2): //Dish1
+        case (IOValues::dish1): 
             wdt_reset();
             stage = Dish1;
             DishCount = 1;
         break;
-        case (3): //Dish2
+        case (IOValues::dish2): 
             wdt_reset();
             stage = Dish2;
             DishCount = 2;
         break;
-        case (4): //Dish3
+        case (IOValues::dish3):
             wdt_reset();
             stage = Dish3;
             DishCount = 3;
         break;
-        case (5): //Dish4
+        case (IOValues::dish4):
             wdt_reset();
             stage = Dish4;
             DishCount = 4;
         break;
-        case (6): //Dish5
+        case (IOValues::dish5):
             wdt_reset();
             stage = Dish5;
             DishCount = 5;
         break;
-        case(7): // Rachel End
+        case(IOValues::rachelEnd):
             wdt_reset();
             stage = WorldsEnd;
             DishCount = 6;
         break;
-        case(8): // Elancell End
+        case(IOValues::elancellEnd):
             wdt_reset();
             stage = DavidEnd;
             DishCount = 6;
         break;
     }
-    /* if (result == dispenserAction) {
-        wdt_reset();
-        DishCount = DishCount + 1;
-        switch (DishCount) {
-            case 1: stage = Dish1; break;
-            case 2: stage = Dish2; break;
-            case 3: stage = Dish3; break;
-            case 4: stage = Dish4; break;
-            case 5: stage = Dish5; break;
-            case 6: stage = WorldsEnd; break;
-            case 7: stage = setupStage; DishCount = 0; break; //reset
-        }        
-
-    } */
 }
+
+
+void setBeltTimer() {
+    #ifndef Hamburg
+        beltEndTime = millis() + 13000;
+        beltActive = true;
+    #endif
+}
+
+
+void stopBelt() {
+    Mother.motherRelay.digitalWrite(BeltOn, closed);  //Start Belt 
+    delay(50);   
+    Mother.motherRelay.digitalWrite(Belt1, closed);  // Change Belt Direction
+    Mother.motherRelay.digitalWrite(Belt2, closed);  // change Belt Direction
+    beltActive = false;
+}
+
 
 void setup() {
 
