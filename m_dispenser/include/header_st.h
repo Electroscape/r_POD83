@@ -11,7 +11,7 @@
 
 // #define Hamburg 1
 // purely for testing and debugging
-#define IgnoreLeds 1
+// #define IgnoreLeds 1
 
 
 enum brains {
@@ -119,5 +119,5 @@ enum stages {
 
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
-
+int dishStageSum = Dish1 | Dish2 | Dish3 | Dish4 | Dish5;
 
