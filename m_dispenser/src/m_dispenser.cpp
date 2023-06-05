@@ -202,6 +202,7 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(beltReverse_2, open);
                 delay(100);
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
+
                 #ifndef IgnoreLeds
                 // for loops .... do you speak it?
                 for (int i=0; i<6; i++) {
@@ -212,6 +213,7 @@ void stageActions() {
                     wdt_reset();
                 }
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                #endif
                 wdt_disable();
                 delay(15000);
                 wdt_enable(WDTO_8S);
@@ -290,7 +292,6 @@ void handleInputs() {
 
     switch (result) {
         case (IOValues::dishout):
-        wdt_reset();
         DishCount = DishCount + 1;
         switch (DishCount) {
             case 1: stage = Dish1; break;
@@ -301,37 +302,30 @@ void handleInputs() {
         }  
         break;
         case (IOValues::dish1): 
-            wdt_reset();
             stage = Dish1;
             DishCount = 1;
         break;
         case (IOValues::dish2): 
-            wdt_reset();
             stage = Dish2;
             DishCount = 2;
         break;
         case (IOValues::dish3):
-            wdt_reset();
             stage = Dish3;
             DishCount = 3;
         break;
         case (IOValues::dish4):
-            wdt_reset();
             stage = Dish4;
             DishCount = 4;
         break;
         case (IOValues::dish5):
-            wdt_reset();
             stage = Dish5;
             DishCount = 5;
         break;
         case(IOValues::rachelEnd):
-            wdt_reset();
             stage = WorldsEnd;
             DishCount = 6;
         break;
         case(IOValues::elancellEnd):
-            wdt_reset();
             stage = DavidEnd;
             DishCount = 6;
         break;
