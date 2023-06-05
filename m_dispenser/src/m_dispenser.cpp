@@ -204,42 +204,16 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
                 #ifndef IgnoreLeds
                 // for loops .... do you speak it?
+                for (int i=0; i<6; i++) {
+                    LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
+                    delay(300);
+                    LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
+                    delay(100);
+                    wdt_reset();
+                }
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-                delay(300);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-                delay(100);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-                delay(300);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-                delay(100);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-                delay(300);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-                delay(100);
-                wdt_reset();
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-                delay(300);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-                delay(100);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-                delay(300);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-                delay(100);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-                delay(300);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
-                delay(100);
-                wdt_reset();
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
-                //LED_CMDS::blinking(Mother, LED_Brain , LED_CMDS::clrBlack, LED_CMDS::clrRed, 100, 400, 100, 100,PWM::set1);
-                delay(300);
                 wdt_disable();
-                delay(10000);
-                wdt_enable(WDTO_8S);
-                LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed);
-                #endif
-                wdt_disable();
-                delay(5000);
+                delay(15000);
                 wdt_enable(WDTO_8S);
                 Mother.motherRelay.digitalWrite(BeltOn, closed);  //Stop Belt   
                 #ifndef IgnoreLeds
