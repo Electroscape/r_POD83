@@ -1,6 +1,6 @@
 /**
  * @file m_analyzer.cpp
- * @author Christian Walter (pauseandplay@cybwalt.de)
+ * @author Christian Walter (pauseandplay@cybwalt.de) & Martin Pek (martin.pek@web.de)
  * @brief controls lights
  * inputs via RFID 
  * @version 0.1
@@ -35,7 +35,7 @@ int lastInput = -1;
 int DishCount = 0; // Counter for Dishes
 
 unsigned long beltEndTime = millis();
-int beltActive = 0;     // also saves the dishNo
+int beltActive = 0;     // also saves the dishNo to avoid having multiple dishes on the belt colliding
 
 
 /**
@@ -58,7 +58,7 @@ void setStageIndex() {
 }
 
 void func_move_servo(int Brain, int PWM_No) {
-    // on startup the servo is on position 0
+    // on startup the servo is on position 0 since the excecution ends there
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 180);
     delay(600);
     SERVO_CMDS::moveServo(Mother, Brain, PWM_No, 0);
@@ -73,30 +73,31 @@ void func_move_servo(int Brain, int PWM_No) {
 void beginBelt(int beltNo) {
     #ifndef Hamburg
         Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt normalDirection
-        beltEndTime = millis() + 14000;
+        beltEndTime = millis() + beltOperationTime;
         beltActive = beltNo;
     #endif
 }
 
 void stopBelt() {
-    Mother.motherRelay.digitalWrite(BeltOn, closed);  //Start Belt 
-    delay(50);   
-    Mother.motherRelay.digitalWrite(Belt1, closed);  // Change Belt Direction
-    Mother.motherRelay.digitalWrite(Belt2, closed);  // change Belt Direction
+    #ifndef Hamburg
+        Mother.motherRelay.digitalWrite(BeltOn, closed);  //Start Belt 
+        delay(50);   
+        Mother.motherRelay.digitalWrite(beltReverse_1, closed);  // Change Belt Direction
+        Mother.motherRelay.digitalWrite(beltReverse_2, closed);  // change Belt Direction
 
-    Mother.motherRelay.digitalWrite(Pump1, PumpOn);
-    Mother.motherRelay.digitalWrite(Pump2, PumpOn);
-    Mother.motherRelay.digitalWrite(Pump3, PumpOn);
-    Mother.motherRelay.digitalWrite(Pump4, PumpOn);
-    Mother.motherRelay.digitalWrite(Pump5, PumpOn);
+        Mother.motherRelay.digitalWrite(pump1, PumpOn);
+        Mother.motherRelay.digitalWrite(pump2, PumpOn);
+        Mother.motherRelay.digitalWrite(pump3, PumpOn);
+        Mother.motherRelay.digitalWrite(pump4, PumpOn);
+        Mother.motherRelay.digitalWrite(pump5, PumpOn);
 
-    beltActive = 0;
+        beltActive = 0;
+    #endif
 }
 
 
 void stageActions() {
     wdt_reset();
-
 
     // only allow to run the same dish again before the belt completes to avoid physical issues
     if (beltActive && beltActive != stage && stage & dishStageSum) {
@@ -107,11 +108,9 @@ void stageActions() {
     }
 
 
-
     switch (stage) {
         case setupStage: 
             DishCount = 0;
-            // Set Color
             #ifndef Hamburg
                 #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20);
@@ -121,12 +120,12 @@ void stageActions() {
         
         case waitRequest: break;
 
-        case Dish1: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
+        case Dish1: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start pump -> Stop Belt normalDirection
             
             #ifndef Hamburg
                 beginBelt(Dish1);
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump5, PumpOff);
+                Mother.motherRelay.digitalWrite(pump5, PumpOff);
                 delay(500);
                 #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
@@ -136,11 +135,11 @@ void stageActions() {
             func_move_servo(Servo_Brain2,0);   
         break;
 
-        case Dish2: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+        case Dish2: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start pump -> Stop Belt normalDirection
+            #ifndef Hamburg // No Belt no Light no pump in Hamburg
                 beginBelt(Dish2);
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump4, PumpOff);  //Start Belt normalDirection
+                Mother.motherRelay.digitalWrite(pump4, PumpOff);  //Start Belt normalDirection
                 delay(500);
                 #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
@@ -150,11 +149,11 @@ void stageActions() {
             func_move_servo(Servo_Brain1,3);
         break;
 
-        case Dish3:// Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection           
-            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+        case Dish3:// Start Belt normalDirection -> Empty Dish -> Start Light -> Start pump -> Stop Belt normalDirection           
+            #ifndef Hamburg // No Belt no Light no pump in Hamburg
                 beginBelt(Dish3);
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump3, PumpOff); 
+                Mother.motherRelay.digitalWrite(pump3, PumpOff); 
                 delay(500);
                 #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
@@ -165,11 +164,11 @@ void stageActions() {
             wdt_enable(WDTO_8S);
         break;
 
-        case Dish4: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+        case Dish4: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start pump -> Stop Belt normalDirection
+            #ifndef Hamburg // No Belt no Light no pump in Hamburg
                 beginBelt(Dish4);
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump2, PumpOff);
+                Mother.motherRelay.digitalWrite(pump2, PumpOff);
                 delay(500);  
                 #ifndef IgnoreLeds          
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrBlue, 100, PWM::set1, 1);
@@ -179,14 +178,14 @@ void stageActions() {
             func_move_servo(Servo_Brain1, 1);
         break;
 
-        case Dish5: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start Pump -> Stop Belt normalDirection
-            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
-                Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
-                Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
+        case Dish5: // Start Belt normalDirection -> Empty Dish -> Start Light -> Start pump -> Stop Belt normalDirection
+            #ifndef Hamburg // No Belt no Light no pump in Hamburg
+                Mother.motherRelay.digitalWrite(beltReverse_1, open);
+                Mother.motherRelay.digitalWrite(beltReverse_2, open);
                 delay(100);
                 beginBelt(Dish5);
                 delay(500);
-                Mother.motherRelay.digitalWrite(Pump1, PumpOff); 
+                Mother.motherRelay.digitalWrite(pump1, PumpOff); 
                 delay(500);
                 #ifndef IgnoreLeds
                 LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
@@ -198,12 +197,13 @@ void stageActions() {
 
         case WorldsEnd: 
             stopBelt();
-            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
-                Mother.motherRelay.digitalWrite(Belt1, open);  //Change Belt Direction
-                Mother.motherRelay.digitalWrite(Belt2, open);  //change Belt Direction
+            #ifndef Hamburg // No Belt no Light no pump in Hamburg
+                Mother.motherRelay.digitalWrite(beltReverse_1, open);
+                Mother.motherRelay.digitalWrite(beltReverse_2, open);
                 delay(100);
                 Mother.motherRelay.digitalWrite(BeltOn, open);  //Start Belt 
                 #ifndef IgnoreLeds
+                // for loops .... do you speak it?
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100); 
                 delay(300);
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack, 100); 
@@ -245,32 +245,31 @@ void stageActions() {
                 #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrBlack); 
                 #endif
-                Mother.motherRelay.digitalWrite(Pump1, open); 
-                Mother.motherRelay.digitalWrite(Pump2, open);  
-                Mother.motherRelay.digitalWrite(Pump3, open);  
-                Mother.motherRelay.digitalWrite(Pump4, open); 
-                Mother.motherRelay.digitalWrite(Pump5, open); 
+                Mother.motherRelay.digitalWrite(pump1, open); 
+                Mother.motherRelay.digitalWrite(pump2, open);  
+                Mother.motherRelay.digitalWrite(pump3, open);  
+                Mother.motherRelay.digitalWrite(pump4, open); 
+                Mother.motherRelay.digitalWrite(pump5, open); 
             #endif
         break;
 
         case DavidEnd:
             stopBelt();
-            #ifndef Hamburg // No Belt no Light no Pump in Hamburg
+            #ifndef Hamburg // No Belt no Light no pump in Hamburg
                 #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrGreen); 
                 #endif
-                Mother.motherRelay.digitalWrite(Pump1, open); 
-                Mother.motherRelay.digitalWrite(Pump2, open);  
-                Mother.motherRelay.digitalWrite(Pump3, open);  
-                Mother.motherRelay.digitalWrite(Pump4, open); 
-                Mother.motherRelay.digitalWrite(Pump5, open); 
+                Mother.motherRelay.digitalWrite(pump1, open); 
+                Mother.motherRelay.digitalWrite(pump2, open);  
+                Mother.motherRelay.digitalWrite(pump3, open);  
+                Mother.motherRelay.digitalWrite(pump4, open); 
+                Mother.motherRelay.digitalWrite(pump5, open); 
             #endif      
         break;
 
     }
     wdt_reset();
     Serial.println("ending stage");
-    // delay(3500);
     stage = waitRequest;
 }
 
@@ -278,7 +277,6 @@ void stageActions() {
 /**
  * @brief  triggers effects specific to the given stage, 
  * room specific excecutions can happen here
- * TODO: avoid reposts of setflags, but this is an optimisation
 */
 void stageUpdate() {
     if (lastStage == stage) { return; }
@@ -326,7 +324,6 @@ void handleInputs() {
             case 3: stage = Dish3; break;
             case 4: stage = Dish4; break;
             case 5: stage = Dish5; break;
-            case 7: stage = setupStage; break; //reset
         }  
         break;
         case (IOValues::dish1): 
@@ -376,7 +373,6 @@ void checkBelt() {
 
 
 void setup() {
-
     // starts serial and default oled
     Mother.begin();
     

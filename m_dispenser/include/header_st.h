@@ -1,5 +1,9 @@
 #pragma once
 
+// #define Hamburg 1
+// purely for testing and easier debugging
+// #define IgnoreLeds 1
+
 #define StageCount 9
 #define PasswordAmount 1 //only for debugg
 #define MaxPassLen 5
@@ -9,9 +13,7 @@
 #define PumpOn      1
 #define PumpOff     0
 
-// #define Hamburg 1
-// purely for testing and debugging
-// #define IgnoreLeds 1
+const unsigned long beltOperationTime = 14000;
 
 
 enum brains {
@@ -31,9 +33,6 @@ enum IO {
 #define inputCnt 4
 #define outputCnt 0
 
-/* uint8_t inputTypes[inputCnt] = {
-    INPUT_PULLUP
-}; */
 int dispenserAction = (1 << dispenserAction_pin);
 
 int intputArray[inputCnt] = {
@@ -43,8 +42,7 @@ int intputArray[inputCnt] = {
     dispenserIO4
 };
 
-int outputArray[outputCnt] = {
-};
+int outputArray[outputCnt] = {};
 
 enum IOValues {
     dishout=1,
@@ -60,45 +58,45 @@ enum IOValues {
 
 // -- relays
 enum relays {
-    Pump1,
-    Pump2,
-    Pump3,
-    Pump4,
-    Pump5,
-    Belt1,
-    Belt2,
-    BeltOn,
+    pump1,
+    pump2,
+    pump3,
+    pump4,
+    pump5,
+    beltReverse_1,      // both belt reverse need to be triggered to reverse
+    beltReverse_2,      // both belt reverse need to be triggered to reverse
+    BeltOn,             // VCC to trough beltReverse relays 
     relayAmount
 };
 
 enum relayInits {
-    Pump1_init = PumpOn,
-    Pump2_init = PumpOn,
-    Pump3_init = PumpOn,
-    Pump4_init = PumpOn, 
-    Pump5_init = PumpOn, 
+    pump1_init = PumpOn,
+    pump2_init = PumpOn,
+    pump3_init = PumpOn,
+    pump4_init = PumpOn, 
+    pump5_init = PumpOn, 
     Relay6_init = closed,  
     Relay7_init = closed,  
     Relay8_init = closed, 
 };
 
 int relayPinArray[relayAmount] = {
-    Pump1,
-    Pump2,
-    Pump3,
-    Pump4,
-    Pump5,
-    Belt1,
-    Belt2,
+    pump1,
+    pump2,
+    pump3,
+    pump4,
+    pump5,
+    beltReverse_1,
+    beltReverse_2,
     BeltOn
 };
 
 int relayInitArray[relayAmount] = {
-    Pump1_init,
-    Pump2_init,
-    Pump3_init,
-    Pump4_init, 
-    Pump5_init,
+    pump1_init,
+    pump2_init,
+    pump3_init,
+    pump4_init, 
+    pump5_init,
     Relay6_init,
     Relay7_init,
     Relay8_init, 
@@ -106,11 +104,11 @@ int relayInitArray[relayAmount] = {
 
 // Stages
 enum stages {
-    setupStage = 1,
+    setupStage = 1,     // sets the colour of the leds
     waitRequest = 2,
     Dish1 = 4,
     Dish2 = 8,
-    Dish3  = 16,
+    Dish3 = 16,
     Dish4 = 32,
     Dish5 = 64,
     WorldsEnd =128,
