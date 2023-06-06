@@ -14,6 +14,7 @@ from time import sleep, thread_time
 from subprocess import Popen
 from communication.TESocketServer import TESocketServer
 from pathlib import Path
+from datetime import datetime as dt, timedelta
 
 IO = ArbiterIO()
 usb_live = False
@@ -49,6 +50,10 @@ usb_booted = False
 connected = False
 
 boot_usb_path = Path("/media/2cp/usb_boot")
+
+reset_gpios_dicts = {}
+reset_delta = timedelta(seconds=3)
+delayed_events = {}
 
 
 class Settings:
@@ -116,11 +121,7 @@ def handle_event(event_key, event_value=None):
         print(f"setting outputs: PCF={pcf_no} Value={values}")
         for index in range(min(len(values), len(pcf_no))):
             IO.write_pcf(pcf_no[index], values[index])
-        # @todo: this needs to be threaded
-        print("sleeping... ")
-        sleep(3)
-        for index in range(len(pcf_no)):
-            IO.write_pcf(pcf_no[index], 0)
+            reset_gpios_dicts.update({pcf_no[index]: dt.now() + reset_delta})
     except KeyError as err:
         print(err)
         pass
@@ -274,6 +275,18 @@ def inverted_triggered(event_value, active_inputs):
     return True
 
 
+def reset_gpios():
+    # print(reset_gpios_dicts)
+    remove_keys = []
+    for pcf_no, reset_time in reset_gpios_dicts.items():
+        if reset_time < dt.now():
+            # print(f"resetting gpio {pcf_no} {reset_time}")
+            IO.write_pcf(pcf_no, 0)
+            remove_keys.append(pcf_no)
+    for key in remove_keys:
+        reset_gpios_dicts.pop(key)
+
+
 def connect():
     while True:
         try:
@@ -296,6 +309,7 @@ def main():
         active_inputs = IO.get_inputs()
         handle_pcf_inputs(active_inputs=active_inputs)
         handle_inverted_events(active_inputs)
+        reset_gpios()
 
 
 if __name__ == '__main__':
