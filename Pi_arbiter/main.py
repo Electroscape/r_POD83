@@ -127,7 +127,7 @@ def handle_event(event_key, event_value=None):
     try:
         handle_event_fe(event_value, event_key)
     except socketio.exceptions as exp:
-        logging.debug(f"error with sending message to FE: exp")
+        logging.debug(f"error with sending message to FE: {exp}")
     queued_event = event_value.get(event_next_qeued, False)
     if queued_event:
         handle_event(queued_event)
