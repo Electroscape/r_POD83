@@ -51,7 +51,10 @@ class SocketClient:
             print('socket client looking for connection')
             if self.__connect():
                 while self.__received():
-                    pass
+                    try:
+                        self.s.send(bytes("Ping", "UTF-8"))
+                    except socket.error:
+                        break
             else:
                 sleep(1)
 
