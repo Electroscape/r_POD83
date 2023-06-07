@@ -144,7 +144,7 @@ def handle_event(event_key, event_value=None):
     print(f"handling event {event_key}")
 
     if event_value.get(event_delay, 0):
-        event_shedule.update({event_key, dt.now() + timedelta(seconds=event_value.get(event_delay, 0))})
+        event_shedule.update({event_key: dt.now() + timedelta(seconds=event_value.get(event_delay, 0))})
         return
     trigger_event(event_key, event_value)
 
