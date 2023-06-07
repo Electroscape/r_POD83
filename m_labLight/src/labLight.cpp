@@ -55,6 +55,7 @@ void handleInputs() {
     }
     lastState = result;
 
+    unsigned long startTime = millis();
     Serial.println(result);
 
     switch (result) {
