@@ -55,7 +55,6 @@ void handleInputs() {
     }
     lastState = result;
 
-    unsigned long startTime = millis();
     Serial.println(result);
 
     switch (result) {
@@ -64,6 +63,7 @@ void handleInputs() {
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
         break;
         case lightNormal: 
+            Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, clrLight, 60);
         break;
         case lightRed:
