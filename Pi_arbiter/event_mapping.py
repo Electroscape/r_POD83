@@ -525,6 +525,12 @@ event_map = {
             fe_cb_msg: "empty"
         }
     },
+    "display_security": {
+        trigger_cmd: "display",
+        trigger_msg: "security",
+        event_script: call_video,
+    },
+
     "dispenser_dishout": {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
