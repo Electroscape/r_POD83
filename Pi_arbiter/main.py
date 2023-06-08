@@ -14,6 +14,7 @@ from time import sleep, thread_time
 from subprocess import Popen
 from communication.TESocketServer import TESocketServer
 from pathlib import Path
+from datetime import datetime as dt, timedelta
 
 IO = ArbiterIO()
 usb_live = False
@@ -50,6 +51,11 @@ connected = False
 
 boot_usb_path = Path("/media/2cp/usb_boot")
 
+reset_gpios_dicts = {}
+reset_delta = timedelta(seconds=3)
+# used for delayed events
+event_shedule= {}
+
 
 class Settings:
     def __init__(self, server_add, sound_server_add):
@@ -76,28 +82,19 @@ def connect():
     print("Connected to Server!")
 
 
-def handle_event(event_key, event_value=None):
-    '''
-    event first handles CB script then does the delay
-    '''
+def get_event_value(event_key, event_value):
     if event_value is None:
         try:
             event_value = event_map[event_key]
         except KeyError:
             print(f"handle_event received invalid key: {event_key}")
-            return
+    return event_value
 
-    try:
-        if not event_value.get(event_condition, lambda: True)():
-            # print(f"conditions not fullfilled {event_key}")
-            return
 
-        # Start Video before Sound
-        event_value.get(event_script, lambda *args: 'Invalid')(event_key, nw_sock)
-    except TypeError as err:
-        print(f"Error with event fnc/condition {err}")
-    print(f"handling event {event_key}")
-    sleep(event_value.get(event_delay, 0))
+def trigger_event(event_key, event_value=None):
+    event_value = get_event_value(event_key, event_value)
+    if event_value is None:
+        return
 
     # Sound, may be moved to a fnc
     print(event_value)
@@ -116,21 +113,40 @@ def handle_event(event_key, event_value=None):
         print(f"setting outputs: PCF={pcf_no} Value={values}")
         for index in range(min(len(values), len(pcf_no))):
             IO.write_pcf(pcf_no[index], values[index])
-        # @todo: this needs to be threaded
-        print("sleeping... ")
-        sleep(3)
-        for index in range(len(pcf_no)):
-            IO.write_pcf(pcf_no[index], 0)
+            reset_gpios_dicts.update({pcf_no[index]: dt.now() + reset_delta})
     except KeyError as err:
         print(err)
         pass
     try:
         handle_event_fe(event_value, event_key)
     except socketio.exceptions as exp:
-        logging.debug(f"error with sending message to FE: exp")
+        logging.debug(f"error with sending message to FE: {exp}")
     queued_event = event_value.get(event_next_qeued, False)
     if queued_event:
         handle_event(queued_event)
+
+
+def handle_event(event_key, event_value=None):
+
+    event_value = get_event_value(event_key, event_value)
+    if event_value is None:
+        return
+
+    try:
+        if not event_value.get(event_condition, lambda: True)():
+            # print(f"conditions not fullfilled {event_key}")
+            return
+
+        # Start Video before Sound
+        event_value.get(event_script, lambda *args: 'Invalid')(event_key, nw_sock)
+    except TypeError as err:
+        print(f"Error with event fnc/condition {err}")
+    print(f"handling event {event_key}")
+
+    if event_value.get(event_delay, 0):
+        event_shedule.update({event_key: dt.now() + timedelta(seconds=event_value.get(event_delay, 0))})
+        return
+    trigger_event(event_key, event_value)
 
 
 def handle_event_fe(event_value, event_key):
@@ -274,6 +290,28 @@ def inverted_triggered(event_value, active_inputs):
     return True
 
 
+def reset_gpios():
+    # print(reset_gpios_dicts)
+    remove_keys = []
+    for pcf_no, reset_time in reset_gpios_dicts.items():
+        if reset_time < dt.now():
+            # print(f"resetting gpio {pcf_no} {reset_time}")
+            IO.write_pcf(pcf_no, 0)
+            remove_keys.append(pcf_no)
+    for key in remove_keys:
+        reset_gpios_dicts.pop(key)
+
+
+def handle_event_shedule():
+    remove_keys = []
+    for event_name, event_time in event_shedule.items():
+        if event_time < dt.now():
+            remove_keys.append(event_name)
+            trigger_event(event_name)
+    for key in remove_keys:
+        event_shedule.pop(key)
+
+
 def connect():
     while True:
         try:
@@ -286,16 +324,12 @@ def connect():
 
 def main():
     while True:
-        # blank_screen_pid.kill()
-        # handle_event("airlock_intro")
-        # handle_event("laserlock_bootdecon")
-        # handle_event("laserlock_fail")
-        # continue
-        # exit()
         handle_usb_events()
         active_inputs = IO.get_inputs()
         handle_pcf_inputs(active_inputs=active_inputs)
         handle_inverted_events(active_inputs)
+        reset_gpios()
+        handle_event_shedule()
 
 
 if __name__ == '__main__':

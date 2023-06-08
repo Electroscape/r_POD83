@@ -64,6 +64,7 @@ void handleInputs() {
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
         break;
         case lightNormal: 
+            Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, clrLight, 60);
         break;
         case lightRed:

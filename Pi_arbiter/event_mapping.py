@@ -216,10 +216,40 @@ event_map = {
         trigger_msg: "check",
         pcf_out_add: [laserlock_out_pcf],
         pcf_out: [LaserlockOut.failedBootTrigger],
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "boot"
+        },
         sound: {
             sound_id: 3
         },
         event_script: call_video,
+        event_next_qeued: "self_check_q1"
+    },
+    "self_check_q1": {
+        fe_cb: {
+            fe_cb_cmd: "auth",
+            fe_cb_tgt: "tr2",
+            fe_cb_msg: "rachel"
+        },
+        event_next_qeued: "self_check_q2"
+    },
+    "self_check_q2": {
+        event_delay: 15,
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "disconnect"
+        },
+        event_next_qeued: "self_check_q3"
+    },
+    "self_check_q3": {
+        fe_cb: {
+            fe_cb_cmd: "auth",
+            fe_cb_tgt: "tr2",
+            fe_cb_msg: "empty"
+        },
     },
     "airlock_begin": {
         trigger_cmd: "airlock",
@@ -495,6 +525,12 @@ event_map = {
             fe_cb_msg: "empty"
         }
     },
+    "display_security": {
+        trigger_cmd: "display",
+        trigger_msg: "security",
+        event_script: call_video,
+    },
+
     "dispenser_dishout": {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",

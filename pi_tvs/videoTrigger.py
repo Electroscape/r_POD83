@@ -11,7 +11,9 @@ video_dict = {
     "end_rachel_announce": "./play_rachel.sh",
     "end_david_announce": "./play_elancell.sh",
     "analyzer_run1": "./play_killswitch.sh",
-    "play_truth": "./play_truth.sh"
+    "play_truth": "./play_truth.sh",
+    "self_check": "./play_killswitch.sh",
+    "display_security": "./play_camera_feed.sh"
 }
 
 
