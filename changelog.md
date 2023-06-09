@@ -3,7 +3,18 @@
 
 ## still WIP
 * servicemode triggered from lockerwall
-* adding selfcheck before start
+
+
+# v 0.21
+
+* Arbiter handles events in a non blocking way
+* Dispenser revision and fixes, also update of m_servo brains
+* small fix to lablight not containing a dooropen on service
+* Terminal
+  * German error code translation
+  * added security system stream as button
+  * added selfcheck button
+* Pi_TVs: improved reconnect handling 
 
 # V 0.2 
 
