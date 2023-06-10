@@ -103,143 +103,127 @@
 {% endblock %}
 
 {% block content %}
-    <div class="outer">
-        <div>
-            USB Boot:
-            <div class="switch-toggle switch-candy">
-                <input id="t1_shutdown" name="tr1_usbBoot" type="radio" value="disconnect" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t1_shutdown">Shutdown</label>
+    <div>
+        <h3>Terminal 1</h3>
+        <div class="outer">
+            <div>
+                Auth:
+                <div class="switch-toggle switch-3 switch-candy">
+                    <input id="t1_david" name="tr1_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                    <label for="t1_david">David</label>
 
-                <input id="t1_boot" name="tr1_usbBoot" type="radio" value="boot" onclick="onClickTerminal(name)"/>
-                <label for="t1_boot">Boot up</label>
+                    <input id="t1_empty" name="tr1_auth" type="radio" value="empty" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t1_empty">Empty</label>
+
+                    <input id="t1_rachel" name="tr1_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                    <label for="t1_rachel">Rachel</label>
+                </div>
+            </div>
+            <div>
+                USB Boot (no video):
+                <div class="switch-toggle switch-candy">
+                    <input id="t1_shutdown" name="tr1_usbBoot" type="radio" value="disconnect" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t1_shutdown">Shutdown</label>
+
+                    <input id="t1_boot" name="tr1_usbBoot" type="radio" value="boot" onclick="onClickTerminal(name)"/>
+                    <label for="t1_boot">Boot up</label>
+                </div>
+            </div>
+            <div>
+                Laser-lock:
+                <div class="switch-toggle switch-candy">
+                    <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t1_broken">Broken</label>
+
+                    <input id="t1_fixed" name="tr1_airlock" type="radio" value="fixed" onclick="onClickTerminal(name)"/>
+                    <label for="t1_fixed">Fixed</label>
+                </div>
             </div>
         </div>
-        <div>
-            Terminal 1:
-            <div class="switch-toggle switch-3 switch-candy">
-                <input id="t1_david" name="tr1_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
-                <label for="t1_david">David</label>
+        <br>
+        <h3>Terminal 2</h3>
+        <div class="outer">
+            <div>
+                Auth:
+                <div class="switch-toggle switch-3 switch-candy">
+                    <input id="t2_david" name="tr2_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
+                    <label for="t2_david">David</label>
 
-                <input id="t1_empty" name="tr1_auth" type="radio" value="empty" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t1_empty">Empty</label>
+                    <input id="t2_empty" name="tr2_auth" type="radio" value="empty" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_empty">Empty</label>
 
-                <input id="t1_rachel" name="tr1_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
-                <label for="t1_rachel">Rachel</label>
+                    <input id="t2_rachel" name="tr2_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
+                    <label for="t2_rachel">Rachel</label>
+                </div>
+            </div>
+            <div>
+                Cleanroom:
+                <div class="switch-toggle switch-candy">
+                    <input id="t2_broken" name="tr2_cleanroom" type="radio" value="lock" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_broken">lock</label>
+
+                    <input id="t2_fixed" name="tr2_cleanroom" type="radio" value="unlock"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_fixed">unlock</label>
+                </div>
+            </div>
+            <div>
+                upload data:
+                <div class="switch-toggle switch-candy">
+                    <input id="t2_disable" name="tr2_elancell" type="radio" value="disable" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_disable">(no usb) |</label>
+
+                    <input id="t2_enable" name="tr2_elancell" type="radio" value="enable"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_enable"><span style="color: dodgerblue">(blue usb)</span> |</label>
+
+                    <input id="t2_breach" name="tr2_elancell" type="radio" value="breach"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_breach"><span style="color: red">(red usb)</span> |</label>
+
+                    <input id="t2_solved" name="tr2_elancell" type="radio" value="solved"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_solved"> Solved |</label>
+
+                    <input id="t2_synth" name="tr2_elancell" type="radio" value="synthesized"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_synth"> Synthesized |</label>
+
+                    <input id="t2_done" name="tr2_elancell" type="radio" value="doneOverride"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t2_done"> Sent </label>
+                </div>
             </div>
         </div>
-        <div>
-            Terminal 2:
-            <div class="switch-toggle switch-3 switch-candy">
-                <input id="t2_david" name="tr2_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
-                <label for="t2_david">David</label>
-
-                <input id="t2_empty" name="tr2_auth" type="radio" value="empty" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_empty">Empty</label>
-
-                <input id="t2_rachel" name="tr2_auth" type="radio" value="rachel" onclick="onClickTerminal(name)"/>
-                <label for="t2_rachel">Rachel</label>
+        <br>
+        <h3>Server</h3>
+        <div class="outer">
+            <div style="padding-inline: 5px;">
+                <label for="loadingInput">Loading bar: </label>
+                <div class="form-outline" style="width: 7rem; background-color: forestgreen; display: inline-block">
+                    <i class="fas fa-percentage trailing"></i>
+                    <input min="0" max="100" step="5" value="50" type="number" id="loadingInput"
+                           class="form-control form-icon-trailing"/>
+                </div>
+                <button onclick="onClickSet()">set</button>
             </div>
-        </div>
-        <div>
-            Laserlock:
-            <div class="switch-toggle switch-candy">
-                <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t1_broken">Broken</label>
+            <div>
+                reset:
+                <div class="switch-toggle switch-candy">
+                    <input id="ser_reset" name="server_reset" type="radio" value="reset" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="ser_reset">samples</label>
 
-                <input id="t1_fixed" name="tr1_airlock" type="radio" value="fixed" onclick="onClickTerminal(name)"/>
-                <label for="t1_fixed">Fixed</label>
-            </div>
-        </div>
-        <div>
-            Cleanroom:
-            <div class="switch-toggle switch-candy">
-                <input id="t2_broken" name="tr2_cleanroom" type="radio" value="lock" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_broken">lock</label>
-
-                <input id="t2_fixed" name="tr2_cleanroom" type="radio" value="unlock" onclick="onClickTerminal(name)"/>
-                <label for="t2_fixed">unlock</label>
-            </div>
-        </div>
-        <div>
-            IT breach:
-            <div class="switch-toggle switch-candy">
-                <input id="t2_secure" name="tr2_breach" type="radio" value="secure" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_secure">secure</label>
-
-                <input id="t2_breach" name="tr2_breach" type="radio" value="breach" onclick="onClickTerminal(name)"/>
-                <label for="t2_breach">breach <span style="color: red">(red usb)</span></label>
-            </div>
-        </div>
-        <div>
-            Microscope:
-            <div class="switch-toggle switch-5 switch-candy">
-                <input id="t2_sample1" name="mcrp_sample" type="radio" value="1" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_sample1">S-1</label>
-
-                <input id="t2_sample2" name="mcrp_sample" type="radio" value="2" onclick="onClickTerminal(name)"/>
-                <label for="t2_sample2">S-2</label>
-
-                <input id="t2_sample3" name="mcrp_sample" type="radio" value="3" onclick="onClickTerminal(name)"/>
-                <label for="t2_sample3">S-3</label>
-
-                <input id="t2_sample4" name="mcrp_sample" type="radio" value="4" onclick="onClickTerminal(name)"/>
-                <label for="t2_sample4">S-4</label>
-
-                <input id="t2_sample5" name="mcrp_sample" type="radio" value="5" onclick="onClickTerminal(name)"/>
-                <label for="t2_sample5">S-5</label>
-
-                <input id="t2_sample0" name="mcrp_sample" type="radio" value="0" onclick="onClickTerminal(name)"/>
-                <label for="t2_sample0">remove</label>
-            </div>
-        </div>
-        <div>
-            Elancell upload:
-            <div class="switch-toggle switch-candy">
-                <input id="t2_disable" name="tr2_elancell" type="radio" value="disable" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_disable">Disable <span style="color: greenyellow">(no usb)</span></label>
-
-                <input id="t2_enable" name="tr2_elancell" type="radio" value="enable" onclick="onClickTerminal(name)"/>
-                <label for="t2_enable">Enable <span style="color: dodgerblue">(blue usb)</span></label>
-
-                <input id="t2_solved" name="tr2_elancell" type="radio" value="solved" onclick="onClickTerminal(name)"/>
-                <label for="t2_solved">Solved</label>
-
-                <input id="t2_synth" name="tr2_elancell" type="radio" value="synthesized"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_synth">Synthesized</label>
-
-                <input id="t2_done" name="tr2_elancell" type="radio" value="doneOverride"
-                       onclick="onClickTerminal(name)"/>
-                <label for="t2_done">Done</label>
-            </div>
-        </div>
-        <div style="padding-inline: 5px;">
-            <label for="loadingInput">Loading bar: </label>
-            <div class="form-outline" style="width: 7rem; background-color: forestgreen; display: inline-block">
-                <i class="fas fa-percentage trailing"></i>
-                <input min="0" max="100" step="5" value="50" type="number" id="loadingInput"
-                       class="form-control form-icon-trailing"/>
-            </div>
-            <button onclick="onClickSet()">set</button>
-        </div>
-        <div>
-            reset:
-            <div class="switch-toggle switch-candy">
-                <input id="ser_reset" name="server_reset" type="radio" value="reset" checked="checked"
-                       onclick="onClickTerminal(name)"/>
-                <label for="ser_reset">samples</label>
-
-                <input id="ser_resetAll" name="server_reset" type="radio" value="resetAll"
-                       onclick="onClickTerminal(name)"/>
-                <label for="ser_resetAll">all</label>
+                    <input id="ser_resetAll" name="server_reset" type="radio" value="resetAll"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="ser_resetAll">all</label>
+                </div>
             </div>
         </div>
     </div>
@@ -250,11 +234,11 @@
     <form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
         <label for="dm_sender">Sender: </label>
         <select class="form-select w-auto d-inline" id="dm_sender">
-            <option value="SYS" selected>System</option>
-            <option value="TR1">Terminal 1</option>
-            <option value="TR2">Terminal 2</option>
-            <option value="SN1">RFID T1</option>
-            <option value="SN2">RFID T2</option>
+            <option value="Elancell-HQ" selected>Elancell HQ</option>
+            <option value="System">System</option>
+            <option value="Hacker">Hacker</option>
+            <option value="Rachel">Rachel</option>
+            <option value="Game-master">Game Master</option>
         </select>
         <label class="w-50">
             <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
@@ -312,7 +296,7 @@
     <h3>Lab</h3>
     <div>
         <button class="btn btn-outline-light" name="display_security" onclick="onClickTrigger(name)">Stream security cam
-             </button>
+        </button>
         <br>
         <button class="btn btn-outline-light" name="analyzer_run1Right" onclick="onClickTrigger(name)">Synthesizer run1,
             Last sample & Killswitch Video
@@ -353,7 +337,8 @@
         </button>
         <button class="btn btn-outline-light" name="service_off" onclick="onClickTrigger(name)">Service Disable
         </button>
-        <button class="btn btn-outline-light" name="self_check" onclick="onClickTrigger(name)">Self Check (Laserlock + Tvs + Terminals)
+        <button class="btn btn-outline-light" name="self_check" onclick="onClickTrigger(name)">Self Check (Laserlock +
+            Tvs + Terminals)
         </button>
     </div>
     <br>

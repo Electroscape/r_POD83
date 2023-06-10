@@ -154,8 +154,8 @@
                         }
                     );
                 } else {
-                    {% if request.path == "/" %}
-                        swal("System Restored", "Malware USB has been removed", "warning").then(() => {
+                    {% if request.path in ["/", "/elancell_breach", "/elancell_upload"] %}
+                        swal("Data Upload Reset", "USB media has been removed", "warning").then(() => {
                                 document.location.href = "/";
                             }
                         );

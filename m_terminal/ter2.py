@@ -91,7 +91,10 @@ def get_chat():
 
 @app.route('/get_elancell', methods=['GET', 'POST'])
 def get_elancell():
-    return elancell_upload
+    return {
+        "upload": elancell_upload,
+        "usb": usb_status
+    }
 
 
 @app.route('/get_cleanroom', methods=['GET', 'POST'])
@@ -141,6 +144,7 @@ def events_handler(data):
         global elancell_upload
         global cleanroom
         global it_breach
+        global usb_status
 
         msg = data.get("message")
 
@@ -153,20 +157,25 @@ def events_handler(data):
     elif data.get("cmd") == "elancell":
         elancell_upload = msg
         logging.info(f"elancell msg: {msg}")
-        if msg == "disable":
-            # means usb is removed
-            if it_breach != "secure":
-                # sends if there was already a breach
+        if msg == "breach":
+            it_breach = msg
+            usb_status = "red"
+            logging.info(f"IT breach msg: {msg}")
+            self_sio.emit('breach_fe', msg)
+        else:
+            if msg == "disable":
+                # means usb is removed
                 it_breach = "secure"
+                usb_status = "empty"
+                logging.info(f"usb removed: {msg}")
                 self_sio.emit('breach_fe', it_breach)
-        self_sio.emit('elancell_fe', {'data': elancell_upload})
+            elif msg == "enable":
+                usb_status = "blue"
+                logging.info(f"blue usb in: {msg}")
+            self_sio.emit('elancell_fe', {'data': elancell_upload})
     elif data.get("cmd") == "cleanroom":
         cleanroom = msg
         logging.info(f"cleanroom msg: {msg}")
-    elif data.get("cmd") == "breach":
-        it_breach = msg
-        logging.info(f"IT breach msg: {msg}")
-        self_sio.emit('breach_fe', msg)
     elif data.get("cmd") == "loadingbar":
         logging.info(f"set loading bar: {msg}")
         self_sio.emit('loadingbar_fe', msg)
@@ -222,6 +231,7 @@ login_user = get_login_user(terminal_name)  # either David, Rachel or empty stri
 elancell_upload = "disable"
 cleanroom = "lock"
 it_breach = "secure"
+usb_status = "empty"
 samples_flag = "unsolved"
 
 app.register_blueprint(app_pages)
