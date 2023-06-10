@@ -12,7 +12,7 @@ from flask_socketio import SocketIO
 
 from ring_list import RingList
 from fns import js_r, get_progressbar_status
-from pages import app_pages, get_login_user
+from pages import app_pages, get_login_user, get_version
 import socketio
 import logging
 from datetime import datetime as dt
@@ -191,11 +191,7 @@ def get_posts():
 @app.route('/foscam_control', methods=['GET', 'POST'])
 def foscam_control():
     config = {
-        "title": "CCTV Cameras",
-        "pincode": "1010",
-        "version": {
-            "zoom": True
-        }
+        "title": "CCTV Cameras"
     }
 
     if request.method == 'POST':
@@ -206,6 +202,8 @@ def foscam_control():
             logging.info("cgi ptz command")
         return "success"
 
+    version_config = get_version("TR1").get("foscam")
+    config.update(version_config)
     logging.info("open CCTV page")
     return render_template("TR1/p_cctv.html", g_config=config, cams=ip_conf["cams"])
 

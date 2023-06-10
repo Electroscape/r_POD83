@@ -2,10 +2,6 @@
   "title": "Terminal 1",
   "id": "TR1",
   "auth_msg": "Needs Authentication First",
-  "passcodes": {
-    "lab_access": 4321,
-    "gas_control": [1111, 1112, 1113, 1114]
-  },
   "btns": [
     {
       "title": "Browser",

@@ -185,7 +185,7 @@
 
                 <!-- lock wrapper   start -->
                 <div class="lock-wrapper">
-                    {% if g_config.get("version") == "launch_button" %}
+                    {% if g_config.get("pushbutton") %}
                         <div>
                             <button class="btn-danger btn-lg btn-rounded p-5" onclick="launchBtnPress()">
                                 Decontaminate
@@ -231,7 +231,7 @@
         </div>
         <!--sliding door end-->
         <div class="row" id="main-content">
-            {% if g_config.get("version") == "launch_button" %}
+            {% if g_config.get("pushbutton") %}
                 <div class="col-xs-12"><h1> Cleanroom ready <br/> Please use the keypad to unlock the door
                 </h1>
                 </div>

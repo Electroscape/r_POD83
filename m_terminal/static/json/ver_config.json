@@ -1,0 +1,21 @@
+{
+  "server": {
+    "airlock_events": false
+  },
+  "TR1": {
+    "foscam": {
+      "pincode": "1010",
+      "zoom": false
+    }
+  },
+  "TR2": {
+    "elancell": {
+      "elancell_ip": "134.231.83.19",
+      "rachel_ip": "134.231.54.23"
+    },
+    "cleanroom": {
+      "pushbutton": true,
+      "passcode": "4321"
+    }
+  }
+}
