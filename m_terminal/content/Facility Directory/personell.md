@@ -1,7 +1,8 @@
 ---
 title: Personell Files
-date: 2013-08-27
+lang: EN/DE
 ---
+
 <style>
     .carousel-team-card-cell {
         margin: 0 20px 20px 0;
@@ -79,7 +80,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/saei.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>A. Saei</h3>
@@ -95,7 +96,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/01/31/07/50/hunter-7757371_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/hugo.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. D. Hugo</h3>
@@ -111,14 +112,14 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2022/07/24/23/46/artificial-intelligence-7342613_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/david.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. D. Coverstone</h3>
                                                 <span>02.11.1982</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Security Analyst POD 83<br>
+                                                <p>Security Analyst POD 083<br>
                                                     Nano-Technology
                                                     </p>
                                             </div>
@@ -133,7 +134,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2020/12/23/08/50/woman-5854291_1280.png" alt=""/>
+                                                <img src="../../static/imgs/team/winnie.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. J. Winnie</h3>
@@ -149,7 +150,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/42/ai-generated-7809883_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/pek.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>M. Pek</h3>
@@ -165,14 +166,14 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/41/ai-generated-7809880_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/walter.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. C. Walter</h3>
                                                 <span>26.09.1989</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Bio-Technology Division 5</p>
+                                                <p>Bio-Technology Division 005</p>
                                             </div>
                                         </div>
                                     </div>
@@ -185,30 +186,14 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://mdbootstrap.com/img/new/avatars/7.jpg" alt=""/>
-                                            </div>
-                                            <div class="card-team-name">
-                                                <h3>D. Mensah-Bonsu</h3>
-                                                <span>19.09.1984</span>
-                                            </div>
-                                            <div class="card-team-content">
-                                                <p>Nano-Technology POD 85</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="carousel-team-card-cell">
-                                        <div class="carousel-card-team">
-                                            <div class="card-team-img">
-                                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(9).webp" alt=""/>
+                                                <img src="../../static/imgs/team/walti.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>K.T. Walti</h3>
                                                 <span>11.01.1990</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Virology Division 1</p>
+                                                <p>Virology Division 001</p>
                                             </div>
                                         </div>
                                     </div>
@@ -217,11 +202,11 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/02/24/00/42/ai-generated-7809882_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/finn.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. A. Finn</h3>
-                                                <span>Virology Division 54</span>
+                                                <span>Virology Division 054</span>
                                             </div>
                                             <div class="card-team-content">
                                                 <p></p>
@@ -229,26 +214,26 @@ date: 2013-08-27
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2023/01/31/07/52/hunter-7757376_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/henry.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. M. Henry</h3>
                                                 <span></span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Bio-Vita Testing Lab 23</p>
+                                                <p>Bio-Vita Testing Lab 023</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
@@ -260,7 +245,7 @@ date: 2013-08-27
                                                 <span>19.09.1984</span>
                                             </div>
                                             <div class="card-team-content">
-                                                <p>Lead Scientist POD 83<br>
+                                                <p>Lead Scientist POD 083<br>
                                                     Nano-Technology
                                                 </p>
                                             </div>
@@ -271,7 +256,7 @@ date: 2013-08-27
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="https://cdn.pixabay.com/photo/2022/07/24/23/46/artificial-intelligence-7342613_1280.jpg" alt=""/>
+                                                <img src="../../static/imgs/team/baum.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. U. E. Baum</h3>
