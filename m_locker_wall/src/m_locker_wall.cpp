@@ -138,6 +138,7 @@ bool passwordInterpreter(char* password) {
             {
                 passwordActions(passNo);
                 delay(500);
+                MotherIO.outputReset();
                 return true;
             }
         }
@@ -230,7 +231,6 @@ void stageUpdate() {
     Mother.sendCmdToSlave(msg);
 
     stageActions();
-    MotherIO.outputReset();
 
     lastStage = stage;
 }
@@ -240,7 +240,7 @@ void setup() {
     // starts serial and default oled
     Mother.begin();
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
-    MotherIO.ioInit(intputArray, size_t(inputCnt), outputArray, size_t(outputCnt));
+    MotherIO.ioInit(intputArray, sizeof(intputArray), outputArray, sizeof(outputArray));
 
     Serial.println(F("WDT endabled"));
     wdt_enable(WDTO_8S);
