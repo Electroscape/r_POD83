@@ -57,13 +57,13 @@ def browser():
 def get_post(post_path):
     if len(post_path.split("+")) >= 2:
         name = post_path.split("+")[-1]
-        path = '{}/{}'.format(post_path.split("+")[-2], name[:-2] + g_lang)
+        path = '{}/{}'.format(post_path.split("+")[-2], name)
     else:
         name = post_path
-        path = '{}'.format(name[:-2] + g_lang)
+        path = '{}'.format(name)
 
     config = {
-        "title": name[:-3],
+        "title": name,
         "lang": g_lang
     }
     logging.info(f"post path: {path}")
@@ -156,7 +156,7 @@ def switch_language():
 
 
 def get_posts():
-    posts = [p for p in flatpages if p.path.endswith(g_lang)]
+    posts = [p for p in flatpages]
     posts_json = []
     for p in posts:
         try:
@@ -169,7 +169,7 @@ def get_posts():
             {
                 "html": p.html,
                 "title": p.meta["title"],
-                "date": p.meta["date"],
+                "lang": p.meta["lang"],
                 "folder": post_dir,
                 "url": post_url,
                 "exert": p.body[:100] + "..."

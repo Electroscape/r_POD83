@@ -1,6 +1,6 @@
 ---
 title: Fehler Codes
-date: 2013-08-27
+lang: DE
 ---
 
 Diese Datenbank soll helfen, Fehler in Ihrer Einrichtung zu erkennen und zu beheben.

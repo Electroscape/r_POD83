@@ -1,6 +1,6 @@
 ---
 title: Error log
-date: 2013-08-27
+lang: EN
 ---
 
 This database is here to help identify and resolve errors within your facility

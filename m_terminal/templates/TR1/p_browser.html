@@ -7,6 +7,10 @@
             border: unset;
             box-shadow: unset;
         }
+
+        #lang-box {
+            display: none;
+        }
     </style>
 {% endblock %}
 
@@ -36,7 +40,7 @@
                                                     {{ post.title }}
                                                 </a>
                                             </h5>
-                                            <small>Last edit: {{ post.date }}</small>
+                                            <small>Sprache: {{ post.lang }}</small>
                                         </div>
                                     </div>
                                 {% endfor %}
