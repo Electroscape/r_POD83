@@ -109,6 +109,12 @@
 {% endblock %}
 
 {% block content %}
+    <audio id="laserBoot">
+        <source src="{{ url_for('static', filename='sounds/laser-boot.mp3') }}" type="audio/mpeg">
+    </audio>
+    <audio id="laserActive" loop>
+        <source src="{{ url_for('static', filename='sounds/laser-active.mp3') }}" type="audio/mpeg">
+    </audio>
     <audio id="errorSnd">
         <source src="{{ url_for('static', filename='sounds/error.mp3') }}" type="audio/mpeg">
     </audio>
@@ -208,8 +214,9 @@
             }
 
             await sleep(1000);
-
+            $('#laserBoot')[0].pause();
             if (fixed === "fixed") {
+                $('#laserActive')[0].play();
                 // successful booting loop with the "active laser" timeout
                 setTimeout(() => {
                     stopBootLoop = true;
@@ -236,12 +243,10 @@
                 setCountdownTimer(countdownTimeSeconds);
 
             } else {
+                $('#errorSnd')[0].play();
                 $.post("{{ url_for('lab_control') }}", {
                     status: "error"
                 });
-                let snd = document.getElementById("errorSnd");
-                snd.play();
-
                 for (let i = 1; i < 4; i++) {
                     appendLine(`<p style="color: blue">attempt number: ${i}</p>`);
                     appendLine("re-initializing the laser");
@@ -269,6 +274,7 @@
         }
 
         $('#bootup').click(function () {
+            $('#laserBoot')[0].play();
             $(this).hide();
             delayedGreeting();
         });
@@ -313,6 +319,8 @@
 
         /* setCountDown function */
         const setCountDown = (endTime) => {
+            // stop sound
+            $('#laserActive')[0].pause();
             // calculate how many milliseconds is left to reach endTime from now
             secondsLeftms = endTime - Date.now();
             // convert it to seconds

@@ -79,7 +79,9 @@
     </style>
 </head>
 <body>
-
+<audio id="bootAudio">
+    <source src="{{ url_for('static',filename='sounds/bootup.mp3') }}" type="audio/mpeg">
+</audio>
 <div id='js-feed' class="screen feed">
     <label for="feed-area"></label>
     <textarea id="feed-area" rows="10"></textarea>
@@ -108,7 +110,7 @@
         '3: USB CD',
         '4: ATA HDD0 HTS541010G9SA00-(S1)',
         '5: PCI LAN: IBA GE Slot 0200 v1231',
-        '6: -USB HDD',
+        '6: USB HDD',
         '7: ATA HDD1 Excluded from boot order: ATA HDD2, ATAPI CD1 Network - Default boot priority order: 1: PCI LAN: IBA GE Slot 0200 v1231, 2: USB FDD',
         ' ',
         ' ',
@@ -127,7 +129,7 @@
 
     const printLine = function () {
         if (feedItems[i]) {
-            let el = document.querySelector('#feed-area')
+            let el = document.querySelector('#feed-area');
             el.value = el.value + feedItems[i] + '\n';
             i++;
         }
@@ -140,9 +142,10 @@
     };
 
     function startBootUp() {
+        $('#bootAudio')[0].play();
         let next = document.querySelector('#js-feed');
-        next.classList.add('active')
-        fillWindow()
+        next.classList.add('active');
+        fillWindow();
     }
 </script>
 </body>

@@ -124,6 +124,7 @@
                         });
                 } else {
                     toastr.success(`${getFullName(msg.usr)} logged in`);
+                    $('#chatAudio')[0].play();
                 }
                 updateLoginInfo(msg.usr.toLowerCase());
 
@@ -166,6 +167,7 @@
             socket.on("airlock_fe", function (msg) {
                 console.log(`airlock ${msg}`)
                 loadControlPanel(msg.data, msg.status);
+                $('#chatAudio')[0].play();
                 toastr.warning(`airlock laser is ${msg.status}
                                 <button type="button" class="btn btn-outline-dark float-end">open airlock</button>`,
                     "Laser Lock",
@@ -192,6 +194,7 @@
                 //console.log(msg)
                 {% if request.path != "/gas_control" and request.path != "/gas_analysis" %}
                     toastr.success('There is an update in samples status');
+                    $('#chatAudio')[0].play();
                 {% endif %}
             })
 
@@ -204,6 +207,7 @@
                     if (msg.user_name !== myRoomID) {
                         {% if request.path != "/chat_control" %}
                             toastr.clear();
+                            $('#chatAudio')[0].play();
                             toastr.info(msg.message.slice(0, 35) +
                                 '... <button type="button" class="btn btn-outline-dark float-end">open</button>',
                                 "New message:",
@@ -243,7 +247,9 @@
         {% endblock %}
     </div>
 </section>
-
+<audio id="chatAudio">
+    <source src="{{ url_for('static',filename='sounds/notification.mp3') }}" type="audio/mpeg">
+</audio>
 <script src="{{ url_for('static',filename='js/fns.js') }}">
 </script>
 
