@@ -102,7 +102,7 @@ void passwordActions(int passNo) {
                 case service: 
                     stage = serviceMode; 
                     gameReset();
-                    MotherIO.setOuput(service_enable, true);
+                    MotherIO.setOuput(1 << 2);
                 break;
                 case resetIndex: 
                     gameReset();
@@ -118,12 +118,8 @@ void passwordActions(int passNo) {
         break;
         case serviceMode:
             stage = gameLive;
-            switch (passNo) {
-                case service: 
-                    MotherIO.setOuput(service_disable, true);
-                    gameReset();
-                break;
-            }
+            MotherIO.setOuput(1 << 3);
+            gameReset();
         break;
     }
 }
@@ -248,7 +244,6 @@ void setup() {
     // technicall 2 but no need to poll the 2nd as it only receives the colour
     Mother.rs485SetSlaveCount(1);
     gameReset();
-    delay(5000);
     wdt_reset();
 }
 
