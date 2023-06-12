@@ -28,6 +28,7 @@ int stage = gameLive;
 int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
+int lastInput = 0;
 // going to use this to set the LEDs how they are intended to once the function necessary has been added to the lib
 bool lockerStatuses[lockerCnt] = {false};
 
@@ -54,6 +55,14 @@ void ledUpdate() {
         if (lockerStatuses[no]) {
             LED_CMDS::setStripToClr(Mother, 1, LED_CMDS::clrGreen, 50, no);
         }
+    }
+}
+
+void stageActions() {
+    wdt_reset();
+    switch (stage) {
+        case serviceMode: Mother.motherRelay.digitalWrite(service, open); break;
+        case gameLive :Mother.motherRelay.digitalWrite(service, closed); break;
     }
 }
 
@@ -93,8 +102,7 @@ void passwordActions(int passNo) {
                 case service: 
                     stage = serviceMode; 
                     gameReset();
-                    Mother.motherRelay.digitalWrite(service, open);
-                    MotherIO.setOuput(service_enable, true);
+                    MotherIO.setOuput(1 << 2);
                 break;
                 case resetIndex: 
                     gameReset();
@@ -110,14 +118,8 @@ void passwordActions(int passNo) {
         break;
         case serviceMode:
             stage = gameLive;
-            switch (passNo) {
-                case service: 
-                    MotherIO.setOuput(service_disable, true);
-                    Mother.motherRelay.digitalWrite(service, closed); 
-                    gameReset();
-                break;
-                
-            }
+            MotherIO.setOuput(1 << 3);
+            gameReset();
         break;
     }
 }
@@ -132,6 +134,7 @@ bool passwordInterpreter(char* password) {
             {
                 passwordActions(passNo);
                 delay(500);
+                MotherIO.outputReset();
                 return true;
             }
         }
@@ -222,16 +225,18 @@ void stageUpdate() {
     strcat(msg, KeywordsList::delimiter.c_str());
     strcat(msg, stageTexts[stageIndex]); 
     Mother.sendCmdToSlave(msg);
+
+    stageActions();
+
     lastStage = stage;
 }
 
 
 void setup() {
-
     // starts serial and default oled
     Mother.begin();
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
-    MotherIO.ioInit(intputArray, inputCnt, outputArray, outputCnt);
+    MotherIO.ioInit(intputArray, sizeof(intputArray), outputArray, sizeof(outputArray));
 
     Serial.println(F("WDT endabled"));
     wdt_enable(WDTO_8S);
@@ -239,17 +244,26 @@ void setup() {
     // technicall 2 but no need to poll the 2nd as it only receives the colour
     Mother.rs485SetSlaveCount(1);
     gameReset();
-    delay(5000);
     wdt_reset();
+}
+
+void handleInputs() {
+    int inputVal = MotherIO.getInputs();
+    if (lastInput == inputVal) {
+        return;
+    }
+    lastInput = inputVal;
+    switch (inputVal) {
+        case IOValues::service_enable: stage = serviceMode; break;
+        case IOValues::service_disable: stage = gameLive; break;
+    }
 }
 
 
 void loop() {
     Mother.rs485PerformPoll();
     interpreter();
-    if (MotherIO.getInputs() == service_disable_in) {
-        stage = gameLive;
-    }
+    handleInputs();
     stageUpdate();
     wdt_reset();
 }
