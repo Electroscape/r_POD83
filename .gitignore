@@ -7,3 +7,7 @@
 **.pio
 
 pi_tvs/ip_config.json
+
+Pi_arbiter/arbiter_config.py
+
+Pi_arbiter/config.json
