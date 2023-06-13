@@ -67,7 +67,6 @@ def load_settings():
     try:
         with open('config.json') as json_file:
             cfg = json.loads(json_file.read())
-            # event_mapping = cfg["event_mapping"]
             terminal_server_add = cfg["terminal_server_add"]
             sound_server_add = cfg["sound_server_add"]
     except ValueError as e:

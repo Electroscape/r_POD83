@@ -30,4 +30,7 @@ One useful command as well is `git remote set-url origin https://github.com/Elec
    * ip_config.json for Kamera credentials and Terminal Ips
    * /static/json/ver_config.json to configure terminal content depending on location
    * /staitc/media insert content for "media file database"
+ * pi_arbiter:
+   * config.json listing of the IP it connects to
+   * arbiter_config -> set the revision of the arbiter board
  * pi_tvs: ip_config.json 
