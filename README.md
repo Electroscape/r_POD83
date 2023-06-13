@@ -19,3 +19,14 @@ If there is any update later only one line is sufficient `git pull`
 Other useful commands `git fetch` to check the changes without pulling, `git status` to know the modified files and the branch name and `git checkout <branch name>`  to switch to another branch.
 
 One useful command as well is `git remote set-url origin https://github.com/Electroscape/r_POD83.git` to switch the remote-url to HTTPS  for example if it is previously was set to SSH key  or the other way around.
+
+
+# Configuration files
+
+ * m_dispenser: /include/header HH parameter
+ * m_lablight: /include/header HH paramter
+ * m_terminal:
+   * run.sh to configure for terminal excection
+   * ip_config.json for Kamera credentials and Terminal Ips
+   * /static/json/ver_config.json to configure terminal content depending on location
+   * /staitc/media insert content for "media file database"
