@@ -33,4 +33,6 @@ One useful command as well is `git remote set-url origin https://github.com/Elec
  * pi_arbiter:
    * config.json listing of the IP it connects to
    * arbiter_config -> set the revision of the arbiter board
- * pi_tvs: ip_config.json 
+ * pi_tvs: 
+   * ip_config.json 
+   * play_security.sh needs camera credentials
