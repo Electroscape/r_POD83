@@ -200,9 +200,18 @@
 
             function handleMessageReception(msg) {
                 if (typeof msg.user_name !== 'undefined') {
+                    let chatColor = "white";
+                    if (msg.user_name === "rachel") {
+                        chatColor = "red";
+                    } else if (msg.user_name === "elancell-hq") {
+                        chatColor = "yellow";
+                    }
+
                     $('#msg_holder').prepend(
-                        `<div><b style="color: #000"> ${msg.user_name}: </b>
-                     <p style="display: inline; color: white">${msg.message}</p></div>`);
+                        `<div>
+                                <b style="color: #000"> ${msg.user_name}:</b>
+                                <p style="display: inline; color: ${chatColor}">${msg.message}</p>
+                         </div>`);
 
                     if (msg.user_name !== myRoomID) {
                         {% if request.path != "/chat_control" %}
