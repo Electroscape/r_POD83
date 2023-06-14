@@ -55,19 +55,12 @@ def browser():
 
 @app.route('/browser/<post_path>', methods=['GET', 'POST'])
 def get_post(post_path):
-    if len(post_path.split("+")) >= 2:
-        name = post_path.split("+")[-1]
-        path = '{}/{}'.format(post_path.split("+")[-2], name)
-    else:
-        name = post_path
-        path = '{}'.format(name)
-
     config = {
-        "title": name,
+        "title": post_path,
         "lang": g_lang
     }
-    logging.info(f"post path: {path}")
-    post = flatpages.get_or_404(path)
+    logging.info(f"post path: {post_path}")
+    post = flatpages.get_or_404(post_path)
     html_path = f'{terminal_name}/post.html'
     return render_template(html_path, g_config=config, post=post)
 
@@ -155,23 +148,19 @@ def switch_language():
             return get_globals()
 
 
-def get_posts():
-    posts = [p for p in flatpages]
+def get_posts() -> dict:
+    # filter posts by language
+    posts = [p for p in flatpages if p.meta["lang"] == "EN/DE" or p.meta["lang"].lower() == g_lang]
+    # create list of jsons for posts
     posts_json = []
     for p in posts:
-        try:
-            post_dir = p.path.split("/")[-2]
-            post_url = url_for('get_post', post_path=p.path.replace("/", "+"))
-        except IndexError:
-            post_dir = "root"
-            post_url = url_for('get_post', post_path=p.path)
         posts_json.append(
             {
                 "html": p.html,
                 "title": p.meta["title"],
                 "lang": p.meta["lang"],
-                "folder": post_dir,
-                "url": post_url,
+                "folder": p.meta.get("group_" + g_lang, "browser"),
+                "url": url_for('get_post', post_path=p.path),
                 "exert": p.body[:100] + "..."
             }
         )
@@ -179,10 +168,10 @@ def get_posts():
     # group posts by folder name
     folders = {}
     for p in posts_json:
-        if p["folder"] == "/":
-            p["folder"] = "root"
+        # first time create key with folder name
         if not folders.get(p["folder"]):
             folders[p["folder"]] = []
+        # append post to folder name list
         folders[p["folder"]].append(p)
 
     return folders

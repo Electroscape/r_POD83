@@ -4,7 +4,7 @@
   "auth_msg": "Needs Authentication First",
   "btns": [
     {
-      "title": "Browser",
+      "title": "Wiki",
       "details": "open new browser page",
       "image": "static/imgs/home/browser.png",
       "link": "browser",

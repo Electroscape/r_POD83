@@ -1,6 +1,8 @@
 ---
-title: Error log
+title: Error Codes
 lang: EN
+group_en: Technical Maintenance
+group_de: TECHNISCHE INSTANDHALTUNG
 ---
 
 This database is here to help identify and resolve errors within your facility

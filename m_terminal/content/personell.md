@@ -1,6 +1,8 @@
 ---
 title: Personell Files
 lang: EN/DE
+group_en: Facility Directory
+group_de: Facility Directory
 ---
 
 <style>
@@ -80,7 +82,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/saei.png" alt=""/>
+                                                <img src="../static/imgs/team/saei.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>A. Saei</h3>
@@ -96,7 +98,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/hugo.png" alt=""/>
+                                                <img src="../static/imgs/team/hugo.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. D. Hugo</h3>
@@ -112,7 +114,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/david.jpg" alt=""/>
+                                                <img src="../static/imgs/team/david.jpg" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. D. Coverstone</h3>
@@ -134,7 +136,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/winnie.png" alt=""/>
+                                                <img src="../static/imgs/team/winnie.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. J. Winnie</h3>
@@ -150,7 +152,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/pek.png" alt=""/>
+                                                <img src="../static/imgs/team/pek.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>M. Pek</h3>
@@ -166,7 +168,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/walter.png" alt=""/>
+                                                <img src="../static/imgs/team/walter.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. C. Walter</h3>
@@ -186,7 +188,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/walti.png" alt=""/>
+                                                <img src="../static/imgs/team/walti.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>K.T. Walti</h3>
@@ -202,7 +204,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/finn.png" alt=""/>
+                                                <img src="../static/imgs/team/finn.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. A. Finn</h3>
@@ -218,7 +220,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/henry.png" alt=""/>
+                                                <img src="../static/imgs/team/henry.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. M. Henry</h3>
@@ -238,7 +240,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/rachel.png" alt=""/>
+                                                <img src="../static/imgs/team/rachel.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. R. Taylor</h3>
@@ -256,7 +258,7 @@ lang: EN/DE
                                     <div class="carousel-team-card-cell">
                                         <div class="carousel-card-team">
                                             <div class="card-team-img">
-                                                <img src="../../static/imgs/team/baum.png" alt=""/>
+                                                <img src="../static/imgs/team/baum.png" alt=""/>
                                             </div>
                                             <div class="card-team-name">
                                                 <h3>Dr. U. E. Baum</h3>

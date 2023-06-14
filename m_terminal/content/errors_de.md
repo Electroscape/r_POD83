@@ -1,6 +1,8 @@
 ---
 title: Fehler Codes
 lang: DE
+group_en: Technical Maintenance
+group_de: TECHNISCHE INSTANDHALTUNG
 ---
 
 Diese Datenbank soll helfen, Fehler in Ihrer Einrichtung zu erkennen und zu beheben.
