@@ -1,9 +1,11 @@
 # Changelog 
 
 
-## still WIP
+# v 0.22
 * servicemode triggered from lockerwall
-
+* added config flie listing
+* fixed minor startup problems in T2
+* queued security stream after "the truth"
 
 # v 0.21
 
