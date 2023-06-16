@@ -6,7 +6,13 @@
     "foscam": {
       "pincode": "1010",
       "zoom": false
-    }
+    },
+    "airlock": {
+      "boot_time_s": 14,
+      "countdown_time_s": 12,
+      "sound_effects": true
+    },
+    "boot_sound": true
   },
   "TR2": {
     "elancell": {

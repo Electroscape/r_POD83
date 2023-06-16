@@ -142,7 +142,9 @@
     };
 
     function startBootUp() {
-        $('#bootAudio')[0].play();
+        {% if play_boot_sound %}
+            $('#bootAudio')[0].play();
+        {% endif %}
         let next = document.querySelector('#js-feed');
         next.classList.add('active');
         fillWindow();

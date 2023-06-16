@@ -226,14 +226,14 @@
          title="Upload to {% if "breach" in request.path %}R.{% else %}Elancell{% endif %}">
         <p class="validateTips">All form fields are required.</p>
 
-        <form>
+        <form autocomplete="off">
             <fieldset class="form-outline">
                 <h3>Network Configuration</h3>
                 <label class="form-label" for="ipv4">ip
                     <input id="ipv4" type='text' name='text1'
                            {% if "breach" in request.path %}placeholder="type ip here"
                            {% else %}value="{{ g_config.elancell_ip }}"{% endif %}
-                           autocomplete="false"
+                           autocomplete="new-password"
                            class="form-control text ui-widget-content ui-corner-all" disabled/>
                 </label>
 

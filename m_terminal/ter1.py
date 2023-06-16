@@ -83,7 +83,8 @@ def lab_control():
     config = {
         "title": "Lab Control",
         "boot": airlock_boot,
-        "auth": airlock_auth
+        "auth": airlock_auth,
+        "version": get_version(terminal_name).get("airlock")
     }
     logging.info("open lab page")
     html_path = f'{terminal_name}/p_lab.html'
@@ -106,7 +107,8 @@ def pre_entry_point():
     if usb_boot == "boot":
         return redirect("/")
 
-    return render_template("TR1/boot_up.html")
+    sound_effects = get_version(terminal_name).get("boot_sound")
+    return render_template("TR1/boot_up.html", play_boot_sound=sound_effects)
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])

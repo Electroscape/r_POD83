@@ -3,8 +3,8 @@
 {% block head %}
     <script type="text/javascript">
         let stopBootLoop = false;
-        let countdownTimeSeconds = 12;
-        let bootingTimeSeconds = 14;
+        let countdownTimeSeconds = "{{ g_config.version.get('countdown_time_s', 10) }}";
+        let bootingTimeSeconds = "{{ g_config.version.get('boot_time_s', 15) }}";
     </script>
     <style>
         /* countdown */
@@ -216,7 +216,9 @@
             await sleep(1000);
             $('#laserBoot')[0].pause();
             if (fixed === "fixed") {
-                $('#laserActive')[0].play();
+                {% if g_config.version.sound_effects %}
+                    $('#laserActive')[0].play();
+                {% endif %}
                 // successful booting loop with the "active laser" timeout
                 setTimeout(() => {
                     stopBootLoop = true;
@@ -274,7 +276,9 @@
         }
 
         $('#bootup').click(function () {
-            $('#laserBoot')[0].play();
+            {% if g_config.version.sound_effects %}
+                $('#laserBoot')[0].play();
+            {% endif %}
             $(this).hide();
             delayedGreeting();
         });
