@@ -16,6 +16,8 @@ from communication.TESocketServer import TESocketServer
 from pathlib import Path
 from datetime import datetime as dt, timedelta
 
+time_start = None
+
 IO = ArbiterIO()
 usb_live = False
 
@@ -54,7 +56,12 @@ boot_usb_path = Path("/media/2cp/usb_boot")
 reset_gpios_dicts = {}
 reset_delta = timedelta(seconds=3)
 # used for delayed events
-event_shedule= {}
+event_shedule = {}
+
+now = dt.now()
+log_name = now.strftime("eventlogs/Arbiter events %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.INFO,
+                    format=f'%(asctime)s %(levelname)s : %(message)s')
 
 
 class Settings:
@@ -94,6 +101,17 @@ def trigger_event(event_key, event_value=None):
     event_value = get_event_value(event_key, event_value)
     if event_value is None:
         return
+
+    if event_key == "airlock_begin_atmo":
+        global time_start
+        time_start = dt.now()
+    elapsed_time_str = ""
+
+    if time_start is not None:
+        event_dt = dt.now() - time_start
+        elapsed_time_str = str(event_dt)
+    log_msg = f"{elapsed_time_str} {event_key}"
+    logging.info(log_msg)
 
     # Sound, may be moved to a fnc
     print(event_value)
