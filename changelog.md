@@ -1,5 +1,12 @@
 # Changelog 
 
+# v 0.22.1 (Terminals UI)
+* add `static/json/ver_config` for versions differences
+* add sounds for bootup, airlock boot, active laser and notifications
+* add colors for Elancell HQ and Rachel in chat
+* change Wiki language handling
+* add personell pics
+* fix usb upload bug
 
 # v 0.22
 * servicemode triggered from lockerwall
