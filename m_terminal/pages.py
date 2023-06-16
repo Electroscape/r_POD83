@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from fns import get_samples_status, listdir_no_hidden, is_unique_users, levels_game, get_login_users
+from fns import get_samples_status, listdir_no_hidden, is_unique_users, levels_game, get_login_users, get_version
 
 app_pages = Blueprint('app_pages', __name__, template_folder='templates')
 
@@ -52,10 +52,10 @@ def elancell_upload():
         return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
 
     config = {
-        "title": "Upload Results",
-        "elancell_ip": "134.231.83.19",
-        "rachel_ip": "134.231.54.23"
+        "title": "Upload Results"
     }
+    version_config = get_version("TR2").get("elancell")
+    config.update(version_config)
     print("open Elancell page")
     return render_template("TR2/p_elancell_upload.html", g_config=config, samples=levels_game)
 
@@ -66,10 +66,10 @@ def elancell_breach():
         return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
 
     config = {
-        "title": "IT Breach",
-        "elancell_ip": "134.231.83.19",
-        "rachel_ip": "134.231.54.23"
+        "title": "IT Breach"
     }
+    version_config = get_version("TR2").get("elancell")
+    config.update(version_config)
     print("open Elancell breach page")
     return render_template("TR2/p_elancell_upload.html", g_config=config, samples=levels_game)
 
@@ -80,10 +80,11 @@ def cleanroom():
         return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
 
     config = {
-        "title": "Cleanroom Access",
-        "passcode": "4321",
-        "version": "launch_button"
+        "title": "Cleanroom Access"
     }
+    version_config = get_version("TR2").get("cleanroom", {})
+    config.update(version_config)
+
     print("open cleanroom access page")
     return render_template("TR2/p_cleanroom.html", g_config=config)
 

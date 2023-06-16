@@ -65,12 +65,21 @@ function sendNewMessage() {
 }
 
 function receiveNewMessage(src, msg) {
+    let messageColor, senderColor = "black";
+    if (src === "rachel") {
+        messageColor = "red";
+    } else if (src === "elancell-hq") {
+        messageColor = "yellow";
+    } else {
+        messageColor = "white";
+    }
+
     const messagesContainer = $('.messages');
 
     messagesContainer.prepend([
         '<li class="other">',
-        `<b style="color: #000"> ${src}: </b>`,
-        msg,
+        `<b style="color: ${senderColor}"> ${src}: </b>`,
+        `<p style="display: inline; color: ${messageColor}">${msg}</p>`,
         '</li>'
     ].join(''));
 
