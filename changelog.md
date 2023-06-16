@@ -6,6 +6,8 @@
 * added config flie listing
 * fixed minor startup problems in T2
 * queued security stream after "the truth"
+* added eventlogging to the Arbiter
+* fixed laserlock problems with card locaality and magnet
 
 # v 0.21
 
