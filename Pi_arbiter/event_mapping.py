@@ -24,6 +24,7 @@ laserlock_in_pcf = 4
 laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
 analyzer_in_pcf = laserlock_in_2_pcf
+locker_in_pcf = laserlock_in_2_pcf      # used for the service enable/disable
 dispenser_out_pcf = lab_light_out_pcf
 
 sound = "sound"
@@ -77,6 +78,11 @@ class LaserlockIn(IntEnum):
     davidSeperated = 4     # status for T1
     rachelSeperated = 5    # status for T1
     timeout = 6
+
+
+class LockerIn(IntEnum):
+    serviceEnable = 1 << 4
+    serviceDisable = 1 << 5
 
 
 labLight_trigger = "labLight"
@@ -679,9 +685,10 @@ event_map = {
         event_condition: USBScripts.elancell_disabled_condition
     },
     "service_mode_enable": {
-
         trigger_cmd: "service",
         trigger_msg: "on",
+        pcf_in: LockerIn.serviceEnable,
+        pcf_in_add: locker_in_pcf,
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
         pcf_out: [LaserlockOut.cleanupLight, lab_light_white],
         # event_condition: GeneralConditions.service_enable
@@ -689,6 +696,8 @@ event_map = {
     "service_mode_disable": {
         trigger_cmd: "service",
         trigger_msg: "off",
+        pcf_in: LockerIn.serviceDisable,
+        pcf_in_add: locker_in_pcf,
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
         pcf_out: [LaserlockOut.light_off, lab_light_off],
         # event_condition: GeneralConditions.service_disable

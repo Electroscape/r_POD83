@@ -12,7 +12,7 @@ from flask_socketio import SocketIO
 
 from ring_list import RingList
 from fns import js_r, get_progressbar_status
-from pages import app_pages, get_login_user
+from pages import app_pages, get_login_user, get_version
 import socketio
 import logging
 from datetime import datetime as dt
@@ -55,19 +55,12 @@ def browser():
 
 @app.route('/browser/<post_path>', methods=['GET', 'POST'])
 def get_post(post_path):
-    if len(post_path.split("+")) >= 2:
-        name = post_path.split("+")[-1]
-        path = '{}/{}'.format(post_path.split("+")[-2], name[:-2] + g_lang)
-    else:
-        name = post_path
-        path = '{}'.format(name[:-2] + g_lang)
-
     config = {
-        "title": name[:-3],
+        "title": post_path,
         "lang": g_lang
     }
-    logging.info(f"post path: {path}")
-    post = flatpages.get_or_404(path)
+    logging.info(f"post path: {post_path}")
+    post = flatpages.get_or_404(post_path)
     html_path = f'{terminal_name}/post.html'
     return render_template(html_path, g_config=config, post=post)
 
@@ -90,7 +83,8 @@ def lab_control():
     config = {
         "title": "Lab Control",
         "boot": airlock_boot,
-        "auth": airlock_auth
+        "auth": airlock_auth,
+        "version": get_version(terminal_name).get("airlock")
     }
     logging.info("open lab page")
     html_path = f'{terminal_name}/p_lab.html'
@@ -113,7 +107,8 @@ def pre_entry_point():
     if usb_boot == "boot":
         return redirect("/")
 
-    return render_template("TR1/boot_up.html")
+    sound_effects = get_version(terminal_name).get("boot_sound")
+    return render_template("TR1/boot_up.html", play_boot_sound=sound_effects)
 
 
 @app.route('/chat_control', methods=['GET', 'POST'])
@@ -155,23 +150,19 @@ def switch_language():
             return get_globals()
 
 
-def get_posts():
-    posts = [p for p in flatpages if p.path.endswith(g_lang)]
+def get_posts() -> dict:
+    # filter posts by language
+    posts = [p for p in flatpages if p.meta["lang"] == "EN/DE" or p.meta["lang"].lower() == g_lang]
+    # create list of jsons for posts
     posts_json = []
     for p in posts:
-        try:
-            post_dir = p.path.split("/")[-2]
-            post_url = url_for('get_post', post_path=p.path.replace("/", "+"))
-        except IndexError:
-            post_dir = "root"
-            post_url = url_for('get_post', post_path=p.path)
         posts_json.append(
             {
                 "html": p.html,
                 "title": p.meta["title"],
-                "date": p.meta["date"],
-                "folder": post_dir,
-                "url": post_url,
+                "lang": p.meta["lang"],
+                "folder": p.meta.get("group_" + g_lang, "browser"),
+                "url": url_for('get_post', post_path=p.path),
                 "exert": p.body[:100] + "..."
             }
         )
@@ -179,10 +170,10 @@ def get_posts():
     # group posts by folder name
     folders = {}
     for p in posts_json:
-        if p["folder"] == "/":
-            p["folder"] = "root"
+        # first time create key with folder name
         if not folders.get(p["folder"]):
             folders[p["folder"]] = []
+        # append post to folder name list
         folders[p["folder"]].append(p)
 
     return folders
@@ -191,11 +182,7 @@ def get_posts():
 @app.route('/foscam_control', methods=['GET', 'POST'])
 def foscam_control():
     config = {
-        "title": "CCTV Cameras",
-        "pincode": "1010",
-        "version": {
-            "zoom": True
-        }
+        "title": "CCTV Cameras"
     }
 
     if request.method == 'POST':
@@ -206,6 +193,8 @@ def foscam_control():
             logging.info("cgi ptz command")
         return "success"
 
+    version_config = get_version("TR1").get("foscam")
+    config.update(version_config)
     logging.info("open CCTV page")
     return render_template("TR1/p_cctv.html", g_config=config, cams=ip_conf["cams"])
 

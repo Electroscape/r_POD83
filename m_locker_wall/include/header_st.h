@@ -44,31 +44,29 @@ int relayInitArray[relayAmount] = {
     service_init
 };
 
-#define inputCnt 1
-#define outputCnt 2
+#define inputCnt    2
+#define outputCnt   2
 
 enum IOpins {
     IO_1,
     IO_2,
     IO_3,
+    IO_4,
 };
 
-enum inputValues {
-    service_disable_in = 1
+enum IOValues {
+    service_enable = 1,
+    service_disable
 };
 
 int intputArray[inputCnt] = {
     IO_1,
-};
-
-enum outputValues {
-    service_enable = 1,
-    service_disable,
+    IO_2,
 };
 
 int outputArray[outputCnt] = {
-    IO_2,
     IO_3,
+    IO_4,
 };
 
 enum stages{
@@ -106,8 +104,8 @@ int passwordMap[PasswordAmount] = {
     gameLive,
     gameLive,
     gameLive,
-    stageSum, // service code, valid in all stages
-    stageSum  // reset codevalid in all stages
+    stageSum,   // service code, valid in all stages
+    gameLive    // reset code
 };
 // make a mapping of what password goes to what stage
 

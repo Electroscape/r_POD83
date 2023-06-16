@@ -1,10 +1,21 @@
 from pathlib import Path
 import socketio
+import json
 
 import logging
 
 logging.basicConfig(filename='tvs.log', level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+
+
+try:
+    with open('ip_config.json') as json_file:
+        cfg = json.loads(json_file.read())
+        server_ip = cfg["server"]
+except ValueError as e:
+    print('failure to read serial_config.json')
+    print(e)
+    exit()
 
 
 sio = socketio.Client()
@@ -48,11 +59,10 @@ def main():
             logging.error(err)
 
 
-
 if __name__ == '__main__':
     while not sio.connected:
         try:
-            sio.connect("http://192.168.178.179:5500")
+            sio.connect("http://" + server_ip + ":5500")
         except socketio.exceptions.ConnectionError as exc:
             logging.debug(f'Caught exception socket.error : {exc}')
         except Exception as exp:

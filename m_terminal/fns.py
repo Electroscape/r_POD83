@@ -82,6 +82,7 @@ def listdir_no_hidden(path):
 
 ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
 levels_game = js_r("json/levels.json", add_buttons=False)
+versions = js_r("json/ver_config.json", add_buttons=False)
 server_ip = "http://" + ip_conf["server"]
 
 
@@ -111,3 +112,7 @@ def get_login_users() -> dict:
     except Exception as e:
         users = {}
     return users
+
+
+def get_version(ter_name) -> dict:
+    return versions.get(ter_name, {})

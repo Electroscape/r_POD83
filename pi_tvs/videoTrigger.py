@@ -2,10 +2,19 @@
 
 from socket_client import SocketClient
 from subprocess import Popen
-from time import sleep
+import json
+
+try:
+    with open('ip_config.json') as json_file:
+        cfg = json.loads(json_file.read())
+        arbiter_ip = cfg["arbiter"]
+except ValueError as e:
+    print('failure to read serial_config.json')
+    print(e)
+    exit()
 
 
-sock = SocketClient('raspi-4-pod-arbiter', 12345)
+sock = SocketClient(arbiter_ip, 12345)
 video_dict = {
     "usb_boot": "./play_welcome.sh",
     "end_rachel_announce": "./play_rachel.sh",

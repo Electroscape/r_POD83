@@ -1,0 +1,4 @@
+{
+    "server": "raspi-4-pod-t1",
+    "arbiter": "raspi-4-pod-Arbiter"
+}

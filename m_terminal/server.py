@@ -26,7 +26,6 @@ logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 
-
 def read_json(filename: str, from_static=True) -> dict:
     """
     json read function is used to get the json data from a file and load it to a dict
@@ -57,6 +56,7 @@ login_users = {
     "tr1": "empty",
     "tr2": "empty"
 }
+version = read_json("json/ver_config.json").get("server", {})
 loading_percent = 0
 
 app = Flask(__name__)
@@ -78,9 +78,7 @@ def index():
         "title": "Server Terminal",
         "id": "server",
         "lang": "en",
-        "version": {
-            "airlock_events": True
-        }
+        "version": version
     }
     # ip_address = request.remote_addr
     # logging.info("Requester IP: " + ip_address)

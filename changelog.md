@@ -1,9 +1,20 @@
 # Changelog 
 
+# v 0.22.1 (Terminals UI)
+* add `static/json/ver_config` for versions differences
+* add sounds for bootup, airlock boot, active laser and notifications
+* add colors for Elancell HQ and Rachel in chat
+* change Wiki language handling
+* add personell pics
+* fix usb upload bug
 
-## still WIP
+# v 0.22
 * servicemode triggered from lockerwall
-
+* added config flie listing
+* fixed minor startup problems in T2
+* queued security stream after "the truth"
+* added eventlogging to the Arbiter
+* fixed laserlock problems with card locaality and magnet
 
 # v 0.21
 

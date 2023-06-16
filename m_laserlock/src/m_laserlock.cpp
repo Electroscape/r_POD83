@@ -42,6 +42,7 @@ unsigned long timestamp = millis();
 // timedTrigger shall reset this value 
 // cardsPreset adding bits of present cards with | 
 int cardsPresent = 0;
+int brainsPresent = 0;
 bool lightOn = false;
 
 int validBrainResult = 0;
@@ -108,6 +109,11 @@ void sendResult(bool result, int brainNo=Mother.getPolledSlave()) {
 }
 
 
+void resetDualRfid() {
+    cardsPresent = brainsPresent = 0;
+}
+
+
 /**
  * @brief handles timeouts rfidTX and timeout of the RFID presentation
 */
@@ -121,7 +127,7 @@ void timedTrigger() {
         default: 
             if ((stage & (seperationLocked + seperationUnlocked)) > 0) {
                 if (cardsPresent == 0) {return;}
-                cardsPresent = 0;
+                resetDualRfid();
                 sendResult(false, 0);
                 sendResult(false, 1);
             }
@@ -138,17 +144,22 @@ void checkDualRfid(int passNo) {
      
     timestamp = millis() + rfidTimeout;
     if (stage == seperationUnlocked && inputPCF.digitalRead(reedDoor)) {
-        cardsPresent = 0;
+        resetDualRfid();
         Serial.println("door is not closed");
         return;
     }
     cardsPresent |= passNo + 1;
+    brainsPresent |= Mother.getPolledSlave() + 1;
 
-    // not presented on both sides, hence we exit here
+    // not presented on both cards, hence we exit here
     if (cardsPresent <= PasswordAmount) { return; }
+    // not both rfid readers used so its invalid
+    if (brainsPresent <= int(labAccess)) {
+        Serial.println("not enoough brains present");
+        return;
+    }
 
-    cardsPresent = 0;
-
+    cardsPresent = brainsPresent = 0;
 
     switch (stage) {
         case seperationUnlocked: 
@@ -229,8 +240,6 @@ bool passwordInterpreter(char* password) {
     }
     return false;
 }
-
-
 
 
 /**
@@ -386,7 +395,7 @@ void stageActions() {
             stage = seperationUnlocked;
         break; 
         case seperationUnlocked:
-            cardsPresent = 0;
+            resetDualRfid();
             Mother.rs485SetSlaveCount(2);
             Mother.motherRelay.digitalWrite(door, doorOpen);
             // wdt_disable();
@@ -395,7 +404,7 @@ void stageActions() {
             // MotherIO.outputReset();
         break;
         case seperationLocked:
-            cardsPresent = 0;
+            resetDualRfid();
             Mother.motherRelay.digitalWrite(door, doorClosed);
             // MotherIO.setOuput(seperationEnd);
         break;
@@ -620,6 +629,9 @@ void setup() {
 void loop() {
     validBrainResult = Mother.rs485PerformPoll();
     timedTrigger();
+    if (stage == seperationUnlocked && inputPCF.digitalRead(reedDoor)) {
+        resetDualRfid();
+    }
     if (validBrainResult) {interpreter();}
     handleInputs();    
     stageUpdate(); 

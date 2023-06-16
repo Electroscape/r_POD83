@@ -207,7 +207,7 @@
                                 <td>
                                 </td>
                             </tr>
-                            {% if g_config.version.zoom %}
+                            {% if g_config.get("zoom") %}
                                 <tr>
                                     <td>
                                         <button onmousedown="ptzCmd('zoomOut', {{ loop.index0 }})"
@@ -255,7 +255,7 @@
             }).then(
                 function (inputValue) {
                     console.log(inputValue)
-                    if (inputValue === "{{ g_config.pincode }}") {
+                    if (inputValue === "{{ g_config.get("pincode") }}") {
                         swal("Access Granted", "Correct PIN Code", "success");
                         $("#cams-tab-1").tab("show");
                     } else {
