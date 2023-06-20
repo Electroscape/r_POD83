@@ -669,38 +669,6 @@ event_map = {
             sound_id: 6
         },
     },
-    "usb_rachel_enable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "breach",
-            fe_cb_msg: "breach"
-        },
-        event_condition: USBScripts.rachel_enabled_condition
-    },
-    "usb_rachel_disable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "breach",
-            fe_cb_msg: "secure"
-        },
-        event_condition: USBScripts.rachel_disabled_condition
-    },
-    "usb_elancell_enable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "elancell",
-            fe_cb_msg: "enable"
-        },
-        event_condition: USBScripts.elancell_enabled_condition
-    },
-    "usb_elancell_disable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "elancell",
-            fe_cb_msg: "disable"
-        },
-        event_condition: USBScripts.elancell_disabled_condition
-    },
     "service_mode_enable": {
         trigger_cmd: "service",
         trigger_msg: "on",
