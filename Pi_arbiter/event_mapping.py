@@ -550,6 +550,11 @@ event_map = {
         event_condition: LaserLock.start_stream,
         event_script: call_video,
     },
+    "play_biovita": {
+        trigger_cmd: "play",
+        trigger_msg: "biovita",
+        event_script: call_video,
+    },
     "dispenser_dishout": {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
@@ -663,7 +668,6 @@ event_map = {
             is_fx: False,
             sound_id: 6
         },
-
     },
     "usb_rachel_enable": {
         fe_cb: {
