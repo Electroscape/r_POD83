@@ -239,7 +239,7 @@ def events_handler(msg):
         global loading_percent
 
         if msg.get("cmd") == "loadingbar":
-            loading_percent = msg.get("message")
+            loading_percent = int(msg.get("message"))
             sio.emit("to_clients", {"username": "tr1", "cmd": "loadingbar", "message": loading_percent})
             sio.emit("to_clients", {"username": "tr2", "cmd": "loadingbar", "message": loading_percent})
         elif msg.get("cmd") == "reset":
