@@ -94,7 +94,7 @@
             <div class="menu-wrapper">
                 <div class="videos row">
                     {% for media in g_config.files %}
-                        <video class="item" src="{{ url_for('static', filename='media/' + media) }}"></video>
+                        <video class="item" src="{{ url_for('static', filename='media/' + media) }}#t=0.1"></video>
                     {% endfor %}
                 </div>
                 <div class="paddles">

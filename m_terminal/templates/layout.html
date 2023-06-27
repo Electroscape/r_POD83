@@ -268,6 +268,9 @@
         if (rb) {
             rb.checked = true;
         }
+
+        // decrease notification volume to 50%
+        $("#chatAudio").volume = 0.5;
     });
 
     function loadControlPanel(jsonResponse, airlockStatus = "") {

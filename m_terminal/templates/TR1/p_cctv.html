@@ -170,8 +170,8 @@
                                 <td>
                                 </td>
                                 <td>
-                                    <button onmousedown="ptzCmd('ptzMoveUp', {{ loop.index0 }})"
-                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                    <button onmousedown="ptzCmd('ptzMoveUp', '{{ loop.index0 }}')"
+                                            onmouseup="ptzCmd('ptzStopRun', '{{ loop.index0 }}')">
                                         <i class="fa-solid fa-caret-up"></i>
                                     </button>
                                 </td>
@@ -180,17 +180,17 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <button onmousedown="ptzCmd('ptzMoveLeft', {{ loop.index0 }})"
-                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                    <button onmousedown="ptzCmd('ptzMoveLeft', '{{ loop.index0 }}')"
+                                            onmouseup="ptzCmd('ptzStopRun', '{{ loop.index0 }}')">
                                         <i class="fa-solid fa-caret-left"></i>
                                     </button>
                                 </td>
                                 <td>
-                                    <button onmousedown="ptzCmd('ptzReset', {{ loop.index0 }})">RESET</button>
+                                    <button onmousedown="ptzCmd('ptzReset', '{{ loop.index0 }}')">RESET</button>
                                 </td>
                                 <td>
-                                    <button onmousedown="ptzCmd('ptzMoveRight', {{ loop.index0 }})"
-                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                    <button onmousedown="ptzCmd('ptzMoveRight', '{{ loop.index0 }}')"
+                                            onmouseup="ptzCmd('ptzStopRun', '{{ loop.index0 }}')">
                                         <i class="fa-solid fa-caret-right"></i>
                                     </button>
                                 </td>
@@ -199,8 +199,8 @@
                                 <td>
                                 </td>
                                 <td>
-                                    <button onmousedown="ptzCmd('ptzMoveDown', {{ loop.index0 }})"
-                                            onmouseup="ptzCmd('ptzStopRun', {{ loop.index0 }})">
+                                    <button onmousedown="ptzCmd('ptzMoveDown', '{{ loop.index0 }}')"
+                                            onmouseup="ptzCmd('ptzStopRun', '{{ loop.index0 }}')">
                                         <i class="fa-solid fa-caret-down"></i>
                                     </button>
                                 </td>
@@ -210,8 +210,8 @@
                             {% if g_config.get("zoom") %}
                                 <tr>
                                     <td>
-                                        <button onmousedown="ptzCmd('zoomOut', {{ loop.index0 }})"
-                                                onmouseup="ptzCmd('zoomStop', {{ loop.index0 }})">
+                                        <button onmousedown="ptzCmd('zoomOut', '{{ loop.index0 }}')"
+                                                onmouseup="ptzCmd('zoomStop', '{{ loop.index0 }}')">
                                             <i class="fa-solid fa-minus"></i>
                                         </button>
                                     </td>
@@ -219,8 +219,8 @@
                                         ZOOM
                                     </td>
                                     <td>
-                                        <button onmousedown="ptzCmd('zoomIn', {{ loop.index0 }})"
-                                                onmouseup="ptzCmd('zoomStop', {{ loop.index0 }})">
+                                        <button onmousedown="ptzCmd('zoomIn', '{{ loop.index0 }}')"
+                                                onmouseup="ptzCmd('zoomStop', '{{ loop.index0 }}')">
                                             <i class="fa-solid fa-plus"></i>
                                         </button>
                                     </td>
@@ -241,21 +241,20 @@
             swal({
                 title: "Encrypted Stream",
                 text: "Please write the decryption key",
-                type: "input",
-                showCancelButton: true,
-                closeOnConfirm: false,
-                animation: "slide-from-top",
+                buttons: {
+                    cancel: true
+                },
                 content: {
                     element: "input",
                     attributes: {
                         placeholder: "4-digit PIN Code",
-                        type: "password",
+                        type: "password"
                     },
                 }
             }).then(
                 function (inputValue) {
                     console.log(inputValue)
-                    if (inputValue === "{{ g_config.get("pincode") }}") {
+                    if (inputValue === "{{ g_config.get('pincode') }}") {
                         swal("Access Granted", "Correct PIN Code", "success");
                         $("#cams-tab-1").tab("show");
                     } else {

@@ -84,7 +84,7 @@ def lab_control():
         "title": "Lab Control",
         "boot": airlock_boot,
         "auth": airlock_auth,
-        "version": get_version(terminal_name).get("airlock")
+        "version": get_version(terminal_name).get("laserlock")
     }
     logging.info("open lab page")
     html_path = f'{terminal_name}/p_lab.html'
@@ -176,7 +176,9 @@ def get_posts() -> dict:
         # append post to folder name list
         folders[p["folder"]].append(p)
 
-    return folders
+    sorted_folders = dict(sorted(folders.items()))
+
+    return sorted_folders
 
 
 @app.route('/foscam_control', methods=['GET', 'POST'])
@@ -249,10 +251,13 @@ def events_handler(data):
         usb_boot = msg
         logging.info(f"boot msg: {msg}")
         self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
+    # TODO: refactor airlock to laserlock
     elif data.get("cmd") == "airlock":
         airlock_boot = msg
-        logging.info(f"airlock msg: {msg}")
-        self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
+        logging.info(f"laserlock msg: {msg}")
+        # only notify if not solved
+        if airlock_auth != "success":
+            self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
     elif data.get("cmd") == "airlock_auth":
         airlock_auth = msg
         logging.info(f"airlock auth msg: {msg}")

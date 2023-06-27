@@ -6,7 +6,7 @@
     {
       "title": "Wiki",
       "details": "neue Browserseite öffnen",
-      "image": "static/imgs/home/browser.png",
+      "image": "static/imgs/home/search.png",
       "link": "browser",
       "auth": false
     },

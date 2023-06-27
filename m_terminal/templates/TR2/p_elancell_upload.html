@@ -222,7 +222,7 @@
 
 
 {% block content %}
-    <div id="dialog-form"
+    <div id="dialog-form" class="d-none"
          title="Upload to {% if "breach" in request.path %}R.{% else %}Elancell{% endif %}">
         <p class="validateTips">All form fields are required.</p>
 
@@ -246,7 +246,8 @@
             </fieldset>
         </form>
     </div>
-    <div id="dialog-message" title="Insert Media" style="text-align: center; background-color: dodgerblue;">
+    <div id="dialog-message" title="Insert Media" style="text-align: center; background-color: dodgerblue;"
+         class="d-none">
         <img class="mt-2" width="100px" height="100px" alt="USB flash drive"
              src="{{ url_for("static", filename="imgs/flash-drive.png") }}">
         <p class="my-2">
@@ -265,7 +266,7 @@
             </div>
             <button id="BtnUpload" class="submit">Submit Results</button>
         </div>
-        <div id="levels-game-container">
+        <div id="levels-game-container" class="d-none">
             <h2>Package for data upload</h2>
             <script src="{{ url_for('static',filename='js/g_analysis_brands.js') }}">
             </script>
@@ -372,6 +373,10 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             $("#levels-game-container").hide();
+            $("#dialog-message").removeClass("d-none");
+            $("#levels-game-container").removeClass("d-none");
+            $("#dialog-form").removeClass("d-none");
+
             $('#BtnUpload').attr("disabled", "true");
 
             $('#btn').on('click', () => {
