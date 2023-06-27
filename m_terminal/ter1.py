@@ -251,10 +251,13 @@ def events_handler(data):
         usb_boot = msg
         logging.info(f"boot msg: {msg}")
         self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
+    # TODO: refactor airlock to laserlock
     elif data.get("cmd") == "airlock":
         airlock_boot = msg
-        logging.info(f"airlock msg: {msg}")
-        self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
+        logging.info(f"laserlock msg: {msg}")
+        # only notify if not solved
+        if airlock_auth != "success":
+            self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
     elif data.get("cmd") == "airlock_auth":
         airlock_auth = msg
         logging.info(f"airlock auth msg: {msg}")
