@@ -84,7 +84,7 @@ def lab_control():
         "title": "Lab Control",
         "boot": airlock_boot,
         "auth": airlock_auth,
-        "version": get_version(terminal_name).get("airlock")
+        "version": get_version(terminal_name).get("laserlock")
     }
     logging.info("open lab page")
     html_path = f'{terminal_name}/p_lab.html'
@@ -176,7 +176,9 @@ def get_posts() -> dict:
         # append post to folder name list
         folders[p["folder"]].append(p)
 
-    return folders
+    sorted_folders = dict(sorted(folders.items()))
+
+    return sorted_folders
 
 
 @app.route('/foscam_control', methods=['GET', 'POST'])
