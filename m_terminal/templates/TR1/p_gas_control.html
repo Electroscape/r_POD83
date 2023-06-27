@@ -27,11 +27,9 @@
         .hint-box {
             text-align: center;
             color: white;
-        }
-
-        .hint-box button {
-            border: 0;
+            border: dodgerblue 1px solid;
             background-color: transparent;
+            padding: 5px;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
@@ -82,14 +80,14 @@
 {% endblock %}
 
 {% block content %}
-    <p class="hint-box">To configure the analysis for a particular experiment please use the corresponding environment
-        codes.
+    <div class="text-center">
         <!-- Button to launch a modal -->
         <button data-toggle="modal"
-                data-target="#exampleModal">
-            <i class="fa-solid fa-circle-info" style="color: dodgerblue; font-size: 16pt;"></i>
+                data-target="#exampleModal" class="hint-box">
+            To configure the analysis for a particular experiment please use the corresponding environment codes
+            <i class="fa-solid fa-circle-info" style="color: dodgerblue; font-size: large"></i>
         </button>
-    </p>
+    </div>
     <!-- Modal -->
     <div class="modal fade"
          id="exampleModal"
