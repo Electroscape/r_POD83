@@ -91,11 +91,15 @@ def cleanroom():
 
 @app_pages.route('/media_control', methods=['GET', 'POST'])
 def media_control():
-    media_files = [video_file for video_file in listdir_no_hidden('static/media') if video_file.endswith(".mp4")]
+    version_config = get_version("TR1").get("media", {})
+    media_prefix = version_config.get("prefix", "")
+    media_files = [video_file for video_file in listdir_no_hidden('static/media') if
+                   (video_file.startswith(media_prefix) and video_file.endswith(".webm"))]
+
 
     config = {
         "title": "Media Gallery",
-        "files": media_files
+        "files": sorted(media_files)
     }
     print("open media page")
     return render_template("TR1/p_media.html", g_config=config)
