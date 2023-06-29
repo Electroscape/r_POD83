@@ -8,6 +8,7 @@
 * change Media format from `.mp4` to `.webm`
 * fix upload page flashing images when loading first time
 * minor bugs and css fixes
+* automated startup and continuity of security stream upon first double handshake
 
 ## v 0.22.1 (Terminals UI)
 
