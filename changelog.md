@@ -9,6 +9,7 @@
 * fix upload page flashing images when loading first time
 * minor bugs and css fixes
 * automated startup and continuity of security stream upon first double handshake
+* added Biovita advertisement as button on the kiosk interface
 
 ## v 0.22.1 (Terminals UI)
 
