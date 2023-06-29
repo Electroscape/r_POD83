@@ -123,6 +123,7 @@ class States:
         self.upload_elancell = False
         self.upload_Rachel = False
         self.service = False
+        self.stream_active = False
 
 
 states = States()
@@ -171,6 +172,14 @@ class LaserLock:
     def play_truth_condition(*args):
         if not states.truth_played:
             states.truth_played = True
+            states.stream_active = True
+            return True
+        return False
+
+    @staticmethod
+    def start_stream(*args):
+        if not states.stream_active:
+            states.stream_active = True
             return True
         return False
 
@@ -495,6 +504,7 @@ event_map = {
         trigger_msg: "david",
         pcf_in_add: laserlock_in_pcf,
         pcf_in: LaserlockIn.rachelSeperated,
+        event_next_qeued: "display_securityAutomatic",
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
@@ -536,7 +546,15 @@ event_map = {
         trigger_msg: "security",
         event_script: call_video,
     },
-
+    "display_securityAutomatic": {
+        event_condition: LaserLock.start_stream,
+        event_script: call_video,
+    },
+    "play_biovita": {
+        trigger_cmd: "play",
+        trigger_msg: "biovita",
+        event_script: call_video,
+    },
     "dispenser_dishout": {
         trigger_cmd: "dispenser",
         trigger_msg: "dishout",
@@ -650,39 +668,6 @@ event_map = {
             is_fx: False,
             sound_id: 6
         },
-
-    },
-    "usb_rachel_enable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "breach",
-            fe_cb_msg: "breach"
-        },
-        event_condition: USBScripts.rachel_enabled_condition
-    },
-    "usb_rachel_disable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "breach",
-            fe_cb_msg: "secure"
-        },
-        event_condition: USBScripts.rachel_disabled_condition
-    },
-    "usb_elancell_enable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "elancell",
-            fe_cb_msg: "enable"
-        },
-        event_condition: USBScripts.elancell_enabled_condition
-    },
-    "usb_elancell_disable": {
-        fe_cb: {
-            fe_cb_tgt: "tr2",
-            fe_cb_cmd: "elancell",
-            fe_cb_msg: "disable"
-        },
-        event_condition: USBScripts.elancell_disabled_condition
     },
     "service_mode_enable": {
         trigger_cmd: "service",

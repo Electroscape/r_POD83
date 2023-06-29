@@ -38,12 +38,12 @@ def main():
             if rachel_usb_path.exists():
                 if not upload_rachel:
                     upload_rachel = True
-                    sio.emit("events", {"username": "tr2", "cmd": "breach", "message": "breach"})
+                    sio.emit("events", {"username": "tr2", "cmd": "elancell", "message": "breach"})
                     # print("usb_rachel_enable")
             elif upload_rachel:
                 upload_rachel = False
                 # print("usb_rachel_disable")
-                sio.emit("events", {"username": "tr2", "cmd": "breach", "message": "secure"})
+                sio.emit("events", {"username": "tr2", "cmd": "elancell", "message": "disable"})
             if elancell_usb_path.exists():
                 if not upload_elancell:
                     upload_elancell = True

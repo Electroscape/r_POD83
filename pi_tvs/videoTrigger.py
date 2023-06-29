@@ -22,7 +22,9 @@ video_dict = {
     "analyzer_run1": "./play_killswitch.sh",
     "play_truth": "./play_truth.sh",
     "self_check": "./play_killswitch.sh",
-    "display_security": "./play_camera_feed.sh"
+    "display_security": "./play_camera_feed.sh",
+    "display_securityAutomatic": "./play_camera_feed.sh",
+    "play_biovita": "./play_biovita.sh",
 }
 
 

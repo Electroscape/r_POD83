@@ -34,9 +34,9 @@
     <div class="header-left">
         <div id="btn-main-back" class="ml-auto" style="width: 195px; height: 55px">
             {% if 'get_post' in request.endpoint %}
-                <a class="btn btn-outline-" href='/browser/'><i class="fas fa-chevron-left"></i> BACK</a>
+                <a class="btn btn-outline-light" href='/browser/'><i class="fas fa-chevron-left"></i> BACK</a>
             {% elif request.path != "/" %}
-                <a class="btn btn-outline-" href='/'><i class="fas fa-chevron-left"></i> BACK</a>
+                <a class="btn btn-outline-light" href='/'><i class="fas fa-chevron-left"></i> BACK</a>
             {% endif %}
         </div>
     </div>
