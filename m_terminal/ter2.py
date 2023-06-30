@@ -22,7 +22,7 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
 sio = socketio.Client()
-self_sio = SocketIO(app, cors_allowed_origins="*")
+self_sio = SocketIO(app, cors_allowed_origins="*", ping_timeout=60, ping_interval=5)
 
 ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
 
