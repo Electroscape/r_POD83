@@ -123,7 +123,7 @@
             <div class="caution__text">CAUTION! Laser active</div>
         </div>
     </div>
-    <div id="bootContainer">
+    <div id="bootContainer" class="not-selectable">
         <!-- <div id="test"></div> -->
 
         <button id="bootup" class="d-none">Power-On Airlock2</button>
@@ -132,7 +132,8 @@
     </div>
     <div id="k-lab" class="d-none">
         <!-- countdown text -->
-        <p style="color: whitesmoke">Please authenticate yourself before the time is up!</p>
+        <p style="color: whitesmoke">Bitte authentifizieren Sie sich, bevor die Zeit abgelaufen ist!<br>
+            Please authenticate yourself before the time is up!</p>
         <p class="countdown">00</p>
     </div>
 {% endblock %}
@@ -260,7 +261,9 @@
                 }
                 appendLine(`<p style="color: red"><strong>Failed to start the laser airlock..</strong></p>`);
 
-                swal("Error 432", "laser airlock interface not found - Please check connection and try again", "error"
+                swal("Error 432", "laser airlock interface not found \n\n" +
+                    "- Bitte Verbindung prüfen und erneut versuchen \n" +
+                    "- Please check connection and try again", "error"
                 ).then(() => {
                     document.location.href = "/";
                 })
@@ -365,7 +368,7 @@
                 auth: "failed"
             });
             swal("Timeout!",
-                "Authentication failed. Please use the correct ID card to authenticate!",
+                "Authentication failed. Please try again on time!",
                 "warning").then(function () {
                 /*code to execute after alert*/
                 document.location.href = "/";
