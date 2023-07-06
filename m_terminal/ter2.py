@@ -68,6 +68,16 @@ def get_globals():
         tmp.update({"link": "elancell_breach"})
         g_config["btns"].append(configure_btn(tmp))
 
+    if login_user == "rachel":
+        tmp = {
+            "title": "Personal R.",
+            "details": "personal files of rachel",
+            "image": "static/imgs/home/information.png",
+            "link": "personal_rachel",
+            "auth": False
+        }
+        g_config["btns"].append(configure_btn(tmp))
+
     return g_config
 
 
