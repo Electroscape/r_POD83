@@ -67,10 +67,10 @@
         .header-right {
             visibility: hidden;
         }
-
-        .FixedHeightContainer {
-            height: 50%;
+        h3, h2 {
+            color: #ddd;
         }
+
     </style>
 
 
@@ -236,9 +236,7 @@
     </div>
 
     <label for="msg_holder">Chat Messages</label>
-    <div class="FixedHeightContainer">
-        <div class="message_holder" id="msg_holder">
-        </div>
+    <div class="message_holder" id="msg_holder">
     </div>
 
     <form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
