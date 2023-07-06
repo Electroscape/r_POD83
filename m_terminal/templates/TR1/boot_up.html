@@ -62,6 +62,15 @@
             opacity: 1;
         }
 
+        .not-selectable {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
         .feed textarea {
             width: 80%;
             height: 98vh;
@@ -82,7 +91,7 @@
 <audio id="bootAudio">
     <source src="{{ url_for('static',filename='sounds/bootup.mp3') }}" type="audio/mpeg">
 </audio>
-<div id='js-feed' class="screen feed">
+<div id='js-feed' class="screen feed not-selectable">
     <label for="feed-area"></label>
     <textarea id="feed-area" rows="10"></textarea>
 </div>

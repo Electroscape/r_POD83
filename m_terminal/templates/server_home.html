@@ -46,6 +46,7 @@
     <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet"/>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatroom.css') }}">
+
     <style>
         .switch-candy input:checked + label {
             background-color: rgb(var(--mdb-success-rgb));
@@ -66,7 +67,13 @@
         .header-right {
             visibility: hidden;
         }
+        h3, h2 {
+            color: #ddd;
+        }
+
     </style>
+
+
     <script type="text/javascript">
         function onClickTerminal(src) {
             let msg = document.querySelector(`input[name="${src}"]:checked`).value;
@@ -227,24 +234,9 @@
             </div>
         </div>
     </div>
-    <label for="msg_holder">Chat Messages</label>
-    <div class="message_holder" id="msg_holder">
-    </div>
-
-    <form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
-        <label for="dm_sender">Sender: </label>
-        <select class="form-select w-auto d-inline" id="dm_sender">
-            <option value="elancell-hq" selected>Elancell HQ</option>
-            <option value="system">System</option>
-            <option value="rachel">Rachel</option>
-            <option value="game-master">Game Master</option>
-        </select>
-        <label class="w-50">
-            <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
-        </label>
-        <input type="submit" value="Send">
-    </form>
     <br>
+
+<hr style="height:3px">
 
     <h2>Manual Triggers</h2>
     <br>
@@ -348,6 +340,24 @@
     </div>
     <br>
 
+<label for="msg_holder">Chat Messages</label>
+<div class="message_holder" id="msg_holder">
+</div>
+
+<form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
+    <label for="dm_sender">Sender: </label>
+    <select class="form-select w-auto d-inline" id="dm_sender">
+        <option value="elancell-hq" selected>Elancell HQ</option>
+        <option value="system">System</option>
+        <option value="rachel">Rachel</option>
+        <option value="game-master">Game Master</option>
+    </select>
+    <label class="w-50">
+        <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
+    </label>
+    <input type="submit" value="Send">
+</form>
+<br>
 
 {% endblock %}
 

@@ -1,11 +1,14 @@
 from pathlib import Path
 import socketio
 import json
+from datetime import datetime as dt
 
 import logging
 
-logging.basicConfig(filename='tvs.log', level=logging.DEBUG,
-                    format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+now = dt.now()
+log_name = now.strftime("usb_upload %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.ERROR,
+                    format=f'%(asctime)s %(levelname)s : %(message)s')
 
 
 try:

@@ -64,9 +64,10 @@
             min-width: 100px;
             min-height: 100px;
             float: right;
+            padding: 10px;
             background-repeat: no-repeat;
             background-size: 100px;
-            background-image: url("https://icon-library.com/images/progress-icon-gif/progress-icon-gif-8.jpg");
+            /* background-image: url("https://icon-library.com/images/progress-icon-gif/progress-icon-gif-8.jpg"); */
         }
 
     </style>
@@ -158,8 +159,9 @@
                     <div class="grid-child">
                         <div class="holds-the-iframe">
                             <iframe
+                                    scrolling="no"
                                     height="480px"
-                                    width="600px"
+                                    width="640px"
                                     src="http://{{ cam.ip }}/cgi-bin/CGIStream.cgi?cmd=GetMJStream&usr={{ cam.user }}&pwd={{ cam.pass }}">
                             </iframe>
                         </div>

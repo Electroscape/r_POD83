@@ -96,13 +96,25 @@ def media_control():
     media_files = [video_file for video_file in listdir_no_hidden('static/media') if
                    (video_file.startswith(media_prefix) and video_file.endswith(".webm"))]
 
-
     config = {
         "title": "Media Gallery",
         "files": sorted(media_files)
     }
     print("open media page")
     return render_template("TR1/p_media.html", g_config=config)
+
+
+@app_pages.route('/personal_rachel', methods=['GET', 'POST'])
+def personal_rachel():
+    media_files = [video_file for video_file in listdir_no_hidden('static/media/rachel') if
+                   video_file.endswith(".webm")]
+
+    config = {
+        "title": "personal files",
+        "files": sorted(media_files)
+    }
+    print("open media page")
+    return render_template("TR2/p_personal_rachel.html", g_config=config)
 
 
 @app_pages.route('/double_auth', methods=['GET', 'POST'])

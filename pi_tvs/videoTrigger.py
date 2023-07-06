@@ -21,7 +21,7 @@ video_dict = {
     "end_david_announce": "./play_elancell.sh",
     "analyzer_run1": "./play_killswitch.sh",
     "play_truth": "./play_truth.sh",
-    "self_check": "./play_killswitch.sh",
+    "self_check": "./play_welcome.sh",
     "display_security": "./play_camera_feed.sh",
     "display_securityAutomatic": "./play_camera_feed.sh",
     "play_biovita": "./play_biovita.sh",

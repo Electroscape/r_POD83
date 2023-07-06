@@ -22,7 +22,7 @@ app.config['SECRET_KEY'] = 'EscapeTerminal#'
 
 # standard Python
 sio = socketio.Client()
-self_sio = SocketIO(app, cors_allowed_origins="*")
+self_sio = SocketIO(app, cors_allowed_origins="*", ping_timeout=60, ping_interval=5)
 
 ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
 
@@ -66,6 +66,16 @@ def get_globals():
         tmp = g_config["btns"].pop()
         tmp.update({"title": "Data upload to R."})
         tmp.update({"link": "elancell_breach"})
+        g_config["btns"].append(configure_btn(tmp))
+
+    if login_user == "rachel":
+        tmp = {
+            "title": "Personal R.",
+            "details": "personal files of rachel",
+            "image": "static/imgs/home/information.png",
+            "link": "personal_rachel",
+            "auth": False
+        }
         g_config["btns"].append(configure_btn(tmp))
 
     return g_config
@@ -192,7 +202,9 @@ def samples_handler(samples):
 
 @sio.on('response_to_terminals')
 def on_message(data):
-    chat_msgs.append(data)
+    # chat messages are unique with the key 'user_name'
+    if data.get("user_name"):
+        chat_msgs.append(data)
     self_sio.emit("response_to_frontend", data)
 
 
@@ -223,7 +235,7 @@ while not sio.connected:
         logging.debug(f"re-try connect to server: {server_ip}")
         sio.sleep(2)
 
-chat_msgs = RingList(100)  # stores chat history max 100 msgs, declare before starting sockets
+chat_msgs = RingList(200)  # stores chat history max 200 msgs, declare before starting sockets
 
 logging.info("Init global variables")
 login_user = get_login_user(terminal_name)  # either David, Rachel or empty string

@@ -68,8 +68,10 @@ function receiveNewMessage(src, msg) {
     let messageColor, senderColor = "black";
     if (src === "rachel") {
         messageColor = "red";
+        senderColor = "red";
     } else if (src === "elancell-hq") {
         messageColor = "yellow";
+        senderColor = "yellow";
     } else {
         messageColor = "white";
     }
