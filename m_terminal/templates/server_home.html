@@ -46,6 +46,7 @@
     <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet"/>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatroom.css') }}">
+
     <style>
         .switch-candy input:checked + label {
             background-color: rgb(var(--mdb-success-rgb));
@@ -66,7 +67,13 @@
         .header-right {
             visibility: hidden;
         }
+        h3, h2 {
+            color: #ddd;
+        }
+
     </style>
+
+
     <script type="text/javascript">
         function onClickTerminal(src) {
             let msg = document.querySelector(`input[name="${src}"]:checked`).value;
@@ -227,6 +234,7 @@
             </div>
         </div>
     </div>
+
     <label for="msg_holder">Chat Messages</label>
     <div class="message_holder" id="msg_holder">
     </div>
