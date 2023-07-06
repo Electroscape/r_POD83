@@ -109,7 +109,7 @@
 
             socket.on('response_to_frontend', function (msg) {
                 //console.log(msg)
-                handleMessageReception(msg)
+                handleMessageReception(msg);
             })
 
             socket.on('usr_auth', function (msg) {
@@ -200,16 +200,18 @@
 
             function handleMessageReception(msg) {
                 if (typeof msg.user_name !== 'undefined') {
-                    let chatColor = "white";
+                    let chatColor = "white", srcColor = "black";
                     if (msg.user_name === "rachel") {
                         chatColor = "red";
+                        srcColor = "red";
                     } else if (msg.user_name === "elancell-hq") {
                         chatColor = "yellow";
+                        srcColor = "yellow";
                     }
 
                     $('#msg_holder').prepend(
                         `<div>
-                                <b style="color: #000"> ${msg.user_name}:</b>
+                                <b style="color: ${srcColor}"> ${msg.user_name}:</b>
                                 <p style="display: inline; color: ${chatColor}">${msg.message}</p>
                          </div>`);
 
@@ -295,7 +297,7 @@
             }
 
             for (let jsonResponseElement of jsonResponse.btns) {
-                if (airlockAuth === "failed" && jsonResponseElement.id !== "{{ airlock_id }}") {
+                if (airlockAuth === "failed" && (jsonResponseElement.id !== "{{ airlock_id }}" && jsonResponseElement.id !== "chat-control")) {
                     disableOption(jsonResponseElement, "Authentication failed");
                 } else if (airlockAuth === "success" && jsonResponseElement.id === "{{ airlock_id }}") {
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
@@ -310,7 +312,7 @@
                     || jsonResponseElement.id === "gas-control")) {
                     disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
                 } else if (jsonResponseElement.auth) {
-                    disableOption(jsonResponseElement, `NEEDS AUTHENTICATION OF ${getFullName(jsonResponseElement.auth)}`);
+                    disableOption(jsonResponseElement, `AUTHENTIKATION <span style="color: crimson; background-color: black">${getFullName(jsonResponseElement.auth)}</span>`);
                 }
             }
 

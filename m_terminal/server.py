@@ -17,7 +17,7 @@ Payload.max_decode_packets = 200
 
 from ring_list import RingList
 
-chat_history = RingList(100)
+chat_history = RingList(300)
 chat_history.append('Welcome to the server window')
 
 now = dt.now()
