@@ -87,18 +87,14 @@
             document.getElementById("roomTitle").innerHTML += myDispName;
         }
 
-        function loadChat() {
-            let msg;
-            {% for cMsg in g_config.chat_msg %}
-                {% if cMsg is mapping %}
-                    msg = JSON.parse('{{ cMsg | tojson }}');
-                {% else %}
-                    msg = "{{ cMsg }}";
-                {% endif %}
-                handleMessageReception(msg)
-            {% endfor %}
+        function loadChatHistory() {
+            let msgs = JSON.parse('{{ g_config.chat_msg | tojson }}');
+            console.log(`num of msgs in ring buffer = ${msgs.length}`);
+            for (const msg of msgs) {
+                handleMessageReception(msg);
+            }
         }
 
-        loadChat();
+        loadChatHistory();
     </script>
 {% endblock %}
