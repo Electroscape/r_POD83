@@ -13,7 +13,7 @@ function switchLanguage(lang) {
     }).then(json => {
         let rb = document.getElementById("rb_" + lang)
         rb.checked = true;
-        loadControlPanel(json, g_lang=lang);
+        loadControlPanel(json, "", g_lang=lang);
         console.log('Success! ')
     }).catch(error => {
         console.log('error with access token req!')
