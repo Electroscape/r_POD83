@@ -76,6 +76,9 @@ def get_globals():
             "link": "personal_rachel",
             "auth": False
         }
+        if g_lang.lower() == "de":
+            tmp["title"] = "PRIVAT R."
+
         g_config["btns"].append(configure_btn(tmp))
 
     return g_config

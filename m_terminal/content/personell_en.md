@@ -1,8 +1,8 @@
 ---
-title: Personell Files
-lang: EN/DE
+title: PERSONELL FILES
+lang: EN
 group_en: Facility Directory
-group_de: Facility Directory
+group_de: FORSCHUNGSKOMPLEX VERZEICHNIS
 ---
 
 <style>

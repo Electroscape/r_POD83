@@ -166,7 +166,7 @@
 
             socket.on("airlock_fe", function (msg) {
                 console.log(`airlock ${msg}`)
-                loadControlPanel(msg.data, msg.status);
+                loadControlPanel(msg.data, airlockStatus = msg.status);
                 $('#chatAudio')[0].play();
                 toastr.warning(`airlock laser is ${msg.status}
                                 <button type="button" class="btn btn-outline-dark float-end">open airlock</button>`,
@@ -275,15 +275,15 @@
         $("#chatAudio").volume = 0.5;
     });
 
-    function loadControlPanel(jsonResponse, airlockStatus = "") {
-        let CPanel = document.getElementById("ControlPanel")
-        let PContainer = document.getElementById("posts-container")
-        let resTxt = ""
+    function loadControlPanel(jsonResponse, airlockStatus = "", g_lang = "") {
+        let CPanel = document.getElementById("ControlPanel");
+        let PContainer = document.getElementById("posts-container");
+        let resTxt = "";
 
         if (CPanel) {
             //CPanel.innerHTML = ""
             for (let jsonResponseElement of jsonResponse.btns) {
-                resTxt += jsonResponseElement.html
+                resTxt += jsonResponseElement.html;
             }
             CPanel.innerHTML = resTxt;
 
@@ -291,14 +291,23 @@
             let airlockAuth = "{% if airlock_auth %}{{ airlock_auth }}{% endif %}";
             let samplesFlag = "{% if samples_flag %}{{ samples_flag }}{% endif %}";
             let flags = JSON.parse('{% if flags %}{{ flags | tojson }}{% else %}null{% endif %}');
+            let lang = g_lang || "{% if g_config.lang %}{{ g_config.lang }}{% else %}EN{% endif %}";
+
             if (airlock === "error") {
                 let air_elem = jsonResponse.btns.find(x => x.id === '{{ airlock_id }}');
                 disableOption(air_elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
             }
 
+            let authText = "Authentifizierung";
+            let authFailedText = "Authentifizierung fehlgeschlagen";
+            if (lang.toLowerCase() === "en") {
+                authText = "Authentication";
+                authFailedText = "Authentication failed";
+            }
+
             for (let jsonResponseElement of jsonResponse.btns) {
                 if (airlockAuth === "failed" && (jsonResponseElement.id !== "{{ airlock_id }}" && jsonResponseElement.id !== "chat-control")) {
-                    disableOption(jsonResponseElement, "Authentication failed");
+                    disableOption(jsonResponseElement, authFailedText);
                 } else if (airlockAuth === "success" && jsonResponseElement.id === "{{ airlock_id }}") {
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (airlockAuth === "success" && jsonResponseElement.id === "media-control") {
@@ -312,7 +321,7 @@
                     || jsonResponseElement.id === "gas-control")) {
                     disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
                 } else if (jsonResponseElement.auth) {
-                    disableOption(jsonResponseElement, `AUTHENTIKATION <span style="color: crimson; background-color: black">${getFullName(jsonResponseElement.auth)}</span>`);
+                    disableOption(jsonResponseElement, `${authText} <span style="color: crimson; background-color: black">${getFullName(jsonResponseElement.auth)}</span>`);
                 }
             }
 
