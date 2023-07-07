@@ -1,5 +1,9 @@
 # Changelog
 
+## v 0.24
+
+ * change server kiosk layout to prevent missclicks due to updates
+
 ## v 0.23 (Terminals UI)
 
 * fix progressbar not working when set manually
