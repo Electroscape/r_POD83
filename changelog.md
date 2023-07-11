@@ -3,6 +3,10 @@
 ## v 0.24
 
  * change server kiosk layout to prevent missclicks due to updates
+ * fixed selfcheck ending with active camera stream
+ * fixed chat page failing to load due to json format receiving escpae characters
+ * more localisations 
+ * added rachels personal folders on Terminal 2
 
 ## v 0.23 (Terminals UI)
 
