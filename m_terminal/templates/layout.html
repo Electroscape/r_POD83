@@ -326,8 +326,8 @@
             }
 
 
-        } else if (PContainer) {
-            let resTxt = ""
+        } else if (PContainer && !("title" in jsonResponse)) {
+            let resTxt = "";
             for (const [folder, posts] of Object.entries(jsonResponse)) {
                 resTxt += `<div class="accordion-item bg-transparent">
                                 <h2 class="accordion-header bg-transparent" id="headingOne">
