@@ -11,7 +11,7 @@ from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
 
 from ring_list import RingList
-from fns import js_r, get_progressbar_status
+from fns import js_r, get_progressbar_status, listdir_no_hidden
 from pages import app_pages, get_login_user, get_version
 import socketio
 import logging
@@ -59,10 +59,18 @@ def get_post(post_path):
         "title": post_path,
         "lang": g_lang
     }
+    locker_version = ""
     logging.info(f"post path: {post_path}")
+
+    # version control of locker images prefix
+    if post_path == "locker":
+        ver_prefix = get_version(terminal_name).get("media").get("prefix")
+        locker_version = sorted(
+            [img for img in listdir_no_hidden('static/imgs/locker') if (img.startswith(ver_prefix))])
+
     post = flatpages.get_or_404(post_path)
     html_path = f'{terminal_name}/post.html'
-    return render_template(html_path, g_config=config, post=post)
+    return render_template(html_path, g_config=config, post=post, locker_version=locker_version)
 
 
 @app.route('/lab_control', methods=['GET', 'POST'])
