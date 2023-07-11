@@ -33,8 +33,16 @@
             if (msg.cmd) {
                 $('#msg_holder').prepend(`<div class="text-success"> ${JSON.stringify(msg).replaceAll('"', "")}</div>`)
             } else if (typeof msg.user_name !== 'undefined') {
-                $('#msg_holder').prepend(`<div><b style="color: #000"> ${msg.user_name}: </b>
-                                        <p style="display: inline; color: white">${msg.message}</p></div>`)
+                let chatColor = "white", srcColor = "black";
+                if (msg.user_name === "rachel") {
+                    chatColor = "red";
+                    srcColor = "red";
+                } else if (msg.user_name === "elancell-hq") {
+                    chatColor = "yellow";
+                    srcColor = "yellow";
+                }
+                $('#msg_holder').prepend(`<div><b style="color: ${srcColor}"> ${msg.user_name}: </b>
+                                        <p style="display: inline; color: ${chatColor}">${msg.message}</p></div>`)
             } else {
                 $('#msg_holder').prepend(`<div class="text-warning"> ${JSON.stringify(msg).replaceAll('"', "")}</div>`)
             }
@@ -67,6 +75,7 @@
         .header-right {
             visibility: hidden;
         }
+
         h3, h2 {
             color: #ddd;
         }
@@ -236,7 +245,7 @@
     </div>
     <br>
 
-<hr style="height:3px">
+    <hr style="height:3px">
 
     <h2>Manual Triggers</h2>
     <br>
@@ -311,7 +320,7 @@
         </button>
         <button class="btn btn-outline-light" name="play_biovita" onclick="onClickTrigger(name)">Biovita Advertisement
         </button>
-        </div>
+    </div>
     <br>
 
     <h3>Lab endings</h3>
@@ -340,38 +349,41 @@
     </div>
     <br>
 
-<label for="msg_holder">Chat Messages</label>
-<div class="message_holder" id="msg_holder">
-</div>
+    <label for="msg_holder">Chat Messages</label>
+    <div class="message_holder" id="msg_holder">
+    </div>
 
-<form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
-    <label for="dm_sender">Sender: </label>
-    <select class="form-select w-auto d-inline" id="dm_sender">
-        <option value="elancell-hq" selected>Elancell HQ</option>
-        <option value="system">System</option>
-        <option value="rachel">Rachel</option>
-        <option value="game-master">Game Master</option>
-    </select>
-    <label class="w-50">
-        <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
-    </label>
-    <input type="submit" value="Send">
-</form>
-<br>
+    <form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
+        <label for="dm_sender">Sender: </label>
+        <select class="form-select w-auto d-inline" id="dm_sender">
+            <option value="elancell-hq" selected>Elancell HQ</option>
+            <option value="system">System</option>
+            <option value="rachel">Rachel</option>
+            <option value="game-master">Game Master</option>
+        </select>
+        <label class="w-50">
+            <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
+        </label>
+        <input type="submit" value="Send">
+    </form>
+    <br>
 
 {% endblock %}
 
 {% block add_js %}
     <script type="text/javascript">
-        let msg;
-        {% for cMsg in chat_msg %}
-            {% if cMsg is mapping %}
-                msg = JSON.parse('{{ cMsg | tojson }}');
-            {% else %}
-                msg = "{{ cMsg }}";
-            {% endif %}
-            displayMessage(msg);
-        {% endfor %}
+        // load history messages
+        $.ajax({
+            type: 'POST',
+            url: '{{ url_for("get_chat") }}',
+            contentType: 'application/json;charset=UTF-8',
+            success: function (res) {
+                console.log(`num of msgs in ring buffer = ${res.length}`);
+                for (const msg of res) {
+                    displayMessage(msg);
+                }
+            }
+        });
 
     </script>
 {% endblock %}

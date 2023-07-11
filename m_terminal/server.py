@@ -90,6 +90,11 @@ def get_globals():
     return read_json("json/server_config.json")
 
 
+@app.route('/get_chat', methods=['GET', 'POST'])
+def get_chat():
+    return chat_history.get()
+
+
 @app.route("/get_progress", methods=["GET", "POST"])
 def get_progress():
     return {"percent": loading_percent}

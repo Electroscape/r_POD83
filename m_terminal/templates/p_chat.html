@@ -87,14 +87,17 @@
             document.getElementById("roomTitle").innerHTML += myDispName;
         }
 
-        function loadChatHistory() {
-            let msgs = JSON.parse('{{ g_config.chat_msg | tojson }}');
-            console.log(`num of msgs in ring buffer = ${msgs.length}`);
-            for (const msg of msgs) {
-                handleMessageReception(msg);
+        // load history messages
+        $.ajax({
+            type: 'POST',
+            url: '{{ url_for("get_chat") }}',
+            contentType: 'application/json;charset=UTF-8',
+            success: function (res) {
+                console.log(`num of msgs in ring buffer = ${res.length}`);
+                for (const msg of res) {
+                    handleMessageReception(msg);
+                }
             }
-        }
-
-        loadChatHistory();
+        });
     </script>
 {% endblock %}
