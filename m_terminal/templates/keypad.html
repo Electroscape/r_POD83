@@ -89,8 +89,10 @@
             button.addEventListener('click', function () {
 
                 // Adds the number to the screen and pushes it to the entered array
-                screen.textContent += t;
-                allEntered["{{ keyID }}"].push(t);
+                if (screen.textContent !== "wrong") {
+                    screen.textContent += t;
+                    allEntered["{{ keyID }}"].push(t);
+                }
             });
         }
     });
