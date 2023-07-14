@@ -3,8 +3,6 @@
 {% block head %}
     <style>
         .modal-dialog {
-            max-width: fit-content;
-            background-color: transparent;
             text-align: center;
         }
 
@@ -14,6 +12,8 @@
 
         .modal-content {
             background-color: transparent;
+            width: fit-content;
+
         }
 
         .button-close {
@@ -103,6 +103,60 @@
 {% endblock %}
 
 {% block content %}
+    <!-- SCANDALS modal -->
+    <div class="modal fade"
+         id="pdfsModal"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="pdfsModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content bg-light">
+                <div class="modal-header justify-content-between bg-light">
+                    <h5 class="modal-title">SCANDALS / SKANDALE</h5>
+                    <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="d-flex align-items-start">
+                        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist"
+                             aria-orientation="vertical">
+                            {% for file in g_config.pdfs %}
+                                <div class="thumbnail mx-0 {% if loop.index0 == 0 %}active{% endif %}">
+                                    <button class="nav-link"
+                                            id="v-pills-tab-{{ loop.index }}" data-toggle="pill"
+                                            data-target="#v-pills-{{ loop.index }}" type="button" role="tab"
+                                            aria-controls="v-pills-{{ loop.index }}"
+                                            aria-selected="{% if loop.index0 == 0 %}true{% else %}false{% endif %}">
+
+                                        <i class="fa fa-file-pdf">
+                                            <span>{{ file }}</span>
+                                        </i>
+                                    </button>
+                                    <h1>Report {{ loop.index }}</h1>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="tab-content" id="v-pills-tabContent">
+                            {% for file in g_config.pdfs %}
+                                <div class="tab-pane fade {% if loop.index0 == 0 %}show active{% endif %}"
+                                     id="v-pills-{{ loop.index }}" role="tabpanel"
+                                     aria-labelledby="v-pills-tab-{{ loop.index }}">
+                                    <embed type="application/pdf" height="700px" width="1000px"
+                                           src="{{ url_for('static', filename='pdfs/' + file) }}#toolbar=0&navpanes=0">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- truth video modal -->
     <div class="modal fade"
          id="vidTruthModal"
          tabindex="-1"
@@ -112,18 +166,46 @@
 
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div>
-                    <button class="button-close"
-                            data-dismiss="modal">
-                        <i class="fa-solid fa-circle-xmark" style="color: red; font-size: 20pt"></i>
+                <div class="modal-header justify-content-between bg-light">
+                    <h5 class="modal-title">The Truth Video</h5>
+                    <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
                 <!-- Add image inside the body of modal -->
                 <div class="modal-body">
-                    <video autoplay controls id="vid_the_truth">
+                    <video controls id="vid_the_truth">
                         <source src="{{ url_for('static', filename='media/rachel/The_Truth_Sub_DE_480.webm') }}#t=0.1">
                     </video>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- usb image modal -->
+    <div class="modal fade"
+         id="usbImgDialog"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="usbImgDialogLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-between bg-light">
+                    <h5 class="modal-title">USB Information</h5>
+                    <button type="button" class="close btn-danger" data-dismiss="modal" aria-label="Close"
+                            onclick="$('#usbImgDialog').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Add image inside the body of modal -->
+                <div class="modal-body">
+                    <img src="{{ url_for('static', filename='pdfs/DATA_Upload_Red-Blue.png') }}"
+                         alt="choose red or blue usb" height="500px" width="auto"/>
                 </div>
 
             </div>
@@ -133,43 +215,39 @@
     <main id="main">
         <div class="thumbnail">
             <i class="fa fa-folder">
-                <span>0 folders <br>4 files</span>
-            </i>
-            <h1>Results</h1>
-        </div>
-        <div class="thumbnail">
-            <i class="fa fa-folder">
-                <span>0 folders <br>2 files</span>
+                <span>0 folders <br>0 files</span>
             </i>
             <h1>Photos</h1>
         </div>
         <div class="thumbnail">
-            <i class="fa fa-folder">
-                <span>0 folders <br>0 files</span>
-            </i>
-            <h1>Folder Name</h1>
+            <button data-toggle="modal" data-target="#pdfsModal" class="hint-box">
+                <i class="fa fa-folder">
+                    <span>0 folders <br>3 files</span>
+                </i>
+            </button>
+            <h1>SCANDALS / SKANDALE</h1>
         </div>
         <div class="thumbnail">
-            <i class="fa fa-folder">
-                <span>0 folders <br>0 files</span>
-            </i>
-            <h1>Folder Name</h1>
-        </div>
-        <div class="thumbnail">
-            <button data-toggle="modal"
-                    data-target="#vidTruthModal" class="hint-box">
+            <button data-toggle="modal" data-target="#vidTruthModal" class="hint-box">
                 <i class="fa-regular fa-file-video">
                     <span>play video</span>
                 </i>
             </button>
             <h1>The Truth</h1>
         </div>
+        <div class="thumbnail">
+            <button data-toggle="model" data-target="#usbImgDialog" class="hint-box" id="btnUsbInfo">
+                <i class="fa-regular fa-file-pdf">
+                    <span>open PDF</span>
+                </i>
+            </button>
+            <h1>USB info</h1>
+        </div>
     </main>
 {% endblock %}
 
 {% block add_js %}
     <script>
-
         $(function () {
             $('#vidTruthModal').modal({
                 show: false
@@ -179,5 +257,17 @@
             });
         });
 
+        $('#vidTruthModal').on('shown.bs.modal', function () {
+            $(this).find('video')[0].play();
+        });
+
+        $('#btnUsbInfo').click(function () {
+            $("#usbImgDialog").modal('show');
+        })
+
+        $('button.nav-link').click(function (e) {
+            e.preventDefault();
+            $("button.nav-link").removeClass('active show');
+        });
     </script>
 {% endblock %}
