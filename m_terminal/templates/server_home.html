@@ -47,6 +47,13 @@
                 $('#msg_holder').prepend(`<div class="text-warning"> ${JSON.stringify(msg).replaceAll('"', "")}</div>`)
             }
         }
+
+        function playNotificationSound() {
+            socket.emit('msg_to_server', {
+                cmd: "notification",
+                message: "buzz"
+            })
+        }
     </script>
 {% endblock %}
 
@@ -364,7 +371,8 @@
         <label class="w-50">
             <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
         </label>
-        <input type="submit" value="Send">
+        <input type="submit" value="Send"/>
+        <button onclick="playNotificationSound()"><i class="fa fa-bell" aria-hidden="true"></i></button>
     </form>
     <br>
 
