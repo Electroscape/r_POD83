@@ -91,11 +91,11 @@
         }
 
         .container button {
-            width: 30%;
-            height: 4rem;
+            width: 35%;
             font-size: 1.5rem;
             cursor: pointer;
             margin: 40px;
+            white-space: pre-wrap;
         }
 
         .container .loading-wrapper {
@@ -317,7 +317,10 @@
                         showError(`
                         Package is ready!
                         <span style="color: red">Please Synthesize!</span><br>
-                        <p>Replace most stable component with kill switch<p>
+                        <p>Replace most stable component with kill switch</p>
+                        PAKET IST BEREIT!
+                        <span style="color: red">BITTE SYNTHETISIEREN!</span><br>
+                        <p>DIE STABILSTE KOMPONENTE MUSS DURCH DIE KILL SWITCH ERSETZT WERDEN</p>
                     `);
                     }
                 } else if (width === 100) {
@@ -337,7 +340,7 @@
             $("#loadId").html(errorMsg);
             $(".loading-bar")[0].style.borderColor = "red";
             setTimeout(() => {
-                $('#btn').text("Re-Compile");
+                $('#btn').text("Re-Compile \n NEU KOMPILIEREN ");
                 $('#btn').show();
             }, 1000);
         }

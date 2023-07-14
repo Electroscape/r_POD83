@@ -13,10 +13,6 @@
             padding: 0;
         }
 
-        .modal-content {
-            background-color: transparent;
-        }
-
         .button-close {
             float: right;
             background-color: black;
@@ -31,6 +27,21 @@
             background-color: transparent;
             padding: 5px;
         }
+
+        img.table {
+            vertical-align: middle;
+            margin-top: 10px
+        }
+        .divL {
+            width: 50%;
+            float: left;
+        }
+        .divR {
+            width: 50%;
+            float: right;
+        }
+
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
             integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
@@ -80,41 +91,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="text-center">
-        <!-- Button to launch a modal -->
-        <button data-toggle="modal"
-                data-target="#exampleModal" class="hint-box">
-            To configure the analysis for a particular experiment please use the corresponding environment codes
-            <i class="fa-solid fa-circle-info" style="color: dodgerblue; font-size: large"></i>
-        </button>
+    <div class="divL">
+        <img class="table" id="image" src='{{ url_for("static", filename="imgs/gas_table.png") }}'/>
     </div>
-    <!-- Modal -->
-    <div class="modal fade"
-         id="exampleModal"
-         tabindex="-1"
-         role="dialog"
-         aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
 
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div>
-                    <button class="button-close"
-                            data-dismiss="modal">
-                        <i class="fa-solid fa-circle-xmark" style="color: red; font-size: 20pt"></i>
-                    </button>
-                </div>
-
-                <!-- Add image inside the body of modal -->
-                <div class="modal-body">
-                    <img id="image" src='{{ url_for("static", filename="imgs/gas_table.png") }}'
-                         alt="Click on button"/>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <div id="fakeBody">
+    <div class="divR">
+        <div id="fakeBody">
         <div class="options">
             <link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
             <script src="{{ url_for('static',filename='js/keypad.js') }}">
@@ -150,6 +132,7 @@
                 </script>
             {% endfor %}
         </div>
+    </div>
     </div>
 
 {% endblock %}

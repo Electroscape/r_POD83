@@ -109,6 +109,10 @@
 
             socket.on('response_to_frontend', function (msg) {
                 //console.log(msg)
+                if (typeof msg.cmd !== 'undefined' && msg.cmd === "notification") {
+                    toastr.info(`New Notification`);
+                    $('#chatAudio')[0].play();
+                }
                 handleMessageReception(msg);
             })
 
@@ -326,8 +330,8 @@
             }
 
 
-        } else if (PContainer) {
-            let resTxt = ""
+        } else if (PContainer && !("title" in jsonResponse)) {
+            let resTxt = "";
             for (const [folder, posts] of Object.entries(jsonResponse)) {
                 resTxt += `<div class="accordion-item bg-transparent">
                                 <h2 class="accordion-header bg-transparent" id="headingOne">

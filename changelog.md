@@ -1,5 +1,24 @@
 # Changelog
 
+## v 0.25
+
+  * adjusted Dispenser colouring to match sample colours
+  * Adjusted gas control layout on T1, now the table is integrated
+  * fixed Gas riddle on T2 receiving "sample update" when T1 enters wrong code
+  * Increased keypad blocking time to discourage brute forcing
+  * added manual ping option in case customers don't notice
+  * added german upload page
+  * update to rachels personal page on T2
+  * locker page images are now handled by ver-config.json
+
+## v 0.24
+
+ * change server kiosk layout to prevent missclicks due to updates
+ * fixed selfcheck ending with active camera stream
+ * fixed chat page failing to load due to json format receiving escpae characters
+ * more localisations 
+ * added rachels personal folders on Terminal 2
+
 ## v 0.23 (Terminals UI)
 
 * fix progressbar not working when set manually

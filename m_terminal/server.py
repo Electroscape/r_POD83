@@ -146,9 +146,14 @@ def handle_received_messages(json_msg):
         global samples
         # "gas_control keypad 0 wrong"
         cmd = json_msg.get("keypad_update").split()
-        if cmd[0].startswith("/gas_control") and cmd[-1] == "correct":
-            samples[int(cmd[-2])]["status"] = "unlocked"
-            samples[int(cmd[-2])]["icon"] = sample_icons["unlocked"]
+        if cmd[0].startswith("/gas_control"):
+            if cmd[-1] == "correct":
+                samples[int(cmd[-2])]["status"] = "unlocked"
+                samples[int(cmd[-2])]["icon"] = sample_icons["unlocked"]
+                sio.emit("samples", samples)
+            else:
+                # TODO emit message for wrong trials?
+                print("gas control wrong trial")
 
         elif cmd[0].startswith("/gas_analysis"):
             if cmd[-1] == "correct":
@@ -166,7 +171,8 @@ def handle_received_messages(json_msg):
             if all_samples_solved():
                 sio.emit("samples", {"flag": "done"})
 
-        sio.emit("samples", samples)
+            sio.emit("samples", samples)
+
     elif json_msg.get("levels") and "correct" in str(json_msg):
         sio.emit("to_clients", {
             "username": "tr2",

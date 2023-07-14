@@ -128,7 +128,7 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(pump5, PumpOff);
                 delay(500);
                 #ifndef IgnoreLeds
-                LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1, 4);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1, 4);
                 #endif
                 delay(800);
             #endif
@@ -142,7 +142,7 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(pump4, PumpOff);  //Start Belt normalDirection
                 delay(500);
                 #ifndef IgnoreLeds
-                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 3);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrYellow, 100, PWM::set1, 3);
                 #endif
                 delay(800); 
             #endif
@@ -156,7 +156,7 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(pump3, PumpOff); 
                 delay(500);
                 #ifndef IgnoreLeds
-                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrPurple, 100, PWM::set1, 2);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrGreen, 100, PWM::set1, 2);
                 #endif
                 delay(800);
             #endif
@@ -188,7 +188,7 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(pump1, PumpOff); 
                 delay(500);
                 #ifndef IgnoreLeds
-                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrRed, 100, PWM::set1, 0);
+                LED_CMDS::setLEDToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 100, PWM::set1, 0);
                 #endif
                 delay(800);
             #endif
