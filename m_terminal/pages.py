@@ -109,9 +109,12 @@ def personal_rachel():
     media_files = [video_file for video_file in listdir_no_hidden('static/media/rachel') if
                    video_file.endswith(".webm")]
 
+    pdf_files = [file for file in listdir_no_hidden('static/pdfs') if file.endswith(".pdf")]
+
     config = {
         "title": "personal files",
-        "files": sorted(media_files)
+        "files": sorted(media_files),
+        "pdfs": pdf_files
     }
     print("open media page")
     return render_template("TR2/p_personal_rachel.html", g_config=config)
