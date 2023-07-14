@@ -13,7 +13,7 @@
 #define PumpOn      1
 #define PumpOff     0
 
-const unsigned long beltOperationTime = 14000;
+const unsigned long beltOperationTime = 17000;
 
 
 enum brains {
