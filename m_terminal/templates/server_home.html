@@ -368,7 +368,7 @@
     </div>
     <br>
 
-    <label for="msg_holder">Chat Messages</label>
+    <label class="label-txt" for="msg_holder">Chat Messages</label>
     <div class="message_holder" id="msg_holder">
     </div>
 
@@ -424,9 +424,9 @@
                 console.log(e);
             }
             if (!autocompleteSrc) {
-                autocompleteSrc = ["No Results Found"];
+                autocompleteSrc = [""];
             }
-            
+
             $("#input_msg").autocomplete('option', 'source', autocompleteSrc);
         }
 
