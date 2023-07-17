@@ -43,6 +43,7 @@ def read_json(filename: str, from_static=True) -> dict:
         return json_data
 
     except IOError:
+        print(f"folder '{filename}' not found")
         return {}
 
 
@@ -57,6 +58,7 @@ login_users = {
     "tr2": "empty"
 }
 version = read_json("json/ver_config.json").get("server", {})
+hint_msgs = read_json("json/hints.json")
 loading_percent = 0
 
 app = Flask(__name__)
@@ -82,7 +84,7 @@ def index():
     }
     # ip_address = request.remote_addr
     # logging.info("Requester IP: " + ip_address)
-    return render_template("server_home.html", g_config=config, chat_msg=chat_history.get())
+    return render_template("server_home.html", g_config=config, chat_msg=chat_history.get(), hint_msgs=hint_msgs)
 
 
 @app.route("/get_globals", methods=["GET", "POST"])
