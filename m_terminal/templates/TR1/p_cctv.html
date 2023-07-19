@@ -15,6 +15,17 @@
             color: white;
         }
 
+        .nav-link {
+            border: 2px solid black !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .nav-link.active {
+            color: black !important;
+            background-color: green !important;
+            border: none !important;
+        }
+
         a:visited {
             color: white;
         }
@@ -23,6 +34,7 @@
             border: 1px solid gray;
             margin: 0 auto;
             padding: 5px;
+            font-size: 20pt;
         }
 
         #matrix tr,
@@ -31,8 +43,8 @@
         }
 
         #matrix button {
-            height: 25px;
-            width: 90px;
+            height: 45px;
+            width: 125px;
             border: 1px solid black;
             font-weight: bold;
             color: white;
@@ -131,7 +143,7 @@
 
     <ul class="nav nav-tabs mb-3" id="cams" role="tablist">
         {% for cam in cams %}
-            <li class="nav-item btn-info" role="presentation">
+            <li class="nav-item btn-dark" role="presentation">
                 <a
                         class="nav-link {% if loop.index0 == 0 %}active{% endif %}"
                         id="cams-tab-{{ loop.index0 }}"
@@ -168,6 +180,7 @@
                     </div>
                     <div class="grid-child">
                         <table id="matrix">
+                            Camera control / Kamerasteuerung
                             <tr>
                                 <td>
                                 </td>

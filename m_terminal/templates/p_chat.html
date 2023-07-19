@@ -95,7 +95,7 @@
             success: function (res) {
                 console.log(`num of msgs in ring buffer = ${res.length}`);
                 for (const msg of res) {
-                    handleMessageReception(msg);
+                    handleMessageReception(msg, playNotification=false);
                 }
             }
         });
