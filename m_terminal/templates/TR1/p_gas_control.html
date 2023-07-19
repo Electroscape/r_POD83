@@ -32,10 +32,12 @@
             vertical-align: middle;
             margin-top: 10px
         }
+
         .divL {
             width: 50%;
             float: left;
         }
+
         .divR {
             width: 50%;
             float: right;
@@ -54,11 +56,11 @@
         function unlockSeq(index) {
             let shadow = document.querySelector("#shadow-" + index);
             let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
-            shadowTxt.innerText = "unlocked"
+            shadowTxt.innerText = "unlocked";
             shadowTxt.classList.remove("d-none");
             shadow.hidden = false;
             shadow.style.backgroundColor = "grey";
-            shadow.style.opacity = 0.5;
+            shadow.style.opacity = "0.5";
         }
 
         function releaseSeq(index) {
@@ -68,7 +70,7 @@
             shadowTxt.classList.remove("d-none");
             shadow.hidden = false;
             shadow.style.backgroundColor = "green";
-            shadow.style.opacity = 0.5;
+            shadow.style.opacity = "0.5";
         }
 
         function checkSampleStatus(i, sample) {
@@ -92,47 +94,48 @@
 
 {% block content %}
     <div class="divL">
-        <img class="table" id="image" src='{{ url_for("static", filename="imgs/gas_table.png") }}'/>
+        <img class="table" id="image" src='{{ url_for("static", filename="imgs/gas_table.png") }}' alt="table"/>
     </div>
 
     <div class="divR">
         <div id="fakeBody">
-        <div class="options">
-            <link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
-            <script src="{{ url_for('static',filename='js/keypad.js') }}">
-            </script>
-            {% for sample in g_config.samples %}
-                <div id="option{{ loop.index }}" class="option {% if loop.index0 == 0 %}
+            <div class="options">
+                <link rel="stylesheet" href="{{ url_for('static',filename='css/keypad.css') }}">
+                <script src="{{ url_for('static',filename='js/keypad.js') }}">
+                </script>
+                {% for sample in g_config.samples %}
+                    <div id="option{{ loop.index }}" class="option {% if loop.index0 == 0 %}
                             active
                             {% endif %}">
-                    <div class="shadow" id="shadow-{{ loop.index0 }}" hidden>
-                        <h1 id="shadow-txt-{{ loop.index0 }}" class="txt-vertical d-none"
-                            style="-webkit-transform: rotate(90deg); margin-top: 150px;">
-                            locked</h1>
-                    </div>
-                    <div class="gameContentClass {% if loop.index0 != 0 %}
+                        <div class="shadow" id="shadow-{{ loop.index0 }}" hidden>
+                            <h1 id="shadow-txt-{{ loop.index0 }}" class="txt-vertical d-none"
+                                style="color: {% if loop.index0 == 0 %} transparent {% else %}black{% endif %};
+                                        -webkit-transform: rotate(90deg); margin-top: 150px;">
+                                locked</h1>
+                        </div>
+                        <div class="gameContentClass {% if loop.index0 != 0 %}
                             d-none
                             {% endif %}" id="gameContent{{ loop.index }}">
-                        {% with keyTitle="Code #" ~ loop.index, keyPass=sample.passcode, keyID=loop.index0 %}
-                            {% include "keypad.html" %}
-                        {% endwith %}
-                    </div>
-                    <div class="label">
-                        <div class="icon">
-                            <i id="icon-{{ loop.index0 }}" class="{{ sample.icon }}"></i>
+                            {% with keyTitle="Code #" ~ loop.index, keyPass=sample.passcode, keyID=loop.index0 %}
+                                {% include "keypad.html" %}
+                            {% endwith %}
                         </div>
-                        <div class="info">
-                            <div class="main">{{ sample.name }}</div>
-                            <div id="status-{{ loop.index0 }}" class="sub">{{ sample.status }}</div>
+                        <div class="label">
+                            <div class="icon">
+                                <i id="icon-{{ loop.index0 }}" class="{{ sample.icon }}"></i>
+                            </div>
+                            <div class="info">
+                                <div class="main">{{ sample.name }}</div>
+                                <div id="status-{{ loop.index0 }}" class="sub">{{ sample.status }}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <script type="text/javascript">
-                    checkSampleStatus({{ loop.index0 }}, {{ sample| tojson }})
-                </script>
-            {% endfor %}
+                    <script type="text/javascript">
+                        checkSampleStatus("{{ loop.index0 }}", {{ sample| tojson }})
+                    </script>
+                {% endfor %}
+            </div>
         </div>
-    </div>
     </div>
 
 {% endblock %}
