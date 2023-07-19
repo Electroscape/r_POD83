@@ -67,8 +67,9 @@
             padding: 0.3em;
             color: red;
         }
-    </style>
-    <style>
+
+        /*  --------------------------------------- */
+
         li {
             list-style-type: none;
             font-size: 16pt;
@@ -128,13 +129,14 @@
             text-align: center;
         }
     </style>
+
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis_game.css') }}" media="screen">
     <script src="https://code.iconify.design/iconify-icon/1.0.5/iconify-icon.min.js"></script>
+
     <script>
         $(function () {
             let dialog, form,
                 ip = $("#ipv4");
-
 
             function submitToElancell() {
                 function ip2num(dot) {
@@ -215,6 +217,7 @@
             });
         });
     </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
             integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -222,8 +225,9 @@
 
 
 {% block content %}
-    <div id="dialog-form" class="d-none"
-         title="Upload to {% if "breach" in request.path %}R.{% else %}Elancell{% endif %}">
+
+    <!-- Final upload window -->
+    <div id="dialog-form" class="d-none" title="Upload to {% if "breach" in request.path %}R.{% else %}Elancell{% endif %}">
         <p class="validateTips">All form fields are required.</p>
 
         <form autocomplete="off">
@@ -246,6 +250,7 @@
             </fieldset>
         </form>
     </div>
+
     <div id="dialog-message" title="Insert Media" style="text-align: center; background-color: dodgerblue;"
          class="d-none">
         <img class="mt-2" width="100px" height="100px" alt="USB flash drive"
@@ -255,6 +260,7 @@
             No media detected <br><strong>Please Insert media to continue</strong>.
         </p>
     </div>
+
     <div class="mail">
         <div class="container">
             <button id="btn" class="btn btn-info">COMPILE DATA</button>
@@ -317,10 +323,10 @@
                         showError(`
                         Package is ready!
                         <span style="color: red">Please Synthesize!</span><br>
-                        <p>Replace most stable component with kill switch</p>
+                        <p>Replace most stable component with killswitch</p>
                         PAKET IST BEREIT!
                         <span style="color: red">BITTE SYNTHETISIEREN!</span><br>
-                        <p>DIE STABILSTE KOMPONENTE MUSS DURCH DIE KILL SWITCH ERSETZT WERDEN</p>
+                        <p>DIE STABILSTE KOMPONENTE MUSS DURCH DEN KILLSWITCH ERSETZT WERDEN</p>
                     `);
                     }
                 } else if (width === 100) {
@@ -407,6 +413,7 @@
                     }
                 }
             });
+
             {% if "breach" in request.path %}
                 $('#ipv4').removeAttr("disabled");
             {% endif %}
