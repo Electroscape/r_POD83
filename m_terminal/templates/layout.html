@@ -202,7 +202,7 @@
                 {% endif %}
             })
 
-            function handleMessageReception(msg) {
+            function handleMessageReception(msg, playNotification = true) {
                 if (typeof msg.user_name !== 'undefined') {
                     let chatColor = "white", srcColor = "black";
                     if (msg.user_name === "rachel") {
@@ -220,8 +220,14 @@
                          </div>`);
 
                     if (msg.user_name !== myRoomID) {
-                        {% if request.path != "/chat_control" %}
-                            toastr.clear();
+
+                        toastr.clear();
+                        {% if request.path == "/chat_control" %}
+                            if (playNotification) {
+                                $('#chatAudio')[0].play();
+                                toastr.info("", "New message");
+                            }
+                        {% else %}
                             $('#chatAudio')[0].play();
                             toastr.info(msg.message.slice(0, 35) +
                                 '... <button type="button" class="btn btn-outline-dark float-end">open</button>',
