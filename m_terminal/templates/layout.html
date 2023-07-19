@@ -118,6 +118,10 @@
 
             socket.on('usr_auth', function (msg) {
                 let prev_usr = $(".login-info").find("strong").text();
+                if (msg.silent) {
+                    loadControlPanel(msg.data)
+                    return;
+                }
                 if (msg.usr.toLowerCase() === "empty") {
                     toastr.warning(`${prev_usr} logged out`);
                     swal("logged out", `${prev_usr} has been logged out`, "warning").then(

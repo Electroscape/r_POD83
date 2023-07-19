@@ -277,6 +277,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": "lock"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "breach", "message": "secure"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "hide"})
 
                 # set microscope off
     elif msg.get("username") == "mcrp":
@@ -286,6 +287,9 @@ def events_handler(msg):
         # Filters commands
         if msg.get("cmd") == "auth":
             login_users[msg.get("username")] = msg.get("message")
+            if msg.get("username") == "tr2" and msg.get("message") == "rachel":
+                print("rachel logged in on TR2")
+                sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
 
         if msg.get("cmd") == "usbBoot":
             loading_percent = 90

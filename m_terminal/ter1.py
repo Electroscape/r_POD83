@@ -11,7 +11,7 @@ from flask_flatpages import FlatPages
 from flask_socketio import SocketIO
 
 from ring_list import RingList
-from fns import js_r, get_progressbar_status, listdir_no_hidden
+from fns import js_r, get_progressbar_status, listdir_no_hidden, configure_btn
 from pages import app_pages, get_login_user, get_version
 import socketio
 import logging
@@ -136,6 +136,20 @@ def get_globals():
     login_user = get_login_user(terminal_name)
     g_config = js_r(f"json/{terminal_name}_config_{g_lang}.json", auth=login_user)
     g_config["lang"] = g_lang
+
+    if show_personal_r == "show" and login_user == "rachel":
+        tmp = {
+            "title": "Personal R.",
+            "details": "personal files of rachel",
+            "image": "static/imgs/home/information.png",
+            "link": "personal_rachel",
+            "auth": False
+        }
+        if g_lang.lower() == "de":
+            tmp["title"] = "PRIVAT R."
+
+        g_config["btns"].append(configure_btn(tmp))
+
     return g_config
 
 
@@ -246,30 +260,36 @@ def events_handler(data):
         global usb_boot
         global airlock_boot
         global airlock_auth
+        global show_personal_r
 
         msg = data.get("message")
+        cmd = data.get("cmd")
 
     # Commands
-    if data.get("cmd") == "auth":
+    if cmd == "auth":
         login_user = msg
         logging.info(f"login msg: {msg}")
         logging.info(f'{terminal_name} authenticated user is: {login_user}')
         self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals()})
-    elif data.get("cmd") == "usbBoot":
+    elif cmd == "usbBoot":
         usb_boot = msg
         logging.info(f"boot msg: {msg}")
         self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
     # TODO: refactor airlock to laserlock
-    elif data.get("cmd") == "airlock":
+    elif cmd == "airlock":
         airlock_boot = msg
         logging.info(f"laserlock msg: {msg}")
         # only notify if not solved
         if airlock_auth != "success":
             self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
-    elif data.get("cmd") == "airlock_auth":
+    elif cmd == "airlock_auth":
         airlock_auth = msg
         logging.info(f"airlock auth msg: {msg}")
-    elif data.get("cmd") == "loadingbar":
+    elif cmd == "personalR":
+        show_personal_r = msg
+        logging.info(f"personal R msg: {msg}")
+        self_sio.emit('usr_auth', {'usr': login_user, 'data': get_globals(), 'silent': True})
+    elif cmd == "loadingbar":
         logging.info(f"set loading bar: {msg}")
         self_sio.emit('loadingbar_fe', msg)
 
@@ -327,6 +347,7 @@ airlock_boot = "normal"
 airlock_auth = "normal"
 usb_boot = "shutdown"
 samples_flag = "unsolved"
+show_personal_r = "hide"
 
 app.register_blueprint(app_pages)
 flatpages = FlatPages(app)
