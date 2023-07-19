@@ -154,7 +154,7 @@ void checkDualRfid(int passNo) {
     // not presented on both cards, hence we exit here
     if (cardsPresent <= PasswordAmount) { return; }
     // not both rfid readers used so its invalid
-    if (brainsPresent <= int(labAccess)) {
+    if (brainsPresent <= int(labAccess) + 1) {
         Serial.println("not enoough brains present");
         return;
     }
