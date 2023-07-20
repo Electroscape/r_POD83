@@ -69,6 +69,7 @@ class LaserlockOut(IntEnum):
     failedBootTrigger = 6
     bootupTrigger = 7
     rachel_end_announce = 8
+    skip_to_seperation = 9      # in case the mother crashes lik in in HH
 
 
 class LaserlockIn(IntEnum):
@@ -390,6 +391,12 @@ event_map = {
             is_fx: False,
             sound_id: 2
         },
+    },
+    "laserlock_skip": {
+        trigger_cmd: "laserlock",
+        trigger_msg: "skip",
+        pcf_out_add: [laserlock_out_pcf],
+        pcf_out: [LaserlockOut.skip_to_seperation],
     },
     "laserlock_fail": {
         trigger_cmd: "airlock",

@@ -469,6 +469,10 @@ void handleInputs() {
     // delay(5000);
     wdt_reset();
     switch (result) {
+
+        case skipToSeperation:
+            stage = seperationUnlocked;
+        break;
         case failedBootTrigger: 
             stage = failedBoot;
         break;
