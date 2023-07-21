@@ -42,8 +42,8 @@ enum IOpins {
     IO_1,
     IO_2,
     IO_3,
+    IO_4,
     reedDoor, 
-    IO_5,
     IO_6,
     IO_7,                       
     IO_8,                                            
@@ -59,6 +59,7 @@ enum inputValues {
     failedBootTrigger,        
     bootupTrigger,    
     rachelAnnouncement,    
+    skipToSeperation
 };
 
 // 7 Values 3 IOs
@@ -73,19 +74,19 @@ enum outputValues {
 
 
 
-#define outputCnt 4
-#define inputCnt 4
+#define outputCnt 3
+#define inputCnt 5
 
 
 int intputArray[inputCnt] = {
     IO_1,
     IO_2,
     IO_3,
+    IO_4,
     reedDoor
 };
 
 int outputArray[outputCnt] = {
-    IO_5,
     IO_6,
     IO_7,                       
     IO_8,                       

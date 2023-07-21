@@ -30,6 +30,8 @@
 
         .info {
             color: whitesmoke;
+            margin: 75px 0;
+            border: 2px solid red;
         }
 
         .info p {
@@ -62,6 +64,11 @@
         <p>You are trying to access a double-handshake firewall</p>
         <p>To access "{{ from_url | replace("_"," ") | replace("/","") | title }}" mainframe,</p>
         <p>you need to log-in on the other terminal<span class="blink">_</span></p>
+    </div>
+    <div class="info">
+        <p>Sie versuchen, auf eine Double-Handshake-Firewall zuzugreifen</p>
+        <p>Um auf den Mainframe "{{ from_url | replace("_"," ") | replace("/","") | title }}" zuzugreifen,</p>
+        <p>müssen Sie sich am anderen Terminal anmelden<span class="blink">_</span></p>
     </div>
     <div class="btn-group-lg mt-3 p-3">
         <div class="btn button back">Back</div>

@@ -59,6 +59,9 @@
 
 {% block head %}
     <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatroom.css') }}">
 
@@ -83,17 +86,41 @@
             visibility: hidden;
         }
 
-        h3, h2 {
+        .label-txt, h3, h2 {
             color: #ddd;
         }
 
+        ul {
+            list-style: none !important;
+        }
+
+        li {
+            padding: 5px;
+        }
+
+        .modal-list-label {
+            cursor: pointer;
+            display: block;
+        }
+
+        input:checked + label {
+            background: dodgerblue;
+        }
     </style>
 
 
     <script type="text/javascript">
         function onClickTerminal(src) {
-            let msg = document.querySelector(`input[name="${src}"]:checked`).value;
-            let src_cmd = src.split("_")
+            let radioElement = document.querySelector(`input[name="${src}"]:checked`);
+            let msg, src_cmd;
+            if (radioElement) {
+                msg = radioElement.value;
+                src_cmd = src.split("_");
+            } else {
+                src_cmd = src.split("_");
+                msg = src_cmd[2];
+            }
+
             socket.emit("events", {
                 username: src_cmd[0],
                 cmd: src_cmd[1],
@@ -129,7 +156,7 @@
     <div>
         <h3>Terminal 1</h3>
         <div class="outer">
-            <div>
+            <div class="label-txt">
                 Auth:
                 <div class="switch-toggle switch-3 switch-candy">
                     <input id="t1_david" name="tr1_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
@@ -143,7 +170,7 @@
                     <label for="t1_rachel">Rachel</label>
                 </div>
             </div>
-            <div>
+            <div class="label-txt">
                 USB Boot (no video):
                 <div class="switch-toggle switch-candy">
                     <input id="t1_shutdown" name="tr1_usbBoot" type="radio" value="disconnect" checked="checked"
@@ -154,7 +181,19 @@
                     <label for="t1_boot">Boot up</label>
                 </div>
             </div>
-            <div>
+            <div class="label-txt">
+                Personal R:
+                <div class="switch-toggle switch-candy">
+                    <input id="t1_personalShow" name="tr1_personalR" type="radio" value="show" checked="checked"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t1_personalShow">Show (if rachel logged)</label>
+
+                    <input id="t1_personalHide" name="tr1_personalR" type="radio" value="hide"
+                           onclick="onClickTerminal(name)"/>
+                    <label for="t1_personalHide">Hide</label>
+                </div>
+            </div>
+            <div class="label-txt">
                 Laser-lock:
                 <div class="switch-toggle switch-candy">
                     <input id="t1_broken" name="tr1_airlock" type="radio" value="broken" checked="checked"
@@ -169,7 +208,7 @@
         <br>
         <h3>Terminal 2</h3>
         <div class="outer">
-            <div>
+            <div class="label-txt">
                 Auth:
                 <div class="switch-toggle switch-3 switch-candy">
                     <input id="t2_david" name="tr2_auth" type="radio" value="david" onclick="onClickTerminal(name)"/>
@@ -183,7 +222,7 @@
                     <label for="t2_rachel">Rachel</label>
                 </div>
             </div>
-            <div>
+            <div class="label-txt">
                 Cleanroom:
                 <div class="switch-toggle switch-candy">
                     <input id="t2_broken" name="tr2_cleanroom" type="radio" value="lock" checked="checked"
@@ -195,7 +234,7 @@
                     <label for="t2_fixed">unlock</label>
                 </div>
             </div>
-            <div>
+            <div class="label-txt">
                 upload data:
                 <div class="switch-toggle switch-candy">
                     <input id="t2_disable" name="tr2_elancell" type="radio" value="disable" checked="checked"
@@ -227,7 +266,7 @@
         <br>
         <h3>Server</h3>
         <div class="outer">
-            <div style="padding-inline: 5px;">
+            <div class="label-txt" style="padding-inline: 5px;">
                 <label for="loadingInput">Loading bar: </label>
                 <div class="form-outline" style="width: 7rem; background-color: forestgreen; display: inline-block">
                     <i class="fas fa-percentage trailing"></i>
@@ -236,16 +275,17 @@
                 </div>
                 <button onclick="onClickSet()">set</button>
             </div>
-            <div>
+            <div class="label-txt">
                 reset:
-                <div class="switch-toggle switch-candy">
-                    <input id="ser_reset" name="server_reset" type="radio" value="reset" checked="checked"
-                           onclick="onClickTerminal(name)"/>
-                    <label for="ser_reset">samples</label>
-
-                    <input id="ser_resetAll" name="server_reset" type="radio" value="resetAll"
-                           onclick="onClickTerminal(name)"/>
-                    <label for="ser_resetAll">all</label>
+                <div class="">
+                    <label for="ser_reset">
+                        <input id="ser_reset" name="server_reset_reset" type="button" value="samples"
+                               onclick="onClickTerminal(name)"/>
+                    </label>
+                    <label for="ser_resetAll">
+                        <input id="ser_resetAll" name="server_reset_resetAll" type="button" value="reset all"
+                               onclick="onClickTerminal(name)"/>
+                    </label>
                 </div>
             </div>
         </div>
@@ -296,6 +336,8 @@
         <button class="btn btn-outline-light" name="usb_boot" onclick="onClickTrigger(name)">USB Boot
         </button>
         <button class="btn btn-outline-light" name="airlock_access" onclick="onClickTrigger(name)">Laserlock Trigger
+        </button>
+        <button class="btn btn-outline-light" name="laserlock_skip" onclick="onClickTrigger(name)">Double-Auth Logout
         </button>
     </div>
     <br>
@@ -356,25 +398,72 @@
     </div>
     <br>
 
-    <label for="msg_holder">Chat Messages</label>
+    <label class="label-txt" for="msg_holder">Chat Messages</label>
     <div class="message_holder" id="msg_holder">
     </div>
 
     <form id="sendMsgForm" action="" method="POST" onsubmit="sendMessage(event)" autocomplete='off'>
-        <label for="dm_sender">Sender: </label>
+        <label class="label-txt" for="dm_sender">Sender: </label>
         <select class="form-select w-auto d-inline" id="dm_sender">
             <option value="elancell-hq" selected>Elancell HQ</option>
             <option value="system">System</option>
             <option value="rachel">Rachel</option>
             <option value="game-master">Game Master</option>
         </select>
+        <label class="label-txt" for="dm_lang">
+            <select class="form-select w-auto d-inline" id="dm_lang">
+                <option value="en" selected>EN</option>
+                <option value="de">DE</option>
+            </select>
+        </label>
         <label class="w-50">
             <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
         </label>
         <input type="submit" value="Send"/>
         <button onclick="playNotificationSound()"><i class="fa fa-bell" aria-hidden="true"></i></button>
+        <input
+                type="button"
+                data-mdb-toggle="modal"
+                data-mdb-target="#phrasesModal"
+                data-mdb-whatever="lang"
+                value="phrases"
+        />
     </form>
-    <br>
+
+    <div class="modal fade" id="phrasesModal" tabindex="-1" aria-labelledby="phrasesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Messages</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="label-txt" for="modal_sender">Sender: </label>
+                    <select class="form-select w-auto d-inline" id="modal_sender">
+                        <option value="elancell-hq" selected>Elancell HQ</option>
+                        <option value="system">System</option>
+                        <option value="rachel">Rachel</option>
+                        <option value="game-master">Game Master</option>
+                    </select>
+                    <label class="label-txt" for="modal_lang">Language: </label>
+                    <select class="form-select w-auto d-inline" id="modal_lang">
+                        <option value="en" selected>EN</option>
+                        <option value="de">DE</option>
+                    </select>
+                    <br>
+                    <div class="w-100 py-1 my-2" style="background-color: aliceblue">
+                        <ul id="modalMessages" class="w-100 h-100">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="selectFromModal();">select</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 
@@ -392,6 +481,85 @@
                 }
             }
         });
+
+        // load hints
+        let hints = JSON.parse('{{ hint_msgs | tojson }}');
+
+        function setAutocompleteSource() {
+            let source = $('select#dm_sender').val();
+            let language = $('select#dm_lang').val();
+            let autocompleteSrc;
+            try {
+                autocompleteSrc = hints[source][language];
+            } catch (e) {
+                console.log(e);
+            }
+            if (!autocompleteSrc) {
+                autocompleteSrc = [""];
+            }
+
+            $("#input_msg").autocomplete('option', 'source', autocompleteSrc);
+        }
+
+        $(function () {
+            $("#input_msg").autocomplete({
+                position: {collision: "flip"},
+                source: ["no values"]
+            });
+            setAutocompleteSource();
+        });
+
+        $('select').on('change', function () {
+            setAutocompleteSource();
+            loadHintsModal();
+        });
+
+        function loadHintsModal() {
+            let source = $('select#modal_sender').val();
+            let language = $('select#modal_lang').val();
+            let hintsList;
+            try {
+                hintsList = hints[source][language];
+            } catch (e) {
+                console.log(e);
+            }
+            if (!hintsList) {
+                $("#modalMessages").html('<h1 class="h1 warning mx-3 my-3" style="color: yellowgreen;">No valid Options</h1>');
+                return false;
+            }
+            let txt = "";
+            for (const [i, hint] of hintsList.entries()) {
+                txt += `<li class="form-check ripple">
+                            <input class="form-check-input" type='radio' value='${i}' name="flexRadioDefault" id="flexRadio-${i}"/>
+                            <label id="hint-${i}" class="form-check-label modal-list-label" for="flexRadio-${i}">${hint}</label>
+                        </li>`;
+            }
+            $("#modalMessages").html(txt);
+            return hintsList;
+        }
+
+        $('#phrasesModal').on('show.bs.modal', (e) => {
+            console.log("shown");
+            let source = $('select#dm_sender').val();
+            let language = $('select#dm_lang').val();
+            $('select#modal_sender').val(source).change();
+            $('select#modal_lang').val(language).change();
+        });
+
+        $('#phrasesModal').on('hide.bs.modal', (e) => {
+            console.log("hidden");
+            let source = $('select#modal_sender').val();
+            let language = $('select#modal_lang').val();
+            $('select#dm_sender').val(source).change();
+            $('select#dm_lang').val(language).change();
+        });
+
+        function selectFromModal() {
+            let i = $("input.form-check-input:checked").val();
+            let msg = $("#hint-" + i).text();
+            $("#input_msg").val(msg);
+            $('#phrasesModal').modal('hide');
+        }
 
     </script>
 {% endblock %}

@@ -1,5 +1,13 @@
 # Changelog
 
+## v 0.26
+
+  * added double auth logout option to override
+  * added dropdown/autocomplete to chat interface for GM
+  * added rachels personal folders to T1 when rachel is logged in after The truth has been played 
+  * more localizations
+  * laserlock rfid presentation requirement fix (prviously only covered one reader)
+
 ## v 0.25
 
   * adjusted Dispenser colouring to match sample colours

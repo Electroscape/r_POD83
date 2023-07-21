@@ -43,6 +43,7 @@ def read_json(filename: str, from_static=True) -> dict:
         return json_data
 
     except IOError:
+        print(f"folder '{filename}' not found")
         return {}
 
 
@@ -57,6 +58,7 @@ login_users = {
     "tr2": "empty"
 }
 version = read_json("json/ver_config.json").get("server", {})
+hint_msgs = read_json("json/hints.json")
 loading_percent = 0
 
 app = Flask(__name__)
@@ -82,7 +84,7 @@ def index():
     }
     # ip_address = request.remote_addr
     # logging.info("Requester IP: " + ip_address)
-    return render_template("server_home.html", g_config=config, chat_msg=chat_history.get())
+    return render_template("server_home.html", g_config=config, chat_msg=chat_history.get(), hint_msgs=hint_msgs)
 
 
 @app.route("/get_globals", methods=["GET", "POST"])
@@ -151,6 +153,7 @@ def handle_received_messages(json_msg):
                 samples[int(cmd[-2])]["status"] = "unlocked"
                 samples[int(cmd[-2])]["icon"] = sample_icons["unlocked"]
                 sio.emit("samples", samples)
+                sio.emit("samples", f"sample {int(cmd[-2]) + 1} {samples[int(cmd[-2])]['status']}")
             else:
                 # TODO emit message for wrong trials?
                 print("gas control wrong trial")
@@ -172,6 +175,7 @@ def handle_received_messages(json_msg):
                 sio.emit("samples", {"flag": "done"})
 
             sio.emit("samples", samples)
+            sio.emit("samples", f"sample {int(cmd[-2]) + 1} {samples[int(cmd[-2])]['status']}")
 
     elif json_msg.get("levels") and "correct" in str(json_msg):
         sio.emit("to_clients", {
@@ -275,6 +279,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": "lock"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "breach", "message": "secure"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "hide"})
 
                 # set microscope off
     elif msg.get("username") == "mcrp":
@@ -284,6 +289,9 @@ def events_handler(msg):
         # Filters commands
         if msg.get("cmd") == "auth":
             login_users[msg.get("username")] = msg.get("message")
+            if msg.get("username") == "tr2" and msg.get("message") == "rachel":
+                print("rachel logged in on TR2")
+                sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
 
         if msg.get("cmd") == "usbBoot":
             loading_percent = 90
