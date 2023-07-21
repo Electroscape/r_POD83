@@ -5,5 +5,5 @@ $(".option").click(function () {
     let opNum = this.id.at(-1);
     $("#gameContent" + opNum).removeClass("d-none");
     $(".txt-vertical").css("color", "black");
-    $("#shadow-txt-" + (opNum - 1)).css("color", "transparent");
+    $(this).find(".txt-vertical").css("color", "transparent");
 });

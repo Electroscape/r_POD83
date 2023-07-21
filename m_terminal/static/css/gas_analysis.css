@@ -401,3 +401,7 @@
 #fakeBody .options .option .label .info .sub {
     transition-delay: 0.1s;
 }
+
+.txt-vertical {
+    color: black;
+}

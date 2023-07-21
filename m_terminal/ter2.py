@@ -197,7 +197,9 @@ def events_handler(data):
 @sio.on('samples')
 def samples_handler(samples):
     if isinstance(samples, list):
-        self_sio.emit("samples_updates", samples)
+        self_sio.emit("samples_updates", samples)  # for the game behaviour
+    elif isinstance(samples, str):
+        self_sio.emit("samples_updates_fe", samples)  # for the notification
     elif isinstance(samples, dict):
         global samples_flag
         samples_flag = samples.get("flag")
