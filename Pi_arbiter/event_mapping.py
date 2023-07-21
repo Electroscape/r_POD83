@@ -397,6 +397,12 @@ event_map = {
         trigger_msg: "skip",
         pcf_out_add: [laserlock_out_pcf],
         pcf_out: [LaserlockOut.skip_to_seperation],
+        fe_cb: {
+            fe_cb_cmd: "auth",
+            fe_cb_tgt: "tr2",
+            fe_cb_msg: "empty"
+        },
+        event_next_qeued: "laserlock_lockout_tr1"
     },
     "laserlock_fail": {
         trigger_cmd: "airlock",
