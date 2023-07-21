@@ -198,12 +198,12 @@
                 }
             })
 
-            socket.on('samples_updates', function (msg) {
-                //console.log(msg)
-                {% if request.path != "/gas_control" and request.path != "/gas_analysis" %}
-                    toastr.success('There is an update in samples status');
+            socket.on('samples_updates_fe', function (msg) {
+                setTimeout(() => {
                     $('#chatAudio')[0].play();
-                {% endif %}
+                    toastr.success(msg);
+                }, {% if request.path == "/gas_analysis" %}5000{% else %}1000{% endif %});
+
             })
 
             function handleMessageReception(msg, playNotification = true) {

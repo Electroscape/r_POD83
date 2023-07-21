@@ -153,6 +153,7 @@ def handle_received_messages(json_msg):
                 samples[int(cmd[-2])]["status"] = "unlocked"
                 samples[int(cmd[-2])]["icon"] = sample_icons["unlocked"]
                 sio.emit("samples", samples)
+                sio.emit("samples", f"sample {int(cmd[-2]) + 1} {samples[int(cmd[-2])]['status']}")
             else:
                 # TODO emit message for wrong trials?
                 print("gas control wrong trial")
@@ -174,6 +175,7 @@ def handle_received_messages(json_msg):
                 sio.emit("samples", {"flag": "done"})
 
             sio.emit("samples", samples)
+            sio.emit("samples", f"sample {int(cmd[-2]) + 1} {samples[int(cmd[-2])]['status']}")
 
     elif json_msg.get("levels") and "correct" in str(json_msg):
         sio.emit("to_clients", {
