@@ -247,7 +247,7 @@ event_map = {
         fe_cb: {
             fe_cb_cmd: "auth",
             fe_cb_tgt: "tr2",
-            fe_cb_msg: "rachel"
+            fe_cb_msg: "david"
         },
         event_next_qeued: "self_check_q2"
     },
