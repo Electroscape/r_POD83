@@ -27,7 +27,7 @@
     $.ajax({
         type: 'POST',
         url: '{{ url_for("get_chat") }}',
-        contentType: 'application/json;charset=UTF-8',
+        fntentType: 'application/json;charset=UTF-8',
         success: function (res) {
             for (const msg of res) {
                 receiveNewMessage(msg.user_name, msg.message);

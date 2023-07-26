@@ -55,7 +55,8 @@ sample_icons = {
 }
 login_users = {
     "tr1": "empty",
-    "tr2": "empty"
+    "tr2": "empty",
+    "tr3": "empty"
 }
 version = read_json("json/ver_config.json").get("server", {})
 hint_msgs = read_json("json/hints.json")
@@ -257,6 +258,7 @@ def events_handler(msg):
             loading_percent = int(msg.get("message"))
             sio.emit("to_clients", {"username": "tr1", "cmd": "loadingbar", "message": loading_percent})
             sio.emit("to_clients", {"username": "tr2", "cmd": "loadingbar", "message": loading_percent})
+            sio.emit("to_clients", {"username": "tr3", "cmd": "loadingbar", "message": loading_percent})
         elif msg.get("cmd") == "reset":
             samples = read_json("json/samples.json")
             sio.emit("samples", samples)
@@ -266,7 +268,8 @@ def events_handler(msg):
                 # reset global variables
                 login_users = {
                     "tr1": "empty",
-                    "tr2": "empty"
+                    "tr2": "empty",
+                    "tr3": "empty"
                 }
                 # emit default state messages to terminals
                 sio.emit("to_clients", {"username": "tr1", "cmd": "auth", "message": "empty"})
@@ -297,6 +300,7 @@ def events_handler(msg):
             loading_percent = 90
             # reset airlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
+            sio.emit("to_clients", {"username": "tr3", "cmd": "airlock_auth", "message": "normal"})
 
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)
@@ -310,6 +314,7 @@ def loadingbar_timer():
         if loading_percent > 0:
             sio.emit("to_clients", {"username": "tr1", "cmd": "loadingbar", "message": loading_percent})
             sio.emit("to_clients", {"username": "tr2", "cmd": "loadingbar", "message": loading_percent})
+            sio.emit("to_clients", {"username": "tr3", "cmd": "loadingbar", "message": loading_percent})
             frontend_server_messages({"username": "tr1/tr2", "cmd": "loadingbar", "message": loading_percent})
             # 90 min / 20 loading bars = 4.5 min = 270 seconds
             # remove 1 progress bar every 270 seconds
