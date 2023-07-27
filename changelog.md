@@ -1,5 +1,10 @@
 # Changelog
 
+## v 0.27
+
+ * gas puzzle sequentially dependent 
+ * fixed selfcheck triggering rachels files being available
+
 ## v 0.26
 
   * added double auth logout option to override
