@@ -120,14 +120,14 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis_game.css') }}" media="screen">
 
     <script type="text/javascript">
-        function lockedSeq(index) {
+        function lockedSeq(index, status) {
             let shadow = document.querySelector("#shadow-" + index);
             let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
-            shadowTxt.innerText = "locked"
+            shadowTxt.innerText = status;
             shadowTxt.classList.remove("d-none");
             shadow.hidden = false;
             shadow.style.backgroundColor = "grey";
-            shadow.style.opacity = 0.9;
+            shadow.style.opacity = "0.9";
         }
 
         function releasedSeq(index) {
@@ -137,16 +137,16 @@
             shadowTxt.classList.remove("d-none");
             shadow.hidden = false;
             shadow.style.backgroundColor = "green";
-            shadow.style.opacity = 0.5;
+            shadow.style.opacity = "0.5";
         }
 
         function checkSampleStatus(i, sample) {
             $("#icon-" + i).removeClass().addClass(sample.icon);
             $("#status-" + i)[0].innerText = sample.status
             if (sample.status === "released") {
-                releasedSeq(i)
-            } else if (sample.status === "locked") {
-                lockedSeq(i)
+                releasedSeq(i);
+            } else if (sample.status === "locked" || sample.status === "blocked") {
+                lockedSeq(i, sample.status);
             } else {
                 let shadow = document.querySelector("#shadow-" + i);
                 shadow.hidden = true;
@@ -180,7 +180,8 @@
             <script src="{{ url_for('static',filename='js/g_analysis_brands.js') }}">
             </script>
             <script src="{{ url_for('static',filename='js/gas_analysis_game.js') }}">
-            </script><script src="{{ url_for('static',filename='js/puzzleGame.js') }}">
+            </script>
+            <script src="{{ url_for('static',filename='js/puzzleGame.js') }}">
             </script>
             {% for sample in g_config.samples %}
                 <div id="option{{ loop.index0 }}" class="option {% if loop.index0 == 0 %}
@@ -216,7 +217,7 @@
                     </div>
                 </div>
                 <script type="text/javascript">
-                    checkSampleStatus({{ loop.index0 }}, {{ sample| tojson }})
+                    checkSampleStatus("{{ loop.index0 }}", {{ sample| tojson }})
                 </script>
             {% endfor %}
         </div>

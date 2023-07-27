@@ -49,6 +49,7 @@ def read_json(filename: str, from_static=True) -> dict:
 
 samples = read_json("json/samples.json")
 sample_icons = {
+    "blocked": "fa-solid fa-ban",
     "locked": "fas fa-lock",
     "unlocked": "fas fa-lock-open",
     "released": "fa-solid fa-check"
@@ -147,21 +148,21 @@ def handle_received_messages(json_msg):
     if json_msg.get("keypad_update"):
         global samples
         # "gas_control keypad 0 wrong"
-        cmd = json_msg.get("keypad_update").split()
-        if cmd[0].startswith("/gas_control"):
-            if cmd[-1] == "correct":
-                samples[int(cmd[-2])]["status"] = "unlocked"
-                samples[int(cmd[-2])]["icon"] = sample_icons["unlocked"]
+        page, _, num, status = json_msg.get("keypad_update").split()
+        if page.startswith("/gas_control"):
+            if status == "correct":
+                samples[int(num)]["status"] = "unlocked"
+                samples[int(num)]["icon"] = sample_icons["unlocked"]
                 sio.emit("samples", samples)
-                sio.emit("samples", f"sample {int(cmd[-2]) + 1} {samples[int(cmd[-2])]['status']}")
+                sio.emit("samples", f"sample {int(num) + 1} {samples[int(num)]['status']}")
             else:
                 # TODO emit message for wrong trials?
                 print("gas control wrong trial")
 
-        elif cmd[0].startswith("/gas_analysis"):
-            if cmd[-1] == "correct":
-                samples[int(cmd[-2])]["status"] = "released"
-                samples[int(cmd[-2])]["icon"] = sample_icons["released"]
+        elif page.startswith("/gas_analysis"):
+            if status == "correct":
+                samples[int(num)]["status"] = "released"
+                samples[int(num)]["icon"] = sample_icons["released"]
             trigger_msg = {
                 "username": "arb",
                 "cmd": "dispenser",
@@ -173,9 +174,13 @@ def handle_received_messages(json_msg):
             # for the physical world to take place.
             if all_samples_solved():
                 sio.emit("samples", {"flag": "done"})
+            else:
+                # unblock next sample
+                samples[int(num) + 1]["status"] = "locked"
+                samples[int(num) + 1]["icon"] = sample_icons["locked"]
 
             sio.emit("samples", samples)
-            sio.emit("samples", f"sample {int(cmd[-2]) + 1} {samples[int(cmd[-2])]['status']}")
+            sio.emit("samples", f"sample {int(num) + 1} {samples[int(num)]['status']}")
 
     elif json_msg.get("levels") and "correct" in str(json_msg):
         sio.emit("to_clients", {
