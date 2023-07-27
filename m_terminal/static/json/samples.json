@@ -10,23 +10,23 @@
     "name": "sample 2",
     "passcode": "23",
     "img": "media/gas_puzzle/AN_2.png",
-    "status": "locked",
-    "icon": "fas fa-lock",
+    "status": "blocked",
+    "icon": "fa-solid fa-ban",
     "info": "non-toxic"
   },
   {
     "name": "sample 3",
     "passcode": "12",
     "img": "media/gas_puzzle/AN_3.png",
-    "status": "locked",
-    "icon": "fas fa-lock",
+    "status": "blocked",
+    "icon": "fa-solid fa-ban",
     "info": "non-active"
   },
   {
     "name": "sample 4",
     "passcode": "34",
     "img": "media/gas_puzzle/AN_4.png",
-    "status": "locked",
-    "icon": "fas fa-lock"
+    "status": "blocked",
+    "icon": "fa-solid fa-ban"
   }
 ]

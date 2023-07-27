@@ -53,6 +53,16 @@
             crossorigin="anonymous"></script>
 
     <script type="text/javascript">
+        function blockedSeq(index, status) {
+            let shadow = document.querySelector("#shadow-" + index);
+            let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
+            shadowTxt.innerText = status;
+            shadowTxt.classList.remove("d-none");
+            shadow.hidden = false;
+            shadow.style.backgroundColor = "grey";
+            shadow.style.opacity = "0.9";
+        }
+
         function unlockSeq(index) {
             let shadow = document.querySelector("#shadow-" + index);
             let shadowTxt = shadow.querySelector("#shadow-txt-" + index);
@@ -77,9 +87,14 @@
             $("#icon-" + i).removeClass().addClass(sample.icon);
             $("#status-" + i)[0].innerText = sample.status
             if (sample.status === "released") {
-                releaseSeq(i)
+                releaseSeq(i);
             } else if (sample.status === "unlocked") {
-                unlockSeq(i)
+                unlockSeq(i);
+            } else if (sample.status === "blocked") {
+                blockedSeq(i, sample.status);
+            } else {
+                let shadow = document.querySelector("#shadow-" + i);
+                shadow.hidden = true;
             }
         }
 
