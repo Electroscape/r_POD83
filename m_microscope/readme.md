@@ -13,6 +13,7 @@ use a GUI RPI image
     ```
 3. run `i2cdetect -y 1` to assure i2c sensor is detected corretly. Default address is 0x24
 4. So important: **disable hardware acceleration in chromium**
+5. To hide the mouse cursor edit `sudo nano /etc/lightdm/lightdm.conf` You must add this line after [Seat*] declaration `xserver-command=X -nocursor`
 
 ## Possible installation problems
 
