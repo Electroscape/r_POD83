@@ -95,6 +95,13 @@ void stopBelt() {
     #endif
 }
 
+void setServosZero() {
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 0, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 1, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 2, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 3, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 0);
+}
 
 void stageActions() {
     wdt_reset();
@@ -365,6 +372,8 @@ void loop() {
     stageUpdate();
     checkBelt();
 
+    // make sure servos are always at position 0
+    setServosZero();
     wdt_reset();
 }
 
