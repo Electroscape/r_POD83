@@ -274,9 +274,7 @@
         </div>
         <div id="levels-game-container" class="d-none">
             <h2>Package for data upload</h2>
-            <script src="{{ url_for('static',filename='js/g_analysis_brands.js') }}">
-            </script>
-            <script src="{{ url_for('static',filename='js/gas_analysis_game.js') }}">
+            <script src="{{ url_for('static',filename='js/levels_game.js') }}">
             </script>
             {% with elements=samples|tojson, gameID=0 %}
                 {% include "dragDropGame.html" %}
