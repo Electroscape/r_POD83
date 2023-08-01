@@ -131,6 +131,8 @@ def vid_on_disconnect():
 
 
 def frontend_server_messages(json_msg):
+    if json_msg.get("update"):
+        return
     chat_history.append(json_msg)
     sio.emit('response_to_fe', json_msg)
 

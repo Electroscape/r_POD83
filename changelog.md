@@ -1,5 +1,9 @@
 # Changelog
 
+## v 0.28
+
+  * filtered the frontend updates out from the server interface
+
 ## v 0.27
 
  * gas puzzle sequentially dependent 
