@@ -117,7 +117,7 @@ def media_control_truth():
     }
     print(media_files)
     print("open media page")
-    return render_template("TR3/p_media.html", g_config=config)
+    return render_template("TR3/p_media.html", g_config=config, header_color = "red")
 
 
 @app_pages.route('/personal_rachel', methods=['GET', 'POST'])
@@ -137,8 +137,7 @@ def personal_rachel():
 
 @app_pages.route('/personal_rachel_tablet', methods=['GET', 'POST'])
 def personal_rachel_tablet():
-    media_files = [video_file for video_file in listdir_no_hidden('static/media/rachel') if
-                   video_file.endswith(".webm")]
+   
     gallery_photos = ""
 
     gallery_photos = sorted(
@@ -148,11 +147,10 @@ def personal_rachel_tablet():
 
     config = {
         "title": "personal files",
-        "files": sorted(media_files),
-        "pdfs": pdf_files
+        "pdfs": sorted(pdf_files)
     }
     print("open media page")
-    return render_template("TR3/p_personal_rachel.html", g_config=config, gallery_photos = gallery_photos)
+    return render_template("TR3/p_personal_rachel.html", g_config=config, gallery_photos = gallery_photos, header_color = "red")
 
 
 @app_pages.route('/double_auth', methods=['GET', 'POST'])

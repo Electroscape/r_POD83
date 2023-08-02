@@ -2,9 +2,12 @@
 
 {% block head %}
     <style>
+        
+
         .modal-dialog {
             text-align: center;
         }
+       
 
         .modal-body {
             padding: 0;
@@ -15,7 +18,7 @@
             width: fit-content;
 
         }
-
+        
         .button-close {
             float: right;
             background-color: black;
@@ -95,7 +98,14 @@
         }
         .floating-chat {
             background-color: black;
+         
         }
+        h2 { font-size: 12px; 
+            font-weight: bold;
+            color: #e70a0a;
+        }
+        
+    
 
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
@@ -137,10 +147,10 @@
                                             aria-selected="{% if loop.index0 == 0 %}true{% else %}false{% endif %}">
 
                                         <i class="fa fa-file-pdf">
-                                            <span>{{ file }}</span>
+                                            <span></span>
                                         </i>
                                     </button>
-                                    <h1>Report {{ loop.index }}</h1>
+                                    <h2>{{file}}</h2>
                                 </div>
                             {% endfor %}
                         </div>
@@ -190,10 +200,10 @@
                                             aria-selected="{% if loop.index0 == 0 %}true{% else %}false{% endif %}">
 
                                         <i class="fa fa-camera">
-                                            <span>{{ image_name }}</span>
+                                            <span></span>
                                         </i>
                                     </button>
-                                    <h1>Photo {{ loop.index }}</h1>
+                                    <h2>{{ image_name }}</h2>
                                 </div>
                             {% endfor %}
                         </div>

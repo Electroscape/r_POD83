@@ -107,7 +107,7 @@ def entry_point():  # begin of the code
     conf = get_globals()
     airlock_id = "lab-control"
     return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id,
-                           airlock_auth=airlock_auth, samples_flag=samples_flag, progress="-100")
+                           airlock_auth=airlock_auth, samples_flag=samples_flag, progress="-100",header_color = "red")
 
 
 @app.route('/boot', methods=['GET', 'POST'])
@@ -126,7 +126,7 @@ def chat_control():
         "chat_msg": chat_msgs.get()
     }
     logging.info("open chat page")
-    return render_template("p_chat.html", g_config=config)
+    return render_template("p_chat.html", g_config=config, header_color = "red",chatbox_color = "black")
 
 
 @app.route('/get_globals', methods=['GET', 'POST'])

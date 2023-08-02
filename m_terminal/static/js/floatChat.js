@@ -37,14 +37,18 @@ function closeElement() {
 function sendNewMessage() {
     const userInput = $('.text-box');
     const newMessage = userInput.text();
-
+    let senderColorInTablet = "black";
     if (!newMessage) return;
 
     const messagesContainer = $('.messages');
 
+    if (myRoomID == "TR3"){
+        senderColorInTablet = "white"
+    }
+
     messagesContainer.prepend([
         '<li class="other">',
-        `<b style="color: #000"> ${myRoomID}: </b>`,
+        `<b style="color: ${senderColorInTablet}"> ${myRoomID}: </b>`,
         newMessage,
         '</li>'
     ].join(''));
@@ -66,7 +70,12 @@ function sendNewMessage() {
 
 function receiveNewMessage(src, msg) {
     let messageColor, senderColor = "black";
-    if (src === "rachel") {
+
+    if (src === "TR3"){
+        senderColor = "white";
+        messageColor = "white";
+    }
+    else if (src === "rachel") {
         messageColor = "red";
         senderColor = "red";
     } else if (src === "elancell-hq") {
@@ -75,6 +84,8 @@ function receiveNewMessage(src, msg) {
     } else {
         messageColor = "white";
     }
+    
+    
 
     const messagesContainer = $('.messages');
 

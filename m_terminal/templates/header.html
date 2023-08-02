@@ -3,6 +3,12 @@
         flex-shrink: 1;
         min-width: 16vw;
     }
+    
+    {% if header_color %}
+        #header-title {
+            color: {{ header_color }}!important;
+        }
+    {% endif %}
 
     .header-center {
         flex-grow: 2;
@@ -42,7 +48,7 @@
     </div>
     <div class="header-center">
         <div class="wrap-typing-effect text-center">
-            <h1 class="text-success typing-effect">{{ g_config.title }}</h1>
+            <h1 id="header-title" class="text-success typing-effect">{{ g_config.title }}</h1>
         </div>
     </div>
     <div class="header-right">
