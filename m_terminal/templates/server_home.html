@@ -504,13 +504,13 @@
         $(function () {
             $("#input_msg").autocomplete({
                 position: {collision: "flip"},
-                source: ["no values"]
+                source: [""]
             });
-            setAutocompleteSource();
+            // setAutocompleteSource();
         });
 
         $('select').on('change', function () {
-            setAutocompleteSource();
+            // setAutocompleteSource();
             loadHintsModal();
         });
 
