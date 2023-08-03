@@ -2,6 +2,7 @@
   "server": "raspi-4-pod-t1:5500",
   "ter1": "raspi-4-pod-t1:5551",
   "ter2": "raspi-4-pod-t2:5552",
+  "ter3": "raspi-4-pod-t2:5553",
   "arb": "raspi-4-pod-Arbiter:9999",
   "mcrp": "RPi-HF-Microscope:5555",
   "cams": [
