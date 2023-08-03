@@ -219,6 +219,10 @@ def override_triggers(msg):
     # Therefore listener on the arb Pi is @sio.on("trigger")
     sio.emit("trigger", msg)
 
+    if "laserlock_skip" in str(msg):
+        sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "success"})
+
+
 
 @sio.on('rfid_update')
 def rfid_updates(msg):
