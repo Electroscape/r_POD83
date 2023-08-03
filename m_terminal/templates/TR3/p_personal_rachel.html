@@ -159,7 +159,7 @@
                                 <div class="tab-pane fade {% if loop.index0 == 0 %}show active{% endif %}"
                                      id="v-pills-{{ loop.index }}" role="tabpanel"
                                      aria-labelledby="v-pills-tab-{{ loop.index }}">
-                                    <embed type="application/pdf" height="700px" width="1000px"
+                                    <embed type="application/pdf" height="700px" width="700px"
                                            src="{{ url_for('static', filename='pdfs/' + file) }}#toolbar=0&navpanes=0">
                                 </div>
                             {% endfor %}
