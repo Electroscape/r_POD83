@@ -43,7 +43,8 @@ function sendNewMessage() {
     const messagesContainer = $('.messages');
 
     if (myRoomID == "TR3"){
-        senderColorInTablet = "white"
+        senderColorInTablet = "white";
+        
     }
 
     messagesContainer.prepend([
@@ -70,12 +71,20 @@ function sendNewMessage() {
 
 function receiveNewMessage(src, msg) {
     let messageColor, senderColor = "black";
-
-    if (src === "TR3"){
-        senderColor = "white";
-        messageColor = "white";
-    }
-    else if (src === "rachel") {
+   
+    if (myRoomID === "TR3"){
+        if (src === "system"){
+            senderColor = "blue";
+        }
+        else if (src === "game-master"){
+            senderColor = "green";
+        }
+        else{
+            senderColor = "white";
+        }
+    } 
+    
+    if (src === "rachel") {
         messageColor = "red";
         senderColor = "red";
     } else if (src === "elancell-hq") {
@@ -84,8 +93,6 @@ function receiveNewMessage(src, msg) {
     } else {
         messageColor = "white";
     }
-    
-    
 
     const messagesContainer = $('.messages');
 
