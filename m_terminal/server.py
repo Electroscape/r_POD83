@@ -190,7 +190,8 @@ def handle_received_messages(json_msg):
         })
     elif "/lab_control" in str(json_msg):
         logging.info("access to laser-lock requested")
-        # access the airlock lab
+        # access the laserlock lab
+        # TODO: Refactor needs changes in arb pi code
         sio.emit("trigger", {"username": "arb", "cmd": "airlock", "message": "access"})
     elif json_msg.get("cmd") == "cleanroom":
         logging.info(f"cleanroom status: {json_msg.get('message')}")
@@ -280,7 +281,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr1", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
-                sio.emit("to_clients", {"username": "tr1", "cmd": "airlock", "message": "broken"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock", "message": "broken"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
@@ -303,7 +304,7 @@ def events_handler(msg):
 
         if msg.get("cmd") == "usbBoot":
             loading_percent = 90
-            # reset airlock status on boot event
+            # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
 
         sio.emit("to_clients", msg)

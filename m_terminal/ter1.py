@@ -105,8 +105,8 @@ def entry_point():  # begin of the code
         return redirect("/boot")
 
     conf = get_globals()
-    airlock_id = "lab-control"
-    return render_template("index.html", g_config=conf, airlock=laserlock_boot, airlock_id=airlock_id,
+    laserlock_id = "lab-control"
+    return render_template("index.html", g_config=conf, laserlock=laserlock_boot, laserlock_id=laserlock_id,
                            laserlock_auth=laserlock_auth, samples_flag=samples_flag, progress=get_progressbar_status())
 
 
@@ -275,8 +275,7 @@ def events_handler(data):
         usb_boot = msg
         logging.info(f"boot msg: {msg}")
         self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
-    # TODO: refactor airlock to laserlock
-    elif cmd == "airlock":
+    elif cmd == "laserlock":
         laserlock_boot = msg
         logging.info(f"laserlock msg: {msg}")
         # only notify if not solved
