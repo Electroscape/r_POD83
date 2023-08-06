@@ -219,9 +219,8 @@ def override_triggers(msg):
     # Therefore listener on the arb Pi is @sio.on("trigger")
     sio.emit("trigger", msg)
 
-    if "laserlock_skip" in str(msg):
-        sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "success"})
-
+    if msg.get("cmd") == "laserlock" and msg.get("message") == "skip":
+        sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "success"})
 
 
 @sio.on('rfid_update')
@@ -282,7 +281,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "airlock", "message": "broken"})
-                sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
@@ -305,7 +304,7 @@ def events_handler(msg):
         if msg.get("cmd") == "usbBoot":
             loading_percent = 90
             # reset airlock status on boot event
-            sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
+            sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
 
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)

@@ -76,7 +76,7 @@ def get_post(post_path):
 @app.route('/lab_control', methods=['GET', 'POST'])
 def lab_control():
     global airlock_boot
-    global airlock_auth
+    global laserlock_auth
 
     if request.method == "POST":
         if request.form.get("status"):
@@ -84,14 +84,14 @@ def lab_control():
             logging.info(f"airlock boot: {airlock_boot}")
             return airlock_boot
         elif request.form.get("auth"):
-            airlock_auth = request.form.get("auth")
-            logging.info(f"airlock auth: {airlock_auth}")
-            return airlock_auth
+            laserlock_auth = request.form.get("auth")
+            logging.info(f"airlock auth: {laserlock_auth}")
+            return laserlock_auth
 
     config = {
         "title": "Lab Control",
         "boot": airlock_boot,
-        "auth": airlock_auth,
+        "auth": laserlock_auth,
         "version": get_version(terminal_name).get("laserlock")
     }
     logging.info("open lab page")
@@ -107,7 +107,7 @@ def entry_point():  # begin of the code
     conf = get_globals()
     airlock_id = "lab-control"
     return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id,
-                           airlock_auth=airlock_auth, samples_flag=samples_flag, progress=get_progressbar_status())
+                           laserlock_auth=laserlock_auth, samples_flag=samples_flag, progress=get_progressbar_status())
 
 
 @app.route('/boot', methods=['GET', 'POST'])
@@ -259,7 +259,7 @@ def events_handler(data):
         global login_user
         global usb_boot
         global airlock_boot
-        global airlock_auth
+        global laserlock_auth
         global show_personal_r
 
         msg = data.get("message")
@@ -280,10 +280,10 @@ def events_handler(data):
         airlock_boot = msg
         logging.info(f"laserlock msg: {msg}")
         # only notify if not solved
-        if airlock_auth != "success":
+        if laserlock_auth != "success":
             self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
-    elif cmd == "airlock_auth":
-        airlock_auth = msg
+    elif cmd == "laserlock_auth":
+        laserlock_auth = msg
         logging.info(f"airlock auth msg: {msg}")
     elif cmd == "personalR":
         show_personal_r = msg
@@ -346,7 +346,7 @@ chat_msgs = RingList(200)  # stores chat history max 200 msgs, declare before st
 
 login_user = get_login_user(terminal_name)  # either David, Rachel or empty string
 airlock_boot = "normal"
-airlock_auth = "normal"
+laserlock_auth = "normal"
 usb_boot = "shutdown"
 samples_flag = "unsolved"
 show_personal_r = "hide"

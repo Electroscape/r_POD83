@@ -155,9 +155,15 @@
                 {% endif %}
             })
 
+            socket.on("elancell_fe", function (msg) {
+                $('#chatAudio')[0].play();
+                toastr.info(`Data upload ${msg.data}`);
+            })
+
             socket.on('breach_fe', function (msg) {
                 if (msg === "breach") {
-                    toastr.error(`IT security breach is detected`);
+                    $('#chatAudio')[0].play();
+                    toastr.error(`USB media is detected`);
                     swal("warning", "Your system is being hacked", "error").then(() => {
                             document.location.href = "/";
                         }
@@ -302,7 +308,7 @@
             CPanel.innerHTML = resTxt;
 
             let airlock = airlockStatus || "{% if airlock %}{{ airlock }}{% endif %}";
-            let airlockAuth = "{% if airlock_auth %}{{ airlock_auth }}{% endif %}";
+            let airlockAuth = "{% if laserlock_auth %}{{ laserlock_auth }}{% endif %}";
             let samplesFlag = "{% if samples_flag %}{{ samples_flag }}{% endif %}";
             let flags = JSON.parse('{% if flags %}{{ flags | tojson }}{% else %}null{% endif %}');
             let lang = g_lang || "{% if g_config.lang %}{{ g_config.lang }}{% else %}EN{% endif %}";
