@@ -192,7 +192,8 @@ def handle_received_messages(json_msg):
         })
     elif "/lab_control" in str(json_msg):
         logging.info("access to laser-lock requested")
-        # access the airlock lab
+        # access the laserlock lab
+        # TODO: Refactor needs changes in arb pi code
         sio.emit("trigger", {"username": "arb", "cmd": "airlock", "message": "access"})
     elif json_msg.get("cmd") == "cleanroom":
         logging.info(f"cleanroom status: {json_msg.get('message')}")
@@ -220,6 +221,9 @@ def override_triggers(msg):
     # emit message on "trigger" channel for the arb RPi
     # Therefore listener on the arb Pi is @sio.on("trigger")
     sio.emit("trigger", msg)
+
+    if msg.get("cmd") == "laserlock" and msg.get("message") == "skip":
+        sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "success"})
 
 
 @sio.on('rfid_update')
@@ -279,8 +283,8 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr1", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
-                sio.emit("to_clients", {"username": "tr1", "cmd": "airlock", "message": "broken"})
-                sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock", "message": "broken"})
+                sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "microscope", "message": "0"})
@@ -299,11 +303,15 @@ def events_handler(msg):
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 print("rachel logged in on TR2")
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
-
-        if msg.get("cmd") == "usbBoot":
+        elif msg.get("cmd") == "usbBoot":
             loading_percent = 90
-            # reset airlock status on boot event
-            sio.emit("to_clients", {"username": "tr1", "cmd": "airlock_auth", "message": "normal"})
+            # reset laserlock status on boot event
+            sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
+        elif msg.get("cmd") == "laserlock":
+            dict_cmd = {"username": "arb", "cmd": "laserlock", "message": msg.get("message")}
+            # send cable override to arbiter
+            logging.info(f"msg to arbiter: {str(dict_cmd)}")
+            sio.emit("trigger", dict_cmd)
 
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)

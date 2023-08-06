@@ -155,9 +155,15 @@
                 {% endif %}
             })
 
+            socket.on("elancell_fe", function (msg) {
+                $('#chatAudio')[0].play();
+                toastr.info(`Data upload ${msg.data}`);
+            })
+
             socket.on('breach_fe', function (msg) {
                 if (msg === "breach") {
-                    toastr.error(`IT security breach is detected`);
+                    $('#chatAudio')[0].play();
+                    toastr.error(`USB media is detected`);
                     swal("warning", "Your system is being hacked", "error").then(() => {
                             document.location.href = "/";
                         }
@@ -172,13 +178,13 @@
                 }
             })
 
-            socket.on("airlock_fe", function (msg) {
-                console.log(`airlock ${msg}`)
-                loadControlPanel(msg.data, airlockStatus = msg.status);
+            socket.on("laserlock_fe", function (msg) {
+                console.log(`laserlock ${msg}`)
+                loadControlPanel(msg.data, laserlockStatus = msg.status);
                 $('#chatAudio')[0].play();
-                toastr.warning(`airlock laser is ${msg.status}
-                                <button type="button" class="btn btn-outline-dark float-end">open airlock</button>`,
-                    "Laser Lock",
+                toastr.warning(`laserlock is ${msg.status}
+                                <button type="button" class="btn btn-outline-dark float-end">open laserlock</button>`,
+                    "New Update",
                     {
                         timeOut: false,
                         onclick: function () {
@@ -289,7 +295,7 @@
         $("#chatAudio").volume = 0.5;
     });
 
-    function loadControlPanel(jsonResponse, airlockStatus = "", g_lang = "") {
+    function loadControlPanel(jsonResponse, laserlockStatus = "", g_lang = "") {
         let CPanel = document.getElementById("ControlPanel");
         let PContainer = document.getElementById("posts-container");
         let resTxt = "";
@@ -301,14 +307,14 @@
             }
             CPanel.innerHTML = resTxt;
 
-            let airlock = airlockStatus || "{% if airlock %}{{ airlock }}{% endif %}";
-            let airlockAuth = "{% if airlock_auth %}{{ airlock_auth }}{% endif %}";
+            let laserlock = laserlockStatus || "{% if laserlock %}{{ laserlock }}{% endif %}";
+            let laserlockAuth = "{% if laserlock_auth %}{{ laserlock_auth }}{% endif %}";
             let samplesFlag = "{% if samples_flag %}{{ samples_flag }}{% endif %}";
             let flags = JSON.parse('{% if flags %}{{ flags | tojson }}{% else %}null{% endif %}');
             let lang = g_lang || "{% if g_config.lang %}{{ g_config.lang }}{% else %}EN{% endif %}";
 
-            if (airlock === "error") {
-                let air_elem = jsonResponse.btns.find(x => x.id === '{{ airlock_id }}');
+            if (laserlock === "error") {
+                let air_elem = jsonResponse.btns.find(x => x.id === '{{ laserlock_id }}');
                 disableOption(air_elem, "<p style='color: white; font-size: 25pt'>ERROR 432</p>", "rgba(255,0,0,0.6)");
             }
 
@@ -320,11 +326,11 @@
             }
 
             for (let jsonResponseElement of jsonResponse.btns) {
-                if (airlockAuth === "failed" && (jsonResponseElement.id !== "{{ airlock_id }}" && jsonResponseElement.id !== "chat-control")) {
+                if (laserlockAuth === "failed" && (jsonResponseElement.id !== "{{ laserlock_id }}" && jsonResponseElement.id !== "chat-control")) {
                     disableOption(jsonResponseElement, authFailedText);
-                } else if (airlockAuth === "success" && jsonResponseElement.id === "{{ airlock_id }}") {
+                } else if (laserlockAuth === "success" && jsonResponseElement.id === "{{ laserlock_id }}") {
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
-                } else if (airlockAuth === "success" && jsonResponseElement.id === "media-control") {
+                } else if (laserlockAuth === "success" && jsonResponseElement.id === "media-control") {
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (flags && flags.cleanroom === "unlock" && jsonResponseElement.id === "cleanroom") {
                     disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");

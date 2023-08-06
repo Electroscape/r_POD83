@@ -5,11 +5,9 @@ let itemsList = []
 function initiateGame(index, randomDraggableBrands) {
     let draggableItems = document.querySelector("#draggable-items-" + index);
     let matchingPairs = document.querySelector("#matching-pairs-" + index);
-    let shadow = document.querySelector("#shadow-" + index);
     const submitBtn = document.querySelector("#submit-btn-" + index);
 
     submitBtn.disabled = true;
-    // shadow.hidden = true;
 
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         randomDraggableBrands[i]["id"] = randomDraggableBrands[i].iconName.substring(0, 3) + "-" + index + "-" + i;
@@ -23,7 +21,8 @@ function initiateGame(index, randomDraggableBrands) {
     for (let i = 0; i < randomDraggableBrands.length; i++) {
         draggableItems.insertAdjacentHTML("beforeend", `
       <span class="span-icon">
-      <iconify-icon icon="mdi:${randomDraggableBrands[i].iconName}" class="draggable drag-g${index}" draggable="true"
+      <iconify-icon icon="mdi:${randomDraggableBrands[i].iconName}" style="color: ${randomDraggableBrands[i].color}" 
+                    rotate="${randomDraggableBrands[i].rotate}" class="draggable drag-g${index}" draggable="true"
                     id="${randomDraggableBrands[i].id}"></iconify-icon>
       </span>
     `);
@@ -106,16 +105,17 @@ function drop(event) {
     $(draggableElement).parent().css("border-style", "solid");
 
     let iconName = itemsList[index][draggableElementBrand.split("-").pop()]
-    event.target.innerHTML = `<iconify-icon icon="mdi:${iconName.iconName}"></iconify-icon>`;
+    event.target.innerHTML = `<iconify-icon icon="mdi:${iconName.iconName}"
+                                            rotate="${iconName.rotate}"></iconify-icon>`;
 
     if (isCorrectMatching) {
         correct[index]++;
     }
-    scoreSection.style.opacity = 0;
+    scoreSection.style.opacity = "0";
     setTimeout(() => {
         correctSpan.textContent = correct[index];
         totalSpan.textContent = total[index];
-        scoreSection.style.opacity = 1;
+        scoreSection.style.opacity = "1";
     }, 200);
     if (itemsList[index].length === total[index]) { // Game Over!!
         submitBtn.disabled = false;
@@ -154,10 +154,10 @@ function resetBtnClick(index) {
     submitBtn.disabled = true;
     correct[index] = 0;
     total[index] = 0;
-    draggableItems.style.opacity = 0;
-    matchingPairs.style.opacity = 0;
+    draggableItems.style.opacity = "0";
+    matchingPairs.style.opacity = "0";
     setTimeout(() => {
-        scoreSection.style.opacity = 0;
+        scoreSection.style.opacity = "0";
     }, 100);
     setTimeout(() => {
         while (draggableItems.firstChild) draggableItems.removeChild(draggableItems.firstChild);
@@ -165,21 +165,8 @@ function resetBtnClick(index) {
         initiateGame(index, itemsList[index]);
         correctSpan.textContent = correct[index];
         totalSpan.textContent = total[index];
-        draggableItems.style.opacity = 1;
-        matchingPairs.style.opacity = 1;
-        scoreSection.style.opacity = 1;
+        draggableItems.style.opacity = "1";
+        matchingPairs.style.opacity = "1";
+        scoreSection.style.opacity = "1";
     }, 500);
-}
-
-// Auxiliary functions
-function generateRandomItemsArray(n, originalArray) {
-    let res = [];
-    let clonedArray = [...originalArray];
-    if (n > clonedArray.length) n = clonedArray.length;
-    for (let i = 1; i <= n; i++) {
-        const randomIndex = Math.floor(Math.random() * clonedArray.length);
-        res.push(clonedArray[randomIndex]);
-        clonedArray.splice(randomIndex, 1);
-    }
-    return res;
 }

@@ -183,6 +183,8 @@ def events_handler(data):
                 logging.info(f"usb removed: {msg}")
                 self_sio.emit('breach_fe', it_breach)
             elif msg == "enable":
+                # means blue usb means it is secure
+                it_breach = "secure"
                 usb_status = "blue"
                 logging.info(f"blue usb in: {msg}")
             self_sio.emit('elancell_fe', {'data': elancell_upload})
