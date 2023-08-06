@@ -93,15 +93,31 @@ def cleanroom():
 def media_control():
     version_config = get_version("TR1").get("media", {})
     media_prefix = version_config.get("prefix", "")
-    media_files = [video_file for video_file in listdir_no_hidden('static/media') if
+    media_files = [video_file for video_file in listdir_no_hidden('static/media/') if
                    (video_file.startswith(media_prefix) and video_file.endswith(".webm"))]
 
     config = {
         "title": "Media Gallery",
         "files": sorted(media_files)
     }
+ 
     print("open media page")
     return render_template("TR1/p_media.html", g_config=config)
+
+@app_pages.route('/media_control_rachel', methods=['GET', 'POST'])
+def media_control_truth():
+    version_config = get_version("TR3").get("media", {})
+    media_prefix = version_config.get("prefix", "")
+    media_files = [video_file for video_file in listdir_no_hidden('static/media/rachel') if
+                   (video_file.endswith(".webm"))]
+
+    config = {
+        "title": "Rachel Tablet Gallery",
+        "files": sorted(media_files)
+    }
+    print(media_files)
+    print("open media page")
+    return render_template("TR3/p_media.html", g_config=config, header_color = "red")
 
 
 @app_pages.route('/personal_rachel', methods=['GET', 'POST'])
@@ -118,6 +134,23 @@ def personal_rachel():
     }
     print("open media page")
     return render_template("TR2/p_personal_rachel.html", g_config=config)
+
+@app_pages.route('/personal_rachel_tablet', methods=['GET', 'POST'])
+def personal_rachel_tablet():
+   
+    gallery_photos = ""
+
+    gallery_photos = sorted(
+            [img for img in listdir_no_hidden('static/imgs/gallery') if (img.endswith(".jpeg"))])
+
+    pdf_files = [file for file in listdir_no_hidden('static/pdfs') if file.endswith(".pdf")]
+
+    config = {
+        "title": "personal files",
+        "pdfs": sorted(pdf_files)
+    }
+    print("open media page")
+    return render_template("TR3/p_personal_rachel.html", g_config=config, gallery_photos = gallery_photos, header_color = "red")
 
 
 @app_pages.route('/double_auth', methods=['GET', 'POST'])

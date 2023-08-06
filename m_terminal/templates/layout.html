@@ -215,6 +215,19 @@
             function handleMessageReception(msg, playNotification = true) {
                 if (typeof msg.user_name !== 'undefined') {
                     let chatColor = "white", srcColor = "black";
+                    if (myRoomID=== "TR3"){
+                        
+                        if (msg.user_name == "system"){
+                            srcColor = "blue";
+                        }
+                        else if (msg.user_name == "game-master"){
+                            srcColor = "green";
+                        }
+                        else{
+                            srcColor = "white";
+                        }
+                    }
+                    
                     if (msg.user_name === "rachel") {
                         chatColor = "red";
                         srcColor = "red";

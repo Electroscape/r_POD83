@@ -12,6 +12,12 @@
             float: right;
             width: 9%;
         }
+        {% if chatbox_color %}
+        #msg_holder {
+            background-color: {{ chatbox_color }}!important;
+        }
+        {% endif %}
+        
     </style>
 
     <script type="text/javascript">
