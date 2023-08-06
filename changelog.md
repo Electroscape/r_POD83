@@ -3,6 +3,11 @@
 ## v 0.28
 
   * filtered the frontend updates out from the server interface
+  * refactor airlock to laserlock in TR1 (except cmds used by arb pi)
+  * fix upload levels problematic coding and add colors to symbols
+  * fix blue usb override return back to homepage
+  * green-out lab access on double-auth override (needs to refresh the page)
+  * disable auto-complete for server hints
 
 ## v 0.27
 
