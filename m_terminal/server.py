@@ -301,11 +301,15 @@ def events_handler(msg):
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 print("rachel logged in on TR2")
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
-
-        if msg.get("cmd") == "usbBoot":
+        elif msg.get("cmd") == "usbBoot":
             loading_percent = 90
             # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
+        elif msg.get("cmd") == "laserlock":
+            dict_cmd = {"username": "arb", "cmd": "laserlock", "message": msg.get("message")}
+            # send cable override to arbiter
+            logging.info(f"msg to arbiter: {str(dict_cmd)}")
+            sio.emit("trigger", dict_cmd)
 
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)
