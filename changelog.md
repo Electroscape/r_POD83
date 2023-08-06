@@ -2,6 +2,7 @@
 
 ## v 0.28
 
+  * **first lauch of rachel tablet (ter3)**
   * filtered the frontend updates out from the server interface
   * refactor airlock to laserlock in TR1 (except cmds used by arb pi)
   * fix upload levels problematic coding and add colors to symbols
