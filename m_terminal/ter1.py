@@ -281,7 +281,7 @@ def events_handler(data):
         logging.info(f"laserlock msg: {msg}")
         # only notify if not solved
         if laserlock_auth != "success":
-            self_sio.emit('airlock_fe', {'status': laserlock_boot, 'data': get_globals()})
+            self_sio.emit('laserlock_fe', {'status': laserlock_boot, 'data': get_globals()})
     elif cmd == "laserlock_auth":
         laserlock_auth = msg
         logging.info(f"laserlock auth msg: {msg}")

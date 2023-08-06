@@ -178,7 +178,7 @@
                 }
             })
 
-            socket.on("airlock_fe", function (msg) {
+            socket.on("laserlock_fe", function (msg) {
                 console.log(`airlock ${msg}`)
                 loadControlPanel(msg.data, airlockStatus = msg.status);
                 $('#chatAudio')[0].play();
