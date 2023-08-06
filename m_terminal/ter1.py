@@ -75,22 +75,22 @@ def get_post(post_path):
 
 @app.route('/lab_control', methods=['GET', 'POST'])
 def lab_control():
-    global airlock_boot
+    global laserlock_boot
     global laserlock_auth
 
     if request.method == "POST":
         if request.form.get("status"):
-            airlock_boot = request.form.get("status")
-            logging.info(f"airlock boot: {airlock_boot}")
-            return airlock_boot
+            laserlock_boot = request.form.get("status")
+            logging.info(f"laserlock boot: {laserlock_boot}")
+            return laserlock_boot
         elif request.form.get("auth"):
             laserlock_auth = request.form.get("auth")
-            logging.info(f"airlock auth: {laserlock_auth}")
+            logging.info(f"laserlock auth: {laserlock_auth}")
             return laserlock_auth
 
     config = {
         "title": "Lab Control",
-        "boot": airlock_boot,
+        "boot": laserlock_boot,
         "auth": laserlock_auth,
         "version": get_version(terminal_name).get("laserlock")
     }
@@ -106,7 +106,7 @@ def entry_point():  # begin of the code
 
     conf = get_globals()
     airlock_id = "lab-control"
-    return render_template("index.html", g_config=conf, airlock=airlock_boot, airlock_id=airlock_id,
+    return render_template("index.html", g_config=conf, airlock=laserlock_boot, airlock_id=airlock_id,
                            laserlock_auth=laserlock_auth, samples_flag=samples_flag, progress=get_progressbar_status())
 
 
@@ -258,7 +258,7 @@ def events_handler(data):
     else:
         global login_user
         global usb_boot
-        global airlock_boot
+        global laserlock_boot
         global laserlock_auth
         global show_personal_r
 
@@ -277,14 +277,14 @@ def events_handler(data):
         self_sio.emit('boot_fe', {'status': usb_boot, 'data': get_globals()})
     # TODO: refactor airlock to laserlock
     elif cmd == "airlock":
-        airlock_boot = msg
+        laserlock_boot = msg
         logging.info(f"laserlock msg: {msg}")
         # only notify if not solved
         if laserlock_auth != "success":
-            self_sio.emit('airlock_fe', {'status': airlock_boot, 'data': get_globals()})
+            self_sio.emit('airlock_fe', {'status': laserlock_boot, 'data': get_globals()})
     elif cmd == "laserlock_auth":
         laserlock_auth = msg
-        logging.info(f"airlock auth msg: {msg}")
+        logging.info(f"laserlock auth msg: {msg}")
     elif cmd == "personalR":
         show_personal_r = msg
         logging.info(f"personal R msg: {msg}")
@@ -345,7 +345,7 @@ while not sio.connected:
 chat_msgs = RingList(200)  # stores chat history max 200 msgs, declare before starting sockets
 
 login_user = get_login_user(terminal_name)  # either David, Rachel or empty string
-airlock_boot = "normal"
+laserlock_boot = "normal"
 laserlock_auth = "normal"
 usb_boot = "shutdown"
 samples_flag = "unsolved"
