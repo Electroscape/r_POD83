@@ -92,5 +92,15 @@
       "HQ has taken over communication with you. I can only contact you sporadically.",
       "HQ does not like to see Teamleads getting involved. I do not have to tell you that the contents of this mission are strictly classified."
     ]
+  },
+  "system": {
+    "de": [
+      "Verbindung mit HQ verloren",
+      "Verbindung wieder mit HQ wieder hergestellt"
+    ],
+    "en": [
+      "The connection with the HQ has been lost.",
+      "The connection with the HQ has been re-activated."
+    ]
   }
 }
