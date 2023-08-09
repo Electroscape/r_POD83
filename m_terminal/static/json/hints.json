@@ -96,11 +96,11 @@
   "system": {
     "de": [
       "Verbindung mit HQ verloren",
-      "Verbindung wieder mit HQ wieder hergestellt"
+      "Verbindung mit HQ wieder hergestellt"
     ],
     "en": [
       "The connection with the HQ has been lost.",
-      "The connection with the HQ has been re-activated."
+      "The connection with the HQ has been re-established."
     ]
   }
 }
