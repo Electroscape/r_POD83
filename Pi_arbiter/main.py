@@ -214,16 +214,6 @@ def handle_fe(data):
                 # print(f"wrong msg {msg}")
                 continue
 
-            # @todo: removed once differentiation is possible
-            if key == "laserlock_fail" or key == "laserlock_bootdecon":
-                pcf_value = event_map["laserlock_cable_fixed"][pcf_in]
-                pcf_add = event_map["laserlock_cable_fixed"][pcf_in_add]
-                if IO.read_pcf(pcf_add) & pcf_value == pcf_value:
-                    handle_event("laserlock_bootdecon")
-                else:
-                    handle_event("laserlock_fail")
-                return
-
             handle_event(key)
         except KeyError:
             pass
