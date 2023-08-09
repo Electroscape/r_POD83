@@ -414,7 +414,7 @@
     </div>
     <br>
 
-    <label class="label-txt" for="msg_holder">Chat Messages</label>
+        <label class="label-txt" for="msg_holder">Chat Messages</label>
     <div class="message_holder" id="msg_holder">
     </div>
 
@@ -432,18 +432,20 @@
                 <option value="de">DE</option>
             </select>
         </label>
+        <input
+            type="button"
+            data-mdb-toggle="modal"
+            data-mdb-target="#phrasesModal"
+            data-mdb-whatever="lang"
+            value="phrases"
+        />
+        <br>
         <label class="w-50">
-            <input type="text" class="message w-100" id="input_msg" placeholder="Messages"/>
+            <textarea id="input_msg" cols="50" rows="4">Messages</textarea>
         </label>
+        <br>
         <input type="submit" value="Send"/>
         <button onclick="playNotificationSound()"><i class="fa fa-bell" aria-hidden="true"></i></button>
-        <input
-                type="button"
-                data-mdb-toggle="modal"
-                data-mdb-target="#phrasesModal"
-                data-mdb-whatever="lang"
-                value="phrases"
-        />
     </form>
 
     <div class="modal fade" id="phrasesModal" tabindex="-1" aria-labelledby="phrasesModalLabel" aria-hidden="true">
@@ -468,8 +470,7 @@
                     </select>
                     <br>
                     <div class="w-100 py-1 my-2" style="background-color: aliceblue">
-                        <ul id="modalMessages" class="w-100 h-100">
-                        </ul>
+                        <ul id="modalMessages" class="w-100 h-100"></ul>
                     </div>
                 </div>
 
