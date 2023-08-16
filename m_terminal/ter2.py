@@ -14,8 +14,8 @@ import logging
 from datetime import datetime as dt
 
 now = dt.now()
-log_name = now.strftime("T2 %m_%d_%Y  %H_%M_%S.log")
-logging.basicConfig(filename=log_name, level=logging.DEBUG,
+log_name = now.strftime("logs/T2 %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.ERROR,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
