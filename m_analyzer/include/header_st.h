@@ -27,16 +27,23 @@ enum IOEvents{
     secondSolutionEvent
 };
 
-
+enum light{
+    red_blinking,
+    turn_off,
+    hint_place1,
+    hint_place2,
+    hint_place3,
+    hint_place4
+};
 
 enum stages {
     setupStage = 1,
     runMode1 = 2,
     analyze = 4,
-    runMode1_fast = 8,
+    runMode2 = 8,
     firstSolution  = 16,
     waitfordish5 = 32,
-    runMode2 = 64,
+    runMode3 = 64,
     secondSolution =128
 };
 
@@ -59,35 +66,14 @@ int flagMapping[StageCount] {
 
 char passwords[PasswordAmount][MaxPassLen] = {
     "P1 ", // runmode1
-    "P4 ",
-    "P2 ",
-    "P3 ",
-    "ZERO", 
-    "P5 ",
-    "P5 ",
-    "P4 ",
-    "P2 ",
-    "P3 ",
-    "ZERO"
+    "P4 ", // runmode1
+    "P2 ", // runmode1
+    "P3 ", // runmode1
+    "P5 ", // WaitforDish5
+    "P5 ", // runmode3
+    "P4 ", // runmode3
+    "P2 ", // runmode3
+    "P3 ", // runmode3
 };
 
-/* // defines what password/RFIDCode is used at what stage, if none is used its -1
-int passwordMap[PasswordAmount] = {
-    runMode1,
-    runMode1,
-    runMode1,
-    runMode1,
-    runMode1,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast,
-    runMode1_fast,
-    waitfordish5,
-    runMode2,
-    runMode2,
-    runMode2,
-    runMode2,
-    runMode2
-}; */
 
