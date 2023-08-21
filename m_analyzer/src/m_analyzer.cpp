@@ -108,38 +108,38 @@ void color_hint () {
 
     switch (light_setting) {
         case (red_blinking):
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed ,50, 100, 100, 100, PWM::set1_2_3_4); 
-            nextLightTimer += 1200;
+            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
+            nextLightTimer += 1400;
             light_setting += 1;
         break;
 
         case (turn_off):
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
-            nextLightTimer += 200;
+            nextLightTimer += 300;
             light_setting += 1;
         break;
         
         case (hint_place1):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrRed, 100, PWM::set1);  
-            nextLightTimer += 500;
+            nextLightTimer += 600;
             light_setting += 1;
         break;
         
         case (hint_place2):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrBlue, 100, PWM::set2);  
-            nextLightTimer += 500;
+            nextLightTimer += 600;
             light_setting += 1;
         break;
         
         case (hint_place3):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrYellow, 100, PWM::set3);  
-            nextLightTimer += 500;
+            nextLightTimer += 600;
             light_setting += 1;
         break;
         
         case (hint_place4):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrGreen, 100, PWM::set4);  
-            nextLightTimer += 1500;
+            nextLightTimer += 1600;
             light_setting = red_blinking;
         break;
     }
@@ -169,14 +169,14 @@ void handleResult(char *cmdPtr) {
     // Do as planned
     passwordInterpreter();
     int checkSum = 0;
-    Serial.print(RFID[0].status);
+    /* Serial.print(RFID[0].status);
     Serial.print(RFID[1].status);
     Serial.print(RFID[2].status);
-    Serial.println(RFID[3].status);
+    Serial.println(RFID[3].status); */
     checkSum = RFID[0].status + RFID[1].status + RFID[2].status + RFID[3].status;
-    Serial.print("Stage: ");
+   /*  Serial.print("Stage: ");
     Serial.println(stage);
-
+ */
     wdt_disable();          
     switch (stage) {
 
@@ -190,8 +190,8 @@ void handleResult(char *cmdPtr) {
                 
                 changed = true;
                 if (RFID[i_RFID].status > 0) { //blinking if dish is new 
-                    LED_CMDS::blinking(Mother ,0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
-                    delay(500);   
+                    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
+                    delay(1300);   
                 }                        
             }
             if (changed) { // only if something has changed, two for loops for checking and if necessary change the lights
@@ -234,7 +234,7 @@ void handleResult(char *cmdPtr) {
                     password_stage_start = password_stage_amount; // reset password start counter
                     password_stage_amount += 4; // all four dishes
                     Serial.println("Dish5 found");                      
-                    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrWhite, 50, 100, 100, 100, PWM::set1_2_3_4); 
+                    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrWhite, 125, 125, 100, 100, PWM::set1_2_3_4); 
                     delay(1000);
                     return;
                 }
@@ -315,15 +315,15 @@ void stageActions() {
         case analyze: // set the 4 dishs until right setting     
             wdt_disable();    
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1000);
+            delay(1200);
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrBlue, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1000);
+            delay(1200);
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrPurple, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1000);
+            delay(1200);
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrYellow, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1000);
+            delay(1200);
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1000);
+            delay(1200);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);
             wdt_enable(WDTO_8S);
             stage = runMode2;    
@@ -349,7 +349,7 @@ void stageActions() {
             MotherIO.setOuput(secondSolutionEvent); // Enables the upload 
             delay(100);
             MotherIO.outputReset();
-            delay(3000);
+            delay(5000);
             wdt_enable(WDTO_8S);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrGreen, 50); // torun off until dish 5
         break;

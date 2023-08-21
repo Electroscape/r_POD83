@@ -6,7 +6,7 @@
 #define closed 1
 #define open   0
 
-const unsigned long rfidCheckInterval = 250;
+const unsigned long rfidCheckInterval = 400;
 
 #define outputCnt 2
 #define inputCnt 0
