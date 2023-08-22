@@ -114,6 +114,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
             integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
             crossorigin="anonymous"></script>
+    
 {% endblock %}
 
 {% block content %}
@@ -138,7 +139,7 @@
                     <div class="d-flex align-items-start">
                         <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist"
                              aria-orientation="vertical">
-                            {% for file in g_config.pdfs %}
+                            {% for folder in pdf_folders %}
                                 <div class="thumbnail mx-0 {% if loop.index0 == 0 %}active{% endif %}">
                                     <button class="nav-link"
                                             id="v-pills-tab-{{ loop.index }}" data-toggle="pill"
@@ -150,27 +151,29 @@
                                             <span></span>
                                         </i>
                                     </button>
-                                    <h2>{{file}}</h2>
+                                    <h2>{{folder}}</h2>
                                 </div>
                             {% endfor %}
                         </div>
                         <div class="tab-content" id="v-pills-tabContent">
-                            {% for file in g_config.pdfs %}
+                            {% for foldername,files in pdfs_dict.items() %}    
                                 <div class="tab-pane fade {% if loop.index0 == 0 %}show active{% endif %}"
-                                     id="v-pills-{{ loop.index }}" role="tabpanel"
-                                     aria-labelledby="v-pills-tab-{{ loop.index }}">
-                                    <embed type="application/pdf" height="700px" width="700px"
-                                           src="{{ url_for('static', filename='pdfs/' + file) }}#toolbar=0&navpanes=0">
-                                </div>
+                                id="v-pills-{{ loop.index }}" role="tabpanel"
+                                aria-labelledby="v-pills-tab-{{ loop.index }}">
+                                {% for file_name in files %}
+                                    <img src="../static/pdfs/{{ foldername }}/{{ file_name }}" width="800px" height="1100px">
+                                {% endfor %}
+                                </div> 
                             {% endfor %}
                         </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!--another way of representation-->
+    <!--galerry photos-->
     <div class="modal fade"
          id="galleryModal"
          tabindex="-1"
@@ -194,9 +197,9 @@
                              {% for image_name in gallery_photos %}
                                 <div class="thumbnail mx-0 {% if loop.index0 == 0 %}active{% endif %}">
                                     <button class="nav-link"
-                                            id="v-pills-tab-{{ loop.index }}" data-toggle="pill"
+                                            id="v-pills-tab2-{{ loop.index }}" data-toggle="pill"
                                             data-target="#img-pills-{{ loop.index }}" type="button" role="tab"
-                                            aria-controls="v-pills-{{ loop.index }}"
+                                            aria-controls="v-pills2-{{ loop.index }}"
                                             aria-selected="{% if loop.index0 == 0 %}true{% else %}false{% endif %}">
 
                                         <i class="fa fa-camera">
@@ -207,12 +210,12 @@
                                 </div>
                             {% endfor %}
                         </div>
-                        <div class="tab-content" id="v-pills-tabContent">
+                        <div class="tab-content" id="v-pills2-tabContent">
                             {% for image_name in gallery_photos %}
                             
                                 <div class="tab-pane fade {% if loop.index0 == 0 %}show active{% endif %}"
                                      id="img-pills-{{ loop.index }}" role="tabpanel"
-                                     aria-labelledby="v-pills-tab-{{ loop.index }}">
+                                     aria-labelledby="v-pills-tab2-{{ loop.index }}">
                                     
                                     <img src="{{ url_for('static', filename='imgs/gallery/' + image_name) }}" height="600px" width="600px"
                                     alt="{{ url_for('static', filename='imgs/gallery/' + image_name) }}"/> 
@@ -272,6 +275,7 @@
 {% endblock %}
 
 {% block add_js %}
+    
     <script>
         $(function () {
             $('#vidTruthModal').modal({
