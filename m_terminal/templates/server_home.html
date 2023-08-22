@@ -544,12 +544,23 @@
                 $("#modalMessages").html('<h1 class="h1 warning mx-3 my-3" style="color: yellowgreen;">No valid Options</h1>');
                 return false;
             }
+
             let txt = "";
             for (const [i, hint] of hintsList.entries()) {
-                txt += `<li class="form-check ripple">
+                isArray = hint instanceof Array;
+                if (isArray) {
+                    txt += `<li class="form-check ripple">
                             <input class="form-check-input" type='radio' value='${i}' name="flexRadioDefault" id="flexRadio-${i}"/>
-                            <label id="hint-${i}" class="form-check-label modal-list-label" for="flexRadio-${i}">${hint}</label>
+                            <label id="hint-${i}" class="form-check-label modal-list-label" for="flexRadio-${i}">
+                                <font color="#000000"><p><b>${hint[0]}</b></p></font></label>
                         </li>`;
+                } else {
+                    txt += `<li class="form-check ripple">
+                            <input class="form-check-input" type='radio' value='${i}' name="flexRadioDefault" id="flexRadio-${i}"/>
+                            <label id="hint-${i}" class="form-check-label modal-list-label" for="flexRadio-${i}">
+                                ${hint}</label>
+                        </li>`;
+                }
             }
             $("#modalMessages").html(txt);
             return hintsList;
