@@ -51,7 +51,7 @@
       ["Schickt uns sofort die Daten!"]
     ],
     "en": [
-      ["The system was powered-up successfully. We now have access to the cameras."],
+      ["The system was powered up successfully. We now have access to the cameras."],
       ["You will receive your instructions from us."],
       "At least one person should familiarize themselves with the terminal and its contents.",
       "Do not forget to take your Bio-Vita.",
@@ -66,7 +66,7 @@
       "Terminal 1 always contains maintenance information for the corresponding pod.",
       "Do not lose sight of your mission. We need the data. If the research has not been completed, activate the double handshake protocol to complete the work.",
       "No login possible. The door has to be closed for security reasons. The work cannot be continued if the door is open.",
-      ["That was illegal transmission. We will try to trace the location of the source. Do not listen to the lies of Rachel Taylor."],
+      ["That was an illegal transmission. We will try to trace the location of the source. Do not listen to the lies of Rachel Taylor."],
       "We hope you have taken you Bio-Vita today.",
       "The gas analysis of terminal 2 can only be activated by the gas control of terminal 1.",
       "We have been informed that David Coverstone used his notebook to document parts of the experiments he was involved in.",
@@ -85,8 +85,8 @@
   },
   "game-master": {
     "de": [
-      "HQ hat die Kommunikation mit Euch übernehmen. Ich kann nur im Notfall mit Euch kommunizieren.",
-      "Dies wird aber vom HQ nicht gerne gesehen. Wie Ihr wisst, sind die Inhalte der jeweiligen Missionen streng geheim."
+      "HQ hat die Kommunikation mit Euch übernommen. Ich kann nur im Notfall mit Euch kommunizieren.",
+      "HQ will nicht das Teamleiter zu sehr involviert werden. Wie Ihr wisst, sind die Inhalte der jeweiligen Missionen streng geheim."
     ],
     "en": [
       "HQ has taken over communication with you. I can only contact you sporadically.",
