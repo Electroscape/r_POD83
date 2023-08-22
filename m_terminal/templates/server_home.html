@@ -120,7 +120,13 @@
                 src_cmd = src.split("_");
                 msg = src_cmd[2];
             }
-
+            if (src_cmd[1] == "t2" && (msg == "breach" || msg == "enable")) {
+                socket.emit("events", {
+                    username: src_cmd[0],
+                    cmd: src_cmd[1],
+                    message: "disable"
+                })
+            }
             socket.emit("events", {
                 username: src_cmd[0],
                 cmd: src_cmd[1],
