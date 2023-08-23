@@ -302,25 +302,13 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": "lock"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "breach", "message": "secure"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "hide"})
-
-                # set microscope off
-    elif username == "mcrp":
-        logging.info(f"to microscope: {str(msg)}")
-        sio.emit("rfid_event", msg)
-    elif username == "tr2":
-        if cmd == "elancell" and msg_value in ["synthesized", "solved"]:
-            game_status.uploadProgress = msg_value
-
-
-
-
     else:
-        # Filters commands
         if msg.get("cmd") == "auth":
             login_users[msg.get("username")] = msg.get("message")
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
-                print("rachel logged in on TR2")
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
+        elif username == "tr2" and cmd == "elancell" and msg_value in ["synthesized", "solved"]:
+            game_status.uploadProgress = msg_value
         elif msg.get("cmd") == "usbBoot":
             loading_percent = 90
             # reset laserlock status on boot event
