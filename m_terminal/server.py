@@ -58,6 +58,7 @@ login_users = {
     "tr1": "empty",
     "tr2": "empty"
 }
+
 version = read_json("json/ver_config.json").get("server", {})
 hint_msgs = read_json("json/hints.json")
 loading_percent = 0
@@ -74,6 +75,12 @@ all_cors = ip_conf + ['*']
 sio = SocketIO(app, cors_allowed_origins=all_cors,
                ping_timeout=120, ping_interval=20)
 
+
+class StatusVars:
+    def __init__(self):
+        self.uploadProgress = "disable"
+
+game_status = StatusVars()
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -260,7 +267,11 @@ def rfid_extras(msg):
 def events_handler(msg):
     global login_users
     # Filter messages to server
-    if msg.get("username") == "server":
+    username = msg.get("username")
+    cmd = msg.get("cmd")
+    msg_value = msg.get("msg")
+
+    if username == "server":
         global samples
         global loading_percent
 
@@ -293,9 +304,16 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "hide"})
 
                 # set microscope off
-    elif msg.get("username") == "mcrp":
+    elif username == "mcrp":
         logging.info(f"to microscope: {str(msg)}")
         sio.emit("rfid_event", msg)
+    elif username == "tr2":
+        if cmd == "elancell" and msg_value in ["synthesized", "solved"]:
+            game_status.uploadProgress = msg_value
+
+
+
+
     else:
         # Filters commands
         if msg.get("cmd") == "auth":
