@@ -18,6 +18,7 @@
   * fixed analyzers bug with the killswitch sample position being accepted in wrong position
   * permade hints are now highlighted for mandatory hints
   * the uploads media override now doesn't require pressing removed first
+  * default language is now german
 
     ### to be completed
     * upload persistence

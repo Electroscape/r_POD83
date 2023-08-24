@@ -34,7 +34,7 @@ ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
 
 # Configuration Constants
 server_ip = "http://" + ip_conf["server"]
-g_lang = "en"  # first run starts in English
+g_lang = "de"  # first run starts in English
 terminal_name = "TR1"  # which config file to load
 
 FLATPAGES_EXTENSION = '.md'
