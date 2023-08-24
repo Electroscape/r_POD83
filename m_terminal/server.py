@@ -21,7 +21,7 @@ chat_history = RingList(300)
 chat_history.append('Welcome to the server window')
 
 now = dt.now()
-log_name = now.strftime("server %m_%d_%Y  %H_%M_%S.log")
+log_name = now.strftime("logs/server %m_%d_%Y  %H_%M_%S.log")
 logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
