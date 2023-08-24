@@ -266,24 +266,25 @@ def rfid_extras(msg):
 @sio.on('events')
 def events_handler(msg):
     global login_users
-    # Filter messages to server
     username = msg.get("username")
     cmd = msg.get("cmd")
-    msg_value = msg.get("msg")
+    msg_value = msg.get("message")
+
+    # print(f"sio events handling: {msg}")
 
     if username == "server":
         global samples
         global loading_percent
 
-        if msg.get("cmd") == "loadingbar":
+        if cmd == "loadingbar":
             loading_percent = int(msg.get("message"))
             sio.emit("to_clients", {"username": "tr1", "cmd": "loadingbar", "message": loading_percent})
             sio.emit("to_clients", {"username": "tr2", "cmd": "loadingbar", "message": loading_percent})
-        elif msg.get("cmd") == "reset":
+        elif cmd == "reset":
             samples = read_json("json/samples.json")
             sio.emit("samples", samples)
             sio.emit("samples", {"flag": "unsolved"})  # to reset the flag
-            if msg.get("message") == "resetAll":
+            if msg_value == "resetAll":
                 logging.info("Server: Reset all")
                 # reset global variables
                 login_users = {
@@ -303,18 +304,17 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "breach", "message": "secure"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "hide"})
     else:
-        if msg.get("cmd") == "auth":
+        if cmd == "auth":
             login_users[msg.get("username")] = msg.get("message")
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
-        elif username == "tr2" and cmd == "elancell" and msg_value in ["synthesized", "solved"]:
-            game_status.uploadProgress = msg_value
-        elif msg.get("cmd") == "usbBoot":
+                sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
+        elif cmd == "usbBoot":
             loading_percent = 90
             # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
-        elif msg.get("cmd") == "laserlock":
-            dict_cmd = {"username": "arb", "cmd": "laserlock", "message": msg.get("message")}
+        elif cmd == "laserlock":
+            dict_cmd = {"username": "arb", "cmd": "laserlock", "message": msg_value}
             # send cable override to arbiter
             logging.info(f"msg to arbiter: {str(dict_cmd)}")
             sio.emit("trigger", dict_cmd)
