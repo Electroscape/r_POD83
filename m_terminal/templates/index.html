@@ -51,9 +51,16 @@
             display: inline-block;
         }
     </style>
+
     <script type="text/javascript">
         $(function () {
-            setProgressbar(parseInt("{{ progress }}"));
+            let percent = parseInt("{{ progress }}");
+            if (percent !== -100) {
+                setProgressbar(percent);
+            } else {
+                $("#progress-bar-wrapper").addClass("d-none");
+            }
+            
         });
 
         function setProgressbar(percentage) {
@@ -85,6 +92,7 @@
         })
     </script>
 {% endblock %}
+
 {% block add_js %}
     <script type="text/javascript">
         $(document).ready(function () {

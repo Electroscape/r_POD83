@@ -96,6 +96,17 @@ void stopBelt() {
 }
 
 
+#ifdef Hamburg
+void setServosZero() {
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 0, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 1, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 2, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain1, 3, 0);
+    SERVO_CMDS::moveServo(Mother, Servo_Brain2, 0, 0);
+}
+#endif
+
+
 void stageActions() {
     wdt_reset();
 
@@ -365,6 +376,9 @@ void loop() {
     stageUpdate();
     checkBelt();
 
+    #ifdef Hamburg
+        setServosZero();
+    #endif
     wdt_reset();
 }
 

@@ -227,14 +227,15 @@
 {% block content %}
 
     <!-- Final upload window -->
-    <div id="dialog-form" class="d-none" title="Upload to {% if "breach" in request.path %}R.{% else %}Elancell{% endif %}">
+    <div id="dialog-form" class="d-none"
+         title="Upload to {% if "breach" in request.path %}R.{% else %}Elancell{% endif %}">
         <p class="validateTips">All form fields are required.</p>
 
         <form autocomplete="off">
             <fieldset class="form-outline">
                 <h3>Network Configuration</h3>
                 <label class="form-label" for="ipv4">ip
-                    <input id="ipv4" type='text' name='text1'
+                    <input id="ipv4" type='search' name='text1'
                            {% if "breach" in request.path %}placeholder="type ip here"
                            {% else %}value="{{ g_config.elancell_ip }}"{% endif %}
                            autocomplete="new-password"
@@ -274,9 +275,7 @@
         </div>
         <div id="levels-game-container" class="d-none">
             <h2>Package for data upload</h2>
-            <script src="{{ url_for('static',filename='js/g_analysis_brands.js') }}">
-            </script>
-            <script src="{{ url_for('static',filename='js/gas_analysis_game.js') }}">
+            <script src="{{ url_for('static',filename='js/levels_game.js') }}">
             </script>
             {% with elements=samples|tojson, gameID=0 %}
                 {% include "dragDropGame.html" %}
@@ -365,6 +364,12 @@
             if (msg.data === "disable") {
                 $("#dialog-message").dialog("open");
             } else if (msg.data === "enable") {
+                {% if "breach" in request.path %}
+                    swal("Restart", "Back to homepage", "warning").then(() => {
+                                document.location.href = "/";
+                            }
+                        );
+                {% endif %}
                 console.log("fifth sample is released");
                 $("#dialog-message").dialog("close");
                 animate(msg.data, 11);

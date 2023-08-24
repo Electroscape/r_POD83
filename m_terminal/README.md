@@ -15,6 +15,7 @@ which is the minimum version to run the app. Make sure to:
 - Change the hostname to an informative one
 - Give it a static IP
 - disable password manager from chromium
+- add zoom block extension to chromium https://chrome.google.com/webstore/detail/zoom-block/jmomepcgehgfoimapeoinphcloinjfpb
 
 Screen blanking needs to be disabled: \
 `sudo raspi-config` -> display options -> screen blanking

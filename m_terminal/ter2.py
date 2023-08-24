@@ -14,8 +14,8 @@ import logging
 from datetime import datetime as dt
 
 now = dt.now()
-log_name = now.strftime("T2 %m_%d_%Y  %H_%M_%S.log")
-logging.basicConfig(filename=log_name, level=logging.DEBUG,
+log_name = now.strftime("logs/T2 %m_%d_%Y  %H_%M_%S.log")
+logging.basicConfig(filename=log_name, level=logging.ERROR,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'EscapeTerminal#'
@@ -28,7 +28,7 @@ ip_conf = js_r("ip_config.json", from_static=False, add_buttons=False)
 
 # Configuration Constants
 server_ip = "http://" + ip_conf["server"]
-g_lang = "en"  # first run starts in English
+g_lang = "de"  # first run starts in English
 terminal_name = "TR2"  # which config file to load
 
 
@@ -183,6 +183,8 @@ def events_handler(data):
                 logging.info(f"usb removed: {msg}")
                 self_sio.emit('breach_fe', it_breach)
             elif msg == "enable":
+                # means blue usb means it is secure
+                it_breach = "secure"
                 usb_status = "blue"
                 logging.info(f"blue usb in: {msg}")
             self_sio.emit('elancell_fe', {'data': elancell_upload})
