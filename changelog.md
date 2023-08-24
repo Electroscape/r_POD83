@@ -1,5 +1,9 @@
 # Changelog
 
+
+
+
+
 ## v 0.28
 
   * **first lauch of rachel tablet (ter3)**
@@ -9,6 +13,15 @@
   * fix blue usb override return back to homepage
   * green-out lab access on double-auth override (needs to refresh the page)
   * disable auto-complete for server hints
+  * changed GM input line to a bigger fields so the whole message is readable
+  * added instruction how to block zoom
+  * fixed analyzers bug with the killswitch sample position being accepted in wrong position
+  * permade hints are now highlighted for mandatory hints
+  * the uploads media override now doesn't require pressing removed first
+
+    ### to be completed
+    * upload persistence
+
 
 ## v 0.27
 
