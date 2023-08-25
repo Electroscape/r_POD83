@@ -77,7 +77,17 @@ void handleInputs() {
         case lightRachelAnnouncement:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
             Mother.motherRelay.digitalWrite(labEntry, open);
-            // @todo unlock door
+            wdt_disable();
+            while ((millis() - startTime) < (unsigned long) 42500) {}
+            startTime = millis();
+            while ((millis() - startTime) < (unsigned long) 50000) {
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);
+                delay(600);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlack, 30, LED_CMDS::clrRed, 30, 600, 1);
+                delay(600);
+            }
+            LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);
+            wdt_enable(WDTO_8S);
         break;
         case lightRachelEnd:
             Mother.motherRelay.digitalWrite(labEntry, open);
@@ -153,14 +163,14 @@ void handleInputs() {
                     delay(300);
                 }
                 LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 1000);           
-           #else
-                while ((millis() - startTime) < (unsigned long) 2000) {
+            #else
+                while ((millis() - startTime) < (unsigned long) 10000) {
                     LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);
                     delay(600);
                     LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlack, 30, LED_CMDS::clrRed, 30, 600, 1);
                     delay(600);
                 }
-                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);            
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);          
             #endif              
             wdt_enable(WDTO_8S);
         break;
