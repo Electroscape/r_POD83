@@ -39,6 +39,7 @@ int stageIndex = 0;
 int lastStage = -1;
 bool repeatDecontamination = false;
 
+
 /**
  * @brief Set the Stage Index object
  * @todo safety considerations
@@ -57,7 +58,6 @@ void setStageIndex() {
     wdt_reset();
     delay(16000);
 }
-
 
 
 /**
@@ -95,6 +95,7 @@ bool passwordInterpreter(char* password) {
     if (stage == airlockRequest) { stage = airlockFailed; }
     return false;
 }
+
 
 /**
  * @brief handles evalauation of codes and sends the result to the access module
@@ -319,20 +320,24 @@ void oledUpdate() {
 
 void stageActions() {
     wdt_reset();
+
     switch (stage) {
         case setupStage:
             setupRoom();
             waitForGameStart();
         break;
+
         // could be integrated to the setupStage and trashed
         case preStage:        
             wdt_reset();
             delay(2000);
             stage = startStage;
         break;
+
         case startStage:   
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
+
         case intro: 
             wdt_disable();
             // Serial.println("running Into");
@@ -386,8 +391,8 @@ void stageActions() {
 
             wdt_enable(WDTO_8S);
             stage = sterilization;
-
         break;
+
         case sterilization:
             wdt_disable();   
             MotherIO.setOuput(sterilisationEvent); //fx23 surface SterilizationIntro 13s
@@ -401,6 +406,7 @@ void stageActions() {
             wdt_enable(WDTO_8S);
             stage = BiometricScan;
         break;
+
         case BiometricScan:
             wdt_disable();       
             MotherIO.setOuput(BioScanIntro); //fx22   biometric scann 22s
@@ -592,7 +598,6 @@ void stageUpdate() {
 }
 
 
-
 void handleInputs() {
 
     if (stage != idle) { return; }
@@ -600,7 +605,7 @@ void handleInputs() {
     int result = MotherIO.getInputs();
         Serial.println(F("Wait for Input!"));
        // delay(2000);
-    if (result > 0){
+    if (result > 0) {
         result -= result & (1 << door_reed);
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
@@ -618,6 +623,7 @@ void handleInputs() {
         default: break;
     }
 }
+
 
 void setup() {
 
