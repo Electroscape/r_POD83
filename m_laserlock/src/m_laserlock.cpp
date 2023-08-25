@@ -468,39 +468,52 @@ void handleInputs() {
     // Serial.println(result);
     // delay(5000);
     wdt_reset();
+    unsigned long startTime = millis();
     switch (result) {
-
         case skipToSeperation:
             stage = seperationUnlocked;
         break;
+
         case failedBootTrigger: 
             stage = failedBoot;
         break;
+
         case bootupTrigger: 
             stage = successfulBoot;
         break;
+
         case roomBoot:
             if (lightOn) { return; }
             lightOn = true;
             stage = lightStart;
         break;
+
         case elancellEnd:
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrGreen, 60);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 60);
             delay(3000);
         break;
+
         case cleanupLight:
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 75);
             delay(3000);
         break;
+
         case lightOff: 
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 100);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 100);
         break;
+
         case rachelAnnouncement:
+            wdt_disable();
             LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
-            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);    
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);   
+            wdt_reset();
+            while ((millis() - startTime) < (unsigned long) 42500) {}
+            LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 60);
+            LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 60);
+            wdt_enable(WDTO_8S);
         break;
         
         case rachelEnd:
@@ -583,12 +596,16 @@ void handleInputs() {
                 delay(12000);
                 LED_CMDS::setStripToClr(Mother, ledLaserBrain, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
                 LED_CMDS::setStripToClr(Mother, ledCeilBrain, LED_CMDS::clrWhite, 100,0); // set strip to clr not yet with PWMset 24.03.23
-           
-           #else
-                LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrRed, 60);
-                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 60);
-                delay(3000);
-            #endif              
+            #else
+                LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 60);
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlack, 60);
+                delay(200);
+                // LED_CMDS::blinking(Mother, ledLaserBrain,LED_CMDS::clrBlack,LED_CMDS::clrYellow,950,50,100,10,PWM::set1);
+                while ((millis() - startTime) < (unsigned long) 10000) {}
+                LED_CMDS::setAllStripsToClr(Mother, ledLaserBrain, LED_CMDS::clrBlack, 60);
+                while ((millis() - startTime) < (unsigned long) 60000) {}
+                LED_CMDS::fade2color(Mother, ledCeilBrain,LED_CMDS::clrBlack,100,LED_CMDS::clrWhite,30,15000,PWM::set1);
+            #endif
             wdt_enable(WDTO_8S);
         break;
 
@@ -600,29 +617,17 @@ void handleInputs() {
 void setup() {
 
     Mother.begin();
-    // starts serial and default oled
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
     MotherIO.ioInit(intputArray, sizeof(intputArray), outputArray, sizeof(outputArray));
 
     Serial.println("WDT endabled");
     enableWdt();
 
-    // technicall 3 but for the first segments till unlocked there is no need
+    // technically 3 but for the first segments till unlocked there is no need
     Mother.rs485SetSlaveCount(1);
 
     setStageIndex();
     inputInit();
-
-    /*
-    Mother.setFlags(0, flagMapping[stageIndex]);
-    Mother.setupComplete(0);
-    */
-    /*
-    int argsCnt = 2;
-    int ledCount[argsCnt] = {0, 3};
-    Mother.sendSetting(1, settingCmds::ledCount, ledCount, argsCnt);
-    Mother.setupComplete(1);
-    */
 
     wdt_reset();
     delay(1000);
