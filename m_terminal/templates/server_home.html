@@ -27,6 +27,10 @@
 
         socket.on('response_to_fe', function (msg) {
             displayMessage(msg)
+            if (msg.cmd == "loadingbar") {
+                var inputLoadingBar = document.getElementById("loadingInput");
+                inputLoadingBar.value = msg.message
+            }
         })
 
         function displayMessage(msg) {
