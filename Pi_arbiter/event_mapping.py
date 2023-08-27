@@ -418,7 +418,7 @@ event_map = {
         pcf_in: 1 << 0,
         event_condition: LaserLock.fixed_condition,
         fe_cb: {
-            fe_cb_cmd: "airlock",
+            fe_cb_cmd: "laserlock",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "fixed"
         }
@@ -709,7 +709,7 @@ inverted_events = {
         pcf_in: 1 << 0,
         event_condition: LaserLock.broken_conditions,
         fe_cb: {
-            fe_cb_cmd: "airlock",
+            fe_cb_cmd: "laserlock",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "broken"
         }
