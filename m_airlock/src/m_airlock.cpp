@@ -489,11 +489,11 @@ void stageActions() {
             delay(34000); // Video Proceed to airlock start at second "remain calm" */
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(200);
-            
+            Mother.motherRelay.digitalWrite(alarm, open);
             LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,950,50,100,100,PWM::set1_2_3);
             
             delay(10000); // Delay Countdown
-
+            Mother.motherRelay.digitalWrite(alarm, closed);
 
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(1000);
@@ -566,6 +566,7 @@ void stageActions() {
     }
 }
 
+
 /**
  * @brief  triggers effects specific to the given stage, 
  * room specific excecutions can happen here
@@ -614,9 +615,12 @@ void handleInputs() {
         case 1 << 7: 
             stage = david_end_Stage;
         break;
-       /*  case 1 << 6: 
-            stage = rachel_announce_Stage;
-        break; */
+        case 1 << 6: 
+            // we are out of stages, the size of the stage overflows, hence this direct excecution
+            unsigned long startTime = millis();
+            while ((millis() - startTime) < (unsigned long) 42500) {wdt_reset();}
+            Mother.motherRelay.digitalWrite(alarm, open);
+        break;
         case 1 << 5:
             stage = rachel_end_stage;
         break;
