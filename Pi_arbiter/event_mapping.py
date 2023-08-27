@@ -373,7 +373,6 @@ event_map = {
             sound_id: 1
         }
     },
-    # Airlock 2 (Laserlock Function)
     "usb_boot": {
         trigger_cmd: "usb",
         trigger_msg: "boot",
@@ -639,6 +638,10 @@ event_map = {
         trigger_msg: "unlock",
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [10],
+        sound: {
+            is_fx: False,
+            sound_id: 5
+        }
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
