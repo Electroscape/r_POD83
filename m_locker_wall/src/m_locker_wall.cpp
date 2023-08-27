@@ -63,6 +63,15 @@ void stageActions() {
     switch (stage) {
         case serviceMode: Mother.motherRelay.digitalWrite(service, open); break;
         case gameLive :Mother.motherRelay.digitalWrite(service, closed); break;
+        case gameEnd:
+            unsigned long startTime = millis();
+            while ((millis() - startTime) < (unsigned long) 10200) {wdt_reset();}
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack);
+            startTime = millis(); 
+            while ((millis() - startTime) < (unsigned long) 60000) {wdt_reset();}
+            ledUpdate();
+            stage = gameLive;
+        break;
     }
 }
 
@@ -256,6 +265,7 @@ void handleInputs() {
     switch (inputVal) {
         case IOValues::service_enable: stage = serviceMode; break;
         case IOValues::service_disable: stage = gameLive; break;
+        case IOValues::gameEndTrigger: stage = gameEnd; break;
     }
 }
 

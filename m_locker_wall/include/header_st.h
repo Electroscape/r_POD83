@@ -1,6 +1,6 @@
 #pragma once
 
-#define StageCount 2
+#define StageCount 3
 #define PasswordAmount 6
 #define MaxPassLen 10
 #define lockerCnt 4
@@ -56,7 +56,8 @@ enum IOpins {
 
 enum IOValues {
     service_enable = 1,
-    service_disable
+    service_disable, 
+    gameEndTrigger
 };
 
 int intputArray[inputCnt] = {
@@ -71,7 +72,8 @@ int outputArray[outputCnt] = {
 
 enum stages{
     gameLive = 1,
-    serviceMode = 2
+    serviceMode = 2, 
+    gameEnd = 4
 };
 
 // the sum of all stages sprinkled with a bit of black magic
@@ -80,6 +82,7 @@ int stageSum = ~( ~0 << StageCount );
 
 // could have multiple brains listed here making up a matrix
 int flagMapping[StageCount]{
+    keypadFlag + oledFlag,
     keypadFlag + oledFlag,
     keypadFlag + oledFlag
 };
@@ -112,5 +115,6 @@ int passwordMap[PasswordAmount] = {
 
 char stageTexts[StageCount][headLineMaxSize] = {
     "Access Code",
-    "Service Mode"
+    "Service Mode",
+    ""
 };
