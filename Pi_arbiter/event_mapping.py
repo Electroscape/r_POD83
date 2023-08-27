@@ -660,6 +660,11 @@ event_map = {
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
         pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_dish_rachel_end],
         event_delay: 92,
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "disconnect"
+        },
         sound: {
             is_fx: False,
             sound_id: 6
@@ -677,6 +682,11 @@ event_map = {
         trigger_msg: "SelfDestruction",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
         pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_rachel_end],
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "disconnect"
+        },
         sound: {
             is_fx: False,
             sound_id: 6
