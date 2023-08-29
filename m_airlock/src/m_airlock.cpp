@@ -611,15 +611,17 @@ void handleInputs() {
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
     }
+    unsigned long startTime = millis();
     switch (result) {
         case 1 << 7: 
             stage = david_end_Stage;
         break;
         case 1 << 6: 
             // we are out of stages, the size of the stage overflows, hence this direct excecution
-            unsigned long startTime = millis();
-            while ((millis() - startTime) < (unsigned long) 42500) {wdt_reset();}
+            wdt_disable();
+            while ((millis() - startTime) < (unsigned long) 42500) {}
             Mother.motherRelay.digitalWrite(alarm, open);
+            wdt_enable(WDTO_8S);
         break;
         case 1 << 5:
             stage = rachel_end_stage;
