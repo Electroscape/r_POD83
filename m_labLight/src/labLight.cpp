@@ -77,6 +77,7 @@ void handleInputs() {
         case lightRachelAnnouncement:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
             Mother.motherRelay.digitalWrite(labEntry, open);
+            #ifndef Hamburg
             wdt_disable();
             while ((millis() - startTime) < (unsigned long) 42500) {}
             startTime = millis();
@@ -88,6 +89,7 @@ void handleInputs() {
             }
             LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrRed, 30, LED_CMDS::clrBlack, 30, 600, 1);
             wdt_enable(WDTO_8S);
+            #endif
         break;
         case lightRachelEnd:
             Mother.motherRelay.digitalWrite(labEntry, open);
