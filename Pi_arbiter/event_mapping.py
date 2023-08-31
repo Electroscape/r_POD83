@@ -669,8 +669,7 @@ event_map = {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf, locker_out_pcf],
-        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end,
-                  lab_dish_rachel_end, LockerOut.selfDestruct],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_dish_rachel_end, LockerOut.selfDestruct],
         event_delay: 92,
         fe_cb: {
             fe_cb_tgt: "tr1",
