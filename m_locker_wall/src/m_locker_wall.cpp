@@ -58,13 +58,6 @@ void ledUpdate() {
     }
 }
 
-void stageActions() {
-    wdt_reset();
-    switch (stage) {
-        case serviceMode: Mother.motherRelay.digitalWrite(service, open); break;
-        case gameLive :Mother.motherRelay.digitalWrite(service, closed); break;
-    }
-}
 
 void ledBlink() {
     wdt_reset();
@@ -80,6 +73,24 @@ void ledBlink() {
     // TODO: make a fncs that passes a clr array
     ledUpdate();
 };
+
+
+void stageActions() {
+    wdt_reset();
+    switch (stage) {
+        case serviceMode: Mother.motherRelay.digitalWrite(service, open); break;
+        case gameLive :Mother.motherRelay.digitalWrite(service, closed); break;
+        case gameEnd:
+            unsigned long startTime = millis();
+            while ((millis() - startTime) < (unsigned long) 10200) {wdt_reset();}
+            LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack);
+            startTime = millis(); 
+            while ((millis() - startTime) < (unsigned long) 60000) {wdt_reset();}
+            ledBlink();
+            stage = gameLive;
+        break;
+    }
+}
 
 
 void gameReset() {
@@ -226,9 +237,8 @@ void stageUpdate() {
     strcat(msg, stageTexts[stageIndex]); 
     Mother.sendCmdToSlave(msg);
 
-    stageActions();
-
     lastStage = stage;
+    stageActions();
 }
 
 
@@ -248,14 +258,18 @@ void setup() {
 }
 
 void handleInputs() {
-    int inputVal = MotherIO.getInputs();
+    int inputVal = MotherIO.getInputs(true);
     if (lastInput == inputVal) {
         return;
     }
+    // Serial.print("received input:");
+    // Serial.println(inputVal);
+
     lastInput = inputVal;
     switch (inputVal) {
         case IOValues::service_enable: stage = serviceMode; break;
         case IOValues::service_disable: stage = gameLive; break;
+        case IOValues::gameEndTrigger: stage = gameEnd; break;
     }
 }
 

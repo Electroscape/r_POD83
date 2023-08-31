@@ -25,7 +25,9 @@ laserlock_in_2_pcf = 3
 airlock_in_pcf = 5
 analyzer_in_pcf = laserlock_in_2_pcf
 locker_in_pcf = laserlock_in_2_pcf      # used for the service enable/disable
+locker_out_pcf = airlock_out_pcf
 dispenser_out_pcf = lab_light_out_pcf
+
 
 sound = "sound"
 is_fx = "is_fx"
@@ -84,6 +86,12 @@ class LaserlockIn(IntEnum):
 class LockerIn(IntEnum):
     serviceEnable = 1 << 4
     serviceDisable = 1 << 5
+
+
+class LockerOut(IntEnum):
+    serviceEnable = 1 << 3
+    serviceDisable = 1 << 4
+    selfDestruct = 24
 
 
 labLight_trigger = "labLight"
@@ -373,7 +381,6 @@ event_map = {
             sound_id: 1
         }
     },
-    # Airlock 2 (Laserlock Function)
     "usb_boot": {
         trigger_cmd: "usb",
         trigger_msg: "boot",
@@ -418,7 +425,7 @@ event_map = {
         pcf_in: 1 << 0,
         event_condition: LaserLock.fixed_condition,
         fe_cb: {
-            fe_cb_cmd: "airlock",
+            fe_cb_cmd: "laserlock",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "fixed"
         }
@@ -639,6 +646,10 @@ event_map = {
         trigger_msg: "unlock",
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [10],
+        sound: {
+            is_fx: False,
+            sound_id: 5
+        }
     },
     "lab_light_off": {
         trigger_cmd: labLight_trigger,
@@ -657,9 +668,14 @@ event_map = {
     "end_rachel": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachelEnd",
-        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_dish_rachel_end],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf, locker_out_pcf],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_dish_rachel_end, LockerOut.selfDestruct],
         event_delay: 92,
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "disconnect"
+        },
         sound: {
             is_fx: False,
             sound_id: 6
@@ -677,6 +693,11 @@ event_map = {
         trigger_msg: "SelfDestruction",
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
         pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_rachel_end],
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "disconnect"
+        },
         sound: {
             is_fx: False,
             sound_id: 6
@@ -687,8 +708,8 @@ event_map = {
         trigger_msg: "on",
         pcf_in: LockerIn.serviceEnable,
         pcf_in_add: locker_in_pcf,
-        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.cleanupLight, lab_light_white],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, locker_out_pcf],
+        pcf_out: [LaserlockOut.cleanupLight, lab_light_white, LockerOut.serviceEnable],
         # event_condition: GeneralConditions.service_enable
     },
     "service_mode_disable": {
@@ -696,8 +717,8 @@ event_map = {
         trigger_msg: "off",
         pcf_in: LockerIn.serviceDisable,
         pcf_in_add: locker_in_pcf,
-        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf],
-        pcf_out: [LaserlockOut.light_off, lab_light_off],
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, locker_out_pcf],
+        pcf_out: [LaserlockOut.light_off, lab_light_off, LockerOut.serviceDisable],
         # event_condition: GeneralConditions.service_disable
     }
 }
@@ -709,7 +730,7 @@ inverted_events = {
         pcf_in: 1 << 0,
         event_condition: LaserLock.broken_conditions,
         fe_cb: {
-            fe_cb_cmd: "airlock",
+            fe_cb_cmd: "laserlock",
             fe_cb_tgt: "tr1",
             fe_cb_msg: "broken"
         }

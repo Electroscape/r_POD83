@@ -39,6 +39,7 @@ int stageIndex = 0;
 int lastStage = -1;
 bool repeatDecontamination = false;
 
+
 /**
  * @brief Set the Stage Index object
  * @todo safety considerations
@@ -57,7 +58,6 @@ void setStageIndex() {
     wdt_reset();
     delay(16000);
 }
-
 
 
 /**
@@ -95,6 +95,7 @@ bool passwordInterpreter(char* password) {
     if (stage == airlockRequest) { stage = airlockFailed; }
     return false;
 }
+
 
 /**
  * @brief handles evalauation of codes and sends the result to the access module
@@ -319,20 +320,24 @@ void oledUpdate() {
 
 void stageActions() {
     wdt_reset();
+
     switch (stage) {
         case setupStage:
             setupRoom();
             waitForGameStart();
         break;
+
         // could be integrated to the setupStage and trashed
         case preStage:        
             wdt_reset();
             delay(2000);
             stage = startStage;
         break;
+
         case startStage:   
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrRed, 30);
         break;
+
         case intro: 
             wdt_disable();
             // Serial.println("running Into");
@@ -386,8 +391,8 @@ void stageActions() {
 
             wdt_enable(WDTO_8S);
             stage = sterilization;
-
         break;
+
         case sterilization:
             wdt_disable();   
             MotherIO.setOuput(sterilisationEvent); //fx23 surface SterilizationIntro 13s
@@ -401,6 +406,7 @@ void stageActions() {
             wdt_enable(WDTO_8S);
             stage = BiometricScan;
         break;
+
         case BiometricScan:
             wdt_disable();       
             MotherIO.setOuput(BioScanIntro); //fx22   biometric scann 22s
@@ -483,11 +489,11 @@ void stageActions() {
             delay(34000); // Video Proceed to airlock start at second "remain calm" */
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(200);
-            
+            Mother.motherRelay.digitalWrite(alarm, open);
             LED_CMDS::blinking(Mother,1,LED_CMDS::clrBlack,LED_CMDS::clrYellow,950,50,100,100,PWM::set1_2_3);
             
             delay(10000); // Delay Countdown
-
+            Mother.motherRelay.digitalWrite(alarm, closed);
 
             LED_CMDS::setAllStripsToClr(Mother, 1, LED_CMDS::clrBlack, 50);
             delay(1000);
@@ -560,6 +566,7 @@ void stageActions() {
     }
 }
 
+
 /**
  * @brief  triggers effects specific to the given stage, 
  * room specific excecutions can happen here
@@ -592,7 +599,6 @@ void stageUpdate() {
 }
 
 
-
 void handleInputs() {
 
     if (stage != idle) { return; }
@@ -600,24 +606,30 @@ void handleInputs() {
     int result = MotherIO.getInputs();
         Serial.println(F("Wait for Input!"));
        // delay(2000);
-    if (result > 0){
+    if (result > 0) {
         result -= result & (1 << door_reed);
         Serial.println(F("Input from Arbiter!"));
         Serial.println(result);
     }
+    unsigned long startTime = millis();
     switch (result) {
         case 1 << 7: 
             stage = david_end_Stage;
         break;
-       /*  case 1 << 6: 
-            stage = rachel_announce_Stage;
-        break; */
+        case 1 << 6: 
+            // we are out of stages, the size of the stage overflows, hence this direct excecution
+            wdt_disable();
+            while ((millis() - startTime) < (unsigned long) 42500) {}
+            Mother.motherRelay.digitalWrite(alarm, open);
+            wdt_enable(WDTO_8S);
+        break;
         case 1 << 5:
             stage = rachel_end_stage;
         break;
         default: break;
     }
 }
+
 
 void setup() {
 
