@@ -595,7 +595,7 @@
         function selectFromModal() {
             let i = $("input.form-check-input:checked").val();
             let msg = $("#hint-" + i).text();
-            $("#input_msg").val(msg);
+            $("#input_msg").val(msg.trim());
             $('#phrasesModal').modal('hide');
         }
 
