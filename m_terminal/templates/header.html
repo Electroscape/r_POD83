@@ -70,7 +70,7 @@
 </header>
 
 <script type="text/javascript">
-    {% if g_config.get("id") != "server" %}
+    {% if g_config.get("id") != "server" && if g_config.get("id") != "TR3" %}
         $.ajax({
             type: 'POST',
             url: `{{ url_for("app_pages.get_login_user", ter_name=myRoomID) }}${myRoomID}`,
