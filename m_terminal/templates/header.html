@@ -52,9 +52,11 @@
         </div>
     </div>
     <div class="header-right">
+        {% if (g_config.get("id") in ["TR1", "TR2"]) %}
         <div class="login-info">
             <p style="color: ghostwhite">user: <br><strong>none</strong></p>
         </div>
+        {% endif %}
         <div id="lang-box" class="btn-group btn-group-toggle">
             <input type="radio" class="btn-check" onclick="switchLanguage('en')" name="LangSwitch" id="rb_en"
                    autocomplete="off"/>
@@ -70,7 +72,7 @@
 </header>
 
 <script type="text/javascript">
-    {% if g_config.get("id") != "server" && if g_config.get("id") != "TR3" %}
+    {% if (g_config.get("id") in ["TR1", "TR2"]) %}
         $.ajax({
             type: 'POST',
             url: `{{ url_for("app_pages.get_login_user", ter_name=myRoomID) }}${myRoomID}`,
