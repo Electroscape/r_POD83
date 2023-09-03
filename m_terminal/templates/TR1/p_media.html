@@ -91,7 +91,8 @@
     <div class="container align-content-center">
         {% if g_config.files %}
             <div class="main-video">
-                <video src="{{ url_for('static', filename='media/' + g_config.files[0]) }}" controls autoplay></video>
+                <video src="{{ url_for('static', filename='media/' + g_config.files[0]) }}"
+                       controls autoplay controlsList="nodownload"></video>
             </div>
 
             <div class="menu-wrapper">
