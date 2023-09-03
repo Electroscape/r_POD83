@@ -400,7 +400,7 @@
 
 {% endblock %}
 {% block float_chat %}
-    {% if not request.path in ["/", "/chat_control", "/lab_control", "/media_control", "/p_personal_rachel", "/p_media"] %}
+    {% if not request.path in ["/", "/chat_control", "/lab_control", "/media_control", "/media_control_rachel", "/personal_rachel_tablet"] %}
         {% include "floating_chat.html" %}
     {% endif %}
 {% endblock %}
