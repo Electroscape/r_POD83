@@ -276,15 +276,6 @@
         <br>
         <h3>Server</h3>
         <div class="outer">
-            <div class="label-txt" style="padding-inline: 5px;">
-                <label for="loadingInput">Loading bar: </label>
-                <div class="form-outline" style="width: 7rem; background-color: forestgreen; display: inline-block">
-                    <i class="fas fa-percentage trailing"></i>
-                    <input min="0" max="100" step="5" value="50" type="number" id="loadingInput"
-                           class="form-control form-icon-trailing"/>
-                </div>
-                <button onclick="onClickSet()">set</button>
-            </div>
             <div class="label-txt">
                 reset:
                 <div class="">
@@ -492,6 +483,15 @@
         </div>
     </div>
 
+    <div class="label-txt" style="padding-inline: 5px;">
+        <label for="loadingInput">Loading bar: </label>
+        <div class="form-outline" style="width: 7rem; background-color: forestgreen; display: inline-block">
+            <i class="fas fa-percentage trailing"></i>
+            <input min="0" max="100" step="5" value="50" type="number" id="loadingInput"
+            class="form-control form-icon-trailing"/>
+        </div>
+        <button onclick="onClickSet()">set</button>
+    </div>
 {% endblock %}
 
 {% block add_js %}
@@ -595,7 +595,7 @@
         function selectFromModal() {
             let i = $("input.form-check-input:checked").val();
             let msg = $("#hint-" + i).text();
-            $("#input_msg").val(msg);
+            $("#input_msg").val(msg.trim());
             $('#phrasesModal').modal('hide');
         }
 

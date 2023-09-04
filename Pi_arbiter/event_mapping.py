@@ -501,6 +501,11 @@ event_map = {
         trigger_msg: "truth",
         event_condition: LaserLock.play_truth_condition,
         event_script: call_video,
+        fe_cb: {
+            fe_cb_cmd: "usbBoot",
+            fe_cb_tgt: "tr3",
+            fe_cb_msg: "boot"
+        }
     },
     "laserlock_auth_tr1_rachel": {
         trigger_cmd: "ter1",
