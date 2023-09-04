@@ -17,10 +17,9 @@
       "image": "static/imgs/home/chat.png",
       "link": "chat_control",
       "auth": false
-    }
-    ,
+    },
     {
-      "title": "PERSONAL R.",
+      "title": "PRIVAT R.",
       "details": "Rachel Personal Documents",
       "image": "static/imgs/home/information.png",
       "link": "personal_rachel_tablet",
