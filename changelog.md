@@ -13,16 +13,17 @@
   * fix blue usb override return back to homepage
   * green-out lab access on double-auth override (needs to refresh the page)
   * disable auto-complete for server hints
+  * mandatory hints are now highlighted
   * changed GM input line to a bigger fields so the whole message is readable
   * added instruction how to block zoom
   * fixed analyzers bug with the killswitch sample position being accepted in wrong position
-  * permade hints are now highlighted for mandatory hints
   * the uploads media override now doesn't require pressing removed first
   * default language is now german
-
-    ### to be completed
-    * upload persistence
-
+  * fixed "buzz" bell on server_home sending out message field
+  * Upload: manual media switch now requires no "no media" before updating. Progress still gets lost
+### ST specifc changes v0.28
+  * updated lighting in rachel ending
+  * added stress atmo after cleanroom opening request
 
 ## v 0.27
 
