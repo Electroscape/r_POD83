@@ -193,14 +193,13 @@ def catch_all(event, sid, *args):
 
 @sio.on("trigger")
 def handle_fe(data):
-    print(data)
-
-    # Checking first if the arbiter is teh tgt
     try:
         if not data.get('username') == 'arb':
             return False
     except KeyError:
         return False
+
+    print("\n")
 
     for key, event in event_map.items():
         try:
@@ -213,17 +212,6 @@ def handle_fe(data):
             if msg and msg != data.get("message"):
                 # print(f"wrong msg {msg}")
                 continue
-
-            # @todo: removed once differentiation is possible
-            if key == "laserlock_fail" or key == "laserlock_bootdecon":
-                pcf_value = event_map["laserlock_cable_fixed"][pcf_in]
-                pcf_add = event_map["laserlock_cable_fixed"][pcf_in_add]
-                if IO.read_pcf(pcf_add) & pcf_value == pcf_value:
-                    handle_event("laserlock_bootdecon")
-                else:
-                    handle_event("laserlock_fail")
-                return
-
             handle_event(key)
         except KeyError:
             pass

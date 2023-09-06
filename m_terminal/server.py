@@ -79,8 +79,11 @@ sio = SocketIO(app, cors_allowed_origins=all_cors,
 class StatusVars:
     def __init__(self):
         self.uploadProgress = "disable"
+        self.laserlock_cable = "broken"
+
 
 game_status = StatusVars()
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -199,9 +202,12 @@ def handle_received_messages(json_msg):
         })
     elif "/lab_control" in str(json_msg):
         logging.info("access to laser-lock requested")
+        print(f"access to laser-lock requested, gamestatus is: {game_status.laserlock_cable}")
         # access the laserlock lab
-        # TODO: Refactor needs changes in arb pi code
-        sio.emit("trigger", {"username": "arb", "cmd": "airlock", "message": "access"})
+        if game_status.laserlock_cable == "broken":
+            sio.emit("trigger", {"username": "arb", "cmd": "laserlock", "message": "fail"})
+        else:
+            sio.emit("trigger", {"username": "arb", "cmd": "laserlock", "message": "access"})
     elif json_msg.get("cmd") == "cleanroom":
         logging.info(f"cleanroom status: {json_msg.get('message')}")
         # access the cleanroom
@@ -296,6 +302,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "auth", "message": "empty"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock", "message": "broken"})
+                game_status.laserlock_cable = "broken"
                 sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
@@ -314,10 +321,13 @@ def events_handler(msg):
             # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
         elif cmd == "laserlock":
-            dict_cmd = {"username": "arb", "cmd": "laserlock", "message": msg_value}
+            print(msg)
+            if msg_value in ["broken", "fixed"]:
+                game_status.laserlock_cable = msg_value
+            # dict_cmd = {"username": "arb", "cmd": "laserlock", "message": msg_value}
             # send cable override to arbiter
-            logging.info(f"msg to arbiter: {str(dict_cmd)}")
-            sio.emit("trigger", dict_cmd)
+            # logging.info(f"msg to arbiter: {str(dict_cmd)}")
+            # sio.emit("trigger", dict_cmd)
 
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)
