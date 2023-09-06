@@ -97,7 +97,7 @@ def index():
 
 @app.route("/get_globals", methods=["GET", "POST"])
 def get_globals():
-    return read_json("json/server_config.json")
+    return {}
 
 
 @app.route('/get_chat', methods=['GET', 'POST'])
