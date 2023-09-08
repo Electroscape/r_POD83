@@ -307,11 +307,11 @@ def samples_handler(samples):
 
 @sio.on('response_to_terminals')
 def on_message(data):
-    self_sio.emit("response_to_frontend", data)
     if not data.get("user_name") in ["rachel", "TR3"]:
         return
     if data.get("user_name"):
         chat_msgs.append(data)
+    self_sio.emit("response_to_frontend", data)
 
 
 @self_sio.on("msg_to_backend")
