@@ -412,8 +412,8 @@ event_map = {
         event_next_qeued: "laserlock_lockout_tr1"
     },
     "laserlock_fail": {
-        trigger_cmd: "airlock",
-        trigger_msg: "access",
+        trigger_cmd: "laserlock",
+        trigger_msg: "fail",
         pcf_out_add: [laserlock_out_pcf],
         pcf_out: [LaserlockOut.failedBootTrigger],
         sound: {
@@ -431,6 +431,8 @@ event_map = {
         }
     },
     "laserlock_bootdecon": {
+        trigger_cmd: "laserlock",
+        trigger_msg: "access",
         pcf_out_add: [laserlock_out_pcf],
         pcf_out: [LaserlockOut.bootupTrigger],
         event_script: LaserLock.arm_door,
@@ -661,6 +663,9 @@ event_map = {
         trigger_msg: "off",
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [lab_light_off]
+    },
+    "time_announcement": {
+        event_script: call_video,
     },
     "end_rachel_announce": {
         trigger_cmd: ending_trigger,

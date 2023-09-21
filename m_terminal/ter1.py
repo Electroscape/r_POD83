@@ -41,6 +41,15 @@ FLATPAGES_EXTENSION = '.md'
 FLATPAGES_ROOT = 'content'
 
 
+class StatusVars:
+    def __init__(self):
+        self.laserlock_completed = False
+
+
+game_status = StatusVars()
+
+
+
 @app.route("/browser/", methods=['GET', 'POST'])
 def browser():
     config = {
@@ -75,6 +84,8 @@ def get_post(post_path):
 
 @app.route('/lab_control', methods=['GET', 'POST'])
 def lab_control():
+    if game_status.laserlock_completed and request.method == "GET":
+        return redirect('/')
     global laserlock_boot
     global laserlock_auth
 
@@ -86,6 +97,9 @@ def lab_control():
         elif request.form.get("auth"):
             laserlock_auth = request.form.get("auth")
             logging.info(f"laserlock auth: {laserlock_auth}")
+            if laserlock_auth == "success":
+                game_status.laserlock_completed = True
+            print(laserlock_auth)
             return laserlock_auth
 
     config = {
@@ -149,6 +163,7 @@ def get_globals():
             tmp["title"] = "PRIVAT R."
 
         g_config["btns"].append(configure_btn(tmp))
+        logging.debug(g_config)
 
     return g_config
 
