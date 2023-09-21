@@ -315,8 +315,7 @@ def events_handler(msg):
             login_users[msg.get("username")] = msg.get("message")
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
-                sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
-        elif cmd == "usbBoot":
+        elif cmd == "usbBoot" and username == "tr1":
             loading_percent = 90
             # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
