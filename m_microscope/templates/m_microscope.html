@@ -71,12 +71,12 @@
     function displayContent(path, key) {
         let disContent = document.getElementById("id-" + key)
         let txt = "";
-        if (path.endsWith(".mp4")) {
+        if (path.endsWith(".webm")) {
             txt = `<div class="video">
                     <video id="vid" autoplay="" muted="" loop="" width="100%" height="100%">
                         <source id="mp4"
                                 src="${path}"
-                                type="video/mp4">
+                                type="video/webm">
                     </video>
                 </div>`;
             disContent.innerHTML = txt;
