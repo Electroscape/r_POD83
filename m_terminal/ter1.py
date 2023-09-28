@@ -85,7 +85,8 @@ def get_post(post_path):
 @app.route('/lab_control', methods=['GET', 'POST'])
 def lab_control():
     if game_status.laserlock_completed and request.method == "GET":
-        return redirect('/')
+        pass
+        # return redirect('/')
     global laserlock_boot
     global laserlock_auth
 
