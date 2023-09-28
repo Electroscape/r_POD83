@@ -665,6 +665,8 @@ event_map = {
         pcf_out: [lab_light_off]
     },
     "time_announcement": {
+        trigger_cmd: "time",
+        trigger_msg: "announcement",
         event_script: call_video,
     },
     "end_rachel_announce": {
