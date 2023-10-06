@@ -669,6 +669,22 @@ event_map = {
         trigger_msg: "announcement",
         event_script: call_video,
     },
+    "end_timeup": {
+        trigger_cmd: "end",
+        trigger_msg: "timeup",
+        event_script: call_video,
+        pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, airlock_out_pcf, lab_light_out_pcf],
+        pcf_out: [LaserlockOut.rachel_end, lab_rachel_end, AirlockOut.rachel_end, lab_rachel_end],
+        fe_cb: {
+            fe_cb_tgt: "tr1",
+            fe_cb_cmd: "usbBoot",
+            fe_cb_msg: "disconnect"
+        },
+        sound: {
+            is_fx: False,
+            sound_id: 6
+        },
+    },
     "end_rachel_announce": {
         trigger_cmd: ending_trigger,
         trigger_msg: "rachel",

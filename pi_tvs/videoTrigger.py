@@ -25,7 +25,8 @@ video_dict = {
     "display_security": "./play_camera_feed.sh",
     "display_securityAutomatic": "./play_camera_feed.sh",
     "play_biovita": "./play_biovita.sh",
-    "time_announcement": "./play_time_announcement.sh"
+    "time_announcement": "./play_time_announcement.sh",
+    "end_timeup": "./play_timeup.sh",
 }
 
 
