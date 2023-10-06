@@ -35,3 +35,12 @@ One useful command as well is `git remote set-url origin https://github.com/Elec
  * pi_tvs: 
    * ip_config.json 
    * play_security.sh needs camera credentials
+
+# Assests
+
+## Usb sticks
+
+format those to a linux compatible format and name the volume as follows:
+ * usb_boot
+ * rachel
+ * elancell

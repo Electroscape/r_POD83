@@ -19,12 +19,12 @@ server_ip = "http://raspi-4-pod-t1:5500"  # <= change server ip here
 self_sio = SocketIO(app, cors_allowed_origins="*")
 
 cards = {
-    "1": "Triangle.mp4",
-    "2": "Circle.mp4",
-    "3": "Hexagon.mp4",
-    "4": "Dot.mp4",
-    "5": "Killswitch.mp4",
-    "0": "0.mp4"
+    "1": "Triangle.webm",
+    "2": "Circle.webm",
+    "3": "Hexagon.webm",
+    "4": "Dot.webm",
+    "5": "Killswitch.webm",
+    "0": "0.webm"
 }
 
 valid_cards = list(cards.keys())

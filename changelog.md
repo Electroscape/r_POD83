@@ -1,8 +1,11 @@
 # Changelog
 
 
+## v 0.29
 
-
+  * fixed permissions being lost on T1 being linked to T3 boot
+  * Made laserlock action being arbitrated by the Ter1 and its cable status along with sepereate triggers on the server interface
+  * added 15 minute left announcement
 
 ## v 0.28
 
