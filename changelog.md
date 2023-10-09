@@ -3,6 +3,7 @@
 
 ## v 0.29
 
+  * added hint to the microscope killswitch video
   * fixed permissions being lost on T1 being linked to T3 boot
   * Made laserlock action being arbitrated by the Ter1 and its cable status along with sepereate triggers on the server interface
   * added 15 minute left announcement
