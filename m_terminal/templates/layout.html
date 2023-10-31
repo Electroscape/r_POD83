@@ -215,19 +215,17 @@
             function handleMessageReception(msg, playNotification = true) {
                 if (typeof msg.user_name !== 'undefined') {
                     let chatColor = "white", srcColor = "black";
-                    if (myRoomID=== "TR3"){
-                        
-                        if (msg.user_name == "system"){
+                    if (myRoomID === "TR3") {
+
+                        if (msg.user_name == "system") {
                             srcColor = "blue";
-                        }
-                        else if (msg.user_name == "game-master"){
+                        } else if (msg.user_name == "game-master") {
                             srcColor = "green";
-                        }
-                        else{
+                        } else {
                             srcColor = "white";
                         }
                     }
-                    
+
                     if (msg.user_name === "rachel") {
                         chatColor = "red";
                         srcColor = "red";
@@ -349,9 +347,8 @@
                     disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");
                 } else if (flags && flags.elancell.startsWith("done") && jsonResponseElement.id === "elancell-upload") {
                     disableOption(jsonResponseElement, "sent", "rgba(0, 255, 0, 0.6)");
-                } else if (samplesFlag === "done" && (jsonResponseElement.id === "sample-release"
-                    || jsonResponseElement.id === "gas-analysis"
-                    || jsonResponseElement.id === "gas-control")) {
+                } else if (samplesFlag === "done" && (
+                    jsonResponseElement.id === "gas-analysis" || jsonResponseElement.id === "gas-control")) {
                     disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
                 } else if (jsonResponseElement.auth) {
                     disableOption(jsonResponseElement, `${authText} <span style="color: crimson; background-color: black">${getFullName(jsonResponseElement.auth)}</span>`);
