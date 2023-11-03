@@ -248,6 +248,7 @@ event_map = {
         sound: {
             sound_id: 3
         },
+        event_script: call_video,
         event_next_qeued: "self_check_q1"
     },
     "self_check_q1": {
@@ -265,7 +266,6 @@ event_map = {
             fe_cb_cmd: "usbBoot",
             fe_cb_msg: "disconnect"
         },
-        event_script: call_video,
         event_next_qeued: "self_check_q3"
     },
     "self_check_q3": {
