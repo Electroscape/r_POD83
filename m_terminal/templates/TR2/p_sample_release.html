@@ -95,51 +95,7 @@
         }
 
     </style>
-{% endblock %}
 
-{% block content %}
-    <table class="m-auto">
-        <thead>
-        <tr>
-            <th class="version-title d-block invisible">
-                NAME
-            </th>
-            <th class="version-status invisible">
-                STATUS
-            </th>
-            <th class="version-title">
-                Gas Control T1
-            </th>
-            <th class="version-title">
-                NANO-constructor T2
-            </th>
-            <th class="version-title">
-                Dispenser
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for sample in g_config.samples %}
-            <tr>
-                <td class="version-title d-block">
-                    {{ sample.name }}
-                </td>
-                <td class="version-status" id="sample-status-{{ loop.index }}"
-                    data-mdb-toggle="tooltip" title="status {{ sample.status }}">
-                </td>
-                <td class="sample-{{ loop.index }} sample-status-cell bg-red" id="sample-t1-{{ loop.index }}">
-                </td>
-                <td class="sample-{{ loop.index }} sample-status-cell bg-red" id="sample-t2-{{ loop.index }}">
-                </td>
-                <td class="version-status" id="sample-dispense-{{ loop.index }}">
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-{% endblock %}
-
-{% block add_js %}
     <script type="text/javascript">
         function setSampleStatus(samples) {
             let sampleIndex = "";
@@ -173,10 +129,56 @@
             }
         }
 
-        setSampleStatus(JSON.parse('{{ g_config.samples|tojson }}'));
-
         socket.on('samples_updates', function (samples) {
             setSampleStatus(samples);
         })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <table class="m-auto">
+        <thead>
+        <tr>
+            <th class="version-title d-block invisible">
+                NAME
+            </th>
+            <th class="version-status invisible">
+                STATUS
+            </th>
+            <th class="version-title" id="gas-control-title">
+                Gas Control T1
+            </th>
+            <th class="version-title" id="nano-constructor-title">
+                NANO-constructor T2
+            </th>
+            <th class="version-title">
+                Dispenser
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sample in g_config.samples %}
+            <tr>
+                <td class="version-title d-block">
+                    {{ sample.name }}
+                </td>
+                <td class="version-status" id="sample-status-{{ loop.index }}"
+                    data-mdb-toggle="tooltip" title="status {{ sample.status }}">
+                </td>
+                <td class="sample-{{ loop.index }} sample-status-cell bg-red" id="sample-t1-{{ loop.index }}">
+                </td>
+                <td class="sample-{{ loop.index }} sample-status-cell bg-red" id="sample-t2-{{ loop.index }}">
+                </td>
+                <td class="version-status" id="sample-dispense-{{ loop.index }}">
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block add_js %}
+    <script type="text/javascript">
+        setSampleStatus(JSON.parse('{{ g_config.samples|tojson }}'));
     </script>
 {% endblock %}
