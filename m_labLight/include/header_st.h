@@ -51,6 +51,7 @@ enum IO {
     labDoorLock,
     labDoorUnlock,
     deconTrigger,
+    setStressAtmo,
 };
 
 #define outputCnt 0

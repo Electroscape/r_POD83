@@ -39,11 +39,17 @@ STB_MOTHER_IO MotherIO;
 
 int lastState = -1;
 
+bool stressAtmo = false;
+bool loggedIn = false;
 
 void enableWdt() {
     wdt_enable(WDTO_8S);
 }
 
+
+void handleStressAtmo() {
+
+}
 
 
 void handleInputs() {
@@ -55,8 +61,15 @@ void handleInputs() {
     }
     lastState = result;
 
+    #ifndef Hamburg
     unsigned long startTime = millis();
+    #endif
+
     Serial.println(result);
+
+    if ((result & lightBlue & setStressAtmo) == 0) {
+        loggedIn = false;
+    }
 
     switch (result) {
         case lightOff: 
@@ -69,9 +82,9 @@ void handleInputs() {
         break;
         case lightRed:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 40);
-            
         break;
         case lightBlue:
+            loggedIn = true;
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 55);
         break;
         case lightRachelAnnouncement:
@@ -191,6 +204,10 @@ void handleInputs() {
             delay(5000);
             Mother.motherRelay.digitalWrite(decon, closed);
         break;
+        case IO::setStressAtmo: {
+            loggedIn = true;
+            stressAtmo = true;
+        }
         default: break;
     }
 
@@ -215,7 +232,9 @@ void setup() {
 
 
 void loop() {
+
     handleInputs();    
+    handleStressAtmo();
     wdt_reset();
 }
 
