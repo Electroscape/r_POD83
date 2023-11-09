@@ -1,13 +1,13 @@
 [
   {
-    "name": "sample 1",
+    "name": "experiment 1",
     "passcode": "51",
     "img": "media/gas_puzzle/AN_1.png",
     "status": "locked",
     "icon": "fas fa-lock"
   },
   {
-    "name": "sample 2",
+    "name": "experiment 2",
     "passcode": "23",
     "img": "media/gas_puzzle/AN_2.png",
     "status": "blocked",
@@ -15,7 +15,7 @@
     "info": "non-toxic"
   },
   {
-    "name": "sample 3",
+    "name": "experiment 3",
     "passcode": "12",
     "img": "media/gas_puzzle/AN_3.png",
     "status": "blocked",
@@ -23,7 +23,7 @@
     "info": "non-active"
   },
   {
-    "name": "sample 4",
+    "name": "experiment 4",
     "passcode": "34",
     "img": "media/gas_puzzle/AN_4.png",
     "status": "blocked",

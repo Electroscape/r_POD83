@@ -1,5 +1,12 @@
 # Changelog
 
+## v 0.30
+
+  * replaced sample status page
+  * changed notification sound
+  * fix to microscope possibly not picking up a very fast change
+  * added sound staggering for self checkup so the system can be assessed easier
+
 
 ## v 0.29
 

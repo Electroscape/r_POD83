@@ -4,14 +4,14 @@
   "auth_msg": "Needs Authentication First",
   "btns": [
     {
-      "title": "Samples Status",
+      "title": "Experiment Status",
       "details": "open new browser page",
       "image": "static/imgs/home/petri-dish.png",
       "link": "sample_release",
       "auth": false
     },
     {
-      "title": "Gas Analysis",
+      "title": "Nano-Constructor",
       "details": "control the files",
       "image": "static/imgs/home/analytics.png",
       "link": "gas_analysis",

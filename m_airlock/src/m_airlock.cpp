@@ -621,6 +621,9 @@ void handleInputs() {
             wdt_disable();
             while ((millis() - startTime) < (unsigned long) 42500) {}
             Mother.motherRelay.digitalWrite(alarm, open);
+            startTime = millis();
+            while ((millis() - startTime) < (unsigned long) 50000) {}
+            stage = rachel_end_stage;
             wdt_enable(WDTO_8S);
         break;
         case 1 << 5:

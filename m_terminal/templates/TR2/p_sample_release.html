@@ -2,49 +2,34 @@
 
 {% block head %}
     <style>
-        .board {
-            -webkit-font-smoothing: antialiased;
-            background: #333 url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/t-1/arrivals-backgroundnoise.png);
-            border-radius: 1rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-            overflow: hidden;
-            max-width: 700px;
-            min-width: 440px;
-            padding-bottom: 2rem;
-            margin: 0 auto;
+        th, td {
+            padding: 25px;
         }
 
-        .board-header {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.16);
-            padding: 0.75rem 1rem;
+        .blinking {
+            -webkit-animation: blink-effect 1s infinite; /* Safari 4+ */
+            -moz-animation: blink-effect 1s infinite; /* Fx 5+ */
+            -o-animation: blink-effect 1s infinite; /* Opera 12+ */
+            animation: blink-effect 1s infinite; /* IE 10+, Fx 29+ */
         }
 
-        .board-header svg {
-            fill: white;
-            width: 1em;
-            height: 1em;
-            vertical-align: center;
-            position: relative;
-            top: 4px;
+        @-webkit-keyframes blink-effect {
+            0%, 49% {
+                color: yellow;
+                border: 3px solid red;
+            }
+            50%, 100% {
+                color: red;
+                border: 3px solid yellow;
+            }
         }
 
-        .board-header h1 {
-            text-shadow: black 0 -1px 0;
-            margin: 0;
+        .bg-red {
+            background-color: red !important;
         }
 
-        .version {
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.16);
-            padding: 1rem;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            grid-template-areas: "title status" "about date";
-            grid-gap: 0.5rem 1rem;
-        }
-
-        .version:last-child {
-            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+        .bg-green {
+            background-color: green !important;
         }
 
         .version-title,
@@ -52,7 +37,19 @@
             font-size: 1.5em;
             line-height: 2rem;
             margin: 0;
-            padding: 0.4rem 0.6rem;
+            position: relative;
+            color: #DDDDDD;
+            background: #212121;
+            border-radius: 3px;
+            overflow: hidden;
+            white-space: nowrap;
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.07), inset 0 -1px 2px rgba(0, 0, 0, 0.5), inset 0 3px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        .sample-status-cell {
+            font-size: 1.5em;
+            line-height: 2rem;
+            margin: 0;
             position: relative;
             color: #DDDDDD;
             background: #212121;
@@ -97,44 +94,91 @@
             text-align: center;
         }
 
-        .version-status.in-dev {
-            color: #DEDEDE;
-        }
-
-        .version-date,
-        .version-about {
-            color: #666;
-        }
-
-        .version-date a,
-        .version-about a {
-            text-decoration: underline;
-            color: inherit;
-        }
-
-        .version-about {
-            grid-area: about;
-        }
     </style>
+
+    <script type="text/javascript">
+        function setSampleStatus(samples) {
+            let sampleIndex = "";
+            for (const sample of samples) {
+                sampleIndex = sample.name.at(-1);
+                if (sample.status === "blocked") {
+                    $('#sample-status-' + sampleIndex).html('<i class="fas fa-lock"></i>');
+                } else if (sample.status === "locked") {
+                    $('#sample-status-' + sampleIndex).html('<i class="fas fa-lock-open"></i>');
+                    //$("#sample-t1-" + sampleIndex).html(sample.status);
+                    $("#sample-t1-" + sampleIndex).addClass("blinking");
+                } else if (sample.status === "unlocked") {
+                    $('#sample-status-' + sampleIndex).html('<i class="fas fa-lock-open"></i>');
+                    $("#sample-t1-" + sampleIndex).removeClass("bg-red blinking");
+                    $("#sample-t1-" + sampleIndex).css("background-color", "green");
+                    $("#sample-t2-" + sampleIndex).addClass("blinking");
+                    //$("#sample-t2-" + sampleIndex).html(sample.status);
+                    //$("#sample-t1-" + sampleIndex).html("");
+                } else if (sample.status === "released") {
+                    $('#sample-status-' + sampleIndex).html(`<i class="${sample.icon}"></i>`);
+                    $('#sample-dispense-' + sampleIndex).css("padding", "0");
+                    $('#sample-dispense-' + sampleIndex).html(
+                        `<img alt="released" height="75px" width="75px"
+                        src="{{ url_for('static', filename="imgs/petri-dish.png") }}">`);
+                    $(".sample-" + sampleIndex).removeClass("blinking");
+                    $(".sample-" + sampleIndex).addClass("bg-green");
+                    //$("#sample-dispense-" + sampleIndex).html(sample.status);
+                    //$("#sample-t2-" + sampleIndex).html("");
+                    //$("#sample-t1-" + sampleIndex).html("");
+                }
+            }
+        }
+
+        socket.on('samples_updates', function (samples) {
+            setSampleStatus(samples);
+        })
+    </script>
 {% endblock %}
 
 {% block content %}
-    <div class="board">
-
-        <header class="board-header">
-            <h1>
-                <i class="fas fa-star"></i>
-                SAMPLES
-            </h1>
-        </header>
+    <table class="m-auto">
+        <thead>
+        <tr>
+            <th class="version-title d-block invisible">
+                NAME
+            </th>
+            <th class="version-status invisible">
+                STATUS
+            </th>
+            <th class="version-title" id="gas-control-title">
+                Gas Control T1
+            </th>
+            <th class="version-title" id="nano-constructor-title">
+                NANO-constructor T2
+            </th>
+            <th class="version-title">
+                Dispenser
+            </th>
+        </tr>
+        </thead>
+        <tbody>
         {% for sample in g_config.samples %}
-            <div class="version">
-                <h2 class="version-title">
-                    <i class="{{ sample.icon }}"></i>
+            <tr>
+                <td class="version-title d-block">
                     {{ sample.name }}
-                </h2>
-                <div class="version-status">{{ sample.status }}</div>
-            </div>
+                </td>
+                <td class="version-status" id="sample-status-{{ loop.index }}"
+                    data-mdb-toggle="tooltip" title="status {{ sample.status }}">
+                </td>
+                <td class="sample-{{ loop.index }} sample-status-cell bg-red" id="sample-t1-{{ loop.index }}">
+                </td>
+                <td class="sample-{{ loop.index }} sample-status-cell bg-red" id="sample-t2-{{ loop.index }}">
+                </td>
+                <td class="version-status" id="sample-dispense-{{ loop.index }}">
+                </td>
+            </tr>
         {% endfor %}
-    </div>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block add_js %}
+    <script type="text/javascript">
+        setSampleStatus(JSON.parse('{{ g_config.samples|tojson }}'));
+    </script>
 {% endblock %}
