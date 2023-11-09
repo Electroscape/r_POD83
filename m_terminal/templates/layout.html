@@ -215,19 +215,17 @@
             function handleMessageReception(msg, playNotification = true) {
                 if (typeof msg.user_name !== 'undefined') {
                     let chatColor = "white", srcColor = "black";
-                    if (myRoomID=== "TR3"){
-                        
-                        if (msg.user_name == "system"){
+                    if (myRoomID === "TR3") {
+
+                        if (msg.user_name == "system") {
                             srcColor = "blue";
-                        }
-                        else if (msg.user_name == "game-master"){
+                        } else if (msg.user_name == "game-master") {
                             srcColor = "green";
-                        }
-                        else{
+                        } else {
                             srcColor = "white";
                         }
                     }
-                    
+
                     if (msg.user_name === "rachel") {
                         chatColor = "red";
                         srcColor = "red";
@@ -298,12 +296,26 @@
 </script>
 
 <script type="text/javascript">
+
+    function setLangExpStatus(g_lang = "de") {
+        {% if request.path in ["/sample_release"] %}
+            console.log("language is '" + g_lang + "' set table values in experiment status");
+            if (g_lang === "en") {
+                $("#gas-control-title").html("gas control T1");
+                $("#nano-constructor-title").html("NANO-constructor T2");
+            } else {
+                $("#gas-control-title").html("Gassteuerung T1");
+                $("#nano-constructor-title").html("Nano-Konstrukteur T2");
+            }
+        {% endif %}
+    }
+
     $(function () {
         let rb = document.getElementById("rb_" + g_lang)
         if (rb) {
             rb.checked = true;
         }
-
+        setLangExpStatus(g_lang);
         // decrease notification volume to 50%
         $("#chatAudio").volume = 0.5;
     });
@@ -349,9 +361,8 @@
                     disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");
                 } else if (flags && flags.elancell.startsWith("done") && jsonResponseElement.id === "elancell-upload") {
                     disableOption(jsonResponseElement, "sent", "rgba(0, 255, 0, 0.6)");
-                } else if (samplesFlag === "done" && (jsonResponseElement.id === "sample-release"
-                    || jsonResponseElement.id === "gas-analysis"
-                    || jsonResponseElement.id === "gas-control")) {
+                } else if (samplesFlag === "done" && (
+                    jsonResponseElement.id === "gas-analysis" || jsonResponseElement.id === "gas-control")) {
                     disableOption(jsonResponseElement, "done", "rgba(0, 255, 0, 0.6)");
                 } else if (jsonResponseElement.auth) {
                     disableOption(jsonResponseElement, `${authText} <span style="color: crimson; background-color: black">${getFullName(jsonResponseElement.auth)}</span>`);
@@ -394,6 +405,7 @@
             }
             PContainer.innerHTML = resTxt
         }
+        setLangExpStatus(g_lang);
     }
 </script>
 {% block add_js %}

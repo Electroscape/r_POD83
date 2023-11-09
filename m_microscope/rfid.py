@@ -159,7 +159,8 @@ class RFID:
 
                 # wait here until card is removed
                 # if wrong card should it stuck?!
-                while rfid_present(self.pn532) and card_read:
+                current_card = rfid_present(self.pn532)
+                while current_card and current_card == rfid_present(self.pn532):
                     continue
 
                 self.data["data"] = str(self.cards[-1])

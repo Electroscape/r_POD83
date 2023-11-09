@@ -27,7 +27,7 @@ def gas_control():
 @app_pages.route('/sample_release', methods=['GET', 'POST'])
 def sample_release():
     config = {
-        "title": "Samples Status",
+        "title": "Experiment Status",
         "samples": get_samples_status()
     }
     print("open sample release page")
