@@ -3,6 +3,7 @@ import busio
 from time import sleep
 import socketio
 import RPi.GPIO as GPIO
+from time import sleep
 
 from adafruit_pn532.adafruit_pn532 import MIFARE_CMD_AUTH_A, BusyError
 from adafruit_pn532.i2c import PN532_I2C
@@ -138,6 +139,7 @@ class RFID:
 
     def check_loop(self):
         while True:
+            sleep(0.05)
             card_uid = rfid_present(self.pn532)
             if card_uid:
                 print(f"Card found uid: {card_uid}")
