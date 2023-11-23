@@ -2,6 +2,10 @@
 
 {% block head %}
     <style>
+        .th-width {
+            width: 28%;
+        }
+
         th, td {
             padding: 25px;
         }
@@ -34,6 +38,7 @@
 
         .version-title,
         .version-status {
+            text-align: center;
             font-size: 1.5em;
             line-height: 2rem;
             margin: 0;
@@ -145,11 +150,11 @@
             <th class="version-status invisible">
                 STATUS
             </th>
-            <th class="version-title" id="gas-control-title">
-                Gas Control T1
+            <th class="version-title th-width" id="gas-control-title">
+                Gas Control <br> Terminal 1
             </th>
-            <th class="version-title" id="nano-constructor-title">
-                NANO-constructor T2
+            <th class="version-title th-width" id="nano-constructor-title">
+                NANO-constructor <br> Terminal 2
             </th>
             <th class="version-title">
                 Dispenser
