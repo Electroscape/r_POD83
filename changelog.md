@@ -1,5 +1,10 @@
 # Changelog
 
+
+## v0.31
+  * renaming and hints for new sample status 
+  * rachels upload now should lock the field of upload as completed
+
 ## v 0.30
 
   * replaced sample status page
