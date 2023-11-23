@@ -21,13 +21,14 @@
             console.log(`connect_error due to ${err.message}`);
         });
 
-        socket.on('boot_fe', function () {
-            startBootUp();
-            console.log("done");
-            setTimeout(function () {
-                window.location.href = "/";
-            }, 10000);
-
+        socket.on('boot_fe', function (data) {
+            if (data.status !== "disconnect") {
+                startBootUp();
+                console.log("done");
+                setTimeout(function () {
+                    window.location.href = "/";
+                }, 10000);
+            }
         })
     </script>
     <style>

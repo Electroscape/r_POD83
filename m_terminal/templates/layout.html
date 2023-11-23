@@ -359,7 +359,8 @@
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (flags && flags.cleanroom === "unlock" && jsonResponseElement.id === "cleanroom") {
                     disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");
-                } else if (flags && flags.elancell.startsWith("done") && jsonResponseElement.id === "elancell-upload") {
+                } else if (flags && flags.elancell.startsWith("done") && (
+                    jsonResponseElement.id === "elancell-upload" || jsonResponseElement.id === "elancell-breach")) {
                     disableOption(jsonResponseElement, "sent", "rgba(0, 255, 0, 0.6)");
                 } else if (samplesFlag === "done" && (
                     jsonResponseElement.id === "gas-analysis" || jsonResponseElement.id === "gas-control")) {
