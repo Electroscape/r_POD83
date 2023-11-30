@@ -1,0 +1,26 @@
+[
+  {
+    "iconName": "triangle-outline",
+    "color": "red",
+    "rotate": "0",
+    "brandName": "Level 4"
+  },
+  {
+    "iconName": "hexagon-outline",
+    "color": "green",
+    "rotate":"90deg",
+    "brandName": "Level 2"
+  },
+  {
+    "iconName": "checkbox-blank-circle-outline",
+    "color": "gold",
+    "rotate": "0",
+    "brandName": "level 3"
+  },
+  {
+    "iconName": "circle",
+    "rotate": "0",
+    "color": "navy",
+    "brandName": "Level 1 (bottom)"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "server": {
+    "airlock_events": true
+  },
+  "TR1": {
+    "foscam": {
+      "pincode": "1010",
+      "zoom": true
+    },
+    "media": {
+      "prefix": "ST"
+    },
+    "laserlock": {
+      "boot_time_s": 14,
+      "countdown_time_s": 12,
+      "sound_effects": false
+    },
+    "boot_sound": false
+  },
+  "TR2": {
+    "elancell": {
+      "elancell_ip": "134.231.83.19",
+      "rachel_ip": "134.231.54.23"
+    },
+    "cleanroom": {
+      "pushbutton": false,
+      "passcode": "9649"
+    }
+  }
+}
