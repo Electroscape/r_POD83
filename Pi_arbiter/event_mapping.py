@@ -738,6 +738,7 @@ event_map = {
         pcf_in_add: locker_in_pcf,
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, locker_out_pcf],
         pcf_out: [LaserlockOut.cleanupLight, lab_light_white, LockerOut.serviceEnable],
+        event_script: call_video,
         # event_condition: GeneralConditions.service_enable
     },
     "service_mode_disable": {
@@ -747,6 +748,7 @@ event_map = {
         pcf_in_add: locker_in_pcf,
         pcf_out_add: [laserlock_out_pcf, lab_light_out_pcf, locker_out_pcf],
         pcf_out: [LaserlockOut.light_off, lab_light_off, LockerOut.serviceDisable],
+        event_script: call_video,
         # event_condition: GeneralConditions.service_disable
     }
 }
