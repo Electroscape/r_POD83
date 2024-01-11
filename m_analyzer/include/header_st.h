@@ -37,7 +37,6 @@ enum light{
 };
 
 enum stages {
-    setupStage = 1,
     runMode1 = 2,
     analyze = 4,
     runMode2 = 8,

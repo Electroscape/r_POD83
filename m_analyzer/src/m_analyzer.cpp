@@ -27,12 +27,13 @@ PCF8574 inputPCF;
 STB_MOTHER Mother;
 STB_MOTHER_IO MotherIO;
 
-int stage = setupStage;
+int stage = runMode1;
 // since stages are single binary bits and we still need to d some indexing
 int stageIndex=0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 // Indicates the status of Light during runMode
+
 int light_setting = 0;
 int color_hint_active = 0; 
 int password_stage_start = 0; // indicates the start index of the password array
@@ -310,10 +311,6 @@ void stageActions() {
     wdt_disable(); 
 
     switch (stage) {
-        case setupStage:
-            setupRoom();
-            stage = runMode1;
-        break;
 
         case analyze: // set the 4 dishs until right setting     
    
