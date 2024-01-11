@@ -9,6 +9,7 @@
  * @copyright Copyright (c) 2023
  * 
  *  TODO: 
+ *  🔲 Consider cutting down on amount of stages, this might just be too annoying to trace and easier to read with less potential corners
  * 
  *  Q: 
  * 
@@ -101,7 +102,7 @@ bool passwordInterpreter() {
  * @brief Gives the Color Hint at the synthesizer same for runmode2 and runmode3
  * @param  
 */
-void color_hint () {
+void color_hint() {
     unsigned long actTime = millis();
 
     if ((nextLightTimer > actTime ) || (color_hint_active == 0)) { return; } // only new light setting if timer is reached
@@ -174,13 +175,14 @@ void handleResult(char *cmdPtr) {
     Serial.print(RFID[2].status);
     Serial.println(RFID[3].status); */
     checkSum = RFID[0].status + RFID[1].status + RFID[2].status + RFID[3].status;
-   /*  Serial.print("Stage: ");
+    /*  Serial.print("Stage: ");
     Serial.println(stage);
- */
-    wdt_disable();          
+    */
+    wdt_disable();  
+           
     switch (stage) {
 
-        case runMode1:// Stage runMode 1 if a Dish is placed LEDs should get white, blink red and stay at this position on white until all 4 dishes are placed
+        case runMode1: // Stage runMode 1 if a Dish is placed LEDs should get white, blink red and stay at this position on white until all 4 dishes are placed
             if (RFID[0].status > 0 && RFID[1].status > 0 && RFID[2].status > 0 && RFID[3].status > 0) { //change stage if all dishes are placed
                 stage = analyze;
                 return;
@@ -304,7 +306,8 @@ void setupRoom() {
  * @brief  Light actions after stage has changed
 */
 void stageActions() {
-    wdt_reset();
+
+    wdt_disable(); 
 
     switch (stage) {
         case setupStage:
@@ -313,7 +316,7 @@ void stageActions() {
         break;
 
         case analyze: // set the 4 dishs until right setting     
-            wdt_disable();    
+   
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
             delay(1200);
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrBlue, 50, 100, 100, 100, PWM::set1_2_3_4); 
@@ -325,35 +328,33 @@ void stageActions() {
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
             delay(1200);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);
-            wdt_enable(WDTO_8S);
+            
             stage = runMode2;    
         break;
 
         case firstSolution: // After the first 4 dishes are placed at the right position, sends first Signal to arbiter
-            wdt_disable();
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
             delay(200);
             MotherIO.setOuput(firstSolutionEvent); // Release the Killswitch (Dish5)
             delay(100);
             MotherIO.outputReset();
             delay(6000);
-            wdt_enable(WDTO_8S);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // torun off until dish 5
             stage = waitfordish5;
         break;
 
         case secondSolution: // After the first 4 dishes are placed at the right position, sends second Signal to arbiter
-            wdt_disable();
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
             delay(200);
             MotherIO.setOuput(secondSolutionEvent); // Enables the upload 
             delay(100);
             MotherIO.outputReset();
             delay(5000);
-            wdt_enable(WDTO_8S);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrGreen, 50); // torun off until dish 5
         break;
     }
+
+    wdt_enable(WDTO_8S);
 }
 
 
@@ -377,7 +378,6 @@ void stageUpdate() {
     }
     // important to do this before stageActions! otherwise we skip stages
     lastStage = stage;
-    //Mother.setFlags(0, flagMapping[stageIndex]);
     stageActions();
 }
 
@@ -399,14 +399,18 @@ void setup() {
 
 void loop() {
     color_hint();
+    /*
+    the check interval already exists on the brain, so i don't see a reason not to poll
     if (millis() - lastRfidCheck < rfidCheckInterval) {
         return;
     } 
+    */
     lastRfidCheck = millis();
     Mother.rs485PerformPoll();
     interpreter();
     stageUpdate();
     wdt_reset();
+    delay(50);
 }
 
 

@@ -51,19 +51,6 @@ enum stages {
 int stageSum = ~( ~0 << StageCount );
 
 
-// could have multiple brains listed here making up a matrix
-// for now its only an Access module mapped here
-int flagMapping[StageCount] {
-    0,
-    ledFlag+rfidFlag,
-    ledFlag,
-    ledFlag+rfidFlag,
-    ledFlag,
-    rfidFlag,
-    ledFlag+rfidFlag,
-    ledFlag+rfidFlag
-};
-
 char passwords[PasswordAmount][MaxPassLen] = {
     "P1 ", // runmode1
     "P4 ", // runmode1
