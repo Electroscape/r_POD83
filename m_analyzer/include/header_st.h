@@ -42,9 +42,9 @@ enum stages {
     runMode1 = 1,
     analyze = 2,
     runMode2 = 4,
-    firstSolution  = 8,
+    firstSolution  = 8,     // evaluating the first solution to release the Killswitch
     runMode3 = 16,
-    secondSolution = 32
+    secondSolution = 32     // evaluating the final solution with the Killswitch
 };
 
 
@@ -64,14 +64,16 @@ char passwords[PasswordAmount][MaxPassLen] = {
     "P3 ", // runmode3
 };
 
-char initialCombination[4][MaxPassLen] = {
+#define sampleCount 4
+
+char initialCombination[sampleCount][MaxPassLen] = {
     "P1 ", // runmode1
     "P4 ", // runmode1
     "P2 ", // runmode1
     "P3 ", // runmode1
 };
 
-char finalCombination[4][MaxPassLen] = {
+char finalCombination[sampleCount][MaxPassLen] = {
     "P5 ", // runmode3
     "P4 ", // runmode3
     "P2 ", // runmode3

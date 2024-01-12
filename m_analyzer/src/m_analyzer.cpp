@@ -84,10 +84,10 @@ bool passwordInterpreter() {
             RFID[i_RFID].status = 1; // set P1 because not in Password List            
         }
 
-        for (int passNo=password_stage_start; passNo < password_stage_amount; passNo++) {
+        for (int passNo=0; passNo < sampleCount; passNo++) {
             if ( ( strlen(passwords[passNo]) == strlen(password) ) && strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {       
                 found = true;
-                if (passNo - password_stage_start == i_RFID) { 
+                if (passNo == i_RFID) { 
                     RFID[i_RFID].status = 2; // Dish presented and at right position
                 } else {
                     RFID[i_RFID].status = 1; // Dish presented but at wrong position
@@ -211,14 +211,12 @@ void handleResult(char *cmdPtr) {
 
         case runMode2: // without the light up and analyze, it should blink red for short if it is the wrong combination and gives color hint
             if (checkSum == 8) { // Right Solution found -> change state
-                    color_hint_active = 0;
-                    stage = firstSolution;
-                    password_stage_start = password_stage_amount; // reset password start counter
-                    password_stage_amount += 1; // Only P5 during waitfor dish 5
-                    return;
+                color_hint_active = 0;
+                stage = firstSolution;
+                return;
             }
             if (RFID[0].status > 0 && RFID[1].status > 0 && RFID[2].status > 0 && RFID[3].status > 0) { // only if 4 dishes are presented is always wrong solution, because if CheckSum Condition before
-                    if (color_hint_active == 0) { // start color_hint
+                    if (color_hint_active == 0) {
                         color_hint_active = 1;
                         light_setting = 0; // always start with red blinking
                         nextLightTimer = millis();
@@ -230,19 +228,19 @@ void handleResult(char *cmdPtr) {
             }
         break;
 
-        case waitfordish5: // shows nothing until Dish5 is presented
-            for (int i_RFID = 0; i_RFID < 4; i_RFID++) { //check all RFIDs for Dish 5
-                if (RFID[i_RFID].status > 0) { // if anny RFID has Dish5 change the stage
-                    stage = runMode3;
-                    password_stage_start = password_stage_amount; // reset password start counter
-                    password_stage_amount += 4; // all four dishes
-                    Serial.println("Dish5 found");                      
-                    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrWhite, 125, 125, 100, 100, PWM::set1_2_3_4); 
-                    delay(1000);
-                    return;
-                }
+        // waitfordish5
+        /*
+        for (int i_RFID = 0; i_RFID < 4; i_RFID++) { //check all RFIDs for Dish 5
+            if (RFID[i_RFID].status > 0) { // if anny RFID has Dish5 change the stage
+                stage = runMode3;
+                Serial.println("Dish5 found");                      
+                LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrWhite, 125, 125, 100, 100, PWM::set1_2_3_4); 
+                delay(1000);
+                return;
             }
-        break;
+        }
+        */
+
 
         case runMode3: // without the light up and analyze, it should blink red for short if it is the wrong combination and gives color hint, at the moment technical the same as runmode2
             if (checkSum == 8) { // Right Solution found -> change state
@@ -329,7 +327,7 @@ void stageActions() {
             stage = runMode2;    
         break;
 
-        case firstSolution: // After the first 4 dishes are placed at the right position, sends first Signal to arbiter
+        case firstSolution:
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
             delay(200);
             MotherIO.setOuput(firstSolutionEvent); // Release the Killswitch (Dish5)
