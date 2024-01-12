@@ -10,6 +10,8 @@
  * 
  *  TODO: 
  *  🔲 Consider cutting down on amount of stages, this might just be too annoying to trace and easier to read with less potential corners
+ *  🔲 Split passwords into two arrays
+ *  🔲 is waitfordish5 necessary? maybe it could be be simpler to remove it
  * 
  *  Q: 
  * 
@@ -36,8 +38,6 @@ int lastStage = -1;
 
 int light_setting = 0;
 int color_hint_active = 0; 
-int password_stage_start = 0; // indicates the start index of the password array
-int password_stage_amount = 4; // inital Password Amount at Stage 1 increased every stage
 int setStrips = 0;
 
 struct RFID_Check {
@@ -337,7 +337,7 @@ void stageActions() {
             MotherIO.outputReset();
             delay(6000);
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // torun off until dish 5
-            stage = waitfordish5;
+            stage = secondSolution;
         break;
 
         case secondSolution: // After the first 4 dishes are placed at the right position, sends second Signal to arbiter

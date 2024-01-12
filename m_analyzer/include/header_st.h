@@ -16,16 +16,18 @@ enum IO {
     IO1
 };
 
-int intputArray[inputCnt] = {
-};
+int intputArray[inputCnt] = {};
 int outputArray[outputCnt] = {
     IO0,             
     IO1,             
 };
+
+
 enum IOEvents{
     firstSolutionEvent = 1,
     secondSolutionEvent
 };
+
 
 enum light{
     red_blinking,
@@ -37,14 +39,14 @@ enum light{
 };
 
 enum stages {
-    runMode1 = 2,
-    analyze = 4,
-    runMode2 = 8,
-    firstSolution  = 16,
-    waitfordish5 = 32,
-    runMode3 = 64,
-    secondSolution =128
+    runMode1 = 1,
+    analyze = 2,
+    runMode2 = 4,
+    firstSolution  = 8,
+    runMode3 = 16,
+    secondSolution = 32
 };
+
 
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
@@ -56,6 +58,20 @@ char passwords[PasswordAmount][MaxPassLen] = {
     "P2 ", // runmode1
     "P3 ", // runmode1
     "P5 ", // WaitforDish5
+    "P5 ", // runmode3
+    "P4 ", // runmode3
+    "P2 ", // runmode3
+    "P3 ", // runmode3
+};
+
+char initialCombination[4][MaxPassLen] = {
+    "P1 ", // runmode1
+    "P4 ", // runmode1
+    "P2 ", // runmode1
+    "P3 ", // runmode1
+};
+
+char finalCombination[4][MaxPassLen] = {
     "P5 ", // runmode3
     "P4 ", // runmode3
     "P2 ", // runmode3
