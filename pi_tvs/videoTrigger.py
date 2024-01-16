@@ -27,6 +27,8 @@ video_dict = {
     "play_biovita": "./play_biovita.sh",
     "time_announcement": "./play_time_announcement.sh",
     "end_timeup": "./play_timeup.sh",
+    "service_mode_enable": "./play_service_on.sh",
+    "service_mode_disable": "./play_service_off.sh",
 }
 
 

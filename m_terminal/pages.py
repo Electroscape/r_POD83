@@ -40,7 +40,7 @@ def gas_analysis():
         return redirect(url_for("app_pages.double_auth_block", src_url=request.path))
 
     config = {
-        "title": "Gas Analysis",
+        "title": "Nano-Constructor",
         "samples": get_samples_status()
     }
     print("open gas analysis page")

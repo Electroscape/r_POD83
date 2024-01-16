@@ -301,11 +301,11 @@
         {% if request.path in ["/sample_release"] %}
             console.log("language is '" + g_lang + "' set table values in experiment status");
             if (g_lang === "en") {
-                $("#gas-control-title").html("gas control T1");
-                $("#nano-constructor-title").html("NANO-constructor T2");
+                $("#gas-control-title").html("gas control <br> Terminal 1");
+                $("#nano-constructor-title").html("NANO-constructor <br> Terminal 2");
             } else {
-                $("#gas-control-title").html("Gassteuerung T1");
-                $("#nano-constructor-title").html("Nano-Konstrukteur T2");
+                $("#gas-control-title").html("Gassteuerung <br> Terminal 1");
+                $("#nano-constructor-title").html("Nano-Konstrukteur <br> Terminal 2");
             }
         {% endif %}
     }
@@ -359,7 +359,8 @@
                     disableOption(jsonResponseElement, "success", "rgba(0, 255, 0, 0.6)");
                 } else if (flags && flags.cleanroom === "unlock" && jsonResponseElement.id === "cleanroom") {
                     disableOption(jsonResponseElement, "unlock", "rgba(0, 255, 0, 0.6)");
-                } else if (flags && flags.elancell.startsWith("done") && jsonResponseElement.id === "elancell-upload") {
+                } else if (flags && flags.elancell.startsWith("done") && (
+                    jsonResponseElement.id === "elancell-upload" || jsonResponseElement.id === "elancell-breach")) {
                     disableOption(jsonResponseElement, "sent", "rgba(0, 255, 0, 0.6)");
                 } else if (samplesFlag === "done" && (
                     jsonResponseElement.id === "gas-analysis" || jsonResponseElement.id === "gas-control")) {
