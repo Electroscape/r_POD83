@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.32
+ * added a testimage to the servicemode to spot if TVs are actually turned on
+ * improved the black-screen image for the TVs 
+
 
 ## v0.31
   * renaming and hints for new sample status 
