@@ -24,6 +24,7 @@ now = dt.now()
 log_name = now.strftime("logs/server %m_%d_%Y  %H_%M_%S.log")
 logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+startTime = False
 
 
 def read_json(filename: str, from_static=True) -> dict:
@@ -315,6 +316,10 @@ def events_handler(msg):
             login_users[msg.get("username")] = msg.get("message")
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
+        elif cmd in ["airlock_begin_atmo", "airlock_intro"]:
+            global startTime
+            startTime = dt.now()
+            sio.emit("to_clients", {"username": "tr1", "cmd": "startTimer"})
         elif cmd == "usbBoot" and username == "tr1":
             loading_percent = 90
             # reset laserlock status on boot event
