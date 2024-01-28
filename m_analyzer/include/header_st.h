@@ -50,34 +50,13 @@ enum stages {
 
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
-
-
-char passwords[PasswordAmount][MaxPassLen] = {
-    "P1 ", // runmode1
-    "P4 ", // runmode1
-    "P2 ", // runmode1
-    "P3 ", // runmode1
-    "P5 ", // WaitforDish5
-    "P5 ", // runmode3
-    "P4 ", // runmode3
-    "P2 ", // runmode3
-    "P3 ", // runmode3
-};
-
 #define sampleCount 4
 
-char initialCombination[sampleCount][MaxPassLen] = {
+char passwords[sampleCount + 1][MaxPassLen] = {
     "P1 ", // runmode1
     "P4 ", // runmode1
     "P2 ", // runmode1
     "P3 ", // runmode1
+    "P5 "
 };
-
-char finalCombination[sampleCount][MaxPassLen] = {
-    "P5 ", // runmode3
-    "P4 ", // runmode3
-    "P2 ", // runmode3
-    "P3 ", // runmode3
-};
-
 
