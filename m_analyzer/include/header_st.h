@@ -39,12 +39,9 @@ enum light{
 };
 
 enum stages {
-    runMode1 = 1,
-    analyze = 2,
-    runMode2 = 4,
-    firstSolution  = 8,     // evaluating the first solution to release the Killswitch
-    runMode3 = 16,
-    secondSolution = 32     // evaluating the final solution with the Killswitch
+    start = 1,              // nothing been solved
+    firstSolution  = 2,     // first stage has been solved, evaluation only continues with the KS
+    secondSolution = 4      // solved the final stage, emit event but goes back to firstSolution to enable a repeated trigger 
 };
 
 
