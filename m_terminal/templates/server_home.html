@@ -5,8 +5,11 @@
 
 {% block chat_js %}
     <script type="text/javascript">
-
         var countDownDate = Date.now() + 90 * 1000 * 60;
+        if ({{g_config.startTime}}) {
+            console.log({{g_config.startTime}})
+            countDownDate = {{g_config.startTime}} * 1000 + 90 * 1000 * 60;
+        }
 
         function sendMessage(event) {
             event.preventDefault();
@@ -34,7 +37,7 @@
             if (msg.cmd == "loadingbar") {
                 var inputLoadingBar = document.getElementById("loadingInput");
                 inputLoadingBar.value = msg.message
-            } else if (msg.message == "airlock_begin_atmo" || msg.message == "airlock_intro") {
+            } else if (msg.message == "startTimer") {
                 console.log("startTimer event")
                 countDownDate = Date.now() + 90 * 1000 * 60;
             }

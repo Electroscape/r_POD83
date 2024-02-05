@@ -9,6 +9,7 @@ from flask_socketio import SocketIO
 import json
 import logging
 from datetime import datetime as dt
+from datetime import timedelta
 
 # Next two lines are for the issue: https://github.com/miguelgrinberg/python-engineio/issues/142
 from engineio.payload import Payload
@@ -25,6 +26,31 @@ log_name = now.strftime("logs/server %m_%d_%Y  %H_%M_%S.log")
 logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 startTime = False
+start_time_file = "startTime.txt"
+
+def get_start_time() -> bool:
+    try:
+        f = open(start_time_file, "r")
+        saved_time = f.read()
+        if saved_time.isdigit():
+            global startTime
+            startTime = saved_time
+            return True
+        else:
+            return False
+    except OSError:
+        return False
+
+
+def save_start_time():
+    try:
+        f = open(start_time_file, "w+")
+        if startTime:
+            f.write("%s"%startTime)
+    except OSError as err:
+        print(err)
+        logging.error("failed to write starttime file")
+        pass
 
 
 def read_json(filename: str, from_static=True) -> dict:
@@ -92,8 +118,14 @@ def index():
         "title": "Server Terminal",
         "id": "server",
         "lang": "en",
-        "version": version
+        "version": version,
     }
+
+    if startTime:
+        config["startTime"] = startTime.timestamp()
+    else:
+        config["startTime"] = "false"   # prefer doing things on python rather than JS
+
     # ip_address = request.remote_addr
     # logging.info("Requester IP: " + ip_address)
     return render_template("server_home.html", g_config=config, chat_msg=chat_history.get(), hint_msgs=hint_msgs)
@@ -317,9 +349,12 @@ def events_handler(msg):
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
         elif cmd in ["airlock_begin_atmo", "airlock_intro"]:
+            new_time = dt.now()
             global startTime
-            startTime = dt.now()
-            sio.emit("to_clients", {"username": "tr1", "cmd": "startTimer"})
+            if not startTime or (new_time - startTime > timedelta(minutes=4)):
+                startTime = new_time
+                save_start_time()
+                sio.emit("to_clients", {"username": "tr1", "cmd": "startTimer"})
         elif cmd == "usbBoot" and username == "tr1":
             loading_percent = 90
             # reset laserlock status on boot event
@@ -362,5 +397,7 @@ def favicon():
 
 
 if __name__ == "__main__":
+    save_start_time()
+    get_start_time()
     sio.run(app, debug=True, host='0.0.0.0', port=5500, engineio_logger=True)
     # app.run(debug=True, host='0.0.0.0', port=5500)
