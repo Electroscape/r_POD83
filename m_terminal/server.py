@@ -186,13 +186,7 @@ def all_samples_solved():
     answer = True
     for sample in samples:
         answer = answer and sample.get("status") == "released"
-    return answers
-
-
-@sio.on('*')
-def show_all(msg):
-    logging.debug("catchall event *")
-    logging.debug(msg)
+    return answer
 
 
 @sio.on('msg_to_server')
@@ -410,5 +404,5 @@ def favicon():
 
 if __name__ == "__main__":
     get_start_time()
-    sio.run(app, debug=False, host='0.0.0.0', port=5500, engineio_logger=False)
+    sio.run(app, debug=True, host='0.0.0.0', port=5500, engineio_logger=True)
     # app.run(debug=True, host='0.0.0.0', port=5500)
