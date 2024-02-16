@@ -37,7 +37,8 @@
             if (msg.cmd == "loadingbar") {
                 var inputLoadingBar = document.getElementById("loadingInput");
                 inputLoadingBar.value = msg.message
-            } else if (msg.message == "startTimer") {
+            }
+            if (msg.cmd == "startTimer") {
                 console.log("startTimer event")
                 countDownDate = Date.now() + 90 * 1000 * 60;
             }

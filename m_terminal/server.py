@@ -27,31 +27,34 @@ logging.basicConfig(filename=log_name, level=logging.DEBUG,
                     format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 startTime = False
 start_time_file = "startTime.txt"
-
-def get_start_time() -> bool:
-    try:
-        f = open(start_time_file, "r")
-        saved_time = f.read()
-        if saved_time.isdigit():
-            global startTime
-            startTime = saved_time
-            return True
-        else:
-            return False
-    except OSError:
-        return False
-
+date_format = "%Y-%m-%d %H:%M:%S"
 
 def save_start_time():
     try:
         f = open(start_time_file, "w+")
         if startTime:
-            f.write("%s"%startTime)
+            print("writing")
+            f.write(startTime.strftime(date_format))
     except OSError as err:
         print(err)
-        logging.error("failed to write starttime file")
+        logging.error("failed to write startime file")
         pass
 
+def get_start_time() -> bool:
+    try:
+        f = open(start_time_file, "r")
+        saved_time = f.read()
+        try:
+            saved_time = dt.strptime(saved_time, date_format)
+            global startTime
+            startTime = saved_time
+        except valueError as err:
+            print(err)
+            return False
+    except OSError:
+        return False
+
+    return True
 
 def read_json(filename: str, from_static=True) -> dict:
     """
@@ -179,12 +182,17 @@ def frontend_server_messages(json_msg):
     chat_history.append(json_msg)
     sio.emit('response_to_fe', json_msg)
 
-
 def all_samples_solved():
     answer = True
     for sample in samples:
         answer = answer and sample.get("status") == "released"
-    return answer
+    return answers
+
+
+@sio.on('*')
+def show_all(msg):
+    logging.debug("catchall event *")
+    logging.debug(msg)
 
 
 @sio.on('msg_to_server')
@@ -304,12 +312,24 @@ def rfid_extras(msg):
 
 @sio.on('events')
 def events_handler(msg):
+    logging.debug(f"from events: {msg}")
     global login_users
     username = msg.get("username")
     cmd = msg.get("cmd")
     msg_value = msg.get("message")
 
     # print(f"sio events handling: {msg}")
+
+    if msg_value in ["airlock_begin_atmo", "airlock_intro"]:
+        new_time = dt.now()
+        logging.debug("starttime event rcvd")
+        global startTime
+        if not startTime or (new_time - startTime > timedelta(minutes=4)):
+            logging.debug("starttime set")
+            sio.emit("response_to_fe", {"username": "tr1", "cmd": "startTimer"})
+            startTime = new_time
+            save_start_time()
+            # sio.emit("to_clients", {"username": "tr1", "cmd": "startTimer"})
 
     if username == "server":
         global samples
@@ -348,13 +368,6 @@ def events_handler(msg):
             login_users[msg.get("username")] = msg.get("message")
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
-        elif cmd in ["airlock_begin_atmo", "airlock_intro"]:
-            new_time = dt.now()
-            global startTime
-            if not startTime or (new_time - startTime > timedelta(minutes=4)):
-                startTime = new_time
-                save_start_time()
-                sio.emit("to_clients", {"username": "tr1", "cmd": "startTimer"})
         elif cmd == "usbBoot" and username == "tr1":
             loading_percent = 90
             # reset laserlock status on boot event
@@ -367,7 +380,6 @@ def events_handler(msg):
             # send cable override to arbiter
             # logging.info(f"msg to arbiter: {str(dict_cmd)}")
             # sio.emit("trigger", dict_cmd)
-
         sio.emit("to_clients", msg)
     frontend_server_messages(msg)
 
@@ -397,7 +409,6 @@ def favicon():
 
 
 if __name__ == "__main__":
-    save_start_time()
     get_start_time()
-    sio.run(app, debug=True, host='0.0.0.0', port=5500, engineio_logger=True)
+    sio.run(app, debug=False, host='0.0.0.0', port=5500, engineio_logger=False)
     # app.run(debug=True, host='0.0.0.0', port=5500)
