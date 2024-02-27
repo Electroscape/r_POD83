@@ -118,8 +118,7 @@ lab_dish_rachel_end = 128 + 16
 
 binary_pcfs = [airlock_in_pcf, laserlock_in_pcf]
 
-blank_screen_pid = subprocess.Popen(["cvlc", "media/black_screen.jpg", "--no-embedded-video", "--fullscreen",
-                                     "--no-video-title", "--video-wallpaper", "--quiet", "--loop"])
+blank_screen_pid = subprocess.Popen(["mpv", "media/black_screen.jpg", "--fs", "--loop", "--quiet"])
 
 
 class States:
@@ -141,8 +140,7 @@ states = States()
 def play_elancell_intro(*args):
     blank_screen_pid.kill()
     print("playing elancell intro")
-    subprocess.Popen(['cvlc', "media/Welcome to Elancell_w_Audio.mp4",
-                      "--no-embedded-video", "--fullscreen", '--no-video-title', '--video-on-top', '--quiet'])
+    subprocess.Popen(['mpv', "media/Welcome to Elancell_w_Audio.mp4", "--fs", "--quiet"])
 
 
 def call_video(event_key, nw_sock):
