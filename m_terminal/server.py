@@ -321,6 +321,7 @@ def events_handler(msg):
         if not startTime or (new_time - startTime > timedelta(minutes=4)):
             logging.debug("starttime set")
             sio.emit("response_to_fe", {"username": "tr1", "cmd": "startTimer"})
+            loading_percent = 100
             startTime = new_time
             save_start_time()
             # sio.emit("to_clients", {"username": "tr1", "cmd": "startTimer"})
@@ -363,7 +364,7 @@ def events_handler(msg):
             if msg.get("username") == "tr2" and msg.get("message") == "rachel":
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "show"})
         elif cmd == "usbBoot" and username == "tr1":
-            loading_percent = 90
+            # loading_percent = 90
             # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
         elif cmd == "laserlock":
