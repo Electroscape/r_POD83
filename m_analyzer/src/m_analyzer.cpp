@@ -159,9 +159,8 @@ void color_hint() {
  * @todo consider making this non blocking
 */
 void analyzeFx() {
-    if (!RFID->updated) {
-        return;
-    }
+    Serial.println("analyzeFx");
+    return;
     wdt_reset();
     LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
     delay(300);
@@ -216,16 +215,15 @@ void handleResult(char *cmdPtr) {
 
     if (!allSlotsPresent) {
         color_hint_active = 0;
-
         for (int i_RFID = 0; i_RFID < 4; i_RFID++) {          
             if (RFID[i_RFID].status != RFID[i_RFID].status_old) { return; }
 
             RFID[i_RFID].status_old = RFID[i_RFID].status; 
             
-            if (RFID[i_RFID].status > 0) {  
+            if (RFID[i_RFID].status > 0) {  // if the Brain can handle it this part can be changed to PWM::setX_X_X_X, counting with bitshift
                 LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrWhite, 100, 1 << i_RFID);   // use Bitshift to turn on LED 
             } else { 
-                LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrBlack, 100, 1 << i_RFID);   // use Bitshift to turn off LED
+                LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrBlack, 100, 1 << i_RFID); // use Bitshift to turn off LED
             }  
         }
         return;     // leaving the function since there is no need to evaluate further
@@ -239,6 +237,19 @@ void handleResult(char *cmdPtr) {
         LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
         delay(500); 
     } else {
+        stage = stage << 1;
+    }
+
+    analyzeFx();
+    
+    wdt_disable();        
+    
+    // not every piece correctly placed
+    if (checkSum < 8) { 
+        LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
+        delay(1300); 
+    } else {
+        // solved the riddle
         stage = stage << 1;
     }
 
