@@ -75,10 +75,11 @@ void setStageIndex() {
 
 
 void passwordInterpreter() {
+    RFID->ks_present = false;
+
     for (int i_RFID = 0; i_RFID < 4; i_RFID++) {
         char* password = RFID[i_RFID].str;
         RFID[i_RFID].status = 0;       
-        RFID->ks_present = false;
 
         for (int passNo=0; passNo < sampleCount; passNo++) {
             if ( ( strlen(passwords[passNo]) == strlen(password) ) && strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {       
@@ -88,8 +89,10 @@ void passwordInterpreter() {
                     RFID[i_RFID].status = 1; // Dish presented but at wrong position
                 }
             } else if ( (strlen(passwords[4]) == strlen(password) ) && strncmp(passwords[4], password, strlen(passwords[4]) ) == 0)  {
+                // Serial.print("Sample outside List detected: ");
+                // Serial.println(password);
                 RFID->ks_present = true;
-                if (passNo == 0) {
+                if (i_RFID == 0) {
                     RFID[i_RFID].status = 2; // Dish presented and at right position
                 } else {
                     RFID[i_RFID].status = 1; // Dish presented and at right position
@@ -230,7 +233,10 @@ void handleResult(char *cmdPtr) {
         // Serial.println();
     }    
 
-    // if (stage > firstSolution && !RFID->ks_present) { return; }
+    if (stage >= firstSolution && !RFID->ks_present) { 
+        // Serial.println("KS is not present in later stage");    
+        return; 
+    }
 
     if (!allSlotsPresent) {
         Serial.println("Running partial");
