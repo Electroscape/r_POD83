@@ -178,15 +178,18 @@ void analyzeFx() {
 void partial_update() {
     if (!RFID->updated) {
         LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // turn off all LEDs
-    }   else {
-        for (int i_RFID = 0; i_RFID < 4; i_RFID++) {          
+        for (int i_RFID = 0; i_RFID < 4; i_RFID++) {
+            RFID[i_RFID].status_old = RFID[i_RFID].status; 
+        }
+    } else {
+        for (int i_RFID = 0; i_RFID < 4; i_RFID++) {      
+            LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);    
+            if (RFID[i_RFID].status == RFID[i_RFID].status_old) { continue; }
             if (RFID[i_RFID].status > 0) {  // if the Brain can handle it this part can be changed to PWM::setX_X_X_X, counting with bitshift
-                if (RFID[i_RFID].status == RFID[i_RFID].status_old) { continue; }
-                RFID[i_RFID].status_old = RFID[i_RFID].status; 
-                LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrWhite, 100, 1 << i_RFID);   // use Bitshift to turn on LED 
-            } else { 
-                // LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrBlack, 100, 1 << i_RFID); // use Bitshift to turn off LED
-            }  
+                LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrWhite, 10, 1 << i_RFID);   // use Bitshift to turn on LED 
+                delay(100);
+            }
+            RFID[i_RFID].status_old = RFID[i_RFID].status; 
         }
     }
     RFID->updated = true;
@@ -232,21 +235,22 @@ void handleResult(char *cmdPtr) {
         // Serial.println();
     }    
 
-    if (stage >= firstSolution && !RFID->ks_present) { 
-        // Serial.println("KS is not present in later stage");    
-        return; 
-    }
-
     if (!allSlotsPresent) {
         Serial.println("Running partial");
         partial_update();
         return;
     }
 
+    if (stage >= firstSolution && !RFID->ks_present) { 
+        // Serial.println("KS is not present in later stage");    
+        return; 
+    }
+
     if (!RFID->updated) {
         return;
     }
     RFID->updated = false;
+    
     Serial.println("Running FULL");
 
     analyzeFx();
@@ -304,7 +308,7 @@ void setupRoom() {
     LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrYellow, 100, set4);
     delay(500);
     LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // turn off all LEDs
-   wdt_enable(WDTO_8S);
+    wdt_enable(WDTO_8S);
 }
 
 
@@ -335,7 +339,9 @@ void stageActions() {
     delay(100);
     MotherIO.outputReset();
     delay(6000);
-    LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // torun off until dish 5
+    LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
+    delay(100);
+    LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
 
     wdt_enable(WDTO_8S);
 }
