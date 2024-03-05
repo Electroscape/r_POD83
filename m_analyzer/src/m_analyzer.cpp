@@ -50,7 +50,6 @@ struct RFID_Check {
 };
 
 RFID_Check RFID[4];
-unsigned long lastRfidCheck = millis();
 unsigned long nextLightTimer = millis(); // timer for giving non blocking LightHint
 
 
@@ -113,37 +112,37 @@ void color_hint() {
     switch (light_setting) {
         case (red_blinking):
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            nextLightTimer += 1400;
+            nextLightTimer = millis() + (unsigned long) 1400;
             light_setting += 1;
         break;
 
         case (turn_off):
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
-            nextLightTimer += 500;
+            nextLightTimer = millis() + (unsigned long) 500;
             light_setting += 1;
         break;
         
         case (hint_place1):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrRed, 100, PWM::set1);  
-            nextLightTimer += 600;
+            nextLightTimer = millis() + (unsigned long) 600;
             light_setting += 1;
         break;
         
         case (hint_place2):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrBlue, 100, PWM::set2);  
-            nextLightTimer += 600;
+            nextLightTimer = millis() + (unsigned long) 600;
             light_setting += 1;
         break;
         
         case (hint_place3):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrYellow, 100, PWM::set3);  
-            nextLightTimer += 600;
+            nextLightTimer = millis() + (unsigned long) 600;
             light_setting += 1;
         break;
         
         case (hint_place4):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrGreen, 100, PWM::set4);  
-            nextLightTimer += 1600;
+            nextLightTimer = millis() + (unsigned long) 1600;
             light_setting = red_blinking;
         break;
     }
@@ -261,18 +260,22 @@ void handleResult(char *cmdPtr) {
     } else {
         stage = stage << 1;
         color_hint_active = 0;
+        
     }
+    nextLightTimer = millis();
     wdt_enable(WDTO_8S);
 }
 
 
 // again good candidate for a mother specific lib
 bool checkForRfid() {
-
-    if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
+    if ( strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
+        // Serial.print("no rfid keyword: ");
+        // Serial.println(res);
         return false;
     } 
-    Serial.println( Mother.STB_.rcvdPtr);
+    // Serial.println("Found RFID keyword");
+    // Serial.println(Mother.STB_.rcvdPtr);
     char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
     handleResult(cmdPtr);
     wdt_reset();
@@ -380,16 +383,15 @@ void setup() {
 
 
 void loop() {
-    color_hint();
     /*
     the check interval already exists on the brain, so i don't see a reason not to poll
     if (millis() - lastRfidCheck < rfidCheckInterval) {
         return;
     } 
     */
-    lastRfidCheck = millis();
     Mother.rs485PerformPoll();
     interpreter();
+    color_hint();
     stageUpdate();
     wdt_reset();
     delay(10);
