@@ -92,7 +92,7 @@
         {% if g_config.files %}
             <div class="main-video">
                 <video src="{{ url_for('static', filename='media/' + g_config.files[0]) }}"
-                       controls autoplay controlsList="nodownload"></video>
+                       controls autoplay controlsList="nodownload nofullscreen"></video>
             </div>
 
             <div class="menu-wrapper">
