@@ -305,6 +305,26 @@ def rfid_extras(msg):
         # update backend
         login_users[msg_split[0]] = msg_split[1]
 
+def trigger_start(event_name):
+
+    if event_name == "usbBoot":
+        if version.get("game_duration", 90) == 90:
+            return
+    else:
+        if version.get("game_duration", 90) == 60:
+            return
+
+    new_time = dt.now()
+    logging.debug("starttime event rcvd")
+    global startTime
+    if not startTime or (new_time - startTime > timedelta(minutes=4)):
+        logging.debug("starttime set")
+        sio.emit("response_to_fe", {"username": "tr1", "cmd": "startTimer"})
+        global loading_percent
+        loading_percent = 100
+        startTime = new_time
+        save_start_time()
+
 
 @sio.on('events')
 def events_handler(msg):
@@ -317,16 +337,7 @@ def events_handler(msg):
     # print(f"sio events handling: {msg}")
 
     if msg_value in ["airlock_begin_atmo", "airlock_intro"]:
-        new_time = dt.now()
-        logging.debug("starttime event rcvd")
-        global startTime
-        if not startTime or (new_time - startTime > timedelta(minutes=4)):
-            logging.debug("starttime set")
-            sio.emit("response_to_fe", {"username": "tr1", "cmd": "startTimer"})
-            loading_percent = 100
-            startTime = new_time
-            save_start_time()
-            # sio.emit("to_clients", {"username": "tr1", "cmd": "startTimer"})
+        trigger_start(msg_value)
 
     if username == "server":
         global samples
@@ -370,6 +381,7 @@ def events_handler(msg):
             # loading_percent = 90
             # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
+            trigger_start(cmd)
         elif cmd == "laserlock":
             if game_status.laserlock_cable_override:
                 return
@@ -394,6 +406,7 @@ def loadingbar_timer():
             frontend_server_messages({"username": "tr1/tr2", "cmd": "loadingbar", "message": loading_percent})
             # 90 min / 20 loading bars = 4.5 min = 270 seconds
             # remove 1 progress bar every 270 seconds
+            version.get("game_duration", 90)
             sio.sleep(int(60 * 4.5))
             loading_percent -= 5
 
