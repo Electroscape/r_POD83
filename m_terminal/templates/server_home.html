@@ -5,10 +5,11 @@
 
 {% block chat_js %}
     <script type="text/javascript">
-        var countDownDate = Date.now() + 90 * 1000 * 60;
+        var countDownDate = Date.now() + {{g_config.version.game_duration}} * 1000 * 60;
+
         if ({{g_config.startTime}}) {
             console.log({{g_config.startTime}})
-            countDownDate = {{g_config.startTime}} * 1000 + 90 * 1000 * 60;
+            countDownDate = {{g_config.startTime}} * 1000 + {{g_config.version.game_duration}} * 1000 * 60;
         }
 
         function sendMessage(event) {
@@ -40,7 +41,7 @@
             }
             if (msg.cmd == "startTimer") {
                 console.log("startTimer event")
-                countDownDate = Date.now() + 90 * 1000 * 60;
+                countDownDate = Date.now() + {{g_config.version.game_duration}} * 1000 * 60;
             }
         })
 
