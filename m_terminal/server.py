@@ -110,6 +110,7 @@ class StatusVars:
     def __init__(self):
         self.uploadProgress = "disable"
         self.laserlock_cable = "broken"
+        self.laserlock_cable_override = False
 
 
 game_status = StatusVars()
@@ -271,6 +272,7 @@ def override_triggers(msg):
     sio.emit("trigger", msg)
 
     if msg.get("cmd") == "laserlock" and msg.get("message") == "skip":
+        game_status.laserlock_cable_override = True
         sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "success"})
 
 
@@ -351,6 +353,7 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr1", "cmd": "usbBoot", "message": "disconnect"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock", "message": "broken"})
                 game_status.laserlock_cable = "broken"
+                game_status.laserlock_cable_override = False
                 sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "mSwitch", "message": "off"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "elancell", "message": "disable"})
@@ -368,7 +371,8 @@ def events_handler(msg):
             # reset laserlock status on boot event
             sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "normal"})
         elif cmd == "laserlock":
-            print(msg)
+            if game_status.laserlock_cable_override:
+                return
             if msg_value in ["broken", "fixed"]:
                 game_status.laserlock_cable = msg_value
             # dict_cmd = {"username": "arb", "cmd": "laserlock", "message": msg_value}
