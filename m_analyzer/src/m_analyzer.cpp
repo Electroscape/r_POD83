@@ -332,7 +332,6 @@ void stageActions() {
 
         case secondSolution: // After the first 4 dishes are placed at the right position, sends second Signal to arbiter
             MotherIO.setOuput(secondSolutionEvent); // Enables the upload 
-            stage = firstSolution;
         break;
     }
 
