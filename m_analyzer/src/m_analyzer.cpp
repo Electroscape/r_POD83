@@ -338,6 +338,12 @@ void stageActions() {
 
     delay(100);
     MotherIO.outputReset();
+
+    // game is completed, the analyzer freezes at this point and waits for a restart
+    if (stage == secondSolution) {
+        while (true) {}
+    }
+
     delay(6000);
     LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
     delay(100);
