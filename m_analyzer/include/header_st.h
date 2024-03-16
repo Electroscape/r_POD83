@@ -16,16 +16,18 @@ enum IO {
     IO1
 };
 
-int intputArray[inputCnt] = {
-};
+int intputArray[inputCnt] = {};
 int outputArray[outputCnt] = {
     IO0,             
     IO1,             
 };
+
+
 enum IOEvents{
     firstSolutionEvent = 1,
     secondSolutionEvent
 };
+
 
 enum light{
     red_blinking,
@@ -37,43 +39,21 @@ enum light{
 };
 
 enum stages {
-    setupStage = 1,
-    runMode1 = 2,
-    analyze = 4,
-    runMode2 = 8,
-    firstSolution  = 16,
-    waitfordish5 = 32,
-    runMode3 = 64,
-    secondSolution =128
+    start = 1,              // nothing been solved
+    firstSolution  = 2,     // first stage has been solved, evaluation only continues with the KS
+    secondSolution = 4      // solved the final stage, emit event but goes back to firstSolution to enable a repeated trigger 
 };
+
 
 // the sum of all stages sprinkled with a bit of black magic
 int stageSum = ~( ~0 << StageCount );
+#define sampleCount 4
 
-
-// could have multiple brains listed here making up a matrix
-// for now its only an Access module mapped here
-int flagMapping[StageCount] {
-    0,
-    ledFlag+rfidFlag,
-    ledFlag,
-    ledFlag+rfidFlag,
-    ledFlag,
-    rfidFlag,
-    ledFlag+rfidFlag,
-    ledFlag+rfidFlag
-};
-
-char passwords[PasswordAmount][MaxPassLen] = {
+char passwords[sampleCount + 1][MaxPassLen] = {
     "P1 ", // runmode1
     "P4 ", // runmode1
     "P2 ", // runmode1
     "P3 ", // runmode1
-    "P5 ", // WaitforDish5
-    "P5 ", // runmode3
-    "P4 ", // runmode3
-    "P2 ", // runmode3
-    "P3 ", // runmode3
+    "P5 "
 };
-
 
