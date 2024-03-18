@@ -310,6 +310,7 @@ def rfid_extras(msg):
 def events_handler(msg):
     logging.debug(f"from events: {msg}")
     global login_users
+    global loading_percent
     username = msg.get("username")
     cmd = msg.get("cmd")
     msg_value = msg.get("message")
@@ -330,7 +331,6 @@ def events_handler(msg):
 
     if username == "server":
         global samples
-        global loading_percent
 
         if cmd == "loadingbar":
             loading_percent = int(msg.get("message"))
