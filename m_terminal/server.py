@@ -267,15 +267,19 @@ def override_triggers(msg):
     # Display message on frontend chatbox
     frontend_server_messages(msg)
     # print in console for debugging
-    logging.info(f"msg to arb pi: sio.on('trigger', {str(msg)})")
+    logging.info(f"msg to arb pi: sio.on('triggers', {str(msg)})")
     # emit message on "trigger" channel for the arb RPi
     # Therefore listener on the arb Pi is @sio.on("trigger")
     sio.emit("trigger", msg)
+    cmd = msg.get("cmd")
+    message = msg.get("message")
 
-    if msg.get("cmd") == "laserlock" and msg.get("message") == "skip":
+    if cmd == "laserlock" and message == "skip":
         game_status.laserlock_cable_override = True
         sio.emit("to_clients", {"username": "tr1", "cmd": "laserlock_auth", "message": "success"})
 
+    if cmd == "usb" and message == "boot":
+        trigger_start("usbBoot")
 
 @sio.on('rfid_update')
 def rfid_updates(msg):
