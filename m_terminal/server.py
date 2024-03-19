@@ -184,10 +184,39 @@ def frontend_server_messages(json_msg):
     sio.emit('response_to_fe', json_msg)
 
 def all_samples_solved():
-    answer = True
     for sample in samples:
-        answer = answer and sample.get("status") == "released"
-    return answer
+        if sample.get("status") != "released":
+            return False
+    return True
+
+
+def set_samples(cmd, msg):
+    msg = int(msg) - 1
+
+    for num in range(4):
+        if num < msg:
+            samples[int(num)]["status"] = "released"
+            samples[int(num)]["icon"] = sample_icons["released"]
+        elif num == msg:
+            if cmd == "release":
+                samples[int(num)]["status"] = "released"
+                samples[int(num)]["icon"] = sample_icons["released"]
+            else:
+                samples[int(num)]["status"] = "unlocked"
+                samples[int(num)]["icon"] = sample_icons["unlocked"]
+                if num + 1 < 4:
+                    samples[int(num + 1)]["status"] = "locked"
+                    samples[int(num + 1)]["icon"] = sample_icons["locked"]
+        else:
+            samples[int(num)]["status"] = "blocked"
+            samples[int(num)]["icon"] = sample_icons["unlocked"]
+
+    if all_samples_solved():
+        sio.emit("samples", {"flag": "done"})
+    # keeping the emit coeexisting with the above like the existing code
+    sio.emit("samples", samples)
+    sio.emit("samples", f"sample {int(msg) + 1} {samples[int(msg)]['status']}")
+
 
 
 # @TODO update here to allow an override
@@ -377,6 +406,8 @@ def events_handler(msg):
                 sio.emit("to_clients", {"username": "tr2", "cmd": "cleanroom", "message": "lock"})
                 sio.emit("to_clients", {"username": "tr2", "cmd": "breach", "message": "secure"})
                 sio.emit("to_clients", {"username": "tr1", "cmd": "personalR", "message": "hide"})
+        elif cmd in ["unlock", "release"]:
+            set_samples(cmd, msg_value)
     else:
         if cmd == "auth":
             login_users[msg.get("username")] = msg.get("message")
