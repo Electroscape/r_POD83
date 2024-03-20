@@ -192,30 +192,35 @@ def all_samples_solved():
 
 def set_samples(cmd, msg):
     msg = int(msg) - 1
+    locked_next = False
 
     for num in range(4):
         if num < msg:
-            samples[int(num)]["status"] = "released"
-            samples[int(num)]["icon"] = sample_icons["released"]
+            samples[num]["status"] = "released"
+            samples[num]["icon"] = sample_icons["released"]
         elif num == msg:
             if cmd == "release":
-                samples[int(num)]["status"] = "released"
-                samples[int(num)]["icon"] = sample_icons["released"]
+                samples[num]["status"] = "released"
+                samples[num]["icon"] = sample_icons["released"]
+                locked_next = True
             else:
-                samples[int(num)]["status"] = "unlocked"
-                samples[int(num)]["icon"] = sample_icons["unlocked"]
-                if num + 1 < 4:
-                    samples[int(num + 1)]["status"] = "locked"
-                    samples[int(num + 1)]["icon"] = sample_icons["locked"]
+                samples[num]["status"] = "unlocked"
+                samples[num]["icon"] = sample_icons["unlocked"]
         else:
-            samples[int(num)]["status"] = "blocked"
-            samples[int(num)]["icon"] = sample_icons["unlocked"]
+            if locked_next:
+                samples[num]["status"] = "locked"
+                samples[num]["icon"] = sample_icons["locked"]
+                locked_next = False
+                continue
+            samples[num]["status"] = "blocked"
+            samples[num]["icon"] = sample_icons["blocked"]
 
     if all_samples_solved():
         sio.emit("samples", {"flag": "done"})
     # keeping the emit coeexisting with the above like the existing code
+
     sio.emit("samples", samples)
-    sio.emit("samples", f"sample {int(msg) + 1} {samples[int(msg)]['status']}")
+    sio.emit("samples", f"sample {msg + 1} {samples[msg]['status']}")
 
 
 
