@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.33
+ * added separate sound for anything but message
+ * option to override gasriddle 
+ * seperateable start events
+ * rework to the analyzer
+
 ## v0.32
  * added a testimage to the servicemode to spot if TVs are actually turned on
  * improved the black-screen image for the TVs 
