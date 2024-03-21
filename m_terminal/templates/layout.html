@@ -111,7 +111,7 @@
                 //console.log(msg)
                 if (typeof msg.cmd !== 'undefined' && msg.cmd === "notification") {
                     toastr.info(`New Notification`);
-                    $('#chatAudio')[0].play();
+                    $('#notificationAudio')[0].play();
                 }
                 handleMessageReception(msg);
             })
@@ -132,7 +132,7 @@
                         });
                 } else {
                     toastr.success(`${getFullName(msg.usr)} logged in`);
-                    $('#chatAudio')[0].play();
+                    $('#notificationAudio')[0].play();
                 }
                 updateLoginInfo(msg.usr.toLowerCase());
 
@@ -156,13 +156,13 @@
             })
 
             socket.on("elancell_fe", function (msg) {
-                $('#chatAudio')[0].play();
+                $('#notificationAudio')[0].play();
                 toastr.info(`Data upload ${msg.data}`);
             })
 
             socket.on('breach_fe', function (msg) {
                 if (msg === "breach") {
-                    $('#chatAudio')[0].play();
+                    $('#notificationAudio')[0].play();
                     toastr.error(`USB media is detected`);
                     swal("warning", "Your system is being hacked", "error").then(() => {
                             document.location.href = "/";
@@ -181,7 +181,7 @@
             socket.on("laserlock_fe", function (msg) {
                 console.log(`laserlock ${msg}`)
                 loadControlPanel(msg.data, laserlockStatus = msg.status);
-                $('#chatAudio')[0].play();
+                $('#notificationAudio')[0].play();
                 toastr.warning(`laserlock is ${msg.status}
                                 <button type="button" class="btn btn-outline-dark float-end">open laserlock</button>`,
                     "New Update",
@@ -206,7 +206,7 @@
 
             socket.on('samples_updates_fe', function (msg) {
                 setTimeout(() => {
-                    $('#chatAudio')[0].play();
+                    $('#notificationAudio')[0].play();
                     toastr.success(msg);
                 }, {% if request.path == "/gas_analysis" %}5000{% else %}1000{% endif %});
 
@@ -245,11 +245,11 @@
                         toastr.clear();
                         {% if request.path == "/chat_control" %}
                             if (playNotification) {
-                                $('#chatAudio')[0].play();
+                                $('#messageAudio')[0].play();
                                 toastr.info("", "New message");
                             }
                         {% else %}
-                            $('#chatAudio')[0].play();
+                            $('#messageAudio')[0].play();
                             toastr.info(msg.message.slice(0, 35) +
                                 '... <button type="button" class="btn btn-outline-dark float-end">open</button>',
                                 "New message:",
@@ -289,9 +289,14 @@
         {% endblock %}
     </div>
 </section>
-<audio id="chatAudio">
+<audio id="messageAudio">
+    <source src="{{ url_for('static',filename='sounds/chat.mp3') }}" type="audio/mpeg">
+</audio>
+
+<audio id="notificationAudio">
     <source src="{{ url_for('static',filename='sounds/notification.mp3') }}" type="audio/mpeg">
 </audio>
+
 <script src="{{ url_for('static',filename='js/fns.js') }}">
 </script>
 
@@ -317,7 +322,8 @@
         }
         setLangExpStatus(g_lang);
         // decrease notification volume to 50%
-        $("#chatAudio").volume = 0.5;
+        $("#notificationAudio").volume = 0.8;
+        $("#messageAudio").volume = 0.5;
     });
 
     function loadControlPanel(jsonResponse, laserlockStatus = "", g_lang = "") {

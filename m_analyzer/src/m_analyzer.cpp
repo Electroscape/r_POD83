@@ -1,6 +1,6 @@
 /**
  * @file m_analyzer.cpp
- * @author Christian Walter (pauseandplay@cybwalt.de)
+ * @author Christian Walter (pauseandplay@cybwalt.de) & Martin Pek (martin.pek@web.de)
  * @brief controls lights
  * inputs via RFID 
  * @version 0.1
@@ -9,7 +9,11 @@
  * @copyright Copyright (c) 2023
  * 
  *  TODO: 
- * 
+ *  🔲 Consider cutting down on amount of stages, this might just be too annoying to trace and easier to read with less potential corners
+ *  🔲 Split passwords into two arrays
+ *  🔲 is waitfordish5 necessary? maybe it could be be simpler to remove it
+ *  🔲 make the checksum bitshifted, much shorter 
+ * false positives?
  *  Q: 
  * 
  */
@@ -26,26 +30,26 @@ PCF8574 inputPCF;
 STB_MOTHER Mother;
 STB_MOTHER_IO MotherIO;
 
-int stage = setupStage;
+int stage = stages::start;
 // since stages are single binary bits and we still need to d some indexing
-int stageIndex=0;
+int stageIndex = 0;
 // doing this so the first time it updates the brains oled without an exta setup line
 int lastStage = -1;
 // Indicates the status of Light during runMode
+
 int light_setting = 0;
 int color_hint_active = 0; 
-int password_stage_start = 0; // indicates the start index of the password array
-int password_stage_amount = 4; // inital Password Amount at Stage 1 increased every stage
 int setStrips = 0;
 
 struct RFID_Check {
     char* str;
     int status = 0; // 0 = no Card; 1 = Card; 2 = right Card
     int status_old = 0; 
+    bool ks_present = false;
+    bool updated = false;    // everytime there is apartial load it resets, starting on false will prevent evaluation after bootup
 };
 
 RFID_Check RFID[4];
-unsigned long lastRfidCheck = millis();
 unsigned long nextLightTimer = millis(); // timer for giving non blocking LightHint
 
 
@@ -69,77 +73,76 @@ void setStageIndex() {
 }
 
 
-bool passwordInterpreter() {
-    bool found  = false;
+void passwordInterpreter() {
+    RFID->ks_present = false;
 
     for (int i_RFID = 0; i_RFID < 4; i_RFID++) {
         char* password = RFID[i_RFID].str;
-        RFID[i_RFID].status = 0; // reset status         
+        RFID[i_RFID].status = 0;       
 
-        // Special Conditions
-        if ((stage == runMode3 ) && (strncmp("P1 ", password, strlen("P1 ") ) == 0)){   
-            found = true;         
-            RFID[i_RFID].status = 1; // set P1 because not in Password List            
-        }
-
-        for (int passNo=password_stage_start; passNo < password_stage_amount; passNo++) {
+        for (int passNo=0; passNo < sampleCount; passNo++) {
             if ( ( strlen(passwords[passNo]) == strlen(password) ) && strncmp(passwords[passNo], password, strlen(passwords[passNo]) ) == 0) {       
-                found = true;
-                if (passNo - password_stage_start == i_RFID) { 
+                if (passNo == i_RFID) { 
                     RFID[i_RFID].status = 2; // Dish presented and at right position
                 } else {
                     RFID[i_RFID].status = 1; // Dish presented but at wrong position
                 }
-            }            
+            } else if ( (strlen(passwords[4]) == strlen(password) ) && strncmp(passwords[4], password, strlen(passwords[4]) ) == 0)  {
+                // Serial.print("Sample outside List detected: ");
+                // Serial.println(password);
+                RFID->ks_present = true;
+                if (i_RFID == 0) {
+                    RFID[i_RFID].status = 2; // Dish presented and at right position
+                } else {
+                    RFID[i_RFID].status = 1; // Dish presented and at right position
+                }
+            }
         }   
     }
-    return found;
 }
 
 
 /**
- * @brief Gives the Color Hint at the synthesizer same for runmode2 and runmode3
+ * @brief Gives the Color Hint, runs indefinetely unless cancelled
  * @param  
 */
-void color_hint () {
-    unsigned long actTime = millis();
-
-    if ((nextLightTimer > actTime ) || (color_hint_active == 0)) { return; } // only new light setting if timer is reached
+void color_hint() {
+    if ((nextLightTimer > millis() ) || (color_hint_active == 0)) { return; } // only new light setting if timer is reached
 
     switch (light_setting) {
         case (red_blinking):
             LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            nextLightTimer += 1400;
+            nextLightTimer = millis() + (unsigned long) 1400;
             light_setting += 1;
         break;
 
         case (turn_off):
             LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
-            nextLightTimer += 300;
+            nextLightTimer = millis() + (unsigned long) 500;
             light_setting += 1;
         break;
         
         case (hint_place1):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrRed, 100, PWM::set1);  
-            nextLightTimer += 600;
+            nextLightTimer = millis() + (unsigned long) 600;
             light_setting += 1;
         break;
         
         case (hint_place2):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrBlue, 100, PWM::set2);  
-            nextLightTimer += 600;
+            nextLightTimer = millis() + (unsigned long) 600;
             light_setting += 1;
         break;
         
         case (hint_place3):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrYellow, 100, PWM::set3);  
-            nextLightTimer += 600;
+            nextLightTimer = millis() + (unsigned long) 600;
             light_setting += 1;
         break;
         
         case (hint_place4):
             LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrGreen, 100, PWM::set4);  
-            nextLightTimer += 1600;
+            nextLightTimer = millis() + (unsigned long) 1600;
             light_setting = red_blinking;
         break;
     }
@@ -148,12 +151,59 @@ void color_hint () {
 
 
 /**
+ * @brief  
+ * @todo consider making this non blocking
+*/
+void analyzeFx() {
+    Serial.println("analyzeFx");
+    wdt_reset();
+    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
+    delay(300);
+    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrBlue, 50, 100, 100, 100, PWM::set1_2_3_4); 
+    delay(300);
+    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrPurple, 50, 100, 100, 100, PWM::set1_2_3_4); 
+    delay(300);
+    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrYellow, 50, 100, 100, 100, PWM::set1_2_3_4); 
+    delay(300);
+    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
+    delay(300);
+    LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);
+    wdt_reset();
+}
+
+/**
+ * @brief not all slots are present, simply highlights the last inserted card
+ * @TODO handle coming back from analyzing, only keep the latest change on white rest shall be off
+*/
+void partial_update() {
+    if (!RFID->updated) {
+        LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // turn off all LEDs
+        for (int i_RFID = 0; i_RFID < 4; i_RFID++) {
+            RFID[i_RFID].status_old = RFID[i_RFID].status; 
+        }
+    } else {
+        for (int i_RFID = 0; i_RFID < 4; i_RFID++) {      
+            LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);    
+            if (RFID[i_RFID].status == RFID[i_RFID].status_old) { continue; }
+            if (RFID[i_RFID].status > 0) {  // if the Brain can handle it this part can be changed to PWM::setX_X_X_X, counting with bitshift
+                LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrWhite, 10, 1 << i_RFID);   // use Bitshift to turn on LED 
+                delay(100);
+            }
+            RFID[i_RFID].status_old = RFID[i_RFID].status; 
+        }
+    }
+    RFID->updated = true;
+    color_hint_active = 0;
+    light_setting = 0;
+}
+
+
+/**
  * @brief handles evalauation of codes and sends the result to the access module
  * @param cmdPtr 
 */
 void handleResult(char *cmdPtr) {
-    //Serial.println(cmdPtr);
-    // get all four RFID strings
+
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
     RFID[0].str = cmdPtr;
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
@@ -162,122 +212,83 @@ void handleResult(char *cmdPtr) {
     RFID[2].str = cmdPtr;
     cmdPtr = strtok(NULL, KeywordsList::delimiter.c_str());
     RFID[3].str = cmdPtr;
-    bool changed = false;
 
-    if (cmdPtr == NULL) { return; }
-
-    // Do as planned
     passwordInterpreter();
     int checkSum = 0;
-    /* Serial.print(RFID[0].status);
+
+    checkSum = RFID[0].status + RFID[1].status + RFID[2].status + RFID[3].status;
+
+
+    Serial.print(RFID[0].status);
     Serial.print(RFID[1].status);
     Serial.print(RFID[2].status);
-    Serial.println(RFID[3].status); */
-    checkSum = RFID[0].status + RFID[1].status + RFID[2].status + RFID[3].status;
-   /*  Serial.print("Stage: ");
-    Serial.println(stage);
- */
-    wdt_disable();          
-    switch (stage) {
+    Serial.println(RFID[3].status);
 
-        case runMode1:// Stage runMode 1 if a Dish is placed LEDs should get white, blink red and stay at this position on white until all 4 dishes are placed
-            if (RFID[0].status > 0 && RFID[1].status > 0 && RFID[2].status > 0 && RFID[3].status > 0) { //change stage if all dishes are placed
-                stage = analyze;
-                return;
-            }
-            for (int i_RFID = 0; i_RFID < 4; i_RFID++) { // Check all RFIDs if a new Dish is presented set  to white
-                if (RFID[i_RFID].status == RFID[i_RFID].status_old) { continue; }//only if status of RFID has changed, no return because all RFID neede to be checked!
-                
-                changed = true;
-                if (RFID[i_RFID].status > 0) { //blinking if dish is new 
-                    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
-                    delay(1300);   
-                }                        
-            }
-            if (changed) { // only if something has changed, two for loops for checking and if necessary change the lights
-                for (int i_RFID = 0; i_RFID < 4; i_RFID++) { //check status to set the presented ones to white                     
-                    RFID[i_RFID].status_old = RFID[i_RFID].status; 
-                    if (RFID[i_RFID].status > 0) {  // if the Brain can handle it this part can be changed to PWM::setX_X_X_X, counting with bitshift
-                        LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrWhite, 100, 1 << i_RFID);   // use Bitshift to turn on LED 
-                    } else { // turn off this one LED
-                        LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrBlack, 100, 1 << i_RFID); // use Bitshift to turn off LED
-                    }  
-                }
-            }  
-        break;
+    bool allSlotsPresent = true;
 
-        case runMode2: // without the light up and analyze, it should blink red for short if it is the wrong combination and gives color hint
-            if (checkSum == 8) { // Right Solution found -> change state
-                    color_hint_active = 0;
-                    stage = firstSolution;
-                    password_stage_start = password_stage_amount; // reset password start counter
-                    password_stage_amount += 1; // Only P5 during waitfor dish 5
-                    return;
-            }
-            if (RFID[0].status > 0 && RFID[1].status > 0 && RFID[2].status > 0 && RFID[3].status > 0) { // only if 4 dishes are presented is always wrong solution, because if CheckSum Condition before
-                    if (color_hint_active == 0) { // start color_hint
-                        color_hint_active = 1;
-                        light_setting = 0; // always start with red blinking
-                        nextLightTimer = millis();
-                    }
-                return;     
-            } else {
-                LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // black if one dish is removed
-                color_hint_active = 0; // and stopping colorhint
-            }
-        break;
+    for (int i_RFID = 0; i_RFID < 4; i_RFID++) {   
+        if (RFID[i_RFID].status == 0) {
+            // Serial.print(RFID[i_RFID].status);
+            allSlotsPresent = false;
+            break;
+        }
+        // Serial.println();
+    }    
 
-        case waitfordish5: // shows nothing until Dish5 is presented
-            for (int i_RFID = 0; i_RFID < 4; i_RFID++) { //check all RFIDs for Dish 5
-                if (RFID[i_RFID].status > 0) { // if anny RFID has Dish5 change the stage
-                    stage = runMode3;
-                    password_stage_start = password_stage_amount; // reset password start counter
-                    password_stage_amount += 4; // all four dishes
-                    Serial.println("Dish5 found");                      
-                    LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrWhite, 125, 125, 100, 100, PWM::set1_2_3_4); 
-                    delay(1000);
-                    return;
-                }
-            }
-        break;
+    if (!allSlotsPresent) {
+        Serial.println("Running partial");
+        partial_update();
+        return;
+    }
 
-        case runMode3: // without the light up and analyze, it should blink red for short if it is the wrong combination and gives color hint, at the moment technical the same as runmode2
-            if (checkSum == 8) { // Right Solution found -> change state
-                color_hint_active = 0;
-                stage = secondSolution;
-                return;
-            }
-            if (RFID[0].status > 0 && RFID[1].status > 0 && RFID[2].status > 0 && RFID[3].status > 0) { // only if 4 dishes are presented is always wrong solution, because if CheckSum Condition before
-                    if (color_hint_active == 0) { // start color_hint
-                        color_hint_active = 1;
-                        light_setting = 0; // always start with red blinking
-                        nextLightTimer = millis();
-                    }
-                return;     
-            } else {
-                LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // black if one dish is removed
-                color_hint_active = 0;
-            }
-        break;                
-    }                 
-    wdt_enable(WDTO_8S);  
+    if (stage >= firstSolution && !RFID->ks_present) { 
+        // Serial.println("KS is not present in later stage");    
+        return; 
+    }
+
+    if (!RFID->updated) {
+        return;
+    }
+    RFID->updated = false;
+    
+    Serial.println("Running FULL");
+
+    analyzeFx();
+    wdt_disable();        
+    
+    // not every piece correctly placed
+    if (checkSum < 8) { 
+        LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
+        color_hint_active = 1; 
+        delay(500); 
+    } else {
+        stage = stage << 1;
+        color_hint_active = 0;
+        
+    }
+    nextLightTimer = millis();
+    wdt_enable(WDTO_8S);
 }
+
 
 // again good candidate for a mother specific lib
 bool checkForRfid() {
-
-    if (strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
+    if ( strncmp(KeywordsList::rfidKeyword.c_str(), Mother.STB_.rcvdPtr, KeywordsList::rfidKeyword.length() ) != 0) {
+        // Serial.print("no rfid keyword: ");
+        // Serial.println(res);
         return false;
     } 
-    Serial.println( Mother.STB_.rcvdPtr);
+    // Serial.println("Found RFID keyword");
+    // Serial.println(Mother.STB_.rcvdPtr);
     char *cmdPtr = strtok(Mother.STB_.rcvdPtr, KeywordsList::delimiter.c_str());
     handleResult(cmdPtr);
     wdt_reset();
     return true;
 }
 
+
 void interpreter() {  
-    while (Mother.nextRcvdLn()) {
+    if (Mother.nextRcvdLn()) {
         checkForRfid();
     }
 }
@@ -297,63 +308,47 @@ void setupRoom() {
     LED_CMDS::setStripToClr(Mother, 0, LED_CMDS::clrYellow, 100, set4);
     delay(500);
     LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // turn off all LEDs
-   wdt_enable(WDTO_8S);
+    wdt_enable(WDTO_8S);
 }
+
 
 /**
  * @brief  Light actions after stage has changed
 */
 void stageActions() {
+
+    wdt_disable(); 
     wdt_reset();
 
+    if (stage & (firstSolution + secondSolution)) {
+        LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
+        delay(200);
+    }
+
     switch (stage) {
-        case setupStage:
-            setupRoom();
-            stage = runMode1;
-        break;
-
-        case analyze: // set the 4 dishs until right setting     
-            wdt_disable();    
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrRed, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1200);
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrBlue, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1200);
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrPurple, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1200);
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrYellow, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1200);
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(1200);
-            LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100);
-            wdt_enable(WDTO_8S);
-            stage = runMode2;    
-        break;
-
-        case firstSolution: // After the first 4 dishes are placed at the right position, sends first Signal to arbiter
-            wdt_disable();
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(200);
+        case firstSolution:
             MotherIO.setOuput(firstSolutionEvent); // Release the Killswitch (Dish5)
-            delay(100);
-            MotherIO.outputReset();
-            delay(6000);
-            wdt_enable(WDTO_8S);
-            LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); // torun off until dish 5
-            stage = waitfordish5;
         break;
 
         case secondSolution: // After the first 4 dishes are placed at the right position, sends second Signal to arbiter
-            wdt_disable();
-            LED_CMDS::blinking(Mother, 0, LED_CMDS::clrBlack, LED_CMDS::clrGreen, 50, 100, 100, 100, PWM::set1_2_3_4); 
-            delay(200);
             MotherIO.setOuput(secondSolutionEvent); // Enables the upload 
-            delay(100);
-            MotherIO.outputReset();
-            delay(5000);
-            wdt_enable(WDTO_8S);
-            LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrGreen, 50); // torun off until dish 5
         break;
     }
+
+    delay(100);
+    MotherIO.outputReset();
+
+    // game is completed, the analyzer freezes at this point and waits for a restart
+    if (stage == secondSolution) {
+        while (true) {}
+    }
+
+    delay(6000);
+    LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
+    delay(100);
+    LED_CMDS::setAllStripsToClr(Mother, 0, LED_CMDS::clrBlack, 100); 
+
+    wdt_enable(WDTO_8S);
 }
 
 
@@ -377,10 +372,8 @@ void stageUpdate() {
     }
     // important to do this before stageActions! otherwise we skip stages
     lastStage = stage;
-    //Mother.setFlags(0, flagMapping[stageIndex]);
     stageActions();
 }
-
 
 
 void setup() {
@@ -397,16 +390,22 @@ void setup() {
     wdt_reset();
 }
 
+
+
+
 void loop() {
-    color_hint();
+    /*
+    the check interval already exists on the brain, so i don't see a reason not to poll
     if (millis() - lastRfidCheck < rfidCheckInterval) {
         return;
     } 
-    lastRfidCheck = millis();
+    */
     Mother.rs485PerformPoll();
     interpreter();
+    color_hint();
     stageUpdate();
     wdt_reset();
+    delay(10);
 }
 
 

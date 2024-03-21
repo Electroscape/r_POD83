@@ -5,6 +5,13 @@
 
 {% block chat_js %}
     <script type="text/javascript">
+        var countDownDate = Date.now() + {{g_config.version.game_duration}} * 1000 * 60;
+
+        if ({{g_config.startTime}}) {
+            console.log({{g_config.startTime}})
+            countDownDate = {{g_config.startTime}} * 1000 + {{g_config.version.game_duration}} * 1000 * 60;
+        }
+
         function sendMessage(event) {
             event.preventDefault();
             let user_name = $("#dm_sender").val();
@@ -26,10 +33,15 @@
         })
 
         socket.on('response_to_fe', function (msg) {
+            console.log(msg)
             displayMessage(msg)
             if (msg.cmd == "loadingbar") {
                 var inputLoadingBar = document.getElementById("loadingInput");
                 inputLoadingBar.value = msg.message
+            }
+            if (msg.cmd == "startTimer") {
+                console.log("startTimer event")
+                countDownDate = Date.now() + {{g_config.version.game_duration}} * 1000 * 60;
             }
         })
 
@@ -275,7 +287,7 @@
         </div>
         <br>
         <h3>Server</h3>
-        <div class="outer">
+        <div>
             <div class="label-txt">
                 reset:
                 <div class="">
@@ -289,7 +301,37 @@
                     </label>
                 </div>
             </div>
+
+            <div>
+                Unlock samples:
+                <label for="ser_reset">
+                    <input name="server_unlock_1" type="button" value="unlock 1"
+                           onclick="onClickTerminal(name)"/>
+                    <input name="server_unlock_2" type="button" value="unlock 2"
+                           onclick="onClickTerminal(name)"/>
+                    <input name="server_unlock_3" type="button" value="unlock 3"
+                           onclick="onClickTerminal(name)"/>
+                    <input name="server_unlock_4" type="button" value="unlock 4"
+                           onclick="onClickTerminal(name)"/>
+                </label>
+                <div>
+                    Released samples:
+                    <label for="ser_reset">
+                        <input name="server_release_1" type="button" value="Release 1"
+                               onclick="onClickTerminal(name)"/>
+                        <input name="server_release_2" type="button" value="Release 2"
+                               onclick="onClickTerminal(name)"/>
+                        <input name="server_release_3" type="button" value="Release 3"
+                               onclick="onClickTerminal(name)"/>
+                        <input name="server_release_4" type="button" value="completed"
+                               onclick="onClickTerminal(name)"/>
+                    </label>
+                </div>
+            </div>
+
         </div>
+
+
     </div>
     <br>
     <div>
@@ -387,6 +429,8 @@
         <button class="btn btn-outline-light" name="display_security" onclick="onClickTrigger(name)">Stream security cam
         </button>
         <button class="btn btn-outline-light" name="play_biovita" onclick="onClickTrigger(name)">Biovita Advertisement
+        </button>
+        <button class="btn btn-outline-light" name="play_truth" onclick="onClickTrigger(name)">The Truth
         </button>
     </div>
     <br>
@@ -495,11 +539,41 @@
             class="form-control form-icon-trailing"/>
         </div>
         <button onclick="onClickSet()">set</button>
+
+        <h1 id="timeDisplay">0:00:00</h1>
+
     </div>
 {% endblock %}
 
+
 {% block add_js %}
     <script type="text/javascript">
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+
+            // Get today's date and time
+            var now = new Date().getTime();
+
+            // Find the distance between now and the count down date
+            var distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            // var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            minutes = Math.abs(minutes)
+            seconds = Math.abs(seconds)
+            minuteStr = String(minutes).padStart(2, '0');
+            secondStr = String(seconds).padStart(2, '0');
+
+            document.getElementById("timeDisplay").innerHTML = hours + ":" + minuteStr + ":" + secondStr;
+
+            // If the count down is over, write some text
+        }, 1000);
+
+
         // load history messages
         $.ajax({
             type: 'POST',

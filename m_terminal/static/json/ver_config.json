@@ -1,6 +1,7 @@
 {
   "server": {
-    "airlock_events": false
+    "airlock_events": false,
+    "game_duration": 90
   },
   "TR1": {
     "foscam": {
