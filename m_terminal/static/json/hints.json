@@ -1,6 +1,6 @@
 {
   "how_to": ["writing a hint in bracket without a second string highlights the hint",
-    "adding a second string makes that hint highlighted to the given location",
+    "adding a bracket with a second string makes that hint localized to the given location",
     "st being a Stuttgart only hint writing the ST capitalized makes it highlighted and location specific, same for hh and HH"
   ],
   "rachel": {
@@ -29,7 +29,8 @@
       "Nicht vergessen, Euer Bio-Vita zu Euch zu nehmen. ",
       "Am Terminal gibt es für jeden Forschungs-POD Informationen über den Maintenance Locker.",
       "Laut Firmenprotokoll sollen sich in jedem POD an Terminal 1 Informationen über die Mitarbeitenden finden.",
-      "David hat es nicht immer ernst genommen, dass Essen und Trinken im Reinraum verboten ist.",
+      ["Wir konnten David erreichen. Er hilft uns beim Vorgehen gegen Rachel und hat uns seinen Spindcode gegeben: 5638", "st"],
+      ["David hat es nicht immer ernst genommen, dass Essen und Trinken im Reinraum verboten ist.", "hh"],
       "Verschafft Euch endlich Zugang zum Labor!",
       "Unsere Mitarbeitenden haben die Anweisung, ihre Zugangskarte aus Sicherheitsgründen immer bei sich zu tragen.",
       "Die Verbindung wurde physisch getrennt. Zwei rote Kabel überbrücken die Verbindungen von oben nach unten.",
@@ -46,6 +47,8 @@
       "Uns wurde zugetragen, dass David Coverstone sich Notizen zu Experimenten in seinem Notizbuch gemacht hat.",
       "Beachtet die Zugangsbeschränkungen. Zum Glück hatte David Coverstone Rachel Taylor nicht getraut und ihre Zugänge in weiser Voraussicht eingeschränkt.",
       "Gute Arbeit! Verschafft euch Zugang zum Reinraum, um den Killswitch zu analysieren und die Daten hochzuladen!",
+      ["Der Code für den Reinraum ist 9649.", "ST"],
+      ["Reinraum wurde dekontaminiert... Der Code für den Reinraum ist 9649.", "HH"],
       ["Mit dem blauen USB-Stick erreicht uns der Upload."],
       ["Traut ja nicht der Terroristin Rachel Taylor. Sie muss ausgeschaltet werden."],
       ["Es sieht danach aus, als hätte Rachel Taylor einen weiteren USB-Stick eingeschleust, um Daten außerhalb der Elancell Network zu versenden. Dies ist natürlich höchst gefährlich."],
@@ -62,7 +65,8 @@
       "Do not forget to take your Bio-Vita.",
       "The terminal contains information regarding the maintenance locker of the pods.",
       "Terminal 1 contains information regarding the personnel of Elancell.",
-      "David didn't always take it seriously that eating and drinking in the cleanroom is forbidden.",
+      ["We were able to reach out to David. He is helping us to pursue Rachel and gave us his locker code. It is 5638.", "st"],
+      ["David didn't always take it seriously that eating and drinking in the cleanroom is forbidden.", "hh"],
       "Gain access to the laboratory!",
       "Due to security reasons, all employees have their ID cards permanently attached to their lab coats.",
       "The physical connection has been severed. Replace the two missing cables with the spares from the maintenance locker top to bottom.",
@@ -79,6 +83,8 @@
       "We have been informed that David Coverstone used his notebook to document parts of the experiments he was involved in.",
       "Pay attention to the access-rights. Luckily, David Coverstone suspected something was off and restricted Rachel Taylor’s access rights.",
       "Good work! Gain access to the clean room to analyze the kill switch and send us the results!",
+      ["Clean room has been decontaminated... The code for the clean room is 9649.", "HH"],
+      ["The code for the clean room is 9649.", "ST"],
       ["The blue USB-stick is the gateway for the upload to reach us securely."],
       ["Do not trust Rachel Taylor. She is a terrorist. Do not forget your training."],
       ["It appears Rachel Taylor has smuggled an illegal gateway into the pod to transfer data outside the Elancell network. We do not have to tell you that we are dealing with an extreme security risk."],
@@ -101,12 +107,10 @@
   },
   "system": {
     "de": [
-      ["Reinraum wurde dekontaminiert... Der Code für den Reinraum ist 9649."],
       "Verbindung mit HQ verloren",
       "Verbindung mit HQ wieder hergestellt"
     ],
     "en": [
-      ["Clean room has been decontaminated... The code for the clean room is 9649."],
       "The connection with the HQ has been lost.",
       "The connection with the HQ has been re-established."
     ]

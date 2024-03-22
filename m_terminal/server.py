@@ -134,7 +134,6 @@ def filter_hints():
                     if hint[1].islower():   # local hint but not highlighted
                         hint = hint[0]
                 new_list.append(hint)
-            print(new_list)
             hint_msgs[key][lang_key] = new_list
 
 
