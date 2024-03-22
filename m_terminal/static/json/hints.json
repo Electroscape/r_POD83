@@ -1,4 +1,8 @@
 {
+  "how_to": ["writing a hint in bracket without a second string highlights the hint",
+    "adding a second string makes that hint highlighted to the given location",
+    "st being a Stuttgart only hint writing the ST capitalized makes it highlighted and location specific, same for hh and HH"
+  ],
   "rachel": {
     "de": [
       ["Ich bins, Rachel, zum Glück habe ich Euch überzeugen können."],
