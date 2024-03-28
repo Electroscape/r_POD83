@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.34
+ * added option to split hint configuration by location
+
 ## v0.33
  * added separate sound for anything but message
  * option to override gasriddle 
