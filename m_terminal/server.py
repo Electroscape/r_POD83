@@ -116,6 +116,27 @@ class StatusVars:
 game_status = StatusVars()
 
 
+def filter_hints():
+    global hint_msgs
+    try:
+        del hint_msgs["how_to"]
+    except KeyError:
+        pass
+    for key, value in hint_msgs.items():
+        for lang_key, hint_list in value.items():
+            new_list = []
+            for hint in hint_list:
+                if type(hint) is not str and len(hint) > 1:
+                    if hint[1].lower() == "hh" and version.get("airlock_events"):
+                        continue
+                    elif hint[1].lower() == "st" and not version.get("airlock_events"):
+                        continue
+                    if hint[1].islower():   # local hint but not highlighted
+                        hint = hint[0]
+                new_list.append(hint)
+            hint_msgs[key][lang_key] = new_list
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     config = {
@@ -453,6 +474,8 @@ def loadingbar_timer():
 
 
 progressbar_task = sio.start_background_task(loadingbar_timer)
+filter_hints()
+get_start_time()
 
 
 @app.route('/favicon.ico')
@@ -462,6 +485,5 @@ def favicon():
 
 
 if __name__ == "__main__":
-    get_start_time()
     sio.run(app, debug=True, host='0.0.0.0', port=5500, engineio_logger=True)
     # app.run(debug=True, host='0.0.0.0', port=5500)
