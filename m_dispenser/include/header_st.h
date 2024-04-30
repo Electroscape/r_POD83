@@ -1,6 +1,6 @@
 #pragma once
 
-// #define Hamburg 1
+#define Hamburg 1
 // purely for testing and easier debugging
 // #define IgnoreLeds 1
 
