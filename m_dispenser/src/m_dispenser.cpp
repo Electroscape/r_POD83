@@ -110,7 +110,7 @@ void stageActions() {
 
     switch (stage) {
         case setupStage: 
-            DishCount = 4;
+            DishCount = 0;
             #ifndef Hamburg
                 #ifndef IgnoreLeds
                 LED_CMDS::setAllStripsToClr(Mother, LED_Brain , LED_CMDS::clrWhite, 20);
@@ -134,8 +134,10 @@ void stageActions() {
             #endif
             #ifdef Hamburg
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
-                delay(500);
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set2);
+                Mother.motherRelay.digitalWrite(pump1, PumpOn);
+                Mother.motherRelay.digitalWrite(pump2, PumpOn);
+                delay(4000);
             #endif
             func_move_servo(Servo_Brain2,0);   
         break;
@@ -153,8 +155,10 @@ void stageActions() {
             #endif
             #ifdef Hamburg
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
-                delay(500);
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set2);
+                Mother.motherRelay.digitalWrite(pump1, PumpOn);
+                Mother.motherRelay.digitalWrite(pump2, PumpOn);
+                delay(4000);
             #endif
             func_move_servo(Servo_Brain1, 3);
         break;
@@ -171,8 +175,11 @@ void stageActions() {
                 delay(800);
             #endif
             #ifdef Hamburg
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set1);
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set2);
-                delay(500);
+                Mother.motherRelay.digitalWrite(pump1, PumpOn);
+                Mother.motherRelay.digitalWrite(pump2, PumpOn);
+                delay(4000);
             #endif
             func_move_servo(Servo_Brain1, 2);
         break;
@@ -189,8 +196,11 @@ void stageActions() {
                 delay(800);
             #endif
             #ifdef Hamburg
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set1);
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set2);
-                delay(500);
+                Mother.motherRelay.digitalWrite(pump1, PumpOn);
+                Mother.motherRelay.digitalWrite(pump2, PumpOn);
+                delay(4000);
             #endif
             func_move_servo(Servo_Brain1, 1);
         break;
@@ -212,61 +222,37 @@ void stageActions() {
             #endif
 
             #ifdef Hamburg
-                for (int i=1; i <= 5; i++) {
-                    
-                    if (i % 2 == 0) {
-                        Mother.motherRelay.digitalWrite(pump1, PumpOff);
-                        Mother.motherRelay.digitalWrite(pump2, PumpOff);
-                    } else {
-                        Mother.motherRelay.digitalWrite(pump1, PumpOn);
-                        Mother.motherRelay.digitalWrite(pump2, PumpOn);
-                    }
-                  
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set2);
-                    delay(20);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
-                    delay(500/i);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set2);
-                    delay(20);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
-                    delay(500/i);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set2);
-                    delay(20);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
-                    delay(500/i);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set2);
-                    delay(20);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set1);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
-                    delay(500/i);
-                }
+                Mother.motherRelay.digitalWrite(pump1, PumpOn);
+                Mother.motherRelay.digitalWrite(pump2, PumpOn);
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set2);
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1);
+                delay(125);
 
+                for (int i=1; i <= 5; i++) {
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1);
+                    delay(375/i);
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set2);
+                    delay(125/i);
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1);
+                    delay(375/i);
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set2);
+                    delay(125/i);
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set1);
+                    delay(375/i);
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set2);
+                    delay(125/i);
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set1);
+                    delay(375/i);
+                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set2);
+                    delay(125/i);
+                }
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set1);
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set2);
+                delay(125);
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set1);
+                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set2);
+                delay(500);
 
-                func_move_servo(Servo_Brain1, 0);
-                Mother.motherRelay.digitalWrite(pump1, PumpOn);
-                Mother.motherRelay.digitalWrite(pump2, PumpOn);
-                delay(500);
-                Mother.motherRelay.digitalWrite(pump1, PumpOff);
-                Mother.motherRelay.digitalWrite(pump2, PumpOff);
-                delay(500);
-                Mother.motherRelay.digitalWrite(pump1, PumpOn);
-                Mother.motherRelay.digitalWrite(pump2, PumpOn);
-                delay(500);
-                Mother.motherRelay.digitalWrite(pump1, PumpOff);
-                Mother.motherRelay.digitalWrite(pump2, PumpOff);
-                Mother.motherRelay.digitalWrite(pump1, PumpOn);
-                Mother.motherRelay.digitalWrite(pump2, PumpOn);
-                delay(500);
-                delay(8000);
             #endif
             func_move_servo(Servo_Brain1, 0);
         break;
@@ -318,8 +304,14 @@ void stageActions() {
                 Mother.motherRelay.digitalWrite(pump5, open); 
             #endif      
         break;
-
     }
+
+    #ifdef Hamburg
+        delay(2000);
+        Mother.motherRelay.digitalWrite(pump1, PumpOff);
+        Mother.motherRelay.digitalWrite(pump2, PumpOff);
+    #endif
+
     wdt_enable(WDTO_8S);
     wdt_reset();
     Serial.println("ending stage");
