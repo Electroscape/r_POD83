@@ -190,7 +190,7 @@ def switch_language():
 
 def get_posts() -> dict:
     # filter posts by language
-    posts = [p for p in flatpages if p.meta["lang"] == "EN/DE" or p.meta["lang"].lower() == g_lang]
+    posts = [p for p in flatpages if p.meta["lang"] == "EN/DE" or p.meta.get("lang", "DE").lower() == g_lang]
     # create list of jsons for posts
     posts_json = []
     for p in posts:
