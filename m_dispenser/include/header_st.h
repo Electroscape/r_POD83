@@ -1,6 +1,6 @@
 #pragma once
 
-// #define Hamburg 1
+#define Hamburg 1
 // purely for testing and easier debugging
 // #define IgnoreLeds 1
 
@@ -10,8 +10,13 @@
 #define closed 1
 #define open   0
 
+#ifndef Hamburg
 #define PumpOn      1
 #define PumpOff     0
+#else
+#define PumpOn      0
+#define PumpOff     1
+#endif
 
 const unsigned long beltOperationTime = 17000;
 
@@ -70,11 +75,11 @@ enum relays {
 };
 
 enum relayInits {
-    pump1_init = PumpOn,
-    pump2_init = PumpOn,
-    pump3_init = PumpOn,
-    pump4_init = PumpOn, 
-    pump5_init = PumpOn, 
+    pump1_init = PumpOff,
+    pump2_init = PumpOff,
+    pump3_init = PumpOff,
+    pump4_init = PumpOff, 
+    pump5_init = PumpOff, 
     Relay6_init = closed,  
     Relay7_init = closed,  
     Relay8_init = closed, 
