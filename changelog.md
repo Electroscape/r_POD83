@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.35
+ * updated Hamburg dispenser with additional features
+ * fixed a dictionary KeyError within wiki page
+
 ## v0.34
  * added option to split hint configuration by location
 
