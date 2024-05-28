@@ -294,6 +294,9 @@ def inverted_triggered(event_value, active_inputs):
                 return False
     return True
 
+def handle_timed_events(active_inputs):
+    pass
+
 
 def reset_gpios():
     # print(reset_gpios_dicts)
