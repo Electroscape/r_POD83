@@ -39,18 +39,75 @@ STB_MOTHER_IO MotherIO;
 
 int lastState = -1;
 
+unsigned long last_flutter_time = millis();
+unsigned long repeat_time = random(180000, 240000);
+unsigned long next_flutter_step = 0;
+unsigned long last_flutter_step = 0;
+int flutter_color_possible = 0; // 0=nothing, 1=red, 2=blue
+bool flutter_possible_general = true;
+int flutter_activity_count = 1;
+int flutter_activity_end = random(10, 15);
+
 
 void enableWdt() {
     wdt_enable(WDTO_8S);
 }
 
 
+void flutter() {
+
+    unsigned long now_time = millis();
+
+    //flutter blue
+    if (now_time - last_flutter_time > repeat_time && now_time - last_flutter_step >= next_flutter_step && flutter_color_possible > 0 && flutter_possible_general == true){
+
+        if(flutter_activity_count % 2 == 0){
+            if(flutter_color_possible == 1){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, random(70, 100));
+            }
+            if(flutter_color_possible == 2){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, random(70, 100));
+            }
+            next_flutter_step = random(20, 150);
+        }
+        else{
+            if(flutter_color_possible == 1){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, random(0, 30));
+            }
+            if(flutter_color_possible == 2){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, random(0, 30));
+            }
+            next_flutter_step = random(20, 150);
+        }
+        last_flutter_step = millis();
+        flutter_activity_count = flutter_activity_count + 1;
+        
+        if(flutter_activity_count == flutter_activity_end){
+            if(flutter_color_possible == 1){
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrGreen, 0, LED_CMDS::clrRed, 40, 2000, 1);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrGreen, 0, LED_CMDS::clrRed, 40, 2000, 2);
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 100);
+            }
+            if(flutter_color_possible == 2){
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlue, 0, LED_CMDS::clrBlue, 55, 2000, 1);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlue, 0, LED_CMDS::clrBlue, 55, 2000, 2);
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+            }
+            flutter_activity_count = 1;
+            repeat_time = random(180000, 240000);
+            next_flutter_step = 0;
+            last_flutter_time = now_time;
+            flutter_activity_end = random(10, 15);
+        }
+    }
+}
+
 
 void handleInputs() {
 
     int result = MotherIO.getInputs();
 
-    if (lastState == result) {
+    if (lastState == result || result == 0) {
         return;
     }
     lastState = result;
@@ -66,13 +123,18 @@ void handleInputs() {
         case lightNormal: 
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, clrLight, 60);
+            flutter_color_possible = 0;
         break;
         case lightRed:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 40);
-            
+            flutter_color_possible = 1;
         break;
         case lightBlue:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 55);
+            flutter_color_possible = 2;
+        break;
+        case flutteractivate:
+            flutter_possible_general = true;
         break;
         case lightRachelAnnouncement:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
@@ -209,14 +271,18 @@ void setup() {
 
     // technicall 3 but for the first segments till unlocked there is no need
     Mother.rs485SetSlaveCount(0);
-  
+
+
+
     wdt_reset();
+
 }
 
-
 void loop() {
-    handleInputs();    
+    handleInputs();   
     wdt_reset();
+    flutter();
+    //flutter_extreme();
 }
 
 
