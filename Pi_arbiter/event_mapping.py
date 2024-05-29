@@ -39,6 +39,8 @@ pcf_in_add = "pcf_in_add"
 pcf_out = "pcf_out"
 pcf_out_add = "pcf_out_add"
 
+trigger_time = "trigger_time"
+
 # event triggered from FE
 trigger_cmd = "trigger_cmd"
 # may not always be required
@@ -782,7 +784,7 @@ timed_events = {
     "flutter": {
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [flutteractivate],
-        trigger_time: 75,
+        trigger_time: 75, #in minutes
     }
 }
 

@@ -137,6 +137,7 @@ void handleInputs() {
             flutter_possible_general = true;
         break;
         case lightRachelAnnouncement:
+            flutter_color_possible = 0
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
             Mother.motherRelay.digitalWrite(labEntry, open);
             #ifndef Hamburg
@@ -157,6 +158,7 @@ void handleInputs() {
             #endif
         break;
         case lightRachelEnd:
+            flutter_color_possible = 0
             Mother.motherRelay.digitalWrite(labEntry, open);
             wdt_disable();
             #ifdef Hamburg
@@ -244,7 +246,9 @@ void handleInputs() {
             #endif              
             wdt_enable(WDTO_8S);
         break;
+
         case lightDavidAnnouncement:
+            flutter_color_possible = 0
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 40);
         break;
