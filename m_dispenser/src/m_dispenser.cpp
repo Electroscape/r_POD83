@@ -422,6 +422,9 @@ void setup() {
 
     Mother.rs485SetSlaveCount(3);
     
+    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set1);
+    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
+
     setStageIndex();
     wdt_reset();
 }
