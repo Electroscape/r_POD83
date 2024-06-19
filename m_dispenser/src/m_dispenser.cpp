@@ -134,7 +134,6 @@ void stageActions() {
             #endif
             #ifdef Hamburg
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set2);
                 Mother.motherRelay.digitalWrite(pump1, PumpOn);
                 Mother.motherRelay.digitalWrite(pump2, PumpOn);
                 delay(4000);
@@ -155,7 +154,6 @@ void stageActions() {
             #endif
             #ifdef Hamburg
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set2);
                 Mother.motherRelay.digitalWrite(pump1, PumpOn);
                 Mother.motherRelay.digitalWrite(pump2, PumpOn);
                 delay(4000);
@@ -176,7 +174,6 @@ void stageActions() {
             #endif
             #ifdef Hamburg
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set2);
                 Mother.motherRelay.digitalWrite(pump1, PumpOn);
                 Mother.motherRelay.digitalWrite(pump2, PumpOn);
                 delay(4000);
@@ -197,7 +194,6 @@ void stageActions() {
             #endif
             #ifdef Hamburg
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set2);
                 Mother.motherRelay.digitalWrite(pump1, PumpOn);
                 Mother.motherRelay.digitalWrite(pump2, PumpOn);
                 delay(4000);
@@ -224,33 +220,22 @@ void stageActions() {
             #ifdef Hamburg
                 Mother.motherRelay.digitalWrite(pump1, PumpOn);
                 Mother.motherRelay.digitalWrite(pump2, PumpOn);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set2);
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1);
                 delay(125);
 
-                for (int i=1; i <= 5; i++) {
+                for (int i=1; i <= 6; i++) {
                     LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set1);
-                    delay(375/i);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set2);
-                    delay(125/i);
+                    delay(350/i);
                     LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrYellow, 100, PWM::set1);
-                    delay(375/i);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set2);
-                    delay(125/i);
+                    delay(350/i);
                     LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrGreen, 100, PWM::set1);
-                    delay(375/i);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set2);
-                    delay(125/i);
+                    delay(350/i);
                     LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlue, 100, PWM::set1);
-                    delay(375/i);
-                    LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrRed, 100, PWM::set2);
-                    delay(125/i);
+                    delay(350/i);
                 }
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set2);
                 delay(125);
                 LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set1);
-                LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrWhite, 100, PWM::set2);
                 delay(500);
 
             #endif
@@ -424,7 +409,6 @@ void setup() {
     
     #ifdef Hamburg
         LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set1);
-        LED_CMDS::setStripToClr(Mother, LED_Brain, LED_CMDS::clrBlack, 100, PWM::set2);
     #endif
 
     
