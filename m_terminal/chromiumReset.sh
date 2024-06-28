@@ -1,5 +1,5 @@
 #!/bin/bash
-pkill chromium
+pkill chromium-browse
 
 
 # set environment variable to enable sound
