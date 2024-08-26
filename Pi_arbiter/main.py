@@ -110,7 +110,7 @@ def trigger_event(event_key, event_value=None):
             already_started_events.append(event_key)
 
 
-    if event_key == "airlock_begin_atmo":
+    if event_key == "airlock_intro":
         global time_start
         time_start = dt.now()
     elapsed_time_str = ""

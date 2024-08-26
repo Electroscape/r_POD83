@@ -784,7 +784,7 @@ timed_events = {
     "flutter": {
         pcf_out_add: [lab_light_out_pcf],
         pcf_out: [flutteractivate],
-        trigger_time: 10, #in minutes
+        trigger_time: 75, #in minutes
     }
 }
 
