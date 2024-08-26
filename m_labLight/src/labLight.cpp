@@ -39,14 +39,14 @@ STB_MOTHER_IO MotherIO;
 
 int lastState = -1;
 
-unsigned long last_flutter_time = millis();
-unsigned long repeat_time = random(180000, 240000);
-unsigned long next_flutter_step = 0;
-unsigned long last_flutter_step = 0;
+unsigned long last_flutter_time = millis(); 
+unsigned long repeat_time = random(180000, 240000); //time between flutter sequences
+unsigned long next_flutter_step = 0; //time, in flutter sequence, between diffrent flutter elements
+unsigned long last_flutter_step = 0; //last time a flutter sequence ended
 int flutter_color_possible = 0; // 0=nothing, 1=red, 2=blue
-bool flutter_possible_general = true;
-int flutter_activity_count = 1;
-int flutter_activity_end = random(10, 15);
+bool flutter_possible_general = false; //flutter set possible by arbiter and triggered by time (75 min)
+int flutter_activity_count = 1; //counting flutter elements in flutter sequence
+int flutter_activity_end = random(10, 15); //number of flutter elements in one flutter sequence
 
 
 void enableWdt() {
@@ -59,7 +59,7 @@ void flutter() {
     unsigned long now_time = millis();
 
     //flutter blue
-    if (now_time - last_flutter_time > repeat_time && now_time - last_flutter_step >= next_flutter_step && flutter_color_possible > 0 && flutter_possible_general == true){
+    if (now_time - last_flutter_time > repeat_time && now_time - last_flutter_step >= next_flutter_step && flutter_color_possible > 0 && flutter_possible_general){
 
         if(flutter_activity_count % 2 == 0){
             if(flutter_color_possible == 1){
@@ -137,7 +137,7 @@ void handleInputs() {
             flutter_possible_general = true;
         break;
         case lightRachelAnnouncement:
-            flutter_color_possible = 0
+            flutter_color_possible = 0;
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
             Mother.motherRelay.digitalWrite(labEntry, open);
             #ifndef Hamburg
@@ -158,7 +158,7 @@ void handleInputs() {
             #endif
         break;
         case lightRachelEnd:
-            flutter_color_possible = 0
+            flutter_color_possible = 0;
             Mother.motherRelay.digitalWrite(labEntry, open);
             wdt_disable();
             #ifdef Hamburg
@@ -248,7 +248,7 @@ void handleInputs() {
         break;
 
         case lightDavidAnnouncement:
-            flutter_color_possible = 0
+            flutter_color_possible = 0;
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 40);
         break;
@@ -286,7 +286,6 @@ void loop() {
     handleInputs();   
     wdt_reset();
     flutter();
-    //flutter_extreme();
 }
 
 

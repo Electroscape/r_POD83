@@ -103,7 +103,7 @@ def trigger_event(event_key, event_value=None):
         return
 
 
-    if event_key == "flutter":
+    if event_key in timed_events:
         if event_key in already_started_events:
             return
         else:
@@ -305,12 +305,14 @@ def inverted_triggered(event_value, active_inputs):
 
 def handle_timed_events():
     for event_key, event_value in timed_events.items():
-        if timed_trigger(event_value, event_key):
+        if timed_trigger(event_value):
             trigger_event(event_key, event_value)
 
 
 def timed_trigger(event_value):
     event_time = event_value.get(trigger_time)
+    if time_start is None:
+        return False
     if dt.now() - time_start >= timedelta(minutes=event_time):
         return True
     else:
