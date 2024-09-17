@@ -256,6 +256,7 @@ void handleInputs() {
             Mother.motherRelay.digitalWrite(decon, open);
             delay(5000);
             Mother.motherRelay.digitalWrite(decon, closed);
+            lastState = 0;  
         break;
         default: break;
     }
