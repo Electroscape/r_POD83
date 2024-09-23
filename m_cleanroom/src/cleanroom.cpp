@@ -28,39 +28,123 @@ STB_MOTHER_IO MotherIO;
 
 int lastState = -1;
 int armingTicks = 0;
-
+unsigned long lastChangeTime = 0; // Store the last time the result changed
+const unsigned long TIME_THRESHOLD = 5000; 
+unsigned long startTime = 0;
 
 void enableWdt() {
     wdt_enable(WDTO_8S);
 }
 
-void open_cleanroom() {
+void openCleanroom() {
+    wdt_reset();
+    delay(1000);
+    Mother.motherRelay.digitalWrite(PNDOOR_PIN, closed);
+    Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
     
+    LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrRed, 100, 300, ZYL_LED_CNT, ledBrain, 200);
+    startTime = millis();
+    while ((millis() - startTime) < (DOOR_OPENTIME * 1000)) {
+        wdt_reset();
+    }
+
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, led_strips::zyl_leds);
 }
 
 void runDecontamination() {
+    wdt_reset();
     delay(3000);
     Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, !RPI_VIDEO_INIT);
     delay(1000);
     Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, RPI_VIDEO_INIT);
+    
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
+
+    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open); Serial.println("Light: off");
+    wdt_reset();
+    delay(2000);
+    wdt_reset();
+    Mother.motherRelay.digitalWrite(FANS_SMALL_PIN, !FANS_SMALL_INIT); Serial.println("Fan small: on");
+    delay(3000);
+
+    static constexpr int clr1[3] = {170, 95, 255};
+    static constexpr int clr2[3] = {0, 255, 255};
+    LED_CMDS::blinking(Mother, ledBrain, clr1, clr2, 1000, 1000, 100, 100, led_strips::fr_leds);
+
+
+    for (int z=0; z<14; z++) {
+
+        Serial.print("z: "); Serial.println(z);
+        if (z==0) {Mother.motherRelay.digitalWrite(FOG_PIN, !FOG_INIT); Serial.println("Fog: on");}
+        else if (z==5) {Mother.motherRelay.digitalWrite(FOG_PIN, FOG_INIT); Serial.println("Fog: off");}
+        else if (z==6) {Mother.motherRelay.digitalWrite(FAN_OUT_BIG_PIN, !FAN_OUT_BIG_INIT); Serial.println("Fan OUT big: on");}
+        else {}//Serial.print("ez: "); Serial.println(z);}
+
+        Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, closed);
+        wdt_reset();
+        delay(1000);
+
+        Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, FR_LIGHTS_INIT);
+        wdt_reset();
+        delay(1000);
+    }
+
+    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, closed);
+    // Green light -----------------------------------------------
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::fr_leds);
+    Serial.println("LED: green");
+    Mother.motherRelay.digitalWrite(FANS_SMALL_PIN, FANS_SMALL_INIT); Serial.println("Fan small: off");
+    wdt_reset();
+    delay(1000);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, open);
+    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open); Serial.println("Light: on");
+
+
+    // White light -----------------------------------------------
+    LED_CMDS::setStripToClr(Mother, ledBrain, clr1, 100, led_strips::fr_leds);
+    Serial.println("LED: white");
+
+    // moved it forward 4s bec it really seems abrupt shutdown
+    delay(1000);
+    Mother.motherRelay.digitalWrite(FAN_OUT_BIG_PIN, FAN_OUT_BIG_INIT);
+
+    wdt_reset();
+    // was 4s but i moved delay of 1s to the main fan
+    delay(3000);
+
+    Mother.motherRelay.digitalWrite(KEYPAD_PIN, open);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
+
+    openCleanroom();
 };
+
+
+void triggerTimeoutAction() {
+    Serial.println("Timeout triggered without input change!");
+    // Add more actions you want to happen after the timeout
+}
 
 void handleInputs() {
 
     int result = MotherIO.getInputs();
 
-    if (lastState == result || result == 0) {
+    if (lastState == result) {
+       if (result != 0) {
+            // Check how much time has passed since last result change
+            if (millis() - lastChangeTime > TIME_THRESHOLD) {
+                // Trigger action after the time threshold has been reached
+                triggerTimeoutAction();
+                lastChangeTime = millis(); // Reset the timer after triggering
+            }
+        }
         return;
     }
     lastState = result;
+    lastChangeTime = millis(); // Reset time when result changes
 
-    unsigned long startTime = millis();
     Serial.println(result);
 
     switch (result) {
-        case IO::arming:
-            armingTicks++;
-        break;
         case IO::deconTrigger:
             runDecontamination();
         break;
@@ -69,7 +153,7 @@ void handleInputs() {
 
 }
 
-void init_room() {
+void initRoom() {
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, zyl_leds);
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, fr_leds);
     
@@ -95,8 +179,14 @@ void setup() {
     // technicall 1 but for the first segments till unlocked there is no need
     Mother.rs485SetSlaveCount(0);
 
-    init_room();
+    initRoom();
+
+    LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlue);
+    delay(1000);
     wdt_reset();
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, zyl_leds);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, fr_leds);
+    delay(1000);
 
 }
 
