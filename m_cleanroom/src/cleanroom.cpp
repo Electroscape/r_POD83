@@ -31,6 +31,7 @@ int armingTicks = 0;
 unsigned long lastChangeTime = 0; // Store the last time the result changed
 const unsigned long TIME_THRESHOLD = 5000; 
 unsigned long startTime = 0;
+bool roomArmed = false;
 
 void enableWdt() {
     wdt_enable(WDTO_8S);
@@ -42,13 +43,14 @@ void openCleanroom() {
     Mother.motherRelay.digitalWrite(PNDOOR_PIN, closed);
     Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
     
-    LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrRed, 100, 300, ZYL_LED_CNT, ledBrain, 200);
+    LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrRed, 100, 300, ZYL_LED_CNT, zyl_leds, 200);
     startTime = millis();
     while ((millis() - startTime) < (DOOR_OPENTIME * 1000)) {
         wdt_reset();
     }
 
-    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, led_strips::zyl_leds);
+    // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, led_strips::zyl_leds);
+    LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
 }
 
 void runDecontamination() {
@@ -133,9 +135,12 @@ void handleInputs() {
             // Check how much time has passed since last result change
             if (millis() - lastChangeTime > TIME_THRESHOLD) {
                 // Trigger action after the time threshold has been reached
-                triggerTimeoutAction();
+                roomArmed = true;
+                Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
                 lastChangeTime = millis(); // Reset the timer after triggering
             }
+        } else if (!roomArmed) {
+            Mother.motherRelay.digitalWrite(PNDOOR_PIN, closed);
         }
         return;
     }
@@ -146,8 +151,13 @@ void handleInputs() {
 
     switch (result) {
         case IO::deconTrigger:
+        if (roomArmed) {
+            roomArmed = false;
             runDecontamination();
+        }
         break;
+        case IO::arming:
+            Mother.motherRelay.digitalWrite(PNDOOR_PIN, open);
         default: break;
     }
 
@@ -180,14 +190,6 @@ void setup() {
     Mother.rs485SetSlaveCount(0);
 
     initRoom();
-
-    LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlue);
-    delay(1000);
-    wdt_reset();
-    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, zyl_leds);
-    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, fr_leds);
-    delay(1000);
-
 }
 
 void loop() {
