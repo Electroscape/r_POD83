@@ -121,9 +121,21 @@ void runDecontamination() {
 };
 
 
-void triggerTimeoutAction() {
+void arm_room() {
     Serial.println("Timeout triggered without input change!");
-    // Add more actions you want to happen after the timeout
+    roomArmed = true;
+    Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, closed);
+    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open);
+    Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, closed);
+
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, fr_leds);
+    LED_CMDS::blinking(Mother, ledBrain, LED_CMDS::clrGreen, LED_CMDS::clrBlack, 500, 100, 100, 100, zyl_leds);
+
+    wdt_reset();
+    delay(2300);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, zyl_leds);
+    wdt_reset();
 }
 
 void handleInputs() {
