@@ -115,10 +115,6 @@ void passwordActions(int passNo) {
                     gameReset();
                     MotherIO.setOuput(1 << 2);
                 break;
-                case resetIndex: 
-                    gameReset();
-                    stage = gameLive;
-                break;
                 default: 
                     lockerStatuses[passNo] = true;
                     delay(2);
@@ -128,9 +124,20 @@ void passwordActions(int passNo) {
             }
         break;
         case serviceMode:
-            stage = gameLive;
-            MotherIO.setOuput(1 << 3);
-            gameReset();
+            switch(passNo) {
+                case resetIndex: 
+                    for (int no=0; no<lockerCnt; no++) {
+                        Mother.motherRelay.digitalWrite(no, open);
+                        delay(100);
+                        Mother.motherRelay.digitalWrite(no, closed);
+                    }
+                break;
+                default:
+                    stage = gameLive;
+                    MotherIO.setOuput(1 << 3);
+                    gameReset();
+                break;
+            }
         break;
     }
 }

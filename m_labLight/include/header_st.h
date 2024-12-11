@@ -51,6 +51,7 @@ enum IO {
     labDoorLock,
     labDoorUnlock,
     deconTrigger,
+    flutteractivate,
 };
 
 #define outputCnt 0

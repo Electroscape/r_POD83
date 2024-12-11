@@ -39,18 +39,75 @@ STB_MOTHER_IO MotherIO;
 
 int lastState = -1;
 
+unsigned long last_flutter_time = millis(); 
+unsigned long repeat_time = random(180000, 240000); //time between flutter sequences
+unsigned long next_flutter_step = 0; //time, in flutter sequence, between diffrent flutter elements
+unsigned long last_flutter_step = 0; //last time a flutter sequence ended
+int flutter_color_possible = 0; // 0=nothing, 1=red, 2=blue
+bool flutter_possible_general = false; //flutter set possible by arbiter and triggered by time (75 min)
+int flutter_activity_count = 1; //counting flutter elements in flutter sequence
+int flutter_activity_end = random(10, 15); //number of flutter elements in one flutter sequence
+
 
 void enableWdt() {
     wdt_enable(WDTO_8S);
 }
 
 
+void flutter() {
+
+    unsigned long now_time = millis();
+
+    //flutter blue
+    if (now_time - last_flutter_time > repeat_time && now_time - last_flutter_step >= next_flutter_step && flutter_color_possible > 0 && flutter_possible_general){
+
+        if(flutter_activity_count % 2 == 0){
+            if(flutter_color_possible == 1){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, random(70, 100));
+            }
+            if(flutter_color_possible == 2){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, random(70, 100));
+            }
+            next_flutter_step = random(20, 150);
+        }
+        else{
+            if(flutter_color_possible == 1){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, random(0, 30));
+            }
+            if(flutter_color_possible == 2){
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, random(0, 30));
+            }
+            next_flutter_step = random(20, 150);
+        }
+        last_flutter_step = millis();
+        flutter_activity_count = flutter_activity_count + 1;
+        
+        if(flutter_activity_count == flutter_activity_end){
+            if(flutter_color_possible == 1){
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrGreen, 0, LED_CMDS::clrRed, 40, 2000, 1);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrGreen, 0, LED_CMDS::clrRed, 40, 2000, 2);
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 100);
+            }
+            if(flutter_color_possible == 2){
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlue, 0, LED_CMDS::clrBlue, 55, 2000, 1);
+                LED_CMDS::fade2color(Mother, ledCeilBrain, LED_CMDS::clrBlue, 0, LED_CMDS::clrBlue, 55, 2000, 2);
+                LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
+            }
+            flutter_activity_count = 1;
+            repeat_time = random(180000, 240000);
+            next_flutter_step = 0;
+            last_flutter_time = now_time;
+            flutter_activity_end = random(10, 15);
+        }
+    }
+}
+
 
 void handleInputs() {
 
     int result = MotherIO.getInputs();
 
-    if (lastState == result) {
+    if (lastState == result || result == 0) {
         return;
     }
     lastState = result;
@@ -66,15 +123,21 @@ void handleInputs() {
         case lightNormal: 
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, clrLight, 60);
+            flutter_color_possible = 0;
         break;
         case lightRed:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 40);
-            
+            flutter_color_possible = 1;
         break;
         case lightBlue:
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 55);
+            flutter_color_possible = 2;
+        break;
+        case flutteractivate:
+            flutter_possible_general = true;
         break;
         case lightRachelAnnouncement:
+            flutter_color_possible = 0;
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrRed, 30);
             Mother.motherRelay.digitalWrite(labEntry, open);
             #ifndef Hamburg
@@ -95,6 +158,7 @@ void handleInputs() {
             #endif
         break;
         case lightRachelEnd:
+            flutter_color_possible = 0;
             Mother.motherRelay.digitalWrite(labEntry, open);
             wdt_disable();
             #ifdef Hamburg
@@ -182,7 +246,9 @@ void handleInputs() {
             #endif              
             wdt_enable(WDTO_8S);
         break;
+
         case lightDavidAnnouncement:
+            flutter_color_possible = 0;
             Mother.motherRelay.digitalWrite(labEntry, open);
             LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrGreen, 40);
         break;
@@ -190,6 +256,7 @@ void handleInputs() {
             Mother.motherRelay.digitalWrite(decon, open);
             delay(5000);
             Mother.motherRelay.digitalWrite(decon, closed);
+            lastState = 0;  
         break;
         default: break;
     }
@@ -209,14 +276,17 @@ void setup() {
 
     // technicall 3 but for the first segments till unlocked there is no need
     Mother.rs485SetSlaveCount(0);
-  
+
+
+
     wdt_reset();
+
 }
 
-
 void loop() {
-    handleInputs();    
+    handleInputs();   
     wdt_reset();
+    flutter();
 }
 
 

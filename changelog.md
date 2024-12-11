@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.35
+ * updated Hamburg dispenser with additional features
+ * fixed a dictionary KeyError within wiki page
+ * added lockerwall service opening code
+ * cleanroom rebuild to Hat stb v0.0.5 Mother
+ * added flutter effect to lab 
+
 ## v0.34
  * added option to split hint configuration by location
 

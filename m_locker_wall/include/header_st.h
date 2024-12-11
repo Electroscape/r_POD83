@@ -108,7 +108,7 @@ int passwordMap[PasswordAmount] = {
     gameLive,
     gameLive,
     stageSum,   // service code, valid in all stages
-    gameLive    // reset code
+    serviceMode    // reset code
 };
 // make a mapping of what password goes to what stage
 

@@ -29,6 +29,7 @@ startTime = False
 start_time_file = "startTime.txt"
 date_format = "%Y-%m-%d %H:%M:%S"
 
+
 def save_start_time():
     try:
         f = open(start_time_file, "w+")
@@ -39,6 +40,7 @@ def save_start_time():
         print(err)
         logging.error("failed to write startime file")
         pass
+
 
 def get_start_time() -> bool:
     try:
@@ -55,6 +57,7 @@ def get_start_time() -> bool:
         return False
 
     return True
+
 
 def read_json(filename: str, from_static=True) -> dict:
     """
@@ -108,7 +111,6 @@ sio = SocketIO(app, cors_allowed_origins=all_cors,
 
 class StatusVars:
     def __init__(self):
-        self.uploadProgress = "disable"
         self.laserlock_cable = "broken"
         self.laserlock_cable_override = False
 
@@ -204,6 +206,7 @@ def frontend_server_messages(json_msg):
     chat_history.append(json_msg)
     sio.emit('response_to_fe', json_msg)
 
+
 def all_samples_solved():
     for sample in samples:
         if sample.get("status") != "released":
@@ -242,7 +245,6 @@ def set_samples(cmd, msg):
 
     sio.emit("samples", samples)
     sio.emit("samples", f"sample {msg + 1} {samples[msg]['status']}")
-
 
 
 # @TODO update here to allow an override
@@ -310,6 +312,7 @@ def handle_received_messages(json_msg):
         msg = json_msg.get("message")
         if msg in ["elancell", "rachel"]:
             sio.emit("trigger", {"username": "arb", "cmd": "upload", "message": msg})
+            trigger_stop()
     else:
         # broadcast chat message
         sio.emit('response_to_terminals', json_msg)
@@ -335,6 +338,7 @@ def override_triggers(msg):
 
     if cmd == "usb" and message == "boot":
         trigger_start("usbBoot")
+
 
 @sio.on('rfid_update')
 def rfid_updates(msg):
@@ -365,6 +369,7 @@ def rfid_extras(msg):
         # update backend
         login_users[msg_split[0]] = msg_split[1]
 
+
 def trigger_start(event_name):
 
     if event_name == "usbBoot":
@@ -386,6 +391,11 @@ def trigger_start(event_name):
         save_start_time()
 
 
+def trigger_stop():
+    logging.debug("stoptime event rcvd")
+    sio.emit("response_to_fe", {"username": "tr1", "cmd": "stopTimer"})
+
+
 @sio.on('events')
 def events_handler(msg):
     logging.debug(f"from events: {msg}")
@@ -399,6 +409,9 @@ def events_handler(msg):
 
     if msg_value in ["airlock_begin_atmo", "airlock_intro"]:
         trigger_start(msg_value)
+
+    if msg_value in ["end_rachel_announce", "end_david_announce"]:
+        trigger_stop()
 
     if username == "server":
         global samples
