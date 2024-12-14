@@ -40,13 +40,15 @@ STB_MOTHER_IO MotherIO;
 int lastState = -1;
 
 unsigned long last_flutter_time = millis(); 
-unsigned long repeat_time = random(180000, 240000); //time between flutter sequences
+unsigned long repeat_time = 30000; //time for next flutter sequence
+unsigned long repeat_time_cut = 700; //cut time at every flutter sequence
+unsigned long repeat_time_minimum = 8000; //lowest time possible for flutter sequence
 unsigned long next_flutter_step = 0; //time, in flutter sequence, between diffrent flutter elements
 unsigned long last_flutter_step = 0; //last time a flutter sequence ended
 int flutter_color_possible = 0; // 0=nothing, 1=red, 2=blue
 bool flutter_possible_general = false; //flutter set possible by arbiter and triggered by time (75 min)
 int flutter_activity_count = 1; //counting flutter elements in flutter sequence
-int flutter_activity_end = random(10, 15); //number of flutter elements in one flutter sequence
+int flutter_activity_end = random(10, 20); //number of flutter elements in one flutter sequence
 
 
 void enableWdt() {
@@ -58,7 +60,6 @@ void flutter() {
 
     unsigned long now_time = millis();
 
-    //flutter blue
     if (now_time - last_flutter_time > repeat_time && now_time - last_flutter_step >= next_flutter_step && flutter_color_possible > 0 && flutter_possible_general){
 
         if(flutter_activity_count % 2 == 0){
@@ -94,10 +95,15 @@ void flutter() {
                 LED_CMDS::setAllStripsToClr(Mother, ledCeilBrain, LED_CMDS::clrBlue, 100);
             }
             flutter_activity_count = 1;
-            repeat_time = random(180000, 240000);
+            if(repeat_time > repeat_time_minimum){
+                repeat_time = repeat_time - repeat_time_cut;
+            }
+            else{
+                repeat_time = repeat_time_minimum;
+            }
             next_flutter_step = 0;
             last_flutter_time = now_time;
-            flutter_activity_end = random(10, 15);
+            flutter_activity_end = random(10, 20);
         }
     }
 }
