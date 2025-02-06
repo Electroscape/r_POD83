@@ -10,6 +10,13 @@
     overflow-y: scroll;
 }
 
+#msg_holder>div {
+    width: 99%;
+    background-color: mediumblue;
+    margin-top: 7px;
+    padding: 5px;
+}
+
 .video-grid {
     display: grid;
     grid-auto-flow: dense;
