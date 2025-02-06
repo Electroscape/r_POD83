@@ -55,6 +55,14 @@ Screen blanking needs to be disabled: \
 
 project contains shellscripts, those can be made executable with `chmod +x myfile`
 
+## Kamera setup
+
+to enable the onvif on the foscam D4Z, the camera does not need onvif authentification disable
+type the following into the browser
+http://<IP>:88/cgi-bin/CGIProxy.fcgi?cmd=setONVIFEnable&onvifEnable=1&usr=<Username>&pwd=<password>
+an error of -3 may actually not be a problem and the setup may run regardless
+check the stream http://<IP>:88/cgi-bin/CGIStream.cgi?cmd=GetMJStream&usr=<Username>&pwd=<password>
+
 ## Common Issues
 
 ### Socket-IO

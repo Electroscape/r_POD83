@@ -1,13 +1,22 @@
 # Changelog
 
+## v0.35
+ * updated Hamburg dispenser with additional features
+ * fixed a dictionary KeyError within wiki page
+ * added lockerwall service opening code
+ * cleanroom rebuild to Hat stb v0.0.5 Mother
+ * added flutter effect to lab 
+
 ## v0.34
  * added option to split hint configuration by location
 
 ## v0.33
  * added separate sound for anything but message
  * option to override gasriddle 
- * seperateable start events
+ * separable start events for the clock on the server interface
  * rework to the analyzer
+ * added chromium reset shellscript to be tied in from GM PC
+ * removed fullscreen in video player of terminal 1
 
 ## v0.32
  * added a testimage to the servicemode to spot if TVs are actually turned on

@@ -39,6 +39,8 @@ pcf_in_add = "pcf_in_add"
 pcf_out = "pcf_out"
 pcf_out_add = "pcf_out_add"
 
+trigger_time = "trigger_time"
+
 # event triggered from FE
 trigger_cmd = "trigger_cmd"
 # may not always be required
@@ -103,6 +105,7 @@ lab_light_on = 4
 lab_rachel_end_announce = 5
 lab_rachel_end = 6
 lab_david_end_announce = 7
+flutteractivate = 11
 
 lab_dishout = 1 << 4
 lab_dish1 = 32
@@ -775,6 +778,14 @@ inverted_events = {
             is_fx: False
         }
     },
+}
+
+timed_events = {
+    "flutter": {
+        pcf_out_add: [lab_light_out_pcf],
+        pcf_out: [flutteractivate],
+        trigger_time: 75, #in minutes
+    }
 }
 
 
