@@ -127,7 +127,10 @@
     clear: both;
     display: block;
     word-wrap: break-word;
-    max-width: 95%;
+    width: 100%;
+    background-color: mediumblue;
+    margin-top: 7px;
+    padding: 5px;
 }
 
 .floating-chat .chat .messages li.other {
