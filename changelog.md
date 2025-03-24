@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.36
+
+ * Chat readibility improvements
+ * arbiter signal stability improvement
+ * changed sweetalert.js source 
+
 ## v0.35
  * updated Hamburg dispenser with additional features
  * fixed a dictionary KeyError within wiki page
