@@ -1,5 +1,7 @@
 import os
 import requests
+from urllib.parse import urljoin
+import re
 
 # Define the static folder for Flask
 download_dir = "static/local_lib"
@@ -20,26 +22,39 @@ font_mapping = {
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.ttf": "fa-solid-900.ttf",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-regular-400.woff2": "fa-regular-400.woff2",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-regular-400.ttf": "fa-regular-400.ttf",
+    "https://manzdev.github.io/twitch-manzdev-bios/assets/perfect-dos-vga437.woff2": "perfect-dos-vga437.woff2"
 }
 
 
 # Dictionary mapping original URLs to new local paths
 # URLs and filenames for the required .map files
 url_mapping = {
-    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css": "static/local_lib/all.min.css",
-    "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap": "static/local_lib/roboto.css",
-    "https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css": "static/local_lib/mdb.min.css",
-    "https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js": "static/local_lib/mdb.min.js",
-    "https://code.jquery.com/jquery-3.6.1.js": "static/local_lib/jquery-3.6.1.js",
-    "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js": "static/local_lib/jquery.min.js",
-    "https://cdn.socket.io/4.5.0/socket.io.min.js": "static/local_lib/socket.io.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js": "static/local_lib/toastr.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css": "static/local_lib/toastr.min.css",
-    "https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js": "static/local_lib/sweetalert.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css": "all.min.css",
+    "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap": "roboto.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.css": "mdb.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js": "mdb.min.js",
+    "https://code.jquery.com/jquery-3.6.1.js": "jquery-3.6.1.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js": "jquery.mask.min.js",
+    "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js": "jquery.min.js",
+    "https://cdn.socket.io/4.5.0/socket.io.min.js": "socket.io.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js": "toastr.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css": "toastr.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js": "sweetalert.min.js",
     "https://cdn.socket.io/4.5.0/socket.io.min.js.map": "socket.io.min.js.map",
     "https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/5.0.0/mdb.min.js.map": "mdb.min.js.map",
     "https://code.jquery.com/jquery-3.6.1.min.map": "jquery-3.6.1.min.map",
     "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.js.map": "toastr.js.map",
+    "https://code.iconify.design/iconify-icon/1.0.5/iconify-icon.min.js": "iconify-icon.min.js",
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js": "bootstrap.min.js",
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js.map": "bootstrap.min.js.map",
+    "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js": "popper.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js.map": "popper.min.js.map",
+    "https://code.jquery.com/ui/1.12.1/jquery-ui.js": "jquery-ui.js",
+    "https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css": "toggle-switch.css",
+    "https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css.map": "toggle-switch.css.map",
+    "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/jquery-ui.min.css": "jquery-ui.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/theme.min.css": "theme.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.150.1/three.min.js": "three.min.js"
 }
 
 # Download each file and save it locally
@@ -73,3 +88,39 @@ for url, filename in font_mapping.items():
         print(f"Downloaded: {file_path}")
     except Exception as e:
         print(f"Failed to download {url}: {e}")
+
+
+def download_png_images(css_url, save_folder="images"):
+    # Ensure the save directory exists
+    os.makedirs(save_folder, exist_ok=True)
+
+    # Fetch the CSS content
+    response = requests.get(css_url)
+    if response.status_code != 200:
+        print("Failed to fetch CSS file")
+        return
+
+    css_content = response.text
+
+    # Regex pattern to find URLs in CSS
+    pattern = re.compile(r'url\(["\']?(images/[^)]+\.png)["\']?\)')
+
+    # Find all matches
+    matches = pattern.findall(css_content)
+
+    # Download each image
+    for img_path in set(matches):  # Using set to avoid duplicates
+        img_url = urljoin(css_url, img_path)
+        img_name = os.path.basename(img_path)
+        save_path = os.path.join(save_folder, img_name)
+
+        img_response = requests.get(img_url, stream=True)
+        if img_response.status_code == 200:
+            with open(save_path, 'wb') as img_file:
+                for chunk in img_response.iter_content(1024):
+                    img_file.write(chunk)
+            print(f"Downloaded: {img_name}")
+        else:
+            print(f"Failed to download: {img_name}")
+
+download_png_images("https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/jquery-ui.min.css", download_dir + "/images")
