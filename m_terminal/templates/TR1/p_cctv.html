@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block head %}
-    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.7/dist/iconify-icon.min.js"></script>
+    <script src="{{ url_for('static',filename='local_lib/iconify-icon.min.js') }}"></script>
     <style>
         #lang-box {
             visibility: hidden;
@@ -79,7 +79,6 @@
             padding: 10px;
             background-repeat: no-repeat;
             background-size: 100px;
-            /* background-image: url("https://icon-library.com/images/progress-icon-gif/progress-icon-gif-8.jpg"); */
         }
 
     </style>
