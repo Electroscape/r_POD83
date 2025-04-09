@@ -294,8 +294,11 @@ void arm_check() {
 
         if (resetTimer > 0) {
             dbg_println("!parse Room reset not held long enough opening door");
-            resetTimer = 0;
+            wdt_disable();
             reset_relays_init();
+            delay(resetTimer + 500);
+            wdt_enable(WDTO_8S);
+            resetTimer = 0;
         }
     }
 }
