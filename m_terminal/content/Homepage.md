@@ -4,7 +4,7 @@ lang: EN/DE
 group_en: browser
 group_de: browser
 ---
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.150.1/three.min.js" integrity="sha512-pHIFefLE+ZH/TmpBDxPoDyC8kBxD773LqGShSv9VSiMFLluVRKKOFO9JA+TgnQruQEKovPtZ3vEz1Hwo/F4J2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="../static/local_lib/three.min.js"></script>
 <style>
 #canvas, canvas {
   width: 300px;

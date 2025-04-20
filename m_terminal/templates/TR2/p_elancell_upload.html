@@ -1,16 +1,11 @@
 {% extends 'layout.html' %}
 
 {% block head %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"
-            integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/jquery-ui.min.css"
-          integrity="sha512-gCFexX+67Pl9rPa75MMyEH2I5jbD5tqij8VBYcsLVwgVfVEdfon+9CEjVnXPtqoHLXjxrjMcyHLaee65dt/jxw=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/dark-hive/theme.min.css"
-          integrity="sha512-pN35/N51n1IeABlNGOSb5ltVKGbvUE8exTMhiB/4ijuy+UOYEWawQZzEs2yUvvCWopRO3uiRueeGnd/mQD0eTQ=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    
+    <script src="{{ url_for('static', filename='local_lib/jquery-ui.js') }}"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='local_lib/jquery-ui.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='local_lib/theme.min.css') }}">
 
     <style>
         h3 {
@@ -131,7 +126,7 @@
     </style>
 
     <link rel="stylesheet" href="{{ url_for('static',filename='css/gas_analysis_game.css') }}" media="screen">
-    <script src="https://code.iconify.design/iconify-icon/1.0.5/iconify-icon.min.js"></script>
+    <script src="{{ url_for('static',filename='local_lib/iconify-icon.min.js') }}"></script>
 
     <script>
         $(function () {
@@ -218,9 +213,8 @@
         });
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
-            integrity="sha512-pHVGpX7F/27yZ0ISY+VVjyULApbDlD0/X0rgGbTqCE7WFW5MezNTWG/dnhtbBuICzsd0WQPgpE4REBLv+UqChw=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ url_for('static', filename='local_lib/jquery.mask.min.js') }}"></script>
+
 {% endblock %}
 
 
