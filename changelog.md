@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.37
+
+ * localized js libraries 
+ * workaround for cleanroom cylinder arming
+
 ## v0.36
 
  * Chat readibility improvements
