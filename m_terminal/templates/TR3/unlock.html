@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <title>Boot Up Page</title>
 
+    
     <!-- AJAX and socketio -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
-            integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
-            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='local_lib/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='local_lib/socket.io.min.js') }}"></script>
+    
     <script type="text/javascript">
         const socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.on('connect', function () {
@@ -33,7 +33,7 @@
     <style>
         @font-face {
             font-family: "Perfect DOS VGA 437";
-            src: url(https://manzdev.github.io/twitch-manzdev-bios/assets/perfect-dos-vga437.woff2) format("woff2");
+            src: url("{{ url_for('static', filename='webfonts/perfect-dos-vga437.woff2') }}") format("woff2");
         }
 
         html {
