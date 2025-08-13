@@ -150,6 +150,13 @@ void handleInputs() {
                 roomArmed = true;
                 Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
                 lastChangeTime = millis(); // Reset the timer after triggering
+                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
+                delay(50);
+                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
+                delay(50);
+                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
+                delay(50);
+                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
             }
         } else if (!roomArmed) {
             Mother.motherRelay.digitalWrite(PNDOOR_PIN, closed);
