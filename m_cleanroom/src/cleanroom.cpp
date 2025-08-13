@@ -115,6 +115,8 @@ void runDecontamination() {
     delay(3000);
 
     Mother.motherRelay.digitalWrite(KEYPAD_PIN, open);
+    // unused 
+    // Mother.motherRelay.digitalWrite(KEYPAD_PIN, open);
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
 
     openCleanroom();
@@ -122,12 +124,20 @@ void runDecontamination() {
 
 
 void arm_room() {
-    Serial.println("Timeout triggered without input change!");
     roomArmed = true;
     Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
-    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, closed);
-    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open);
-    Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, closed);
+    lastChangeTime = millis(); // Reset the timer after triggering
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
+    delay(50);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
+    delay(50);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
+    delay(50);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
+
+    // Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
+    // Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, closed);
+    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, FR_LIGHTS_INIT);
 
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, fr_leds);
     LED_CMDS::blinking(Mother, ledBrain, LED_CMDS::clrGreen, LED_CMDS::clrBlack, 500, 100, 100, 100, zyl_leds);
@@ -147,16 +157,7 @@ void handleInputs() {
             // Check how much time has passed since last result change
             if (millis() - lastChangeTime > TIME_THRESHOLD) {
                 // Trigger action after the time threshold has been reached
-                roomArmed = true;
-                Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
-                lastChangeTime = millis(); // Reset the timer after triggering
-                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
-                delay(50);
-                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
-                delay(50);
-                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
-                delay(50);
-                Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
+                arm_room();
             }
         } else if (!roomArmed) {
             Mother.motherRelay.digitalWrite(PNDOOR_PIN, closed);
