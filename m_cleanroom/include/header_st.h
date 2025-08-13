@@ -7,46 +7,49 @@
 
 #define DOOR_OPENTIME       18
 #define ARMTIME             18
+// #define ARMTIME             3
+
+#define ZYL_LED_CNT         21
 
 enum relays {
-    FR_LIGHTS_PIN,
+    FOG_PWR_PIN,      
     FAN_OUT_BIG_PIN,
-    FANS_SMALL_PIN,
+    FANS_SMALL_PIN,     // 12V Fans
     RPI_VIDEO_PIN,
-    FOG_PIN,
-    ROOM_LIGHT_PIN, // not used anymore but kept to keep pin numbering consistent
+    FOG_TRIGGER_PIN,
+    ROOM_LIGHT_PIN,     // not used anymore but kept to keep pin numbering consistent
     PNDOOR_PIN,
-    KEYPAD_PIN
+    KEYPAD_PIN          // not used in S but may be used in HH
 };
 
 enum relayInits {
-    FR_LIGHTS_INIT = open,
+    FOG_PWR_INIT = closed,
     FAN_OUT_BIG_INIT = closed,
     FANS_SMALL_INIT = closed,
     RPI_VIDEO_INIT = closed,
-    FOG_INIT = closed,
+    FOG_TRIGGER_INIT = closed,
     ROOM_LIGHT_INIT = closed, // not used anymore but kept to keep pin numbering consistent
     PNDOOR_INIT = closed,
     KEYPAD_INIT = closed
 };
 
 int relayPinArray[relayAmount] = {
-    FR_LIGHTS_PIN,
+    FOG_PWR_PIN,
     FAN_OUT_BIG_PIN,
     FANS_SMALL_PIN,
     RPI_VIDEO_PIN,
-    FOG_PIN,
+    FOG_TRIGGER_PIN,
     ROOM_LIGHT_PIN,     // not used anymore but kept to keep pin numbering consistent
     PNDOOR_PIN,
     KEYPAD_PIN
 };
 
 int relayInitArray[relayAmount] = {
-    FR_LIGHTS_INIT,
+    FOG_PWR_INIT,
     FAN_OUT_BIG_INIT,
     FANS_SMALL_INIT,
     RPI_VIDEO_INIT,
-    FOG_INIT,
+    FOG_TRIGGER_INIT,
     ROOM_LIGHT_INIT,
     PNDOOR_INIT,
     KEYPAD_INIT
