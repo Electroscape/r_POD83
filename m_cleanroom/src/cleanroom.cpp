@@ -29,7 +29,6 @@ STB_MOTHER_IO MotherIO;
 int lastState = -1;
 int armingTicks = 0;
 unsigned long lastChangeTime = 0; // Store the last time the result changed
-const unsigned long TIME_THRESHOLD = 5000; 
 unsigned long startTime = 0;
 bool roomArmed = false;
 
@@ -41,33 +40,38 @@ void openCleanroom() {
     wdt_reset();
     delay(1000);
     Mother.motherRelay.digitalWrite(PNDOOR_PIN, closed);
-    Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
     
-    LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrRed, 100, 300, ZYL_LED_CNT, zyl_leds, 200);
+
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 0, zyl_leds);
+    // running doesnt work cleanly for some reason, i haven't seen it work on strips before only chained dots
+    // LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrRed, 100, 300, ZYL_LED_CNT, PWM::set2, 200);
+    LED_CMDS::blinking(Mother, ledBrain, LED_CMDS::clrRed, LED_CMDS::clrBlack, 400, 100, 100, 100, zyl_leds);
     startTime = millis();
     while ((millis() - startTime) < (DOOR_OPENTIME * 1000)) {
         wdt_reset();
     }
 
     // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, led_strips::zyl_leds);
-    LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlue, 100, led_strips::fr_leds);
 }
 
 void runDecontamination() {
     wdt_reset();
-    delay(3000);
+
     Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, !RPI_VIDEO_INIT);
     delay(1000);
     Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, RPI_VIDEO_INIT);
+    delay(5000);
     
-    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
+    // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
 
-    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open); Serial.println("Light: off");
     wdt_reset();
     delay(2000);
     wdt_reset();
     Mother.motherRelay.digitalWrite(FANS_SMALL_PIN, !FANS_SMALL_INIT); Serial.println("Fan small: on");
-    delay(3000);
+    delay(6000);
+    wdt_reset();
 
     static constexpr int clr1[3] = {170, 95, 255};
     static constexpr int clr2[3] = {0, 255, 255};
@@ -77,29 +81,33 @@ void runDecontamination() {
     for (int z=0; z<14; z++) {
 
         Serial.print("z: "); Serial.println(z);
-        if (z==0) {Mother.motherRelay.digitalWrite(FOG_PIN, !FOG_INIT); Serial.println("Fog: on");}
-        else if (z==5) {Mother.motherRelay.digitalWrite(FOG_PIN, FOG_INIT); Serial.println("Fog: off");}
+        if (z==0) {Mother.motherRelay.digitalWrite(FOG_TRIGGER_PIN, !FOG_TRIGGER_INIT); Serial.println("Fog: on");}
+        else if (z==5) {Mother.motherRelay.digitalWrite(FOG_TRIGGER_PIN, FOG_TRIGGER_INIT); Serial.println("Fog: off");}
         else if (z==6) {Mother.motherRelay.digitalWrite(FAN_OUT_BIG_PIN, !FAN_OUT_BIG_INIT); Serial.println("Fan OUT big: on");}
         else {}//Serial.print("ez: "); Serial.println(z);}
 
-        Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, closed);
+        // used to be FR lights pins here
+        // Mother.motherRelay.digitalWrite(FOG_PWR_PIN, closed);
         wdt_reset();
         delay(1000);
 
-        Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, FR_LIGHTS_INIT);
+        // used to be FR lights pins here
+        // Mother.motherRelay.digitalWrite(FOG_PWR_PIN, FOG_PWR_INIT);
         wdt_reset();
         delay(1000);
     }
+    Mother.motherRelay.digitalWrite(FOG_PWR_PIN, closed);
 
-    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, closed);
+    // Mother.motherRelay.digitalWrite(FOG_PWR_PIN, closed);
     // Green light -----------------------------------------------
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::fr_leds);
     Serial.println("LED: green");
     Mother.motherRelay.digitalWrite(FANS_SMALL_PIN, FANS_SMALL_INIT); Serial.println("Fan small: off");
     wdt_reset();
-    delay(1000);
+    delay(5000);
     Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, open);
-    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open); Serial.println("Light: on");
+    //Mother.motherRelay.digitalWrite(FOG_PWR_PIN, open); Serial.println("Light: on");
+    wdt_reset();
 
 
     // White light -----------------------------------------------
@@ -115,19 +123,31 @@ void runDecontamination() {
     delay(3000);
 
     Mother.motherRelay.digitalWrite(KEYPAD_PIN, open);
-    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
+    
+    // unused 
+    // Mother.motherRelay.digitalWrite(KEYPAD_PIN, open);
+    // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
 
     openCleanroom();
 };
 
 
 void arm_room() {
-    Serial.println("Timeout triggered without input change!");
     roomArmed = true;
     Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
-    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, closed);
-    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open);
-    Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, closed);
+
+    lastChangeTime = millis(); // Reset the timer after triggering
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
+    delay(50);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
+    delay(50);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, !ROOM_LIGHT_INIT);
+    delay(50);
+    Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, ROOM_LIGHT_INIT);
+
+    // Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
+    // Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, closed);
+    Mother.motherRelay.digitalWrite(FOG_PWR_PIN, open);
 
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, fr_leds);
     LED_CMDS::blinking(Mother, ledBrain, LED_CMDS::clrGreen, LED_CMDS::clrBlack, 500, 100, 100, 100, zyl_leds);
@@ -135,6 +155,7 @@ void arm_room() {
     wdt_reset();
     delay(2300);
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, zyl_leds);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, fr_leds);
     wdt_reset();
 }
 
@@ -147,9 +168,7 @@ void handleInputs() {
             // Check how much time has passed since last result change
             if (millis() - lastChangeTime > TIME_THRESHOLD) {
                 // Trigger action after the time threshold has been reached
-                roomArmed = true;
-                Mother.motherRelay.digitalWrite(KEYPAD_PIN, closed);
-                lastChangeTime = millis(); // Reset the timer after triggering
+                arm_room();
             }
         } else if (!roomArmed) {
             Mother.motherRelay.digitalWrite(PNDOOR_PIN, closed);
@@ -177,13 +196,13 @@ void handleInputs() {
 
 void initRoom() {
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, zyl_leds);
-    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, fr_leds);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrWhite, 100, fr_leds);
     
     // reset relays cmd?? may aswell add one ot the library if it doesnt exist
     Mother.relayInit(relayPinArray, relayInitArray, relayAmount);
     /*
     Mother.motherRelay.digitalWrite(ROOM_LIGHT_PIN, closed);
-    Mother.motherRelay.digitalWrite(FR_LIGHTS_PIN, open);
+    Mother.motherRelay.digitalWrite(FOG_PWR_PIN, open);
     Mother.motherRelay.digitalWrite(RPI_VIDEO_PIN, RPI_VIDEO_INIT);
     */
 }
