@@ -29,7 +29,6 @@ STB_MOTHER_IO MotherIO;
 int lastState = -1;
 int armingTicks = 0;
 unsigned long lastChangeTime = 0; // Store the last time the result changed
-const unsigned long TIME_THRESHOLD = 18000; 
 unsigned long startTime = 0;
 bool roomArmed = false;
 
@@ -44,14 +43,17 @@ void openCleanroom() {
     
 
     LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 0, zyl_leds);
-    LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrRed, 100, 300, ZYL_LED_CNT, zyl_leds, 200);
+    // running doesnt work cleanly for some reason, i haven't seen it work on strips before only chained dots
+    // LED_CMDS::running(Mother, ledBrain, LED_CMDS::clrRed, 100, 300, ZYL_LED_CNT, PWM::set2, 200);
+    LED_CMDS::blinking(Mother, ledBrain, LED_CMDS::clrRed, LED_CMDS::clrBlack, 400, 100, 100, 100, zyl_leds);
     startTime = millis();
     while ((millis() - startTime) < (DOOR_OPENTIME * 1000)) {
         wdt_reset();
     }
 
     // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, led_strips::zyl_leds);
-    LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlue, 100, led_strips::fr_leds);
 }
 
 void runDecontamination() {
@@ -124,7 +126,7 @@ void runDecontamination() {
     
     // unused 
     // Mother.motherRelay.digitalWrite(KEYPAD_PIN, open);
-    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
+    // LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrGreen, 100, led_strips::zyl_leds);
 
     openCleanroom();
 };
@@ -152,7 +154,8 @@ void arm_room() {
 
     wdt_reset();
     delay(2300);
-    LED_CMDS::setAllStripsToClr(Mother, ledBrain, LED_CMDS::clrRed);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrRed, 100, zyl_leds);
+    LED_CMDS::setStripToClr(Mother, ledBrain, LED_CMDS::clrBlack, 100, fr_leds);
     wdt_reset();
 }
 

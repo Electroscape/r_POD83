@@ -6,7 +6,8 @@
 // #define Hamburg     1
 
 #define DOOR_OPENTIME       18
-#define ARMTIME             18
+// for closing the door
+const unsigned long TIME_THRESHOLD = 18000; 
 // #define ARMTIME             3
 
 #define ZYL_LED_CNT         21
