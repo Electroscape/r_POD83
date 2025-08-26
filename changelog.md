@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.38
+ * new cleanroom code for Hat boards 
+
 ## v0.37
 
  * localized js libraries 
