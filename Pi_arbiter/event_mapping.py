@@ -186,7 +186,6 @@ class LaserLock:
             states.truth_played = True
             states.stream_active = True
             return True
-        call_video("play_biovita", nw_sock=nw_sock)
         return False
 
     @staticmethod
